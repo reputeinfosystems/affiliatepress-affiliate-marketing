@@ -69,7 +69,7 @@
                                                     </el-row>										
                                                     <el-row v-if="select_download_log == 'custom'" class="ap-download-datepicker">
                                                         <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" >											
-                                                            <el-date-picker :teleported="false"  popper-class="ap-el-select--is-with-modal" class="ap-form-control--date-range-picker ap-form-date-range-control ap-form-full-width-control ap-padding-right-16" v-model="download_log_daterange" type="daterange" start-placeholder="Start date" end-placeholder="End date" :clearable="false" value-format="YYYY-MM-DD" :format="ap_common_date_format"  :picker-options="filter_pickerOptions"> </el-date-picker>
+                                                            <el-date-picker :teleported="false"  popper-class="ap-el-select--is-with-modal" class="ap-form-control--date-range-picker ap-form-date-range-control ap-form-full-width-control ap-padding-right-16" v-model="download_log_daterange" type="daterange" :start-placeholder="affiliatepress_start_date" :end-placeholder="affiliatepress_end_date" :clearable="false" value-format="YYYY-MM-DD" :format="ap_common_date_format"  :picker-options="filter_pickerOptions"> </el-date-picker>
                                                         </el-col>
                                                     </el-row>
                                                     <el-row>													
@@ -170,7 +170,7 @@
                                                     </el-row>										
                                                     <el-row v-if="select_download_log == 'custom'" class="ap-download-datepicker">
                                                         <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" >											
-                                                            <el-date-picker :teleported="false"  popper-class="ap-el-select--is-with-modal" class="ap-form-control--date-range-picker ap-form-date-range-control ap-form-full-width-control ap-padding-right-16" v-model="download_log_daterange" type="daterange" start-placeholder="Start date" end-placeholder="End date" :clearable="false" value-format="YYYY-MM-DD" :format="ap_common_date_format"  :picker-options="filter_pickerOptions"> </el-date-picker>
+                                                            <el-date-picker :teleported="false"  popper-class="ap-el-select--is-with-modal" class="ap-form-control--date-range-picker ap-form-date-range-control ap-form-full-width-control ap-padding-right-16" v-model="download_log_daterange" type="daterange" :start-placeholder="affiliatepress_start_date" :end-placeholder="affiliatepress_end_date" :clearable="false" value-format="YYYY-MM-DD" :format="ap_common_date_format"  :picker-options="filter_pickerOptions"> </el-date-picker>
                                                         </el-col>
                                                     </el-row>
                                                     <el-row>													
@@ -271,7 +271,7 @@
                                                     </el-row>										
                                                     <el-row v-if="select_download_log == 'custom'" class="ap-download-datepicker">
                                                         <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" >											
-                                                            <el-date-picker :teleported="false"  popper-class="ap-el-select--is-with-modal" class="ap-form-control--date-range-picker ap-form-date-range-control ap-form-full-width-control ap-padding-right-16" v-model="download_log_daterange" type="daterange" start-placeholder="Start date" end-placeholder="End date" :clearable="false" value-format="YYYY-MM-DD" :format="ap_common_date_format"  :picker-options="filter_pickerOptions"> </el-date-picker>
+                                                            <el-date-picker :teleported="false"  popper-class="ap-el-select--is-with-modal" class="ap-form-control--date-range-picker ap-form-date-range-control ap-form-full-width-control ap-padding-right-16" v-model="download_log_daterange" type="daterange" :start-placeholder="affiliatepress_start_date" :end-placeholder="affiliatepress_end_date" :clearable="false" value-format="YYYY-MM-DD" :format="ap_common_date_format"  :picker-options="filter_pickerOptions"> </el-date-picker>
                                                         </el-col>
                                                     </el-row>
                                                     <el-row>													

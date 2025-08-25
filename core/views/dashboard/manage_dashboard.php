@@ -16,7 +16,7 @@
                 </el-col>  
                 <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="ap-head-right">
                     <div class="dashboard-head-filter">
-                        <el-date-picker :teleported="false" @change="affiliatepress_get_dashboard_detail()" popper-class="ap-date-range-picker-widget-wrapper" value-format="YYYY-MM-DD" :format="ap_common_date_format" v-model="dashboard_date_range" class="ap-form-date-range-control ap-form-full-width-control ap-padding-right-16" type="daterange" size="large" start-placeholder="Start date" end-placeholder="End date" :shortcuts="shortcuts" :default-time="defaultTime"/>
+                        <el-date-picker :teleported="false" @change="affiliatepress_get_dashboard_detail()" popper-class="ap-date-range-picker-widget-wrapper" value-format="YYYY-MM-DD" :format="ap_common_date_format" v-model="dashboard_date_range" class="ap-form-date-range-control ap-form-full-width-control ap-padding-right-16" type="daterange" size="large" :start-placeholder="affiliatepress_start_date" :end-placeholder="affiliatepress_end_date" :shortcuts="shortcuts" :default-time="defaultTime"/>
                     </div>
                 </el-col>                      
             </el-row>

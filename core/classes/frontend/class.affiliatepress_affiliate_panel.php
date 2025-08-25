@@ -175,7 +175,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             if($affiliatepress_affiliate_id){
 
                 $affiliatepress_admin_email_subject = esc_html__('Affiliate Account Closure Request', 'affiliatepress-affiliate-marketing');						
-                $affiliatepress_admin_email_content = sprintf( esc_html__( 'Dear Admin, %1$s We have received a request from an affiliate user to close their account. Below are the details: %2$s Affiliate User Name: %3$s %4$s Affiliate User Email: %5$s %6$s Date of Request: %7$s %8$s Thank you for your prompt attention to this matter.', 'affiliatepress-affiliate-marketing'), '<br/>','<br/>', '%affiliate_user_name%', '<br/>', '%affiliate_email%', '<br/>', '%request_date%', '<br/>' ); // phpcs:ignore
+                $affiliatepress_admin_email_content = sprintf( esc_html__( 'Dear Admin, %1$s We have received a request from an affiliate user to close their account. Below are the details: %2$s Affiliate Username: %3$s %4$s Affiliate User Email: %5$s %6$s Date of Request: %7$s %8$s Thank you for your prompt attention to this matter.', 'affiliatepress-affiliate-marketing'), '<br/>','<br/>', '%affiliate_user_name%', '<br/>', '%affiliate_email%', '<br/>', '%request_date%', '<br/>' ); // phpcs:ignore
 
                 $affiliatepress_admin_email = $AffiliatePress->affiliatepress_get_settings('admin_email', 'email_notification_settings');
                 $affiliatepress_from_name = $AffiliatePress->affiliatepress_get_settings('sender_name', 'email_notification_settings');

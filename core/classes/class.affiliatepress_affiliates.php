@@ -311,16 +311,20 @@ if (! class_exists('affiliatepress_affiliates') ) {
                                                     $affiliatepress_has_import_affiliate = true;
                                                     $this->affiliatepress_add_affiliate_user_role($affiliatepress_user_id);                                                    
                                                 }else{
-                                                    $affiliatepress_error_msg = 'Affiliate User not created for : '.$affiliatepress_email.' User Name: '.$affiliatepress_username;        
+
+                                                    $affiliatepress_error_msg = sprintf( esc_html__('Affiliate User not created for :  %1$s Username :  %2$s','affiliatepress-affiliate-marketing'), $affiliatepress_email, $affiliatepress_username);// phpcs:ignore
                                                 }                                                
                                             }else{
-                                                $affiliatepress_error_msg = 'WordPress User not created for : '.$affiliatepress_email.' User Name: '.$affiliatepress_username;    
+
+                                                $affiliatepress_error_msg = sprintf( esc_html__('WordPress User not created for :  %1$s Username :  %2$s','affiliatepress-affiliate-marketing'), $affiliatepress_email, $affiliatepress_username);// phpcs:ignore
                                             }
                                         }else{
-                                            $affiliatepress_error_msg = 'User Name OR Email already exists email : '.$affiliatepress_email.' User Name: '.$affiliatepress_username;    
+
+                                            $affiliatepress_error_msg = sprintf( esc_html__('Username OR Email already exists email :  %1$s Username :  %2$s','affiliatepress-affiliate-marketing'), $affiliatepress_email, $affiliatepress_username);// phpcs:ignore
                                         }
                                     }else{
-                                        $affiliatepress_error_msg = 'Not Valid Email Address '.$affiliatepress_email;
+
+                                        $affiliatepress_error_msg = sprintf( esc_html__('Not Valid Email Address  %1$s','affiliatepress-affiliate-marketing'), $affiliatepress_email);// phpcs:ignore
                                     }
                                 }
                             }                    
@@ -581,18 +585,19 @@ if (! class_exists('affiliatepress_affiliates') ) {
             $affiliatepress_exports_data = $affiliates;
 
             $affiliatepress_columns = array(
-                'ap_affiliates_id'              => __( 'Affiliate ID', 'affiliatepress-affiliate-marketing' ),
-                'ap_affiliates_user_name'       => __( 'User Name', 'affiliatepress-affiliate-marketing' ),
-                'email'                         => __( 'User Email', 'affiliatepress-affiliate-marketing' ),
-                'first_name'                    => __( 'First Name', 'affiliatepress-affiliate-marketing' ),
-                'last_name'                     => __( 'Last Name', 'affiliatepress-affiliate-marketing' ),
-                'affiliate_payment_email'       => __( 'Payout Email', 'affiliatepress-affiliate-marketing' ),
-                'unpaid_earning'                => __( 'Unpaid Earnings', 'affiliatepress-affiliate-marketing' ),
-                'paid_earning'                  => __( 'Paid Earnings', 'affiliatepress-affiliate-marketing' ),
-                'website'                       => __( 'Website', 'affiliatepress-affiliate-marketing' ),
-                'status'                        => __( 'Status', 'affiliatepress-affiliate-marketing' ),
-                'total_visit'                   => __( 'Total Visit', 'affiliatepress-affiliate-marketing' ),
-                'convert_user'                  => __( 'Converted', 'affiliatepress-affiliate-marketing' ),
+                'ap_affiliates_id'              => 'Affiliate ID', // No need to add Text domain
+                'ap_affiliates_user_name'       => 'Username',
+                'email'                         => 'User Email',
+                'first_name'                    => 'First Name',
+                'last_name'                     => 'Last Name',
+                'affiliate_payment_email'       => 'Payout Email',
+                'unpaid_earning'                => 'Unpaid Earnings',
+                'paid_earning'                  => 'Paid Earnings',
+                'website'                       => 'Website',
+                'status'                        => 'Status',
+                'total_visit'                   => 'Total Visit',
+                'convert_user'                  => 'Converted',
+                'created_date'                  => 'Date Registered',
             );
 
             $affiliatepress_filename = 'AffiliatePress-export-affiliates.csv'; //phpcs:ignore
@@ -1751,15 +1756,15 @@ if (! class_exists('affiliatepress_affiliates') ) {
         function affiliatepress_all_affiliates_status(){
             $affiliatepress_all_affiliates_status = array(
                 array(
-                    'label'=>'Approved',
+                    'label'=> esc_html__('Approved', 'affiliatepress-affiliate-marketing'),
                     'value'=>'1',
                 ),
                 array(
-                    'label'=>'Pending',
+                    'label'=> esc_html__('Pending', 'affiliatepress-affiliate-marketing'),
                     'value'=>'2',
                 ),
                 array(
-                    'label'=>'Rejected',
+                    'label'=> esc_html__('Rejected', 'affiliatepress-affiliate-marketing'),
                     'value'=>'3',
                 )                                
             );

@@ -2,22 +2,22 @@
     if ( ! defined( 'ABSPATH' ) ) { exit; }
     global $affiliatepress_get_setting_data;
 ?>
-<el-main v-cloak :class="affiliatepress_container_dynamic_class" class="ap-front-reg-container  <?php echo esc_html((is_rtl())?'ap-front-panel-container-rtl':''); ?>" id="affiliatepress_panel_<?php echo esc_html( $affiliatepress_uniq_id ); ?>" style="min-height:600px;">
+<div v-cloak :class="affiliatepress_container_dynamic_class" class="ap-front-reg-container  <?php echo esc_html((is_rtl())?'ap-front-panel-container-rtl':''); ?>" id="affiliatepress_panel_<?php echo esc_html( $affiliatepress_uniq_id ); ?>" style="min-height:600px;">
     <div id="ap-none-field">
         <?php wp_nonce_field('ap_wp_nonce'); ?>    
     </div>
     <div ref="affiliatepresspanel" class="ap-vue-main-front-container" :class="(is_login == 'true' && allow_user_access == 'true')?'ap-affiliate-panel-main':''" id="ap-vue-cont-id" style="min-height:600px;">
-        <div v-if="is_login == 'false'" class="ap-main-reg-card-container" :class="(show_forgot_password_form == '1')?'ap-main-forgot-password-container':''">
-            <div v-if="is_affiliate_form_loader == '0'" class="ap-front-loader-container" id="ap-page-front-loading-loader">
+        <div style="display:none;" :style="(is_login == 'false') ? 'display:flex;' : ''" class="ap-main-reg-card-container" :class="(show_forgot_password_form == '1')?'ap-main-forgot-password-container':''">
+            <div style="display:none;" :style="(is_affiliate_form_loader == '0') ? 'display:block;' : ''" class="ap-front-loader-container" id="ap-page-front-loading-loader">
                 <div class="ap-front-loader"></div>
             </div>
-            <div class="ap-main-reg-card-inside" v-if="is_affiliate_form_loader == '1'" style="display:none;" :style="(is_affiliate_form_loader == '1') ? 'display:block;' : ''">
-                <div class="ap-front-toast-notification --ap-error ap-front-msg-panel" v-if="is_display_error == '1'">
+            <div class="ap-main-reg-card-inside" style="display:none;" :style="(is_affiliate_form_loader == '1') ? 'display:block;' : ''">
+                <div class="ap-front-toast-notification --ap-error ap-front-msg-panel" style="display:none;" :style="(is_display_error == '1') ? 'display:block;' : ''">
                     <div class="ap-front-tn-body">                                                
                         <p :aria-label="is_error_msg">{{ is_error_msg }}</p>                        
                     </div>
                 </div>
-                <div class="ap-front-toast-notification --ap-success ap-front-msg-panel" v-if="is_display_success == '1'">
+                <div class="ap-front-toast-notification --ap-success ap-front-msg-panel" style="display:none;" :style="(is_display_success == '1') ? 'display:block;' : ''">
                     <div class="ap-front-tn-body">
                         <p :aria-label="is_success_msg">{{ is_success_msg }}</p>
                     </div>
@@ -64,7 +64,7 @@
                                 </div>                    
                             </el-button>                 
                         </div>
-                        <div v-if="allow_affiliate_registration != 'false'" class="ap-frm-account-link-upper">
+                        <div style="display:none;" :style="(allow_affiliate_registration != 'false') ? 'display:flex;' : ''" class="ap-frm-account-link-upper">
                             <span :aria-label="affiliate_panel_labels.login_dont_have_account" v-html="affiliate_panel_labels.login_dont_have_account"></span>&nbsp;<a  class="ap-acnt-link ap-title-text-color" @click="affiliatepress_go_to_register" href="javascript:void(0);"  :aria-label="affiliate_panel_labels.login_create_account" v-html="affiliate_panel_labels.login_create_account"></a>
                         </div>
                     </el-form>
@@ -167,7 +167,7 @@
                 </div>    
             </div>
         </div>
-        <div class="ap-main-reg-card-container" v-if="is_login == 'true' && allow_user_access == 'false' && allow_signup == 'false'" style="display:none;" :style="(is_affiliate_form_loader == '1') ? 'display:block;' : ''">
+        <div class="ap-main-reg-card-container" style="display:none;" :style="(is_affiliate_form_loader == '1' && is_login == 'true' && allow_user_access == 'false' && allow_signup == 'false') ? 'display:block;' : ''">
             <div class="ap-flex-center">
                 <div class="ap-lock-icon ap-flex-center">
                     <?php do_action('affiliatepress_common_affiliate_panel_svg_code','lock_screen_icon'); ?>
@@ -175,25 +175,25 @@
             </div>
             <div class="ap-box-card-value ap-affiliate-not-allow-msg ap-mt-20">{{ not_allow_user_affiliate_panel }}</div>                 
         </div>
-        <div class="ap-main-reg-card-container" v-if="is_login == 'true' && allow_user_access == 'false' && allow_signup == 'true'" style="display:none;" :style="(is_affiliate_form_loader == '1') ? 'display:block;' : ''">
-            <div class="ap-front-toast-notification --ap-error ap-front-msg-panel" v-if="is_display_error == '1'">
+        <div class="ap-main-reg-card-container" style="display:none;" :style="(is_affiliate_form_loader == '1' && is_login == 'true' && allow_user_access == 'false' && allow_signup == 'true') ? 'display:block;' : ''">
+            <div class="ap-front-toast-notification --ap-error ap-front-msg-panel" style="display:none;" :style="(is_display_error == '1') ? 'display:block;' : ''">
                 <div class="ap-front-tn-body">                                                
                     <p>{{ is_error_msg }}</p>                        
                 </div>
             </div>
-            <div class="ap-front-toast-notification --ap-success ap-front-msg-panel" v-if="is_display_success == '1'">
+            <div class="ap-front-toast-notification --ap-success ap-front-msg-panel" style="display:none;" :style="(is_display_success == '1') ? 'display:block;' : ''">
                 <div class="ap-front-tn-body">
                     <p>{{ is_success_msg }}</p>
                 </div>
             </div>  
-            <div class="ap-front-toast-notification --ap-success ap-front-msg-panel" v-if="register_form_msg != ''">
+            <div class="ap-front-toast-notification --ap-success ap-front-msg-panel" style="display:none;" :style="(register_form_msg != '') ? 'display:block;' : ''" >
                 <div class="ap-front-tn-body">
                     <p class="ap-success-register-message">{{ register_form_msg }}</p>
                 </div>
             </div>                          
             <div class="ap-main-reg-frm-body ap-single-form">
 
-                <el-form v-if="is_show_register_form == 'true'" @submit.native.prevent ref="affiliates_reg_form_data" :rules="rules" require-asterisk-position="right" :model="affiliates" label-position="top">    
+                <el-form style="display:none;" :style="(is_show_register_form == 'true') ? 'display:block;' : ''"  @submit.native.prevent ref="affiliates_reg_form_data" :rules="rules" require-asterisk-position="right" :model="affiliates" label-position="top">    
                         <div class="ap-front-page-title" :aria-label="affiliate_panel_labels.create_an_account" v-html="affiliate_panel_labels.create_an_account"></div>
                         <div class="ap-front-page-sub-title" :aria-label="affiliate_panel_labels.create_account_description" v-html="affiliate_panel_labels.create_account_description"></div>
                         <div v-for="affiliate_field in affiliate_fields">                    
@@ -252,7 +252,6 @@
                             </el-button>                 
                         </div>
                 </el-form>
-
             </div>
         </div>        
         <div class="affiliatepress-affiliate-panel" v-if="is_login == 'true' && allow_user_access == 'true'">
@@ -402,7 +401,7 @@
                     
                     <div v-if="affiliate_current_tab == 'payments'" class="ap-affiliate-panel-content">  
                         <div v-if="is_display_tab_content_loader == '1'" class="ap-panel-loader">
-                            <div class="ap-front-loader-container">
+                            <div class="ap-front-loader-container ap-panel-front-loader">
                                 <div class="ap-front-loader"></div>
                             </div>
                         </div>
@@ -480,7 +479,7 @@
 
                             <div class="ap-panel-data-container ap-aff-panel-table">
                                 <div v-if="affiliate_payments_loader == '1'" class="ap-panel-loader ap-panel-inner-loader">
-                                    <div class="ap-front-loader-container">
+                                    <div class="ap-front-loader-container ap-panel-front-loader">
                                         <div class="ap-front-loader"></div>
                                     </div>
                                 </div>   
@@ -562,7 +561,7 @@
 
                     <div v-if="affiliate_current_tab == 'commission'" class="ap-affiliate-panel-content">  
                         <div v-if="is_display_tab_content_loader == '1'" class="ap-panel-loader">
-                            <div class="ap-front-loader-container">
+                            <div class="ap-front-loader-container ap-panel-front-loader">
                                 <div class="ap-front-loader"></div>
                             </div>
                         </div>
@@ -639,7 +638,7 @@
                             </div>                    
                             <div class="ap-panel-data-container ap-aff-panel-table">
                                 <div v-if="affiliate_commission_loader == '1'" class="ap-panel-loader ap-panel-inner-loader">
-                                    <div class="ap-front-loader-container">
+                                    <div class="ap-front-loader-container ap-panel-front-loader">
                                         <div class="ap-front-loader"></div>
                                     </div>
                                 </div>   
@@ -748,7 +747,7 @@
                     </div>
                     <div v-if="affiliate_current_tab == 'dashboard'" class="ap-affiliate-panel-content ap-dashboard-content">
                         <div v-if="is_display_tab_content_loader == '1'" class="ap-panel-loader">
-                            <div class="ap-front-loader-container">
+                            <div class="ap-front-loader-container ap-panel-front-loader">
                                 <div class="ap-front-loader"></div>
                             </div>
                         </div>
@@ -876,7 +875,7 @@
                     </div>   
                     <div v-if="affiliate_current_tab == 'visit'" class="ap-affiliate-panel-content">
                         <div v-if="is_display_tab_content_loader == '1'" class="ap-panel-loader">
-                            <div class="ap-front-loader-container">
+                            <div class="ap-front-loader-container ap-panel-front-loader">
                                 <div class="ap-front-loader"></div>
                             </div>
                         </div>
@@ -955,7 +954,7 @@
                             <div class="ap-panel-data-container ap-aff-panel-table">
                                 <div class="ap-front-content-data">
                                     <div v-if="affiliate_visit_loader == '1'" class="ap-panel-loader ap-panel-inner-loader">
-                                        <div class="ap-front-loader-container">
+                                        <div class="ap-front-loader-container ap-panel-front-loader">
                                             <div class="ap-front-loader"></div>
                                         </div>
                                     </div>  
@@ -1111,7 +1110,7 @@
                     <div v-if="affiliate_current_tab == 'affiliates_links'" class="ap-affiliate-panel-content">
 
                         <div v-if="is_display_tab_content_loader == '1'" class="ap-panel-loader">
-                            <div class="ap-front-loader-container">
+                            <div class="ap-front-loader-container ap-panel-front-loader">
                                 <div class="ap-front-loader"></div>
                             </div>
                         </div>
@@ -1260,7 +1259,7 @@
                     <div v-if="affiliate_current_tab == 'creative'" class="ap-affiliate-panel-content ap-panel-form-content">
 
                         <div v-if="is_display_tab_content_loader == '1'" class="ap-panel-loader">
-                            <div class="ap-front-loader-container">
+                            <div class="ap-front-loader-container ap-panel-front-loader">
                                 <div class="ap-front-loader"></div>
                             </div>                           
                         </div>
@@ -1308,7 +1307,7 @@
                             <div class="ap-creative-list ap-panel-data-container ap-affiliat-panel-pading">
                                 <div class="ap-front-content-data">
                                     <div v-if="affiliate_creative_loader == '1'" class="ap-panel-loader ap-panel-inner-loader">
-                                        <div class="ap-front-loader-container">
+                                        <div class="ap-front-loader-container ap-panel-front-loader">
                                             <div class="ap-front-loader"></div>
                                         </div>
                                     </div>  
@@ -1460,7 +1459,7 @@
                     <div v-if="affiliate_current_tab == 'edit_profile'" class="ap-affiliate-panel-content">
 
                         <div v-if="is_display_tab_content_loader == '1'" class="ap-panel-loader">
-                            <div class="ap-front-loader-container">
+                            <div class="ap-front-loader-container ap-panel-front-loader">
                                 <div class="ap-front-loader"></div>
                             </div>
                         </div>
@@ -1632,4 +1631,4 @@
             </div>
         </div>
     </div>    
-</el-main>
+</div>

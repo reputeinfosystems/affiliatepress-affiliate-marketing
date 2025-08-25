@@ -40,6 +40,10 @@ if( !class_exists('affiliatepress_armember') ){
                 /**Save Disable option settings */
                 add_filter( 'arm_befor_save_field_membership_plan', array( $this, 'affiliatepress_before_save_field_membership_plan' ), 10, 2 );
 
+                add_filter( 'arm_add_arm_entries_value', array( $this, 'affiliatepress_add_affiliate_armember_data' ), 10, 1 );
+
+                add_filter( 'affiliatepress_get_affiliate_cookie_armember', array( $this, 'affiliatepress_modify_affiliate_cookie_data' ), 10, 3 );
+
             }
 
             if($affiliatepress_is_armember_active){
@@ -52,6 +56,48 @@ if( !class_exists('affiliatepress_armember') ){
             }
         }
 
+        function affiliatepress_modify_affiliate_cookie_data($affiliatepress_get_cookie,$affiliatepress_plan_data,$affiliatepress_cookie_type){
+
+            global $wpdb,$ARMember,$affiliatepress_commission_debug_log_id;
+
+            $user_id = isset($affiliatepress_plan_data['arm_user_id']) ? $affiliatepress_plan_data['arm_user_id'] : 0;
+            if($user_id == 0){ return; }
+
+            $entry_id = get_user_meta($user_id, 'arm_entry_id');
+
+            $arm_tbl_entry = $ARMember->tbl_arm_entries;
+            $entry_data_value = $wpdb->get_row($wpdb->prepare("SELECT `arm_entry_value` FROM `{$arm_tbl_entry}` WHERE `arm_user_id` = %d AND `arm_entry_id` = %d ", $user_id, $entry_id[0]), ARRAY_A); //phpcs:ignore
+
+            if(!empty($entry_data_value) && isset($entry_data_value['arm_entry_value'])){
+                $entry_data = maybe_unserialize($entry_data_value['arm_entry_value']);
+
+                if($affiliatepress_cookie_type == "affiliate"){
+                    $affiliatepress_get_store_cookie = isset($_COOKIE['affiliatepress_ref_cookie']) ? intval($_COOKIE['affiliatepress_ref_cookie']) :$affiliatepress_get_cookie;                
+                    if(($affiliatepress_get_store_cookie <= 0 ) && isset($entry_data['affiliatepress_ref_affiliate_id'])){
+                        $affiliatepress_get_store_cookie = isset($entry_data['affiliatepress_ref_affiliate_id']) ? $entry_data['affiliatepress_ref_affiliate_id'] : $affiliatepress_get_cookie;
+                    }
+                    $affiliatepress_get_cookie = $affiliatepress_get_store_cookie;
+                }elseif ($affiliatepress_cookie_type == "visit") {
+                    $affiliatepress_get_store_visit_cookie = isset($_COOKIE['affiliatepress_visitor_id']) ? intval($_COOKIE['affiliatepress_visitor_id']) : $affiliatepress_get_cookie;                
+                    if(($affiliatepress_get_store_visit_cookie <= 0 ) && isset($entry_data['affiliatepress_ref_affiliate_visitor_id'])){
+                        $affiliatepress_get_store_visit_cookie = isset($entry_data['affiliatepress_ref_affiliate_visitor_id']) ? $entry_data['affiliatepress_ref_affiliate_visitor_id'] : $affiliatepress_get_cookie ;
+                    }
+                    $affiliatepress_get_cookie = $affiliatepress_get_store_visit_cookie;   
+                }
+            }
+
+            return $affiliatepress_get_cookie;
+        }
+
+        function affiliatepress_add_affiliate_armember_data( $entry_post_data ) {
+            global $affiliatepress_tracking,$affiliatepress_commission_debug_log_id;
+            $entry_post_data['affiliatepress_ref_affiliate_id'] = isset($_COOKIE['affiliatepress_ref_cookie']) ? absint( $_COOKIE['affiliatepress_ref_cookie'] ) : 0;
+            $entry_post_data['affiliatepress_ref_affiliate_visitor_id'] = isset($_COOKIE['affiliatepress_visitor_id']) ? intval($_COOKIE['affiliatepress_visitor_id']) : 0;
+
+            $affiliatepress_log_msg = "Add Cookie data in entry value & Entry affiliate id=".$entry_post_data['affiliatepress_ref_affiliate_id'] ."& visistor Entry data = ".$entry_post_data['affiliatepress_ref_affiliate_visitor_id'];
+            do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' Set Entry Cookie data', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_log_msg, $affiliatepress_commission_debug_log_id);
+	        return $entry_post_data;
+        }
 
         /**
          * Function for get order page link for commission referance order
@@ -329,8 +375,11 @@ if( !class_exists('affiliatepress_armember') ){
 
             $affiliatepress_order_id = isset($affiliatepress_plan_data['arm_log_id']) ? intval( $affiliatepress_plan_data['arm_log_id'] ) : '';
 
-            $affiliatepress_affiliate_id = $affiliatepress_tracking->affiliatepress_get_referral_affiliate();
-            $affiliatepress_visit_id	  = $affiliatepress_tracking->affiliatepress_get_referral_visit();   
+            $affiliatepress_affiliate_id = $affiliatepress_tracking->affiliatepress_get_referral_affiliate($this->affiliatepress_integration_slug,$affiliatepress_plan_data);
+            $affiliatepress_visit_id	  = $affiliatepress_tracking->affiliatepress_get_referral_visit($this->affiliatepress_integration_slug,$affiliatepress_plan_data);   
+
+            $affiliatepress_log_msg = "Affiliate ID : ".$affiliatepress_affiliate_id;
+            do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' Affiliate ID', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_log_msg, $affiliatepress_commission_debug_log_id);
 
             $affiliatepress_affiliate_id = !empty($affiliatepress_affiliate_id) ? intval($affiliatepress_affiliate_id) : 0;
 
@@ -596,15 +645,20 @@ if( !class_exists('affiliatepress_armember') ){
 
             global $wpdb; 
 
-            $affiliatepress_tbl_arm_payment_log = $this->affiliatepress_tablename_prepare($wpdb->prefix . 'arm_payment_log'); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'arm_payment_log' contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
+            $affiliatepress_is_recurring = false;
+            $arm_user_plan_ids = get_user_meta($affiliatepress_user_id,'affiliatepress_user_id',true);
 
-            $affiliatepress_arm_payment =$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$affiliatepress_tbl_arm_payment_log} WHERE arm_user_id = %d AND arm_plan_id = %d",$affiliatepress_user_id,$affiliatepress_user_plan));// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arm_subscription_plan is a table name. false alarm 
+            if(!empty($arm_user_plan_ids) && in_array($affiliatepress_user_plan,$arm_user_plan_ids)){
+                $arm_user_plan = get_user_meta($affiliatepress_user_id,'arm_user_plan_'.$affiliatepress_user_plan,true);
+                
+                $arm_completed_recurring = isset($arm_user_plan['arm_completed_recurring']) ? $arm_user_plan['arm_completed_recurring'] : '';
 
-            if($affiliatepress_arm_payment > 1){
-                return true;
-            }else{
-                return false;
+                if($arm_completed_recurring > 1){
+                    $affiliatepress_is_recurring =  true;
+                }
             }
+            
+            return $affiliatepress_is_recurring;
         }
         
         /**

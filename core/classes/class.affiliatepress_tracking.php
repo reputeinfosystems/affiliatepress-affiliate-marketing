@@ -564,12 +564,18 @@ if( !class_exists('affiliatepress_tracking') ){
          *
          * @return string
         */
-        function affiliatepress_get_referral_affiliate(){            
-            if(isset($_COOKIE['affiliatepress_ref_cookie']) && !empty($_COOKIE['affiliatepress_ref_cookie'])){
-                return absint( $_COOKIE['affiliatepress_ref_cookie'] );    
-            }else{
-                return '';
+        function affiliatepress_get_referral_affiliate($source = '', $order_data = '' ){            
+            $affiliatepress_get_cookie = '';
+            if(isset($_COOKIE['affiliatepress_ref_cookie']) && !empty($_COOKIE['affiliatepress_ref_cookie'])) 
+            {
+                $affiliatepress_get_cookie = absint( $_COOKIE['affiliatepress_ref_cookie'] );
             }
+            else if( !empty( $source ) )
+            {
+                $affiliatepress_get_cookie = apply_filters( 'affiliatepress_get_affiliate_cookie_'.$source, $affiliatepress_get_cookie,$order_data,'affiliate');
+            }
+            
+            return $affiliatepress_get_cookie;
         } 
 
         /**
@@ -577,12 +583,18 @@ if( !class_exists('affiliatepress_tracking') ){
          *
          * @return void
         */
-        function affiliatepress_get_referral_visit(){            
-            if(isset($_COOKIE['affiliatepress_visitor_id']) && !empty($_COOKIE['affiliatepress_visitor_id'])){
-                return absint( $_COOKIE['affiliatepress_visitor_id'] );    
-            }else{
-                return '';
+        function affiliatepress_get_referral_visit( $source = '', $order_data = '' ){
+            $affiliatepress_get_visit_id = '';
+            if(isset($_COOKIE['affiliatepress_visitor_id']) && !empty($_COOKIE['affiliatepress_visitor_id']))
+            {
+                $affiliatepress_get_visit_id = absint( $_COOKIE['affiliatepress_visitor_id'] );
             }
+            else if( !empty( $source ) )
+            {
+                $affiliatepress_get_visit_id = apply_filters( 'affiliatepress_get_affiliate_cookie_'.$source, $affiliatepress_get_visit_id,$order_data,'visit');
+            }
+            
+            return $affiliatepress_get_visit_id;
         }         
 
         /**

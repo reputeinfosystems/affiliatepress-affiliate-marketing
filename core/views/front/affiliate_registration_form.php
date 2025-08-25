@@ -1,25 +1,25 @@
 <?php 
     global $affiliatepress_get_setting_data;
 ?>
-<el-main v-cloak class="ap-front-reg-container <?php echo esc_html((is_rtl())?'ap-front-reg-container-rtl':''); ?>" id="affiliatepress_reg_form_<?php echo esc_html( $affiliatepress_uniq_id ); ?>" style="min-height:700px;">
+<div v-cloak class="ap-front-reg-container <?php echo esc_html((is_rtl())?'ap-front-reg-container-rtl':''); ?>" id="affiliatepress_reg_form_<?php echo esc_html( $affiliatepress_uniq_id ); ?>" style="min-height:700px;">
     <div id="ap-none-field">
         <?php wp_nonce_field('ap_wp_nonce'); ?> 
     </div>
     <div ref="container" id="ap-vue-cont-id" class="ap-main-reg-card-container" style="min-height:700px;">
-        <div v-if="is_affiliate_form_loader == '0'" class="ap-front-loader-container" id="ap-page-front-loading-loader">
+        <div style="display:none;" :style="(is_affiliate_form_loader == '0') ? 'display:flex;' : ''" class="ap-front-loader-container" id="ap-page-front-loading-loader">
             <div class="ap-front-loader"></div>
         </div>
-        <div v-if="is_affiliate_form_loader == '1'" class="ap-main-reg-frm-body ap-single-form" style="display:none;" :style="(is_affiliate_form_loader == '1') ? 'display:block;' : ''">
+        <div class="ap-main-reg-frm-body ap-single-form" style="display:none;" :style="(is_affiliate_form_loader == '1') ? 'display:block;' : ''">
             <el-form @submit.native.prevent ref="affiliates_reg_form_data" :rules="rules" require-asterisk-position="right" :model="affiliates" label-position="top"> 
                 <div class="ap-front-page-title" :aria-label="affiliate_panel_labels.create_an_account" v-html="affiliate_panel_labels.create_an_account"></div>
                 <div class="ap-front-page-sub-title" :aria-label="affiliate_panel_labels.create_account_description" v-html="affiliate_panel_labels.create_account_description"></div>
 
-                <div class="ap-front-toast-notification --ap-error" v-if="is_display_error == '1'">
+                <div class="ap-front-toast-notification --ap-error" style="display:none;" :style="(is_display_error == '1') ? 'display:block;' : ''">
                     <div class="ap-front-tn-body">                                                
                         <p :aria-label="is_error_msg">{{ is_error_msg }}</p>                        
                     </div>
                 </div>
-                <div class="ap-front-toast-notification --ap-success" v-if="is_display_success == '1'">
+                <div class="ap-front-toast-notification --ap-success" style="display:none;" :style="(is_display_success == '1') ? 'display:block;' : ''" >
                     <div class="ap-front-tn-body">
                         <p :aria-label="is_success_msg">{{ is_success_msg }}</p>
                     </div>
@@ -85,5 +85,5 @@
             </el-form>
         </div>
     </div>    
-</el-main>
+</div>
 

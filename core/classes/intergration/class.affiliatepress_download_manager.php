@@ -27,7 +27,8 @@ if( !class_exists('affiliatepress_download_manager') ){
                 add_action('wpdm_before_placing_order' ,array($this,'affiliatepress_add_pending_commission_downlods_manager'));
                 
                 /**Add approved Commission */
-                add_action('wpdmpp_payment_completed',array($this , 'affiliatepress_accept_pending_commission_downloads_manager'));
+                add_action('wpdmpp_payment_completed', array($this, 'affiliatepress_add_completed_commission_downloads_manager'), 10);
+                add_action('wpdmpp_payment_completed', array($this, 'affiliatepress_accept_pending_commission_downloads_manager'), 20);
 
                 /**Add Approved Commission on status change */
                 add_action('wpdmpp_admin_payment_status_updated',array($this , 'affiliatepress_accept_pending_commission_after_status_change_downloads_manager'),10,2);
@@ -391,6 +392,26 @@ if( !class_exists('affiliatepress_download_manager') ){
                 $affiliatepress_debug_log_msg = sprintf( 'Pending commission #%s has been successfully inserted.', $affiliatepress_ap_commission_id );
  
                 do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Commission Successfully Inserted', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_debug_log_msg, $affiliatepress_commission_debug_log_id);            
+            }
+        }
+
+         /**
+         * Function For Direct Completed paymnet commisison add
+         *
+         * @param  int $affiliatepress_order_id
+         * @return void
+         */
+        function affiliatepress_add_completed_commission_downloads_manager($affiliatepress_order_id){
+
+            global $wpdb, $affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_commission_debug_log_id;
+
+            $affiliatepress_all_commission_data = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_commissions, '*', 'WHERE ap_commission_reference_id = %s', array( $affiliatepress_order_id ), '', '', '', false, true,ARRAY_A);
+
+            if(empty($affiliatepress_all_commission_data)){
+                $affiliatepress_debug_log_msg  = "Downlod manager Completed Paymnet Commission Add.";
+
+                do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Commission Completed Add', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_debug_log_msg, $affiliatepress_commission_debug_log_id);
+                $this->affiliatepress_add_pending_commission_downlods_manager($affiliatepress_order_id);
             }
         }
         

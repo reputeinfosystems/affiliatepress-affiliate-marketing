@@ -378,7 +378,7 @@
                             <template #label>
                                 <span class="ap-form-label"><?php esc_html_e('WordPress User', 'affiliatepress-affiliate-marketing'); ?></span>
                             </template>
-                            <el-input class="ap-form-control" type="text" :disabled="true" v-model="affiliates.affiliate_user_name" size="large" placeholder="<?php esc_html_e('Wordpress User Name', 'affiliatepress-affiliate-marketing'); ?>" />
+                            <el-input class="ap-form-control" type="text" :disabled="true" v-model="affiliates.affiliate_user_name" size="large" placeholder="<?php esc_html_e('Wordpress Username', 'affiliatepress-affiliate-marketing'); ?>" />
                         </el-form-item>                     
                     </div>
                     <div v-for="affiliate_field in affiliate_fields" class="ap-dynamic-fields">

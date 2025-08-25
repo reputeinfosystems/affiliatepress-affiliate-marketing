@@ -26,7 +26,7 @@
                     <el-row type="flex" :gutter="16">
                         <el-col :xs="24" :sm="24" :md="24" :lg="16" :xl="16">
                             <div class="ap-combine-field">
-                                <el-date-picker popper-class="ap-date-range-picker-widget-wrapper" value-format="YYYY-MM-DD" :format="ap_common_date_format" v-model="payout_search.ap_payout_date" class="ap-form-date-range-control ap-form-full-width-control ap-padding-right-16" type="daterange" size="large" start-placeholder="Start date" end-placeholder="End date" :default-time="defaultTime" placement="bottom-start"/>                        
+                                <el-date-picker popper-class="ap-date-range-picker-widget-wrapper" value-format="YYYY-MM-DD" :format="ap_common_date_format" v-model="payout_search.ap_payout_date" class="ap-form-date-range-control ap-form-full-width-control ap-padding-right-16" type="daterange" size="large" :start-placeholder="affiliatepress_start_date" :end-placeholder="affiliatepress_end_date" :default-time="defaultTime" placement="bottom-start"/>                        
                             </div>
                         </el-col>
                         <el-col :xs="24" :sm="24" :md="24" :lg="8" :xl="8">

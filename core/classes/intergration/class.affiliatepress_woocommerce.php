@@ -60,6 +60,7 @@ if( !class_exists('affiliatepress_woocommerce') ){
                 add_action('init', array( $this, 'affiliatepress_woocommerce_shop_base_rewrites'));
 
                 add_action('woocommerce_product_options_general_product_data', array($this,'affiliatepress_add_nonce_field'));
+                add_action( 'woocommerce_thankyou', array($this,'affiliatepress_insert_commission_express_checkout_woocommerce'), 10,1);
 
             }
 
@@ -67,7 +68,20 @@ if( !class_exists('affiliatepress_woocommerce') ){
                 add_filter('affiliatepress_get_source_product',array($this,'affiliatepress_get_source_product_func'),10,3);
                 add_filter('affiliatepress_modify_commission_link',array($this,'affiliatepress_get_link_order_func'),10,3); 
             }
-              
+        }
+        function affiliatepress_insert_commission_express_checkout_woocommerce( $order_id ) {
+            global $affiliatepress_commission_debug_log_id;
+        
+            $order = wc_get_order( $order_id );
+        
+            if ( $order ) {
+                do_action('affiliatepress_commission_debug_log_entry','commission_tracking_debug_logs',$this->affiliatepress_integration_slug.' : Express Chekout Order id ','affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking',$order_id, $affiliatepress_commission_debug_log_id);
+
+                $this->affiliatepress_insert_pending_commission_from_woocommerce( $order );
+            }else{
+                $msg = "Order Not Found";
+                do_action('affiliatepress_commission_debug_log_entry','commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Not Found Order ','affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $msg,$affiliatepress_commission_debug_log_id);
+            }
         }
         
         /**

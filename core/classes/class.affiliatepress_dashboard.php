@@ -626,7 +626,7 @@ if (! class_exists('affiliatepress_dashboard') ) {
                                                 intersect: false,
                                                 callbacks: {
                                                     label: function(context) {
-                                                        let label = "Revenue: ";
+                                                        let label = "'.esc_html__('Revenue', 'affiliatepress-affiliate-marketing').': ";
                                                         if (vm.currency_symbol) {
                                                             label += vm.currency_symbol;
                                                         }
@@ -656,7 +656,7 @@ if (! class_exists('affiliatepress_dashboard') ) {
                                     data: {
                                         labels: vm.visit_chart_data.labels,
                                         datasets: [{
-                                            label: "Visits",
+                                            label: "'.esc_html__('Visits', 'affiliatepress-affiliate-marketing').': ",
                                             data: vm.visit_chart_data.values,
                                             borderColor: "#D75394",
                                             backgroundColor: "rgba(215, 83, 148, 0.2)",

@@ -77,7 +77,7 @@ if (! class_exists('affiliatepress_affiliate_register') ) {
 
             $affiliatepress_username         = ! empty($_POST['username']) ? sanitize_text_field($_POST['username']) : ''; // phpcs:ignore 
 
-            if (empty($affiliatepress_username) || ! preg_match('/^[a-z0-9._@-]+$/', $affiliatepress_username)) {
+            if (empty($affiliatepress_username) || ! preg_match('/^[A-Za-z0-9._-]+$/', $affiliatepress_username)) {
                 $response['msg'] = esc_html__('Entered username is invalid.', 'affiliatepress-affiliate-marketing');
                 wp_send_json($response);
                 die();
@@ -289,14 +289,16 @@ if (! class_exists('affiliatepress_affiliate_register') ) {
                             wp_set_current_user( $user_signon->ID );
                             wp_set_auth_cookie( $user_signon->ID );
                             do_action( 'wp_login', $user_signon->user_login, $user_signon );
-                            $affiliatepress_affiliate_account_page_id = $AffiliatePress->affiliatepress_get_settings('affiliate_account_page_id', 'affiliate_settings');
-                            $affiliatepress_affiliate_login_page_url  = get_permalink($affiliatepress_affiliate_account_page_id);  
-                            $affiliatepress_affiliate_login_page_url = apply_filters('affiliatepress_modify_affiliate_register_redirect_link', $affiliatepress_affiliate_login_page_url);
-                            $response['after_register_redirect'] = $affiliatepress_affiliate_login_page_url;
+                            
                         }                        
                         
                     }                    
                 }
+
+                $affiliatepress_affiliate_account_page_id = $AffiliatePress->affiliatepress_get_settings('affiliate_account_page_id', 'affiliate_settings');
+                $affiliatepress_affiliate_login_page_url  = get_permalink($affiliatepress_affiliate_account_page_id);  
+                $affiliatepress_affiliate_login_page_url = apply_filters('affiliatepress_modify_affiliate_register_redirect_link', $affiliatepress_affiliate_login_page_url);
+                $response['after_register_redirect'] = $affiliatepress_affiliate_login_page_url;
 
                 $response['variant'] = 'success';
                 $response['title']   = esc_html__('Success', 'affiliatepress-affiliate-marketing');

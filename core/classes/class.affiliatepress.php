@@ -104,6 +104,8 @@ if (! class_exists('AffiliatePress') ) {
             /**Hide all admin notices when AffiliatePress page loads */
             add_action('admin_head', array( $this, 'affiliatepress_hide_admin_notices' ));
 
+            add_action('admin_init', array( $this, 'upgrade_data' ));
+
 
             if($pagenow == "plugins.php"){
                 add_action('admin_footer', array( $this, 'affiliatepress_deactivate_feedback_popup' ));
@@ -124,6 +126,15 @@ if (! class_exists('AffiliatePress') ) {
 
             add_action('user_register', array($this,'affiliatepress_add_capabilities_to_new_user'));
             add_action('set_user_role', array($this, 'affiliatepress_assign_caps_on_role_change'), 10, 3); 
+
+            if (is_plugin_active('wp-rocket/wp-rocket.php') && ! is_admin() ) {
+                add_filter('script_loader_tag', array( $this, 'affiliatepress_prevent_rocket_loader_script' ), 10, 2);
+            }
+
+            if (! is_admin() ) {
+                add_filter('script_loader_tag', array( $this, 'affiliatepress_prevent_rocket_loader_script_clf' ), 10, 2);
+		        add_filter('script_loader_tag', array( $this, 'affiliatepress_prevent_rocket_loader_script_clf_advanced' ), 11, 2);
+            }
 
         }
 
@@ -788,9 +799,23 @@ if (! class_exists('AffiliatePress') ) {
                         });
                     </script>
                 <?php
+        }
+
+        /**
+         * Update lite version details
+         *
+         * @return void
+         */
+        function upgrade_data()
+        {
+            global $affiliatepress_version, $AffiliatePress;
+            $affiliatepress_old_version = get_option('affiliatepress_version', true);
+            if (version_compare($affiliatepress_old_version, '1.0.1', '<') ) {
+                $affiliatepress_load_upgrade_file = AFFILIATEPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
+                include $affiliatepress_load_upgrade_file;
+                $AffiliatePress->affiliatepress_send_anonymous_data_cron();
             }
-
-
+        }
         
         /**
          * Function for generate minor dark color 
@@ -934,6 +959,7 @@ if (! class_exists('AffiliatePress') ) {
 
             $affiliatepress_google_fonts_list  = $affiliatepress_global_options->affiliatepress_get_google_fonts();            
             $affiliatepress_font_family = $AffiliatePress->affiliatepress_get_settings('font', 'appearance_settings');  
+            $affiliatepress_font_family = $affiliatepress_font_family == 'Inherit Fonts' ? 'inherit' : $affiliatepress_font_family;
             
             if(empty($affiliatepress_font_family)){
                 $affiliatepress_font_family = "Inter";
@@ -972,8 +998,8 @@ if (! class_exists('AffiliatePress') ) {
                     --ap-panel-sidebar-color:'.$affiliatepress_panel_background_color.';
                     --ap-color-primary-light-10:'.$affiliatepress_panel_background_color.';
                     --ap-front-color-primary-light-10:'.$affiliatepress_panel_background_color.';
-                    --ap-front-primary-font:"'.$affiliatepress_font_family.'";
-                    --ap-primary-font:"'.$affiliatepress_font_family.'";
+                    --ap-front-primary-font:'.$affiliatepress_font_family.';
+                    --ap-primary-font:'.$affiliatepress_font_family.';
 
                     --ap-front-border-color:'.$affiliatepress_border_color.';   
                     --el-text-color:'.$affiliatepress_border_color.';                 
@@ -2220,6 +2246,8 @@ if (! class_exists('AffiliatePress') ) {
                         affiliatepress_return_data["ap_common_date_format"] = "'.esc_html($affiliatepress_common_date_format).'";                        
                         affiliatepress_return_data["drawer_direction"] = "'.$affiliatepress_layout.'";
                         affiliatepress_return_data["affiliatepress_selected_tab_name"] = "'.$affiliatepress_selected_tab_name.'";
+                        affiliatepress_return_data["affiliatepress_start_date"] = "'.esc_html__('Start Date', 'affiliatepress-affiliate-marketing').'";
+                        affiliatepress_return_data["affiliatepress_end_date"] = "'.esc_html__('End Date', 'affiliatepress-affiliate-marketing').'";
                         
 
                         affiliatepress_return_data["ap_first_page_loaded"] = "1";
@@ -2687,6 +2715,99 @@ if (! class_exists('AffiliatePress') ) {
             wp_add_inline_style('affiliatepress_admin_menu_style_css', $affiliatepress_custom_css);            
             */
                 
+        }
+
+
+        function affiliatepress_prevent_rocket_loader_script( $tag, $handle )
+        {
+            $script   = htmlspecialchars($tag);
+            $pattern2 = '/\/(wp\-content\/plugins\/affiliatepress)|(wp\-includes\/js)/';
+            preg_match($pattern2, $script, $match_script);
+
+            /* Check if current script is loaded from affiliatepress only */
+            if (! isset($match_script[0]) || $match_script[0] == '' ) {
+                return $tag;
+            }
+
+            $pattern = '/(.*?)(data\-cfasync\=)(.*?)/';
+            preg_match_all($pattern, $tag, $matches);
+            if (! is_array($matches) ) {
+                return str_replace(' src', ' data-cfasync="false" src', $tag);
+            } elseif (! empty($matches) && ! empty($matches[2]) && ! empty($matches[2][0]) && strtolower(trim($matches[2][0])) != 'data-cfasync=' ) {
+                return str_replace(' src', ' data-cfasync="false" src', $tag);
+            } elseif (! empty($matches) && empty($matches[2]) ) {
+                return str_replace(' src', ' data-cfasync="false" src', $tag);
+            } else {
+                return $tag;
+            }
+        }
+
+        function affiliatepress_prevent_rocket_loader_script_clf_advanced( $tag, $handle ){
+			
+			$script = htmlspecialchars($tag);
+
+			$regex = '/(.*?)(<script(\s)(.*?)(\s)id=(\'|\")affiliatepress(.*)\-(after|before)(\'|\"))\>(.*?)/';
+
+            $handle_arr = ['wcap_vue_js'];
+
+            $handle_arr = apply_filters( 'affiliatepress_skip_loader_tags', $handle_arr, $tag, $handle );
+
+			if( preg_match( '/affiliatepress/', $handle ) || preg_match( '/affiliatepress/', $script ) || preg_match('/id=&#039;affiliatepress/', $script) || in_array( $handle, $handle_arr ) ){
+                if( preg_match( '/\=(\'|")/', $tag, $matches_ ) ){
+                    if( !empty( $matches_[1] ) ){
+                        $tag = str_replace( " src", " data-cfasync=". $matches_[1]."false".$matches_[1]." src", $tag );
+                    } else {
+                        $tag = str_replace(' src', ' data-cfasync="false" src', $tag);
+                    }
+                } else {
+                    $tag = str_replace(' src', ' data-cfasync="false" src', $tag);
+                }
+			}
+
+			if( preg_match( $regex, $tag, $matches ) ){
+				$replaced = preg_replace( $regex, '$1<script$3$4$5id=$6affiliatepress$7-$8$9 data-cfasync=$6false$9>$10', $tag );
+                if( null != $replaced ){
+                    $tag = $replaced;
+                }
+			}
+
+            if( preg_match( '/(<img data\-cfasync\=\"false\")/', $tag ) ){
+				$tag = preg_replace( '/(<img data\-cfasync\=\"false\")/', '<img ', $tag );
+			}
+
+			return $tag;
+		}
+
+        function affiliatepress_prevent_rocket_loader_script_clf( $tag, $handle )
+        {
+            $script   = htmlspecialchars($tag);
+            $pattern2 = '/\/(wp\-content\/plugins\/affiliatepress)|(wp\-includes\/js)/';
+            preg_match($pattern2, $script, $match_script);
+
+            /* Check if current script is loaded from affiliatepress only */
+            if (! isset($match_script[0]) || $match_script[0] == '' ) {
+                return $tag;
+            }
+
+            $pattern = '/(.*?)(data\-cfasync\=)(.*?)/';
+            preg_match_all($pattern, $tag, $matches);
+
+            $pattern3 = '/type\=(\'|")[a-zA-Z0-9]+\-(text\/javascript)(\'|")/';
+            preg_match_all($pattern3, $tag, $match_tag);
+
+            if (! isset($match_tag[0]) || empty($match_tag[0]) ) {
+                return $tag;
+            }
+
+            if (! is_array($matches) ) {
+                return str_replace(' src', ' data-cfasync="false" src', $tag);
+            } elseif (! empty($matches) && ! empty($matches[2]) && ! empty($matches[2][0]) && strtolower(trim($matches[2][0])) != 'data-cfasync=' ) {
+                return str_replace(' src', ' data-cfasync="false" src', $tag);
+            } elseif (! empty($matches) && empty($matches[2]) ) {
+                return str_replace(' src', ' data-cfasync="false" src', $tag);
+            } else {
+                return $tag;
+            }
         }
 
         /**
@@ -3526,9 +3647,9 @@ if (! class_exists('AffiliatePress') ) {
                     'field_type'     => 'Text',
                     'is_edit'        => 0,
                     'is_required'    => 1,
-                    'label'          => wp_kses_post( esc_html__('User Name', 'affiliatepress-affiliate-marketing') ),
-                    'placeholder'    => wp_kses_post( esc_html__('Enter your user name', 'affiliatepress-affiliate-marketing') ),
-                    'error_message'  => wp_kses_post(esc_html__('Please enter your user name', 'affiliatepress-affiliate-marketing') ),
+                    'label'          => wp_kses_post( esc_html__('Username', 'affiliatepress-affiliate-marketing') ),
+                    'placeholder'    => wp_kses_post( esc_html__('Enter your Username', 'affiliatepress-affiliate-marketing') ),
+                    'error_message'  => wp_kses_post(esc_html__('Please enter your Username', 'affiliatepress-affiliate-marketing') ),
                     'show_sign_up'   => 1,
                     'show_profile'   => 1,
                     'field_position' => 3,
@@ -4622,5 +4743,3 @@ if (! class_exists('AffiliatePress') ) {
 }
 global $AffiliatePress;
 $AffiliatePress = new AffiliatePress();
-
-
