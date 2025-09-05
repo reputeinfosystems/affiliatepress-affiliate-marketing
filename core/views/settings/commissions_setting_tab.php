@@ -1,3 +1,6 @@
+<?php 
+global $AffiliatePress;
+?>
 <el-tab-pane class="ap-tabs--v_ls__tab-item--pane-body" name ="commissions_settings"  data-tab_name="commissions_settings">
     <template #label>
         <span>
@@ -154,24 +157,24 @@
                             <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row" :gutter="32">
                                 <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-gs__cb-item-left">
                                     <div class="ap-combine-field">
-                                        <label><span class="ap-form-label"><?php esc_html_e('Default Commission Status', 'affiliatepress-affiliate-marketing'); ?></span></label>        
+                                        <label>
+                                            <span class="ap-form-label">
+                                                <?php esc_html_e('Default Commission Status', 'affiliatepress-affiliate-marketing'); ?> 
+                                                <div v-if="is_pro_active != '1'" @click="open_premium_modal" class="ap-premium-text"><?php echo $AffiliatePress->affiliatepress_get_premium_content(); //phpcs:ignore ?></div>
+                                            </span>
+                                        </label>        
                                         <el-form-item prop="default_commission_status">
-                                            <el-select class="ap-form-control" v-model="commissions_setting_form.default_commission_status" placeholder="Select" size="large">
-                                                <el-option label="<?php esc_html_e('Pending', 'affiliatepress-affiliate-marketing'); ?>" value="2"></el-option>                                        
-                                                <el-option label="<?php esc_html_e('Based On Source Plugin Payment Status', 'affiliatepress-affiliate-marketing'); ?>" value="auto"></el-option>
+                                            <el-select class="ap-form-control" v-model="commissions_setting_form.default_commission_status" placeholder="Select" size="large" :disabled="default_commission_status_disable">
+                                                <el-option v-for="item in default_commission_status_option" :key="item.value" :label="item.label" :value="item.value"/>
                                             </el-select>                                       
                                         </el-form-item>   
                                     </div>
                                 </el-col>
-                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-gs__cb-item-left ap-gs-col-second" v-if="commissions_setting_form.default_commission_status == '2'">
-                                    <div class="ap-combine-field">
-                                        <label><span class="ap-form-label"><?php esc_html_e('Auto Approve Pending Commissions After Days', 'affiliatepress-affiliate-marketing'); ?></span></label>        
-                                        <el-form-item prop="auto_approve_commission_after_days">
-                                            <el-input-number v-model="commissions_setting_form.auto_approve_commission_after_days" class="ap-form-control--number" :min="0" :max="365" size="large" />                                                                            
-                                        </el-form-item>
-                                        <div class="ap-field-desc"><?php esc_html_e('To disable the auto-approval of pending commissions, set the value to "0"', 'affiliatepress-affiliate-marketing'); ?></div>    
-                                    </div>
-                                </el-col>
+                                <?php 
+                                    $affiliatepress_add_default_status_data = "";
+                                    $affiliatepress_add_default_status_data = apply_filters('affiliatepress_add_default_commission_status_other_settings',$affiliatepress_add_default_status_data);
+                                    echo $affiliatepress_add_default_status_data; //phpcs:ignore
+                                ?>
                             </el-row>
                             <?php do_action('affiliatepress_extra_commissions_setting_html');?>
                         </div>

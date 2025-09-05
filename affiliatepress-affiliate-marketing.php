@@ -1,8 +1,8 @@
 <?php
 /*
     Plugin Name: AffiliatePress - Affiliate Marketing
-    Description: AffiliatePress is the easiest WordPress plugin to create and manage affiliate programs. Track Affiliate links and monitor commissions effortlessly within WordPress.
-    Version: 1.0.1
+    Description: AffiliatePress is the reliable WordPress plugin to create and manage affiliate programs. Track Affiliate links and monitor commissions effortlessly within WordPress.
+    Version: 1.0.2
     Requires at least: 5.3.0
     Requires PHP:      7.0
     Plugin URI: https://www.affiliatepressplugin.com/

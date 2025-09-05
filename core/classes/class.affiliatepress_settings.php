@@ -2082,8 +2082,15 @@ if (! class_exists('affiliatepress_settings') ) {
                     'commission_billing_cycle'           => 'monthly',
                     'commission_cooling_period_days'     => 30,
                     'day_of_billing_cycle'               => 3,  
-                    'default_commission_status'          => 'auto',
+                    'default_commission_status'          => '2',
                     'auto_approve_commission_after_days' => 0,
+                ),
+                'default_commission_status_disable' => true,
+                'default_commission_status_option' => array(
+                    array(
+                        'label'  => esc_html__('Pending', 'affiliatepress-affiliate-marketing'),
+                        'value' => '2',
+                    ),
                 ),
                 'billing_cycle'        => array(
                     array(
@@ -2873,6 +2880,7 @@ if (! class_exists('affiliatepress_settings') ) {
             $affiliatepress_dynamic_setting_data_fields['is_display_reset_wizard_setting'] = 0;
             $affiliatepress_dynamic_setting_data_fields['is_display_reset_wizard_setting_btn'] = false;
 
+            $affiliatepress_dynamic_setting_data_fields['integration_reject_commission_disable'] = true;
 
             $affiliatepress_dynamic_setting_data_fields['integrations_setting_form'] = array(
                 'enable_woocommerce' => false,
@@ -2883,6 +2891,7 @@ if (! class_exists('affiliatepress_settings') ) {
                 'enable_accept_stripe_payments' => false,
                 'accept_stripe_payments_exclude_shipping' =>true,
                 'accept_stripe_payments_exclude_taxes' => true,
+                'accept_stripe_payments_reject_commission_on_refund'=>true,
 
                 'enable_armember' => false,
                 'armember_exclude_taxes'=> true,
@@ -2941,6 +2950,8 @@ if (! class_exists('affiliatepress_settings') ) {
                 'lifter_lms_reject_commission_on_refund' => true,
 
                 'enable_learnpress' => false,
+                'learnpress_reject_commission_on_refund'=>true,
+
                 'enable_tutor_lms' => false,
                 
                 'enable_masterstudy_lms' => false,

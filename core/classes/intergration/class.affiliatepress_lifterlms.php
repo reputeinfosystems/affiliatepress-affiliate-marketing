@@ -27,12 +27,7 @@ if( !class_exists('affiliatepress_lifter_lms') ){
                 // Complete the pending referral on successes.
 				add_action( 'lifterlms_order_status_completed', array( $this, 'affiliatepress_complete_pending_referral_lifterlms' ), 10, 1 );
 				add_action( 'lifterlms_order_status_active', array( $this, 'affiliatepress_complete_pending_referral_lifterlms' ), 10, 1 );
-
-                // Revoke the referral on these statuses.
-                add_action( 'lifterlms_order_status_refunded', array( $this, 'affiliatepress_revoke_referral_lifterlms' ), 10, 1 );
-				add_action( 'lifterlms_order_status_cancelled', array( $this, 'affiliatepress_revoke_referral_lifterlms' ), 10, 1 );
-				add_action( 'lifterlms_order_status_expired', array( $this, 'affiliatepress_revoke_referral_lifterlms' ), 10, 1 );
-				add_action( 'lifterlms_order_status_trash', array( $this, 'affiliatepress_revoke_referral_lifterlms' ), 10, 1 );
+                
                 add_action( 'lifterlms_order_status_pending', array( $this, 'affiliatepress_add_pending_commission_on_status_change_lifterlms' ), 10, 1 );
 
                 // Add affiliate product fields to LifterLMS courses and memberships.
@@ -440,65 +435,6 @@ if( !class_exists('affiliatepress_lifter_lms') ){
                 }
 
             }
-
-
-
-        }
-
-        /**
-         * Function For Add reject commission
-         *
-         * @param  array $affiliatepress_order
-         * @return void
-         */
-        public function affiliatepress_revoke_referral_lifterlms( $affiliatepress_order ) {
-
-            global $AffiliatePress,$affiliatepress_tbl_ap_affiliate_commissions,$affiliatepress_commission_debug_log_id;
-            $affiliatepress_reject_commission_on_refund = $AffiliatePress->affiliatepress_get_settings('lifter_lms_reject_commission_on_refund', 'integrations_settings');
-
-            if ( ! $affiliatepress_order instanceof LLMS_Order ) {
-                return;
-            }
-
-            if($affiliatepress_reject_commission_on_refund == "false"){
-                return;
-            }
-
-            $affiliatepress_order_id = !empty($affiliatepress_order->get( 'id' )) ? $affiliatepress_order->get( 'id' ) : 0;
-
-            $affiliatepress_all_commissition_data = $AffiliatePress->affiliatepress_get_all_commission_by_order_and_source($affiliatepress_order_id, $this->affiliatepress_integration_slug);
-
-            if(!empty($affiliatepress_all_commissition_data)){
-
-                foreach($affiliatepress_all_commissition_data as $affiliatepress_commissition_data){
-
-                    if(!empty($affiliatepress_commissition_data)){
-                        $affiliatepress_ap_commission_status = (isset($affiliatepress_commissition_data['ap_commission_status']))?intval($affiliatepress_commissition_data['ap_commission_status']):0;
-                        $affiliatepress_ap_commission_id     = (isset($affiliatepress_commissition_data['ap_commission_id']))?intval($affiliatepress_commissition_data['ap_commission_id']):0;
-                        if($affiliatepress_ap_commission_status == 4){
-                            $affiliatepress_debug_log_msg = sprintf( 'Commission #%s could not be rejected because it was already paid.', $affiliatepress_ap_commission_id );
-                            return;
-                        }
-                        if($affiliatepress_ap_commission_id != 0){
-        
-                            $affiliatepress_commission_data = array(
-                                'ap_commission_updated_date' => current_time( 'mysql', true ),
-                                'ap_commission_status' 		 => 3
-                            );
-                            
-                            $this->affiliatepress_update_record($affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_commission_data, array( 'ap_commission_id' => $affiliatepress_ap_commission_id ));
-
-                            $affiliatepress_debug_log_msg = sprintf( 'Commission #%s successfully marked as rejected, after order #%s was refunded.', $affiliatepress_ap_commission_id, $affiliatepress_order_id );
-        
-                            do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Commission Reject ', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_debug_log_msg, $affiliatepress_commission_debug_log_id);
-        
-                        }
-                    }
-
-                }
-
-            }
-
 
         }
 

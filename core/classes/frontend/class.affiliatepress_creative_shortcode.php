@@ -169,7 +169,7 @@ if (! class_exists('affiliatepress_creative_shortcode') ) {
                     'fileSize' => '',
                 );                
                 if($affiliatepress_creative['ap_creative_type'] == 'image'){
-                    $affiliatepress_creative['ap_creative_code'] = '<a href="'.esc_url($affiliatepress_creative_landing_url).'"><img alt="'.esc_attr($affiliatepress_creative['ap_creative_alt_text']).'" src="'.esc_url($affiliatepress_creative['image_url']).'" /></a>';// phpcs:ignore
+                    $affiliatepress_creative['ap_creative_code'] = '<a href="'.esc_url($affiliatepress_creative_landing_url).'"><img src="'.esc_url($affiliatepress_creative['image_url']).'" alt="'.esc_attr($affiliatepress_creative['ap_creative_alt_text']).'" /></a>';// phpcs:ignore
                     $affiliatepress_creative['ap_creative_code_preview'] = htmlentities($affiliatepress_creative['ap_creative_code']);
                     $affiliatepress_affiliate_upload_dir = AFFILIATEPRESS_UPLOAD_DIR.'/'.$affiliatepress_creative['ap_creative_image_url'];
                     $affiliatepress_creative['image_data'] = $affiliatepress_affiliate_panel->affiliatepress_get_image_info($affiliatepress_affiliate_upload_dir);                    

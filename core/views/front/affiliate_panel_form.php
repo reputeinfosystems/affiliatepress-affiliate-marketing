@@ -31,7 +31,7 @@
                                 <template #label>
                                     <span class="ap-form-label" :aria-label="affiliate_panel_labels.login_user_name" v-html="affiliate_panel_labels.login_user_name"></span>
                                 </template>
-                                <el-input ref="loginInput" class="ap-form-control" type="email" size="large" v-model="affiliatepress_login_form.affiliatepress_username" :placeholder="affiliate_panel_labels.login_user_name_placeholder" />
+                                <el-input ref="loginInput" class="ap-form-control" type="text" size="large" v-model="affiliatepress_login_form.affiliatepress_username" :placeholder="affiliate_panel_labels.login_user_name_placeholder" />
                             </el-form-item>                     
                         </div>
                         <div class="ap-single-field__form">                    
@@ -73,7 +73,7 @@
                             <div class="ap-front-page-title" :aria-label="affiliate_panel_labels.create_an_account" v-html="affiliate_panel_labels.create_an_account"></div>
                             <div class="ap-front-page-sub-title" :aria-label="affiliate_panel_labels.create_account_description" v-html="affiliate_panel_labels.create_account_description"></div>
                             <div v-for="affiliate_field in affiliate_fields">                    
-                                <div v-if="affiliate_field.ap_form_field_type == 'Text'" class="ap-single-field__form">                    
+                                <div v-if="affiliate_field.ap_form_field_type == 'Text' && affiliate_field.ap_field_is_default == '1'" class="ap-single-field__form">                    
                                     <el-form-item :prop="affiliate_field.ap_form_field_name">
                                         <template #label>
                                             <span class="ap-form-label" v-html="affiliate_field.ap_field_label" :aria-label="affiliate_field.ap_field_label"></span>
@@ -86,7 +86,7 @@
                                         <template #label>
                                             <span class="ap-form-label" v-html="affiliate_field.ap_field_label" :aria-label="affiliate_field.ap_field_label"></span>
                                         </template>
-                                        <el-input class="ap-form-control" :readonly="(is_user_login == '1')?true:false" type="email" size="large" v-model="affiliates[affiliate_field.ap_form_field_name]" :placeholder="affiliate_field.ap_field_placeholder" />
+                                        <el-input class="ap-form-control" :readonly="(is_user_login == '1')?true:false" type="text" size="large" v-model="affiliates[affiliate_field.ap_form_field_name]" :placeholder="affiliate_field.ap_field_placeholder" />
                                     </el-form-item>                     
                                 </div> 
                                 <div v-if="affiliate_field.ap_form_field_type == 'Password' && is_user_login == '0'" class="ap-single-field__form">                    
@@ -97,7 +97,7 @@
                                         <el-input class="ap-form-control" type="password" :show-password="true" v-model="affiliates[affiliate_field.ap_form_field_name]" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
                                     </el-form-item>                     
                                 </div>  
-                                <div v-if="affiliate_field.ap_form_field_type == 'Textarea'" class="ap-single-field__form">                    
+                                <div v-if="affiliate_field.ap_form_field_type == 'Textarea' && affiliate_field.ap_field_is_default == '1'" class="ap-single-field__form">                    
                                     <el-form-item :prop="affiliate_field.ap_form_field_name">
                                         <template #label>
                                             <span class="ap-form-label" v-html="affiliate_field.ap_field_label" :aria-label="affiliate_field.ap_field_label"></span>
@@ -144,7 +144,7 @@
                                     <template #label>
                                         <span class="ap-form-label" :aria-label="affiliate_panel_labels.forget_password_email" v-html="affiliate_panel_labels.forget_password_email"></span>
                                     </template>
-                                    <el-input ref="forgetInput" class="ap-form-control" type="email" size="large" v-model="affiliatepress_forgot_password_form.affiliatepress_email" :placeholder="affiliate_panel_labels.forget_password_placeholder" />
+                                    <el-input ref="forgetInput" class="ap-form-control" type="text" size="large" v-model="affiliatepress_forgot_password_form.affiliatepress_email" :placeholder="affiliate_panel_labels.forget_password_placeholder" />
                                 </el-form-item>                     
                             </div>
                             <div class="ap-frm-btn">
@@ -175,7 +175,7 @@
             </div>
             <div class="ap-box-card-value ap-affiliate-not-allow-msg ap-mt-20">{{ not_allow_user_affiliate_panel }}</div>                 
         </div>
-        <div class="ap-main-reg-card-container" style="display:none;" :style="(is_affiliate_form_loader == '1' && is_login == 'true' && allow_user_access == 'false' && allow_signup == 'true') ? 'display:block;' : ''">
+        <div class="ap-main-reg-card-container" v-if="is_login == 'true' && allow_user_access == 'false' && allow_signup == 'true'" style="display:none;" :style="(is_affiliate_form_loader == '1') ? 'display:block;' : ''">
             <div class="ap-front-toast-notification --ap-error ap-front-msg-panel" style="display:none;" :style="(is_display_error == '1') ? 'display:block;' : ''">
                 <div class="ap-front-tn-body">                                                
                     <p>{{ is_error_msg }}</p>                        
@@ -210,7 +210,7 @@
                                     <template #label>
                                         <span class="ap-form-label" v-html="affiliate_field.ap_field_label"></span>
                                     </template>
-                                    <el-input class="ap-form-control" :readonly="(is_user_login == '1')?true:false" type="email" size="large" v-model="affiliates[affiliate_field.ap_form_field_name]" :placeholder="affiliate_field.ap_field_placeholder" />
+                                    <el-input class="ap-form-control" :readonly="(is_user_login == '1')?true:false" type="text" size="large" v-model="affiliates[affiliate_field.ap_form_field_name]" :placeholder="affiliate_field.ap_field_placeholder" />
                                 </el-form-item>                     
                             </div> 
                             <div v-if="affiliate_field.ap_form_field_type == 'Password' && is_user_login == '0'" class="ap-single-field__form">                    
@@ -288,7 +288,7 @@
                         </a>
                         <div class="ap-front-menu-seperator"></div>
                         <div class="ap-sidebar-profile-section">
-                            <img alt="User Avatar" :src="userAvatar" /><?php // phpcs:ignore ?>
+                            <img :src="userAvatar" alt="User Avatar" /><?php // phpcs:ignore ?>
                             <div class="ap-sidebar-profile-detais">
                                 <div class="ap-sidebar-username">{{ userName }}</div>
                                 <div class="ap-sidebar-useremail">{{ userEmail }}</div>
@@ -386,7 +386,7 @@
                         </a>
                         <div class="ap-front-menu-seperator"></div>
                         <div class="ap-sidebar-profile-section">
-                            <img alt="User Avatar" :src="userAvatar" /><?php // phpcs:ignore ?>
+                            <img :src="userAvatar" alt="User Avatar" /><?php // phpcs:ignore ?>
                             <div class="ap-sidebar-profile-detais">
                                 <div class="ap-sidebar-username">{{ userName }}</div>
                                 <div class="ap-sidebar-useremail">{{ userEmail }}</div>
@@ -1169,7 +1169,7 @@
                                                         <template #label>
                                                             <span class="ap-form-label" :aria-label="affiliate_panel_labels.link_page_url" v-html="affiliate_panel_labels.link_page_url"></span>
                                                         </template>
-                                                        <el-input  ref="generate_link_pageUrlInput" class="ap-form-control" type="email" v-model="affiliate_links_data.ap_page_link" size="large" :placeholder="affiliate_panel_labels.link_enter_page_url" />
+                                                        <el-input  ref="generate_link_pageUrlInput" class="ap-form-control" type="text" v-model="affiliate_links_data.ap_page_link" size="large" :placeholder="affiliate_panel_labels.link_enter_page_url" />
                                                     </el-form-item>                     
                                                 </div> 
                                                 <div class="ap-single-field__form">                    
@@ -1375,7 +1375,7 @@
                                     <div class="ap-creative-head-info">
                                         <div class="ap-flex-between">
                                             <div class="ap-img-info">                                                
-                                                <div class="ap-flex-center" :aria-label="creative_popup_data.ap_creative_id"><span>ID: #{{creative_popup_data.ap_creative_id}}</span> <span class="ap-dot-between"></span> <span v-html="(creative_popup_data.ap_creative_type == 'image')?'affiliate_panel_labels.creative_image':'affiliate_panel_labels.creative_text_link'" :aria-label="(creative_popup_data.ap_creative_type == 'image') ? 'affiliate_panel_labels.creative_image' : 'affiliate_panel_labels.creative_text_link'"></span> <span class="ap-dot-between"></span> <span :aria-label="creative_popup_data.ap_creative_created_at_formated">{{creative_popup_data.ap_creative_created_at_formated}}</span> </div>
+                                                <div class="ap-flex-center" :aria-label="creative_popup_data.ap_creative_id"><span>ID: #{{creative_popup_data.ap_creative_id}}</span> <span class="ap-dot-between"></span><span v-if="(creative_popup_data.ap_creative_type == 'image')" :aria-label = "affiliate_panel_labels.creative_image">{{affiliate_panel_labels.creative_image}}</span><span v-else :aria-label = "affiliate_panel_labels.creative_text_link">{{affiliate_panel_labels.creative_text_link}}</span><span class="ap-dot-between"></span> <span :aria-label="creative_popup_data.ap_creative_created_at_formated">{{creative_popup_data.ap_creative_created_at_formated}}</span> </div>
                                             </div>                                            
                                         </div>                                        
                                     </div>
@@ -1509,7 +1509,7 @@
                                                     <template #label>
                                                         <span class="ap-form-label" v-html="affiliate_field.ap_field_label" :aria-label="affiliate_field.ap_field_label"></span>
                                                     </template>
-                                                    <el-input :readonly="(affiliate_field.ap_form_field_name == 'email')?true:false" class="ap-form-control" type="email" size="large" v-model="affiliates_profile_fields[affiliate_field.ap_form_field_name]" :placeholder="affiliate_field.ap_field_placeholder" />
+                                                    <el-input :readonly="(affiliate_field.ap_form_field_name == 'email')?true:false" class="ap-form-control" type="text" size="large" v-model="affiliates_profile_fields[affiliate_field.ap_form_field_name]" :placeholder="affiliate_field.ap_field_placeholder" />
                                                 </el-form-item>                     
                                             </div>                                                                     
                                             <div v-if="affiliate_field.ap_form_field_type == 'Textarea'" class="ap-single-field__form">                    

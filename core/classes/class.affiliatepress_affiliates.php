@@ -252,14 +252,38 @@ if (! class_exists('affiliatepress_affiliates') ) {
                 if(file_exists($affiliatepress_destination)){
                     $affiliatepress_data_array = array();
                     if (($affiliatepress_handle = fopen($affiliatepress_destination, "r")) !== FALSE) { // phpcs:ignore
+
+                        $affiliatepress_final_first_row_data = array();
+                        $affiliatepress_first_row = (array)fgetcsv($affiliatepress_handle);  
+                        if(!isset($affiliatepress_first_row[0]) || empty($affiliatepress_first_row) || (isset($affiliatepress_first_row[0]) && empty($affiliatepress_first_row[0]))){
+                            $affiliatepress_first_row = (array) fgetcsv($affiliatepress_handle);
+                        }                         
+                        if(!empty($affiliatepress_first_row) && is_array($affiliatepress_first_row)){
+                            foreach($affiliatepress_first_row as $affiliatepress_key=>$affiliatepress_val){
+                                $affiliatepress_final_first_row_data[$affiliatepress_key] = $affiliatepress_val;
+                            }
+                        } 
+
+                        $affiliatepress_created_date_key = "";
+                        $affiliatepress_first_name_key = "";
+                        $affiliatepress_last_name_key = "";
+                        foreach ($affiliatepress_final_first_row_data as $key => $value) {
+                            if($value == "Date Registered"){
+                                $affiliatepress_created_date_key = $key;
+                            }
+                            if($value == "First Name"){
+                                $affiliatepress_first_name_key = $key;
+                            }
+                            if($value == "Last Name"){
+                                $affiliatepress_last_name_key = $key;
+                            }
+                        }
+
                         $affiliatepress_i = 0;
                         while (($affiliatepress_row = fgetcsv($affiliatepress_handle, 2000, ",")) !== FALSE) {
                             $affiliatepress_i++;
                             if(empty($affiliatepress_row)){
                                 $affiliatepress_row = fgetcsv($affiliatepress_handle, 2000, ",");
-                            }
-                            if($affiliatepress_i == 1){
-                                continue;
                             }
                             $affiliatepress_total_count++;
                             $affiliatepress_has_import_affiliate = false;
@@ -270,7 +294,13 @@ if (! class_exists('affiliatepress_affiliates') ) {
                                         $affiliatepress_final_single_import_data[$affiliatepress_fkey] = (isset($affiliatepress_row[$affiliatepress_fval]))?$affiliatepress_row[$affiliatepress_fval]:'';
                                     }
                                     $affiliatepress_firstname = (isset($affiliatepress_final_single_import_data['firstname']))?sanitize_text_field($affiliatepress_final_single_import_data['firstname']):'';
+                                    if(empty($affiliatepress_firstname)){
+                                        $affiliatepress_firstname = isset($affiliatepress_row[$affiliatepress_first_name_key]) ? sanitize_text_field($affiliatepress_row[$affiliatepress_first_name_key]) : $affiliatepress_firstname; 
+                                    }
                                     $affiliatepress_lastname  = (isset($affiliatepress_final_single_import_data['lastname']))?sanitize_text_field($affiliatepress_final_single_import_data['lastname']):'';
+                                    if(empty($affiliatepress_lastname)){
+                                        $affiliatepress_lastname = isset($affiliatepress_row[$affiliatepress_last_name_key]) ? sanitize_text_field($affiliatepress_row[$affiliatepress_last_name_key]) : $affiliatepress_lastname; 
+                                    }
                                     $affiliatepress_username  = (isset($affiliatepress_final_single_import_data['username']))?sanitize_text_field($affiliatepress_final_single_import_data['username']):'';
                                     $affiliatepress_email     = (isset($affiliatepress_final_single_import_data['email']))?sanitize_email($affiliatepress_final_single_import_data['email']):'';
                                     $affiliatepress_affiliates_payment_email = (isset($affiliatepress_final_single_import_data['ap_affiliates_payment_email']))?sanitize_email($affiliatepress_final_single_import_data['ap_affiliates_payment_email']):'';
@@ -305,7 +335,13 @@ if (! class_exists('affiliatepress_affiliates') ) {
                                                 }
                                                 if(!empty($affiliatepress_affiliates_promote_us)){
                                                     $affiliatepress_args['ap_affiliates_promote_us'] = $affiliatepress_affiliates_promote_us;
-                                                }     
+                                                }    
+                                                if(!empty($affiliatepress_created_date_key)){
+                                                    $date = date_create($affiliatepress_row[$affiliatepress_created_date_key]); 
+                                                    $affiliatepress_created_date = $date ? date_format($date, 'Y-m-d H:i:s') : '';
+                                                    $affiliatepress_args['ap_affiliates_created_at'] = $affiliatepress_created_date;
+                                                } 
+                                                
                                                 $affiliatepress_affiliates_id = $this->affiliatepress_insert_record($affiliatepress_tbl_ap_affiliates, $affiliatepress_args);
                                                 if($affiliatepress_affiliates_id){
                                                     $affiliatepress_has_import_affiliate = true;
@@ -576,6 +612,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
                     $affiliatepress_total_visits = intval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_visits, 'COUNT(ap_visit_id)', 'WHERE ap_affiliates_id  = %d  ', array( $affiliatepress_affiliate_id), '', '', '', true, false,ARRAY_A));
                     $affiliate['total_visit'] = $affiliatepress_total_visits;
                     $affiliate['convert_user'] = $affiliatepress_total_commission;
+                    $affiliate['created_date'] = (!empty($affiliatepress_single_affiliate['ap_affiliates_created_at']))?stripslashes_deep($affiliatepress_single_affiliate['ap_affiliates_created_at']):""; ;
                     $affiliates[] = $affiliate;
 
                     
@@ -836,6 +873,10 @@ if (! class_exists('affiliatepress_affiliates') ) {
                     $affiliatepress_affiliates_data['ap_affiliates_user_avatar']   = (!empty($affiliatepress_affiliates_user_avatar))?esc_url($affiliatepress_affiliates_user_avatar):'';
                     $affiliatepress_affiliates_data['ap_affiliates_promote_us']    = stripslashes_deep($affiliates['ap_affiliates_promote_us']);
                     $affiliatepress_affiliates_data['affiliate_user_name']         = $AffiliatePress->affiliatepress_get_affiliate_user_name_by_id($affiliates['ap_affiliates_user_id']);
+
+                    if(empty($affiliatepress_affiliates_data['affiliate_user_name'])){
+                        $affiliatepress_affiliates_data['ap_affiliates_user_id'] = "";
+                    }
                     
                     $affiliatepress_affiliates_data = apply_filters('affiliatepress_modify_edit_affiliate_data',$affiliatepress_affiliates_data,$affiliates,$affiliatepress_affiliates_id);
                     /* Filter for modified edit affiliate data for pro  */
@@ -1643,17 +1684,18 @@ if (! class_exists('affiliatepress_affiliates') ) {
                 }
             }
                 
-                
+            $affiliatepress_args['ap_affiliates_user_id'] = $affiliatepress_affiliates_user_id;                
+            $affiliatepress_user_info = get_userdata($affiliatepress_affiliates_user_id);
+            if($affiliatepress_user_info){
+                $affiliatepress_username = $affiliatepress_user_info->user_login;
+                $affiliatepress_email    = $affiliatepress_user_info->user_email;
+                $affiliatepress_args['ap_affiliates_user_name']  = $affiliatepress_username; 
+                $affiliatepress_args['ap_affiliates_user_email'] = $affiliatepress_email;
+            }    
+
             $affiliatepress_affiliates_id = '';
             if($affiliatepress_update_id == 0){
-                $affiliatepress_args['ap_affiliates_user_id'] = $affiliatepress_affiliates_user_id;                
-                $affiliatepress_user_info = get_userdata($affiliatepress_affiliates_user_id);
-                if($affiliatepress_user_info){
-                    $affiliatepress_username = $affiliatepress_user_info->user_login;
-                    $affiliatepress_email    = $affiliatepress_user_info->user_email;
-                    $affiliatepress_args['ap_affiliates_user_name']  = $affiliatepress_username; 
-                    $affiliatepress_args['ap_affiliates_user_email'] = $affiliatepress_email;
-                }
+                
                 $affiliatepress_affiliates_id = $this->affiliatepress_insert_record($affiliatepress_tbl_ap_affiliates, $affiliatepress_args);
 
                 do_action('affiliatepress_after_add_affiliate',$affiliatepress_affiliates_id);

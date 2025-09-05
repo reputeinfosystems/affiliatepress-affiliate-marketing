@@ -34,65 +34,12 @@ if( !class_exists('affiliatepress_gravity_forms') ){
 
                 /**Add Approved Commission */
                 add_action( 'gform_post_payment_completed', array( $this, 'affiliatepress_commission_approve' ), 10, 2 );
-
-                /**Add Refund Commission */
-                add_action( 'gform_post_payment_refunded', array( $this, 'affiliatepress_commission_on_refund' ), 10, 2 );
+              
             }
 
             if($affiliatepress_is_gravity_forms_active){
                 /**Get Order Link */
                 add_filter('affiliatepress_modify_commission_link',array($this,'affiliatepress_get_gravity_forms_link_order_func'),10,3); 
-            }
-        }
-            
-                
-        /**
-         * Function for reject commission on refund 
-         *
-         * @param  int $affiliatepress_entry
-         * @param  string $affiliatepress_action
-         * @return void
-        */
-        function affiliatepress_commission_on_refund($affiliatepress_entry, $affiliatepress_action){
-            $affiliatepress_entry_id = (isset($affiliatepress_entry['id']))?$affiliatepress_entry['id']:'';
-            if($affiliatepress_entry_id){
-                $reject_commission_on_refund = $AffiliatePress->affiliatepress_get_settings('gravity_forms_reject_commission_on_refund', 'integrations_settings');
-                if($reject_commission_on_refund == "false"){
-                    return;
-                }         
-                $affiliatepress_all_commissition_data = $AffiliatePress->affiliatepress_get_all_commission_by_order_and_source($affiliatepress_entry_id, $this->affiliatepress_integration_slug);
-
-                if(!empty($affiliatepress_all_commissition_data)){
-
-                    foreach($affiliatepress_all_commissition_data as $affiliatepress_commissition_data){
-
-                        if(!empty($affiliatepress_commissition_data)){
-
-                            $affiliatepress_commission_status = (isset($affiliatepress_commissition_data['ap_commission_status']))?intval($affiliatepress_commissition_data['ap_commission_status']):0;
-                            $affiliatepress_commission_id     = (isset($affiliatepress_commissition_data['ap_commission_id']))?intval($affiliatepress_commissition_data['ap_commission_id']):0;
-                            if($affiliatepress_commission_status == 4){
-                                $affiliatepress_msg = sprintf( 'Commission #%s could not be rejected because it was already paid.', $affiliatepress_commission_id );
-                                return;
-                            }
-                            if($affiliatepress_commission_id != 0){
-            
-                                $affiliatepress_commission_data = array(
-                                    'ap_commission_updated_date' => current_time( 'mysql', true ),
-                                    'ap_commission_status' 		 => 3
-                                );
-                                $this->affiliatepress_update_record($affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_commission_data, array( 'ap_commission_id' => $affiliatepress_commission_id ));
-                                $affiliatepress_msg = sprintf( 'Commission #%s successfully marked as rejected, after order #%s was refunded.', $affiliatepress_commission_id, $affiliatepress_order_id );
-            
-                                do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Commission Reject ', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_msg, $affiliatepress_commission_debug_log_id);
-            
-                            }                    
-        
-                        }
-
-                    }
-
-                }
-
             }
         }
 
@@ -233,10 +180,35 @@ if( !class_exists('affiliatepress_gravity_forms') ){
             }
             $affiliatepress_first_name = '';
             $affiliatepress_last_name = '';
+            $affiliatepress_mapping_field_value = '';
+
             if(!empty($affiliatepress_customer_name)){
-                $affiliatepress_first_name = rgar($affiliatepress_entry, $affiliatepress_customer_name . '.3' );
-                $affiliatepress_last_name = rgar($affiliatepress_entry, $affiliatepress_customer_name . '.6' );
-            }            
+                foreach ($affiliatepress_form_data['fields'] as $field) {
+                    if ($field->id == $affiliatepress_customer_name) {
+                        $field_type = $field->type;
+                        if($field_type == "name"){
+                            $affiliatepress_first_name = rgar($affiliatepress_entry, $affiliatepress_customer_name . '.3' );
+                            $affiliatepress_last_name = rgar($affiliatepress_entry, $affiliatepress_customer_name . '.6' );
+                        }
+                        if($field_type == "checkbox"){
+                            $values = array();
+                            foreach ($affiliatepress_entry as $key => $value) {
+                                if (strpos((string)$key, $affiliatepress_customer_name) === 0) {
+                                    $values[] = $value;
+                                }
+                            }
+                            $affiliatepress_mapping_field_value = implode(", ", $values);
+                        }else{
+                            $affiliatepress_mapping_field_value = (isset($affiliatepress_entry[$affiliatepress_customer_name]))?($affiliatepress_entry[$affiliatepress_customer_name]):'';
+                        }
+                    }
+                }
+            }  
+            
+            if(empty($affiliatepress_first_name)){
+                $affiliatepress_first_name = $affiliatepress_mapping_field_value;
+            }
+            
             $affiliatepress_customer_id = 0;
             if(!empty($affiliatepress_customer_email)){
                 /* Add Commission Customer Here */
@@ -553,7 +525,7 @@ if( !class_exists('affiliatepress_gravity_forms') ){
                 if(!empty($affiliatepress_all_fields)){
                     foreach( $affiliatepress_all_fields as $affiliatepress_field ) {
                         $affiliatepress_field_type = (isset($affiliatepress_field->type))?$affiliatepress_field->type:'';
-                        if($affiliatepress_field_type != 'section' && $affiliatepress_field_type != 'product' && $affiliatepress_field_type != 'total' && $affiliatepress_field_type != 'page' && $affiliatepress_field_type != 'address' && $affiliatepress_field_type != 'shipping'){
+                        if($affiliatepress_field_type != 'section' && $affiliatepress_field_type != 'product' && $affiliatepress_field_type != 'total' && $affiliatepress_field_type != 'page' && $affiliatepress_field_type != 'address' && $affiliatepress_field_type != 'shipping'  && $affiliatepress_field_type != 'hidden' && $affiliatepress_field_type != 'consent' && $affiliatepress_field_type != 'fileupload' && $affiliatepress_field_type != 'html'){
                             $affiliatepress_selected = ($affiliatepress_email_field == $affiliatepress_field->id)?"selected":"";
                             $affiliatepress_final_html.= '<option '.$affiliatepress_selected.' value="'  . esc_attr( $affiliatepress_field->id ) . '">' . esc_html( $affiliatepress_field->label ) . '</option>';               
                         }
@@ -567,10 +539,10 @@ if( !class_exists('affiliatepress_gravity_forms') ){
                 if(!empty($affiliatepress_all_fields)){
                     foreach( $affiliatepress_all_fields as $affiliatepress_field ) {
                         $affiliatepress_field_type = (isset($affiliatepress_field->type))?$affiliatepress_field->type:'';
-                        if($affiliatepress_field_type == 'name'){
+                        if($affiliatepress_field_type != 'section' && $affiliatepress_field_type != 'product' && $affiliatepress_field_type != 'total' &&       $affiliatepress_field_type != 'page' && $affiliatepress_field_type != 'address' && $affiliatepress_field_type != 'shipping' && $affiliatepress_field_type != 'hidden' && $affiliatepress_field_type != 'consent' && $affiliatepress_field_type != 'fileupload'  && $affiliatepress_field_type != 'html'){
                             $affiliatepress_selected = ($affiliatepress_name_field == $affiliatepress_field->id)?"selected":"";
                             $affiliatepress_final_html.= '<option '.$affiliatepress_selected.' value="'  . esc_attr( $affiliatepress_field->id ) . '">' . esc_html( $affiliatepress_field->label ) . '</option>';               
-                        }
+                        }       
                     }    
                 }                
             $affiliatepress_final_html.= '</select></td>';

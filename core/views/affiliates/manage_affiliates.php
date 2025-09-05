@@ -357,7 +357,7 @@
                             </div>
                         </el-form-item>
                     </div>
-                    <div v-if="affiliates.ap_affiliates_id == ''" class="ap-single-field__form">
+                    <div v-if="affiliates.ap_affiliates_id == '' || affiliates.affiliate_user_name == ''" class="ap-single-field__form">
                         <el-form-item class="ap-combine-field ap-combine-field-search" prop="ap_affiliates_user_id">
                             <template #label>
                                 <span class="ap-form-label"><?php esc_html_e('WordPress User', 'affiliatepress-affiliate-marketing'); ?></span>
@@ -536,7 +536,7 @@
                                 <div class="ap-head-fields"><?php esc_html_e('Affiliate Field', 'affiliatepress-affiliate-marketing'); ?></div>
                             </el-col>
                             <el-col class="ap-import-field__right-area" :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-                                <div class="ap-head-fields"><?php esc_html_e('CSV Column', 'affiliatepress-affiliate-marketing'); ?></div>                              
+                                <div class="ap-head-fields ap-csv-column"><?php esc_html_e('CSV Column', 'affiliatepress-affiliate-marketing'); ?></div>                              
                             </el-col>
                         </el-row>
                         <el-row v-for="import_field in affiliatepress_import_field_data" type="flex" class="ap-import-field-body">

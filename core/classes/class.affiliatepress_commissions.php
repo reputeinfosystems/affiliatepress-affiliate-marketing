@@ -192,37 +192,49 @@ if (! class_exists('affiliatepress_commissions') ) {
 
             $affiliatepress_affiliate_id = isset($_POST['affiliat_id']) ? intval($_POST['affiliat_id']) : 0;
             $affiliatepress_affiliate_user_id = isset($_POST['affiliate_user_id']) ? intval($_POST['affiliate_user_id']) : 0;
-
+            $affiliatepress_affiliate_data = array();
+            $affiliatepress_wordpress_user_delete = "";
             if($affiliatepress_affiliate_id != 0 && $affiliatepress_affiliate_user_id != 0){
                 $affiliatepress_user_data = get_userdata( $affiliatepress_affiliate_user_id);
-                $affiliatepress_affiliate_username = $affiliatepress_user_data->get('user_login');
-                $affiliatepress_affiliate_useremail = $affiliatepress_user_data->get('user_email');
-                $affiliatepress_affiliate_fullname = $affiliatepress_user_data->get('display_name');
-                $affiliatepress_affiliate_firstname =$affiliatepress_user_data->first_name;
-                $affiliatepress_affiliate_lastname =$affiliatepress_user_data->last_name;
+                if(!empty($affiliatepress_user_data)){
+                    $affiliatepress_affiliate_username = $affiliatepress_user_data->get('user_login');
+                    $affiliatepress_affiliate_useremail = $affiliatepress_user_data->get('user_email');
+                    $affiliatepress_affiliate_fullname = $affiliatepress_user_data->get('display_name');
+                    $affiliatepress_affiliate_firstname = $affiliatepress_user_data->first_name;
+                    $affiliatepress_affiliate_lastname = $affiliatepress_user_data->last_name;
+    
+                    if(empty($affiliatepress_affiliate_fullname)){
+                        $affiliatepress_affiliate_fullname = $affiliatepress_affiliate_firstname." ".$affiliatepress_affiliate_lastname;
+                    }
+                    
+                    $affiliatepress_site_url = get_site_url();
+                    $affiliatepress_user_edit_link = $affiliatepress_site_url .'/wp-admin/user-edit.php?user_id=' . $affiliatepress_affiliate_user_id;
+    
+                    $affiliatepress_affiliate_data = array(
+                        'affiliate_user_name' => $affiliatepress_affiliate_username,
+                        'affiliate_user_email' => $affiliatepress_affiliate_useremail,
+                        'affiliate_user_full_name'=> $affiliatepress_affiliate_fullname,
+                        'affiliate_user_edit_link' => $affiliatepress_user_edit_link,
+                    );
+    
+                    $affiliatepress_affiliate_data = apply_filters('affiliatepress_add_extra_affiliate_user_data',$affiliatepress_affiliate_data,$affiliatepress_affiliate_id);
+    
+                    $response['variant'] = 'success';
+                    $response['affiliate_data'] = $affiliatepress_affiliate_data;
+                    $response['affiliatepress_wordpress_user_delete'] = $affiliatepress_wordpress_user_delete;
+                    $response['title']   = esc_html__('Success', 'affiliatepress-affiliate-marketing');
+                    $response['msg']     = esc_html__('Commission Data.', 'affiliatepress-affiliate-marketing');
+                }else{
 
-                if(empty($affiliatepress_affiliate_fullname)){
-                    $affiliatepress_affiliate_fullname = $affiliatepress_affiliate_firstname." ".$affiliatepress_affiliate_lastname;
+                    $affiliatepress_wordpress_user_delete = esc_html__('User data not found', 'affiliatepress-affiliate-marketing');
+
+                    $response['variant'] = 'success';
+                    $response['affiliatepress_wordpress_user_delete'] = $affiliatepress_wordpress_user_delete;
+                    $response['title']   = esc_html__('Success', 'affiliatepress-affiliate-marketing');
+                    $response['msg']     = esc_html__('Commission Data.', 'affiliatepress-affiliate-marketing');
+                    $response['affiliate_data'] = $affiliatepress_affiliate_data;
                 }
                 
-                $affiliatepress_site_url = get_site_url();
-                $affiliatepress_user_edit_link = $affiliatepress_site_url .'/wp-admin/user-edit.php?user_id=' . $affiliatepress_affiliate_user_id;
-
-                $affiliatepress_affiliate_data = array();
-
-                $affiliatepress_affiliate_data = array(
-                    'affiliate_user_name' => $affiliatepress_affiliate_username,
-                    'affiliate_user_email' => $affiliatepress_affiliate_useremail,
-                    'affiliate_user_full_name'=> $affiliatepress_affiliate_fullname,
-                    'affiliate_user_edit_link' => $affiliatepress_user_edit_link,
-                );
-
-                $affiliatepress_affiliate_data = apply_filters('affiliatepress_add_extra_affiliate_user_data',$affiliatepress_affiliate_data,$affiliatepress_affiliate_id);
-
-                $response['variant'] = 'success';
-                $response['affiliate_data'] = $affiliatepress_affiliate_data;
-                $response['title']   = esc_html__('Success', 'affiliatepress-affiliate-marketing');
-                $response['msg']     = esc_html__('Commission Data.', 'affiliatepress-affiliate-marketing');
             }
 
             wp_send_json($response);            
@@ -1728,14 +1740,20 @@ if (! class_exists('affiliatepress_commissions') ) {
                 postData._wpnonce = "'.esc_html(wp_create_nonce("ap_wp_nonce")).'"
                 axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify( postData ) )
                 .then( function (response) {
-                    if(response.data.variant == "success"){
+                    if(response.data.variant == "success" && response.data.affiliate_data != ""){
                         vm.is_get_user_data_loader = "0";
                         vm.affiliate_user_details.affiliate_user_name = response.data.affiliate_data.affiliate_user_name;
                         vm.affiliate_user_details.affiliate_user_email = response.data.affiliate_data.affiliate_user_email;
                         vm.affiliate_user_details.affiliate_user_full_name = response.data.affiliate_data.affiliate_user_full_name;
                         vm.affiliate_user_details.affiliate_user_edit_link = response.data.affiliate_data.affiliate_user_edit_link;
+                        vm.show_user_details = "1";
                         '.$affiliatepress_response_add_user_details.'
-                    }else{
+                    }else if(response.data.variant == "success" && response.data.affiliatepress_wordpress_user_delete != ""){
+                        vm.is_get_user_data_loader = "0";
+                        vm.affiliatepress_wordpress_user_delete = response.data.affiliatepress_wordpress_user_delete;
+                        vm.show_user_details = "0";
+                    }
+                    else{
                         vm.is_get_user_data_loader = "0";     
                         vm.$notify({
                             title: response.data.title,
@@ -1949,6 +1967,8 @@ if (! class_exists('affiliatepress_commissions') ) {
                     'affiliate_user_full_name'=> '',
                     'affiliate_user_edit_link' => '',
                 ),
+                'affiliatepress_wordpress_user_delete'=>'',
+                'show_user_details' => '1',
 
             );
         }

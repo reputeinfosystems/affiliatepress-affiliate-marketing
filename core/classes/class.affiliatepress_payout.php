@@ -68,10 +68,7 @@ if (! class_exists('affiliatepress_payout') ) {
             add_action( 'affiliatepress_payout_hourly_event', array($this,'affiliatepress_generate_auto_payout') );
 
             /* Function for add payout payment note */
-            add_action('wp_ajax_affiliatepress_add_payment_note', array( $this, 'affiliatepress_add_payment_note_func'));                  
-            
-            /* AffiliatePress before auto-payout */
-            add_action('affiliatepress_before_auto_payout_generate',array($this,'affiliatepress_auto_approve_commission_func'));
+            add_action('wp_ajax_affiliatepress_add_payment_note', array( $this, 'affiliatepress_add_payment_note_func')); 
             
             /* Function For After Payment Status Update Migrate Report Table Data Update */
             add_action('affiliatepress_update_report_data_based_on_payment_status',array($this,'affiliatepress_update_report_data_based_on_payment_status_func'),10,2);
@@ -175,39 +172,6 @@ if (! class_exists('affiliatepress_payout') ) {
                 }
             }
             
-        }
-
-        /**
-         * Function for auto approve affiliate commission
-         *
-         * @return void
-        */
-        function affiliatepress_auto_approve_commission_func(){
-            global $wpdb, $AffiliatePress, $affiliatepress_tbl_ap_affiliate_commissions;
-            $affiliatepress_default_commission_status = $AffiliatePress->affiliatepress_get_settings('default_commission_status', 'commissions_settings');
-            if($affiliatepress_default_commission_status == 2){
-                $affiliatepress_auto_approve_commission_after_days = intval($AffiliatePress->affiliatepress_get_settings('auto_approve_commission_after_days', 'commissions_settings'));
-
-                if($affiliatepress_auto_approve_commission_after_days > 0){
-
-                    $affiliatepress_currentDate = new DateTime();
-                    $affiliatepress_currentDate->modify("-{$affiliatepress_auto_approve_commission_after_days} days"); 
-                    $affiliatepress_commission_compare_date = $affiliatepress_currentDate->format('Y-m-d');
-
-                    $affiliatepress_all_commissions = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_commissions, 'ap_commission_id', 'WHERE ap_commission_status = %d AND DATE(ap_commission_created_date) < %s ', array( 2 ,$affiliatepress_commission_compare_date), '', '', '', false, false,ARRAY_A);
-                    if(!empty($affiliatepress_all_commissions)){
-                        foreach($affiliatepress_all_commissions as $affiliatepress_commission){
-
-                            $affiliatepress_commission_id = (isset($affiliatepress_commission['ap_commission_id']))?$affiliatepress_commission['ap_commission_id']:0;
-                            $affiliatepress_new_status = 1;
-                            $this->affiliatepress_update_record($affiliatepress_tbl_ap_affiliate_commissions, array('ap_commission_status'=>$affiliatepress_new_status), array( 'ap_commission_id' => $affiliatepress_commission_id ));
-                            
-                            do_action('affiliatepress_after_commissions_status_change',$affiliatepress_commission_id,$affiliatepress_new_status,2,'');
-
-                        }
-                    }                    
-                }
-            }
         }
 
         /**
@@ -668,7 +632,7 @@ if (! class_exists('affiliatepress_payout') ) {
                             if($affiliatepress_payment_method != 'manual'){
                                 $affiliatepress_ap_payment_status = 2;
                             }else{
-                                $affiliatepress_auto_payout = isset($_POST['auto_approved_payouts']) ? sanitize_text_field($_POST['auto_approved_payouts']) : "false";
+                                $affiliatepress_auto_payout = isset($_POST['auto_approved_payouts']) ? sanitize_text_field(wp_unslash($_POST['auto_approved_payouts'])) : "false";//phpcs:ignore
 
                                 if($affiliatepress_auto_payout == "true"){
                                     $affiliatepress_ap_payment_status = 4;
@@ -1769,7 +1733,6 @@ if (! class_exists('affiliatepress_payout') ) {
                 const vm = this;                
                 this.$refs[form_ref].validate((valid) => { 
                     if (valid) {
-                        console.log(vm.payout_message);
                         var postdata = vm.payout_message;
                         postdata.action = "affiliatepress_add_payment_note";  
                         postdata.payout_id = payout_id;                                               
@@ -2010,8 +1973,6 @@ if (! class_exists('affiliatepress_payout') ) {
                                             vm.$refs["payout_preview_table"].toggleRowSelection(row, true);
                                         });
                                         vm.payout.allow_affiliates = selected_paymnet_affiliates.map(row => row.ap_affiliates_id);
-                                        console.log(vm.payout.allow_affiliates);
-                                        
                                     });
                                 }
                             }

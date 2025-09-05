@@ -79,11 +79,8 @@
                             </el-table-column>
                             <el-table-column  prop="full_name"  min-width="200" label="<?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by='full_name'>
                                 <template #default="scope">
-                                    <el-popover trigger="click" width="350" popper-class="ap-affiliate-user-details-popover" placement="right-start" :visible="userPopoverVisible">
+                                    <el-popover trigger="click" width="350" popper-class="ap-affiliate-user-details-popover" :placement="(is_rtl == 'is_rtl') ? 'left-start' : 'right-start'" :visible="userPopoverVisible">
                                         <div class="ap-affiliate-user-details-container">
-                                            <!-- <div class="ap-back-loader-container" v-if="is_get_user_data_loader == '1'" id="ap-page-loading-loader">
-                                                <div class="ap-back-loader"></div>
-                                            </div>    -->
                                             <div class="ap-status-loader-wrapper" v-if="is_get_user_data_loader == 1">
                                                 <el-image class="ap-status-loader" src="<?php echo esc_url(AFFILIATEPRESS_IMAGES_URL . '/status-loader.gif'); ?>" alt="<?php esc_attr_e('Loader', 'affiliatepress-affiliate-marketing'); ?>"></el-image>
                                             </div>
@@ -92,7 +89,7 @@
                                                     <div><?php esc_html_e('User Details', 'affiliatepress-affiliate-marketing'); ?></div>
                                                     <div @click="editUserclosePopover()" class="ap-close-popup"><?php do_action('affiliatepress_common_svg_code','popup_close'); ?></div>
                                                 </div>
-                                                <div class="ap-user-details-content">
+                                                <div class="ap-user-details-content" v-if="show_user_details == '1'">
                                                     <div class="ap-user-details-row">
                                                         <div class="ap-user-details-label"><?php esc_html_e('Username', 'affiliatepress-affiliate-marketing'); ?></div>
                                                         <div class="ap-user-details-separtor">:</div>
@@ -111,11 +108,14 @@
                                                     <?php
                                                         $affiliatepress_user_extra_details = "";
                                                         $affiliatepress_user_extra_details = apply_filters('affiliatepress_user_extra_details_add',$affiliatepress_user_extra_details);
-                                                        echo $affiliatepress_user_extra_details;
+                                                        echo $affiliatepress_user_extra_details;//phpcs:ignore
                                                     ?>
                                                      <a class="ap-affiliate-edit-user" :href="affiliate_user_details.affiliate_user_edit_link" target="_blank">
                                                         <div><?php esc_html_e('Edit User', 'affiliatepress-affiliate-marketing');?></div>
                                                     </a>
+                                                </div>
+                                                <div class="ap-user-details-content" v-else>
+                                                    <div class="ap-not-wp-user">{{affiliatepress_wordpress_user_delete}}</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -186,7 +186,7 @@
                         </el-table-column> 
                         <el-table-column  prop="full_name"  min-width="120" label="<?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by='full_name'>
                                 <template #default="scope">
-                                    <el-popover trigger="click" width="350" popper-class="ap-affiliate-user-details-popover" placement="right-start"  :visible="userPopoverVisible" ref="fields_useredit_popover">
+                                    <el-popover trigger="click" width="350" popper-class="ap-affiliate-user-details-popover" placement="bottom"  :visible="userPopoverVisible" ref="fields_useredit_popover">
                                         <div class="ap-affiliate-user-details-container">
                                             <div class="ap-status-loader-wrapper" v-if="is_get_user_data_loader == 1">
                                                 <el-image class="ap-status-loader" src="<?php echo esc_url(AFFILIATEPRESS_IMAGES_URL . '/status-loader.gif'); ?>" alt="<?php esc_attr_e('Loader', 'affiliatepress-affiliate-marketing'); ?>"></el-image>
@@ -196,7 +196,7 @@
                                                     <div><?php esc_html_e('User Details', 'affiliatepress-affiliate-marketing'); ?></div>
                                                     <div @click="editUserclosePopover()" class="ap-close-popup"><?php do_action('affiliatepress_common_svg_code','popup_close'); ?></div>
                                                 </div>
-                                                <div class="ap-user-details-content">
+                                                <div class="ap-user-details-content" v-if="show_user_details == '1'">
                                                     <div class="ap-user-details-row">
                                                         <div class="ap-user-details-label"><?php esc_html_e('Username', 'affiliatepress-affiliate-marketing'); ?></div>
                                                         <div class="ap-user-details-separtor">:</div>
@@ -215,11 +215,14 @@
                                                     <?php
                                                         $affiliatepress_user_extra_details = "";
                                                         $affiliatepress_user_extra_details = apply_filters('affiliatepress_user_extra_details_add',$affiliatepress_user_extra_details);
-                                                        echo $affiliatepress_user_extra_details;
+                                                        echo $affiliatepress_user_extra_details;//phpcs:ignore
                                                     ?>
                                                      <a class="ap-affiliate-edit-user" :href="affiliate_user_details.affiliate_user_edit_link" target="_blank">
                                                         <div><?php esc_html_e('Edit User', 'affiliatepress-affiliate-marketing');?></div>
                                                     </a>
+                                                </div>
+                                                <div class="ap-user-details-content" v-else>
+                                                    <div class="ap-not-wp-user">{{affiliatepress_wordpress_user_delete}}</div>
                                                 </div>
                                             </div>
                                         </div>

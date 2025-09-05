@@ -77,7 +77,7 @@ if (! class_exists('affiliatepress_affiliate_register') ) {
 
             $affiliatepress_username         = ! empty($_POST['username']) ? sanitize_text_field($_POST['username']) : ''; // phpcs:ignore 
 
-            if (empty($affiliatepress_username) || ! preg_match('/^[A-Za-z0-9._-]+$/', $affiliatepress_username)) {
+            if (!is_user_logged_in() && (empty($affiliatepress_username) || ! preg_match('/^[A-Za-z0-9._-]+$/', $affiliatepress_username))) {
                 $response['msg'] = esc_html__('Entered username is invalid.', 'affiliatepress-affiliate-marketing');
                 wp_send_json($response);
                 die();
@@ -481,7 +481,6 @@ if (! class_exists('affiliatepress_affiliate_register') ) {
                             const formFields = this.$refs.affiliates_reg_form_data.fields;
                             if(typeof formFields != "undefined"){
                                 for (let field in formFields) {
-                                    console.log(formFields[field].validateState);
                                     if (formFields[field].$el && formFields[field].validateState == "error") {
                                         const errorElement = formFields[field].$el;
                                         if (errorElement){

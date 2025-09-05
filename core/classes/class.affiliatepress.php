@@ -136,6 +136,9 @@ if (! class_exists('AffiliatePress') ) {
 		        add_filter('script_loader_tag', array( $this, 'affiliatepress_prevent_rocket_loader_script_clf_advanced' ), 11, 2);
             }
 
+            /**lifetime deal notice dismissed */
+            add_action('wp_ajax_affiliatepress_lifetime_deal_close', array( $this, 'affiliatepress_lifetime_deal_close_func' ));   
+
         }
 
         /**
@@ -666,7 +669,6 @@ if (! class_exists('AffiliatePress') ) {
                     'features'         => esc_html__('Not the features I wanted', 'affiliatepress-affiliate-marketing'),
                     'better-plugin'    => esc_html__('Found a better plugin', 'affiliatepress-affiliate-marketing'),
                     'incompatibility'  => esc_html__('Incompatible with theme or plugin', 'affiliatepress-affiliate-marketing'),
-                    'bought-premium'   => esc_html__('I bought premium version of affiliatepress', 'affiliatepress-affiliate-marketing'),
                     'maintenance'      => esc_html__('Other', 'affiliatepress-affiliate-marketing'),
                 );
     
@@ -810,7 +812,7 @@ if (! class_exists('AffiliatePress') ) {
         {
             global $affiliatepress_version, $AffiliatePress;
             $affiliatepress_old_version = get_option('affiliatepress_version', true);
-            if (version_compare($affiliatepress_old_version, '1.0.1', '<') ) {
+            if (version_compare($affiliatepress_old_version, '1.0.2', '<') ) {
                 $affiliatepress_load_upgrade_file = AFFILIATEPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $affiliatepress_load_upgrade_file;
                 $AffiliatePress->affiliatepress_send_anonymous_data_cron();
@@ -2169,6 +2171,8 @@ if (! class_exists('AffiliatePress') ) {
         */
         function affiliatepress_admin_print_scripts_func(){
 
+            global $AffiliatePress;
+
             $requested_module = ! empty($_REQUEST['page']) ? sanitize_text_field($_REQUEST['page']) : 'dashboard'; // phpcs:ignore 
             if (!empty($requested_module) && (strpos($requested_module, 'affiliatepress_') !== false || $requested_module == 'affiliatepress' )) {
 
@@ -2231,6 +2235,14 @@ if (! class_exists('AffiliatePress') ) {
                 if(!empty($affiliatepress_selected_optins_name)){
                     $affiliatepress_script_return_data .= 'sessionStorage.setItem("selected_optins", "'.esc_html($affiliatepress_selected_optins_name).'");';
                 }
+
+                $affiliatepress_is_rtl = "";
+                if(is_rtl()){
+                    $affiliatepress_is_rtl = "is_rtl";
+                }
+
+                $affiliatepress_is_pro_active = $AffiliatePress->affiliatepress_pro_install();
+
                 $affiliatepress_script_return_data .= '                
                 var app;
                     function affiliatepress_admin_vue_data_load(){                    
@@ -2248,11 +2260,12 @@ if (! class_exists('AffiliatePress') ) {
                         affiliatepress_return_data["affiliatepress_selected_tab_name"] = "'.$affiliatepress_selected_tab_name.'";
                         affiliatepress_return_data["affiliatepress_start_date"] = "'.esc_html__('Start Date', 'affiliatepress-affiliate-marketing').'";
                         affiliatepress_return_data["affiliatepress_end_date"] = "'.esc_html__('End Date', 'affiliatepress-affiliate-marketing').'";
-                        
+                        affiliatepress_return_data["is_rtl"] = "'.$affiliatepress_is_rtl.'";
 
                         affiliatepress_return_data["ap_first_page_loaded"] = "1";
                         affiliatepress_return_data["current_screen_size"] = "desktop";
                         affiliatepress_return_data["current_grid_screen_size"] = "desktop";
+                         affiliatepress_return_data["is_pro_active"] = "'.$affiliatepress_is_pro_active.'";
 
                         var today = new Date();                         
                         const dayOfWeek = today.getDay(); 
@@ -2401,16 +2414,32 @@ if (! class_exists('AffiliatePress') ) {
                     methods:{
                         affiliatepress_redirect_premium_page(){
                             const vm = this;
-                            window.location.href="'.$affiliatepress_website_url.'affiliate-lite-vs-pro/";
+                            window.open("'.$affiliatepress_website_url.'pricing/?utm_source=liteversion&utm_medium=plugin&utm_campaign=Upgrade+to+Premium&utm_id=affiliatepress_2");
                         },
                         affiliatepress_redirect_lite_vs_preminum_page(){
                             const vm = this;
-                            window.location.href="'.$affiliatepress_website_url.'affiliate-lite-vs-pro/";
-                        },
-                        affiliatepress_redirect_lite_vs_other_page(){
+                            window.open("'.$affiliatepress_website_url.'affiliate-lite-vs-pro/");
+                        },      
+                        affiliatepress_lifetime_deal_close(){
                             const vm = this;
-                            window.location.href="'.$affiliatepress_website_url.'affiliate-lite-vs-pro/";
-                        },                                                
+                            var postData = [];
+                            postData.action = "affiliatepress_lifetime_deal_close";
+                            postData._wpnonce = "'.esc_html(wp_create_nonce("ap_wp_nonce")).'"
+                            axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify( postData ) )
+                            .then( function (response) {
+                                const notice = document.querySelector(".ap-header-deal-belt-wrapper");
+                                if (notice) {
+                                    notice.style.display = "none";
+                                }
+                            }.bind(this) )
+                            .catch( function (error) {   
+                               console.log(error);
+                            });
+                        },
+                        affiliatepress_redirect_pricing_page(){
+                            const vm = this;
+                            window.open("'.$affiliatepress_website_url.'pricing/?utm_campaign=PluginTopBar");
+                        },                                    
                         ap_fab_floating_action_btn(){
                             const vm = this;
                             vm.affiliatepress_fab_floating_btn = 1;                         
@@ -2517,6 +2546,10 @@ if (! class_exists('AffiliatePress') ) {
                             }
                             '.$affiliatepress_additional_menu_help_content.'
 
+                        },
+                        open_premium_modal(){
+                            const vm = this;
+                            vm.affiliatepress_premium_modal = true;
                         },
                         close_need_help_popup(){
                             const vm = this;
@@ -2774,6 +2807,9 @@ if (! class_exists('AffiliatePress') ) {
             if( preg_match( '/(<img data\-cfasync\=\"false\")/', $tag ) ){
 				$tag = preg_replace( '/(<img data\-cfasync\=\"false\")/', '<img ', $tag );
 			}
+			if( preg_match( '/(&lt;img data\-cfasync\=\"false\")/', $tag ) ){
+				$tag = preg_replace( '/(&lt;img data\-cfasync\=\"false\")/', '&lt;img ', $tag );
+			}
 
 			return $tag;
 		}
@@ -2963,8 +2999,8 @@ if (! class_exists('AffiliatePress') ) {
             $ap_admin_menu_script .= '#toplevel_page_affiliatepress .wp-submenu li:last-child a, #toplevel_page_affiliatepress .wp-submenu li:last-child a:hover { color: #1CC6C9 !important; font-weight: 600 !important; }';
             $ap_admin_menu_script .= '#toplevel_page_affiliatepress .wp-submenu li:last-child a:after { content: " "; width: 14px; height:14px; background-image: url(' . esc_url(AFFILIATEPRESS_IMAGES_URL) . '/affiliatepress_upgrade_pro_crown.svg); background-repeat:no-repeat; vertical-align: text-bottom; display: inline-block; margin-left: 5px; }';
             $ap_admin_menu_script .= '</style>';
-            
-            echo $ap_admin_menu_script .= '';
+           
+            echo  $ap_admin_menu_script .= '';//phpcs:ignore
         }
         
         /**
@@ -3296,7 +3332,7 @@ if (! class_exists('AffiliatePress') ) {
                 array('ap_setting_name' => 'enable_google_recaptcha','ap_setting_value' => 'false','ap_setting_type' => 'affiliate_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'default_discount_val','ap_setting_value' => '10','ap_setting_type' => 'commissions_settings','auto_load'=>1,'type'=>'float'),
                 array('ap_setting_name' => 'default_discount_type','ap_setting_value' => 'percentage','ap_setting_type' => 'commissions_settings','auto_load'=>1,'type'=>'text'),
-                array('ap_setting_name' => 'default_commission_status','ap_setting_value' => 'auto','ap_setting_type' => 'commissions_settings','auto_load'=>1,'type'=>'text'),                
+                array('ap_setting_name' => 'default_commission_status','ap_setting_value' => '2','ap_setting_type' => 'commissions_settings','auto_load'=>1,'type'=>'text'),                
                 array('ap_setting_name' => 'flat_rate_commission_basis','ap_setting_value' => 'pre_product','ap_setting_type' => 'commissions_settings','auto_load'=>1,'type'=>'text'),
                 // array('ap_setting_name' => 'exclude_shipping','ap_setting_value' => 'true','ap_setting_type' => 'commissions_settings'),
                 // array('ap_setting_name' => 'exclude_taxes','ap_setting_value' => 'true','ap_setting_type' => 'commissions_settings'),
@@ -3319,6 +3355,7 @@ if (! class_exists('AffiliatePress') ) {
                 array('ap_setting_name' => 'enable_accept_stripe_payments','ap_setting_value' => 'false','ap_setting_type' => 'integrations_settings','auto_load'=>1),
                 array('ap_setting_name' => 'accept_stripe_payments_exclude_shipping','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0),
                 array('ap_setting_name' => 'accept_stripe_payments_exclude_taxes','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0),
+                array('ap_setting_name' => 'accept_stripe_payments_reject_commission_on_refund','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0,'type'=>'text'),
 
                 array('ap_setting_name' => 'enable_forminator_forms','ap_setting_value' => 'false','ap_setting_type' => 'integrations_settings','auto_load'=>1),
 
@@ -3367,6 +3404,7 @@ if (! class_exists('AffiliatePress') ) {
                 array('ap_setting_name' => 'enable_lifter_lms','ap_setting_value' => 'false','ap_setting_type' => 'integrations_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'lifter_lms_reject_commission_on_refund','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'enable_learnpress','ap_setting_value' => 'false','ap_setting_type' => 'integrations_settings','auto_load'=>1,'type'=>'text'),
+                array('ap_setting_name' => 'learnpress_reject_commission_on_refund','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'enable_tutor_lms','ap_setting_value' => 'false','ap_setting_type' => 'integrations_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'enable_masterstudy_lms','ap_setting_value' => 'false','ap_setting_type' => 'integrations_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'enable_download_manager','ap_setting_value' => 'false','ap_setting_type' => 'integrations_settings','auto_load'=>1,'type'=>'text'),
@@ -3378,7 +3416,6 @@ if (! class_exists('AffiliatePress') ) {
                 array('ap_setting_name' => 'sender_email','ap_setting_value' => $wordpress_admin_email,'ap_setting_type' => 'email_notification_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'admin_email','ap_setting_value' => $wordpress_admin_email,'ap_setting_type' => 'email_notification_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'company_name','ap_setting_value' => $wordpress_sitename,'ap_setting_type' => 'email_notification_settings','auto_load'=>1,'type'=>'text'),
-                array('ap_setting_name' => 'default_commission_status','ap_setting_value' => 'auto','ap_setting_type' => 'commissions_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'auto_approve_commission_after_days','ap_setting_value' => '0','ap_setting_type' => 'commissions_settings','auto_load'=>1,'type'=>'text'),
 
                 array('ap_setting_name' => 'login_error_message','ap_setting_value' => esc_html__('Username/Password you have entered is invalid.', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
@@ -3756,6 +3793,84 @@ if (! class_exists('AffiliatePress') ) {
                     $wpdb->insert($affiliatepress_tbl_ap_affiliate_form_fields, $affiliatepress_form_field_db_data); // phpcs:ignore WordPress.DB.DirectDatabaseQuery               
                 }
 
+            }
+
+        }
+
+        function affiliatepress_install_default_creative_data(){
+
+            global $affiliatepress_tbl_ap_creative;
+
+            $affiliatepress_creative = array();
+
+            $affiliatepress_creative[] = array(
+                'ap_creative_name'              => esc_html__('Creative 1', 'affiliatepress-affiliate-marketing'),
+                'ap_creative_description'       => '',
+                'ap_creative_type'              => 'image',                
+                'ap_creative_alt_text'          => '',
+                'ap_creative_status'            => '1',
+                'ap_creative_text'              => '',
+                'ap_creative_landing_url'       => site_url(),
+                'ap_creative_image_url'         => 'creative_image_1.jpg'
+            );
+
+            $affiliatepress_creative[] = array(
+                'ap_creative_name'              => esc_html__('Creative 2', 'affiliatepress-affiliate-marketing'),
+                'ap_creative_description'       => '',
+                'ap_creative_type'              => 'image',                
+                'ap_creative_alt_text'          => '',
+                'ap_creative_status'            => '1',
+                'ap_creative_text'              => '',
+                'ap_creative_landing_url'       => site_url(),
+                'ap_creative_image_url'         => 'creative_image_2.jpg'
+            );
+
+            $affiliatepress_creative[] = array(
+                'ap_creative_name'              => esc_html__('Creative 3', 'affiliatepress-affiliate-marketing'),
+                'ap_creative_description'       => '',
+                'ap_creative_type'              => 'image',              
+                'ap_creative_alt_text'          => '',
+                'ap_creative_status'            => '1',
+                'ap_creative_text'              => '',
+                'ap_creative_landing_url'       => site_url(),
+                'ap_creative_image_url'         => 'creative_image_3.jpg'
+            );
+            
+            $affiliatepress_creative_rows = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_creative, 'ap_creative_id', '', array(), '', '', '', false, false,ARRAY_A);
+            
+            $affiliatepress_affiliates_creative_count = count($affiliatepress_creative_rows);
+
+            if ( ! function_exists( 'WP_Filesystem' ) ) {
+                require_once ABSPATH . 'wp-admin/includes/file.php';
+            }
+        
+            global $wp_filesystem;
+            WP_Filesystem();
+
+            foreach ($affiliatepress_creative as $affiliatepress_creative_value) {
+
+                $affiliatepress_creative_rows = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_creative, 'ap_creative_id', '', array(), '', '', '', false, false,ARRAY_A);
+
+                $affiliatepress_affiliates_creative_count = count($affiliatepress_creative_rows);
+                
+                if($affiliatepress_affiliates_creative_count < 3){
+
+                    $affiliatepress_user_img_name = isset($affiliatepress_creative_value['ap_creative_image_url']) ? sanitize_text_field($affiliatepress_creative_value['ap_creative_image_url']) : '';
+                    $source_path = AFFILIATEPRESS_IMAGES_DIR.'/' .$affiliatepress_user_img_name;
+                    $affiliatepress_upload_dir                 = AFFILIATEPRESS_UPLOAD_DIR . '/';
+                    $affiliatepress_new_file_name = current_time('timestamp') . '_' . $affiliatepress_user_img_name;
+                    $destination_path                = $affiliatepress_upload_dir . $affiliatepress_new_file_name;
+
+                    if ( $wp_filesystem->exists( $source_path ) ) {
+                        $file_content = $wp_filesystem->get_contents( $source_path );
+                        if ( false !== $file_content ) {
+                            $wp_filesystem->put_contents( $destination_path, $file_content, FS_CHMOD_FILE );
+                            $affiliatepress_creative_value['ap_creative_image_url'] = $affiliatepress_new_file_name;
+                        }
+                    }
+
+                    $affiliatepress_creative_id = $this->affiliatepress_insert_record($affiliatepress_tbl_ap_creative, $affiliatepress_creative_value);   
+                }
             }
 
         }
@@ -4365,6 +4480,8 @@ if (! class_exists('AffiliatePress') ) {
 
                 $AffiliatePress->affiliatepress_send_anonymous_data_cron();
 
+                $AffiliatePress->affiliatepress_install_default_creative_data();
+
                 update_option( 'affiliatepress_flush_rewrites','1');
                 flush_rewrite_rules();
 
@@ -4736,6 +4853,53 @@ if (! class_exists('AffiliatePress') ) {
             do_action('affiliatepress_extra_common_icon',$affiliatepress_type);
         }
 
+        function affiliatepress_get_premium_content(){
+            $affiliatepress_content = '
+                <div class="ap-premium-content" @click="open_premium_modal">
+                    <div>
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M14.7602 14.498H3.24016C2.64472 14.498 2.16016 14.9826 2.16016 15.578C2.16016 16.1735 2.64472 16.658 3.24016 16.658H14.7602C15.3556 16.658 15.8402 16.1735 15.8402 15.578C15.8402 14.9826 15.3556 14.498 14.7602 14.498Z" fill="#FA6732"/>
+                        <path d="M16.56 3.59945C15.7659 3.59945 15.12 4.24531 15.12 5.03945C15.12 5.57298 15.4152 6.03448 15.8479 6.2836C15.0149 8.25639 13.7153 9.46672 12.5006 9.35727C11.1499 9.24713 10.0483 7.65016 9.44061 4.97825C10.2196 4.78095 10.8 4.07895 10.8 3.23945C10.8 2.24657 9.99285 1.43945 8.99996 1.43945C8.00708 1.43945 7.19996 2.24657 7.19996 3.23945C7.19996 4.07898 7.78029 4.78098 8.55932 4.97825C7.95164 7.65016 6.85002 9.24713 5.49932 9.35727C4.28973 9.46672 2.98434 8.25639 2.15205 6.2836C2.58476 6.03448 2.87996 5.57295 2.87996 5.03945C2.87996 4.24531 2.23411 3.59945 1.43996 3.59945C0.645855 3.59945 0 4.24531 0 5.03945C0 5.77819 0.561586 6.38154 1.2787 6.4636L2.66544 13.6795H15.3346L16.7213 6.4636C17.4384 6.38154 18 5.77819 18 5.03945C18 4.24531 17.3541 3.59945 16.56 3.59945Z" fill="#FA6732"/>
+                        </svg>
+                    </div>
+                    <div class="ap-premium-content-text">'.esc_html__('Premium', 'affiliatepress-affiliate-marketing').'</div>
+                </div>
+            ';
+ 
+            return $affiliatepress_content;
+        }
+
+        /**lifetime deal notice dismissed */
+        function affiliatepress_lifetime_deal_close_func(){
+            global $wpdb;
+			$response              = array();
+            $affiliatepress_wpnonce               = isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '';// phpcs:ignore
+            $affiliatepress_verify_nonce_flag = wp_verify_nonce($affiliatepress_wpnonce, 'ap_wp_nonce');
+            if (! $affiliatepress_verify_nonce_flag ) {
+                $response['variant']        = 'error';
+                $response['title']          = esc_html__('Error', 'affiliatepress-affiliate-marketing');
+                $response['msg']            = esc_html__('Sorry, Your request can not be processed due to security reason.', 'affiliatepress-affiliate-marketing');
+                echo wp_json_encode($response);
+                exit;
+            }
+			
+            if(!current_user_can('affiliatepress')){
+                $affiliatepress_error_msg = esc_html__( 'Sorry, you do not have permission to perform this action.', 'affiliatepress-affiliate-marketing');
+                $response['variant'] = 'error';
+                $response['title'] = esc_html__( 'Error', 'affiliatepress-affiliate-marketing');
+                $response['msg'] = $affiliatepress_error_msg; 
+                wp_send_json( $response );
+                die;                
+            }
+			update_option('affiliatepress_lifetime_deal_notice_dismissed', 1);
+
+			$response['variant']        = 'success';
+			$response['title']          = esc_html__('Success', 'affiliatepress-affiliate-marketing');
+			$response['msg']            = esc_html__('Notice Set successfully', 'affiliatepress-affiliate-marketing');
+
+			echo wp_json_encode($response);
+			exit;
+        }
 
 
 

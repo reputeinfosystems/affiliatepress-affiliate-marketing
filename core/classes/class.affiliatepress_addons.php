@@ -92,10 +92,6 @@ if (! class_exists('affiliatepress_addons') ) {
             global $affiliatepress_notification_duration;
 
             $affiliatepress_addons_vue_methods.= ' 
-            open_premium_modal(){
-                const vm = this;
-                vm.affiliatepress_premium_modal = true;
-            },
             affiliatepress_get_remote_addons_list(){
                 const vm = this;
                 vm.is_display_loader = "1";

@@ -31,20 +31,11 @@ if( !class_exists('affiliatepress_edd') ){
                 /** Add Approved Commission */
                 add_action( 'edd_complete_purchase', array($this,'affiliatepress_accept_pending_commission_edd'), 10, 1 );
 
-                /** Add Reject Commission on refund */
-                add_action( 'edd_update_payment_status', array($this,'affiliatepress_reject_commission_on_trash_and_refund_edd'), 10, 3 );
-
-                /** Add Reject Commission on delete */
-                add_action( 'edd_payment_delete', array($this,'affiliatepress_reject_commission_on_delete_edd'), 10, 1 );
-
                 /** Add Pending Commission on status change*/
                 add_action( 'edd_update_payment_status', array($this,'affiliatepress_change_pending_status_edd'), 10, 3 );
 
                 /** Add Approved Commission  on status change*/
                 add_action( 'edd_update_payment_status', array($this,'affiliatepress_change_completed_status_edd'), 10, 3 );
-
-                /** Add Reject Commission on status change */
-                add_action( 'edd_update_payment_status', array($this,'affiliatepress_reject_commission_on_failed_edd'), 10, 3 );
 
                 /** Add Affiliate Disable settings */
                 add_action('add_meta_boxes',array($this, 'affiliatepress_add_affilate_edd_metabox'), 10, 1);
@@ -627,121 +618,6 @@ if( !class_exists('affiliatepress_edd') ){
             }
         }
 
-        
-        /**
-         * affiliatepress_reject_commission_on_trash_and_refund_edd
-         *
-         * @param  int $affiliatepress_order_id
-         * @param  string $affiliatepress_new_status
-         * @param  string $affiliatepress_old_status
-         * @return void
-         */
-        public function affiliatepress_reject_commission_on_trash_and_refund_edd( $affiliatepress_order_id, $affiliatepress_new_status, $affiliatepress_old_status  ) {
-
-            global $AffiliatePress,$affiliatepress_tbl_ap_affiliate_commissions,$affiliatepress_commission_debug_log_id;
-
-            if ( $affiliatepress_new_status == 'refunded'  || $affiliatepress_new_status == "partially_refunded" )
-            {
-                do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Commission Rejected ID ', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_order_id, $affiliatepress_commission_debug_log_id);
-
-                $affiliatepress_reject_commission_on_refund = $AffiliatePress->affiliatepress_get_settings('easy_digital_downloads_reject_commission_on_refund', 'integrations_settings');
-    
-                if($affiliatepress_reject_commission_on_refund == "false"){
-                    return;
-                }
-    
-                $affiliatepress_all_commissition_data = $AffiliatePress->affiliatepress_get_all_commission_by_order_and_source($affiliatepress_order_id, $this->affiliatepress_integration_slug);
-
-                if(!empty($affiliatepress_all_commissition_data)){
-
-                    foreach($affiliatepress_all_commissition_data as $affiliatepress_commissition_data){
-
-                        if(!empty($affiliatepress_commissition_data)){
-                
-                            $affiliatepress_ap_commission_status = (isset($affiliatepress_commissition_data['ap_commission_status']))? intval($affiliatepress_commissition_data['ap_commission_status']):0;
-                            $affiliatepress_ap_commission_id     = (isset($affiliatepress_commissition_data['ap_commission_id']))?intval($affiliatepress_commissition_data['ap_commission_id']):0;
-                            if($affiliatepress_ap_commission_status == 4){
-                                $affiliatepress_debug_log_msg = sprintf( 'Commission #%s could not be rejected because it was already paid.', $affiliatepress_ap_commission_id );
-                                continue;
-                            }
-        
-                            if($affiliatepress_ap_commission_id != 0){ 
-        
-                            $affiliatepress_update_commission_data = array(
-                                'ap_commission_updated_date' => current_time( 'mysql', true ),
-                                'ap_commission_status' 		 => 3
-                            );
-        
-                            $this->affiliatepress_update_record($affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_update_commission_data, array( 'ap_commission_id' => $affiliatepress_ap_commission_id ));
-        
-                            $affiliatepress_debug_log_msg = sprintf( 'Commission #%s successfully marked as rejected, after order #%s was refunded.', $affiliatepress_ap_commission_id, $affiliatepress_order_id );
-        
-                            do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Commission Reject ', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_debug_log_msg, $affiliatepress_commission_debug_log_id);
-                        
-                            }
-        
-                        }
-
-                    }
-
-                }
-    
-
-            
-            }
-    
-        }
-        
-        /**
-         * affiliatepress_reject_commission_on_delete_edd
-         *
-         * @param  int $affiliatepress_order_id
-         * @return void
-         */
-        function affiliatepress_reject_commission_on_delete_edd($affiliatepress_order_id)
-        {
-            global $AffiliatePress,$affiliatepress_tbl_ap_affiliate_commissions,$affiliatepress_commission_debug_log_id;
-
-            do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Commission Deleted ID ', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_order_id, $affiliatepress_commission_debug_log_id);
-
-            $affiliatepress_all_commissition_data = $AffiliatePress->affiliatepress_get_all_commission_by_order_and_source($affiliatepress_order_id, $this->affiliatepress_integration_slug);
-
-            if(!empty($affiliatepress_all_commissition_data)){
-
-                foreach($affiliatepress_all_commissition_data as $affiliatepress_commissition_data){
-
-                    if(!empty($affiliatepress_commissition_data)){
-            
-                        $affiliatepress_ap_commission_status = (isset($affiliatepress_commissition_data['ap_commission_status']))? intval($affiliatepress_commissition_data['ap_commission_status']):0;
-                        $affiliatepress_ap_commission_id     = (isset($affiliatepress_commissition_data['ap_commission_id']))?intval($affiliatepress_commissition_data['ap_commission_id']):0;
-                        if($affiliatepress_ap_commission_status == 4){
-                            $affiliatepress_debug_log_msg = sprintf( 'Commission #%s could not be rejected because it was already paid.', $affiliatepress_ap_commission_id );
-                            return;
-                        }
-        
-                        if($affiliatepress_ap_commission_id != 0){
-        
-                            $affiliatepress_update_commission_data = array(
-                                'ap_commission_updated_date' => current_time( 'mysql', true ),
-                                'ap_commission_status' 		 => 3
-                            );
-        
-                            $this->affiliatepress_update_record($affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_update_commission_data, array( 'ap_commission_id' => $affiliatepress_ap_commission_id ));
-        
-                            $affiliatepress_debug_log_msg = sprintf( 'Commission #%s successfully marked as rejected, after order #%s was deleted.', $affiliatepress_ap_commission_id, $affiliatepress_order_id );
-        
-                            do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Commission Reject ', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_debug_log_msg, $affiliatepress_commission_debug_log_id);
-                        
-                        }
-        
-                    }
-
-                }
-
-            }
-           
-        }
-
         function affiliatepress_commission_validation_func_edd($affiliatepress_commission_validation, $affiliatepress_affiliate_id, $affiliatepress_source, $affiliatepress_order_id, $affiliatepress_order){
 
             if($affiliatepress_source == $this->affiliatepress_integration_slug)
@@ -899,62 +775,6 @@ if( !class_exists('affiliatepress_edd') ){
                 
             }
         }  
-        
-        /**
-         * affiliatepress_reject_commission_on_failed_edd
-         *
-         * @param  int $affiliatepress_order_id
-         * @param  string $affiliatepress_new_status
-         * @param  string $affiliatepress_old_status
-         * @return void
-         */
-        function affiliatepress_reject_commission_on_failed_edd( $affiliatepress_order_id, $affiliatepress_new_status, $affiliatepress_old_status  ) {
-
-            global $AffiliatePress,$affiliatepress_tbl_ap_affiliate_commissions,$affiliatepress_commission_debug_log_id;
-    
-            if ( $affiliatepress_new_status == 'failed'  || $affiliatepress_new_status == "abandoned"  || $affiliatepress_new_status == "revoked"){
-                
-                $affiliatepress_all_commission_data = $AffiliatePress->affiliatepress_get_all_commission_by_order_and_source($affiliatepress_order_id, $this->affiliatepress_integration_slug);
-    
-                if(!empty($affiliatepress_all_commission_data)){
-
-                    foreach($affiliatepress_all_commission_data as $affiliatepress_commission_data){
-
-                        if(!empty($affiliatepress_commission_data)){
-                
-                            $affiliatepress_ap_commission_status = (isset($affiliatepress_commission_data['ap_commission_status']))?intval($affiliatepress_commission_data['ap_commission_status']):0;
-                            $affiliatepress_ap_commission_id     = (isset($affiliatepress_commission_data['ap_commission_id']))?intval($affiliatepress_commission_data['ap_commission_id']):0;
-                            if($affiliatepress_ap_commission_status == 4){
-                                $affiliatepress_debug_log_msg = sprintf( 'Commission #%s could not be rejected because it was already paid.', $affiliatepress_ap_commission_id );
-                                return;
-                            }
-                
-                            if($affiliatepress_ap_commission_id != 0){
-                
-                                $affiliatepress_update_commission_data = array(
-                                    'ap_commission_updated_date' => current_time( 'mysql', true ),
-                                    'ap_commission_status' 		 => 3
-                                );
-                
-                                $this->affiliatepress_update_record($affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_update_commission_data, array( 'ap_commission_id' => $affiliatepress_ap_commission_id ));
-                
-                                $affiliatepress_debug_log_msg = sprintf( 'Commission #%s successfully marked as rejected, after order #%s was failed.', $affiliatepress_ap_commission_id, $affiliatepress_order_id );
-                
-                                do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Commission Rejected', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_debug_log_msg, $affiliatepress_commission_debug_log_id);
-                            
-                            }
-                
-                        }
-
-                    }
-
-                }
-
-
-                
-            }
-            
-        }
 
     }
 

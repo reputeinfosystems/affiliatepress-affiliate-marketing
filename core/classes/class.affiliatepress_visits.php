@@ -377,7 +377,7 @@ if (! class_exists('affiliatepress_visits') ) {
                 const vm = this
                 vm.$refs.multipleTable.toggleRowExpansion(row);
             },      
-            affiliatepress_get_affiliate_user_details(affiliate_id,user_id){
+           affiliatepress_get_affiliate_user_details(affiliate_id,user_id){
                 const vm = this;
                 vm.userPopoverVisible = "true";
                 vm.is_get_user_data_loader = "1";
@@ -388,14 +388,20 @@ if (! class_exists('affiliatepress_visits') ) {
                 postData._wpnonce = "'.esc_html(wp_create_nonce("ap_wp_nonce")).'"
                 axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify( postData ) )
                 .then( function (response) {
-                    if(response.data.variant == "success"){
+                    if(response.data.variant == "success" && response.data.affiliate_data != ""){
                         vm.is_get_user_data_loader = "0";
                         vm.affiliate_user_details.affiliate_user_name = response.data.affiliate_data.affiliate_user_name;
                         vm.affiliate_user_details.affiliate_user_email = response.data.affiliate_data.affiliate_user_email;
                         vm.affiliate_user_details.affiliate_user_full_name = response.data.affiliate_data.affiliate_user_full_name;
                         vm.affiliate_user_details.affiliate_user_edit_link = response.data.affiliate_data.affiliate_user_edit_link;
+                        vm.show_user_details = "1";
                         '.$affiliatepress_response_add_user_details.'
-                    }else{
+                    }else if(response.data.variant == "success" && response.data.affiliatepress_wordpress_user_delete != ""){
+                        vm.is_get_user_data_loader = "0";
+                        vm.affiliatepress_wordpress_user_delete = response.data.affiliatepress_wordpress_user_delete;
+                        vm.show_user_details = "0";
+                    }
+                    else{
                         vm.is_get_user_data_loader = "0";     
                         vm.$notify({
                             title: response.data.title,
@@ -417,7 +423,7 @@ if (! class_exists('affiliatepress_visits') ) {
                             duration:'.intval($affiliatepress_notification_duration).',  
                     });
                 });
-            },     
+            },               
             editUserclosePopover(){
                 const vm = this;
                 vm.userPopoverVisible = false;
@@ -531,7 +537,8 @@ if (! class_exists('affiliatepress_visits') ) {
                     'affiliate_user_full_name'=> '',
                     'affiliate_user_edit_link' => '',
                 ),
-
+                'affiliatepress_wordpress_user_delete'=>'',
+                'show_user_details' => '1',
             );
         }
 

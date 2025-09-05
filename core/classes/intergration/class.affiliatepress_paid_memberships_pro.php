@@ -269,9 +269,8 @@ if( !class_exists('affiliatepress_paid_memberships_pro') ){
                 }
 
             }
-            $affiliatepress_paid_memberships_pro_reject_commission_on_refund = $AffiliatePress->affiliatepress_get_settings('paid_memberships_pro_reject_commission_on_refund', 'integrations_settings');
 
-           if(in_array($affiliatepress_order_status,array( 'token', 'error', 'review', 'pending' ), true ) || ($affiliatepress_order_status == 'refunded' && $affiliatepress_paid_memberships_pro_reject_commission_on_refund == "true")){
+           if(in_array($affiliatepress_order_status,array( 'token', 'error', 'review', 'pending' ), true )){
                 
                 $affiliatepress_all_commission_data = $AffiliatePress->affiliatepress_get_all_commission_by_order_and_source($affiliatepress_order_id, $this->affiliatepress_integration_slug);
 
@@ -286,35 +285,21 @@ if( !class_exists('affiliatepress_paid_memberships_pro') ){
                                 $affiliatepress_debug_log_msg = sprintf( 'Commission #%s could not be rejected because it was already paid.', $affiliatepress_ap_commission_id );
                                 return;                        
                             }else{
+                                if($affiliatepress_ap_commission_status != 2 && in_array($affiliatepress_order_status,array('token','error','review','pending'))){
         
-                                if($affiliatepress_order_status == 'refunded'){
-                                    
                                     $affiliatepress_commission_data = array(
                                         'ap_commission_updated_date' => current_time( 'mysql', true ),
-                                        'ap_commission_status' 		 => 3
-                                    );
+                                        'ap_commission_status' 		 => 2
+                                    ); 
+        
                                     $this->affiliatepress_update_record($affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_commission_data, array( 'ap_commission_id' => $affiliatepress_ap_commission_id ));
-                                    $affiliatepress_debug_log_msg = sprintf( 'WOO: Commission #%s successfully marked as rejected, after order #%s failed or was cancelled.', $affiliatepress_ap_commission_id, $affiliatepress_order_id );
+                                    $affiliatepress_debug_log_msg = sprintf('Pending commission #%s successfully marked as completed.', $affiliatepress_ap_commission_id );                               
         
+                                    do_action('affiliatepress_after_commissions_status_change',$affiliatepress_ap_commission_id,$affiliatepress_ap_commission_status,2);
+                    
                                     do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Commission Approve ', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_debug_log_msg, $affiliatepress_commission_debug_log_id);
-        
-                                }else{
-                                    if($affiliatepress_ap_commission_status != 2 && in_array($affiliatepress_order_status,array('token','error','review','pending'))){
-        
-                                        $affiliatepress_commission_data = array(
-                                            'ap_commission_updated_date' => current_time( 'mysql', true ),
-                                            'ap_commission_status' 		 => 2
-                                        ); 
-        
-                                        $this->affiliatepress_update_record($affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_commission_data, array( 'ap_commission_id' => $affiliatepress_ap_commission_id ));
-                                        $affiliatepress_debug_log_msg = sprintf('Pending commission #%s successfully marked as completed.', $affiliatepress_ap_commission_id );                               
-        
-                                        do_action('affiliatepress_after_commissions_status_change',$affiliatepress_ap_commission_id,$affiliatepress_ap_commission_status,2);
-                    
-                                        do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Commission Approve ', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_debug_log_msg, $affiliatepress_commission_debug_log_id);
                     
         
-                                    }
                                 }
                             }
         

@@ -31,6 +31,8 @@ if (! class_exists('affiliatepress_notifications') ) {
             /* Get Notifications */
             add_action('wp_ajax_affiliatepress_get_email_notification_data', array( $this, 'affiliatepress_get_email_notification_data' ), 10);
 
+            add_action('wp_ajax_affiliatepress_email_notification_status', array( $this, 'affiliatepress_get_all_email_notification_status' ), 10);
+
             /* Save Email Notifications */
             add_action('wp_ajax_affiliatepress_save_email_notification_data', array( $this, 'affiliatepress_save_email_notification_data' ), 10);
 
@@ -99,19 +101,19 @@ if (! class_exists('affiliatepress_notifications') ) {
                 $affiliatepress_ap_notification_message  = ! empty($_POST['ap_notification_message']) ? wp_kses($_POST['ap_notification_message'], $affiliatepress_allow_tag) : '';// phpcs:ignore
                 
                 $affiliatepress_ap_notification_message  = htmlspecialchars_decode(stripslashes_deep($affiliatepress_ap_notification_message));
-                $affiliatepress_ap_notification_status   = (!empty($_POST['ap_notification_status'])) ? sanitize_text_field($_POST['ap_notification_status']) : 0;// phpcs:ignore
-                if($affiliatepress_ap_notification_status == 'true'){
-                    $affiliatepress_ap_notification_status = 1;
-                } else {
-                    $affiliatepress_ap_notification_status = 0;
-                }
+
+                $affiliatepress_email_notification_status = ! empty($_REQUEST['ap_notification_status'][ $affiliatepress_ap_notification_receiver_type ][ $affiliatepress_ap_notification_slug ]) ? sanitize_text_field($_REQUEST['ap_notification_status'][ $affiliatepress_ap_notification_receiver_type ][ $affiliatepress_ap_notification_slug ]) : '';
+
+                $affiliatepress_notification_status = ($affiliatepress_email_notification_status == "true") ? 1 : 0;
+                
                 $affiliatepress_database_modify_data = array(
                     'ap_notification_receiver_type'           => $affiliatepress_ap_notification_receiver_type,                    
-                    'ap_notification_status'                  => $affiliatepress_ap_notification_status,
+                    'ap_notification_status'                  => $affiliatepress_notification_status,
                     'ap_notification_subject'                 => $affiliatepress_ap_notification_subject,
                     'ap_notification_message'                 => $affiliatepress_ap_notification_message,
                     'ap_notification_updated_at'              => current_time('mysql'),
                 );
+
                 $affiliatepress_database_modify_data = apply_filters('affiliatepress_save_email_notification_data_filter', $affiliatepress_database_modify_data);// phpcs:ignore
                 $affiliatepress_if_notification_exists = intval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_notifications, 'COUNT(ap_notification_id)', ' WHERE ap_notification_slug = %s AND ap_notification_receiver_type = %s', array( $affiliatepress_ap_notification_slug, $affiliatepress_ap_notification_receiver_type), '', '', '', true, false,ARRAY_A));
 
@@ -141,10 +143,117 @@ if (! class_exists('affiliatepress_notifications') ) {
          */
         function affiliatepress_notifications_dynamic_on_load_methods_func($affiliatepress_notifications_dynamic_on_load_methods){
             $affiliatepress_notifications_dynamic_on_load_methods.='
-                this.affiliatepress_select_email_notification("affiliate_account_pending", "affiliate");            
+                this.affiliatepress_select_email_notification("affiliate_account_pending", "affiliate");  
+                this.affiliatepress_get_all_email_notification_status()          
             ';
             return $affiliatepress_notifications_dynamic_on_load_methods;
-        }        
+        }     
+        
+        function affiliatepress_get_all_email_notification_status(){
+            global $wpdb, $affiliatepress_tbl_ap_notifications, $AffiliatePress,$affiliatepress_global_options;
+
+            $affiliatepress_ap_check_authorization = $this->affiliatepress_ap_check_authentication( 'retrieve_email_notification', true, 'ap_wp_nonce' );
+            $response = array();
+            $response['variant'] = 'error';
+            $response['title']   = esc_html__( 'Error', 'affiliatepress-affiliate-marketing');
+            $response['msg']     = esc_html__( 'Something Wrong', 'affiliatepress-affiliate-marketing');
+            $response['return_data']            = array();
+
+            if( preg_match( '/error/', $affiliatepress_ap_check_authorization ) ){
+                $affiliatepress_auth_error = explode( '^|^', $affiliatepress_ap_check_authorization );
+                $affiliatepress_error_msg = !empty( $affiliatepress_auth_error[1] ) ? $affiliatepress_auth_error[1] : esc_html__( 'Sorry. Something went wrong while processing the request', 'affiliatepress-affiliate-marketing');
+                $response['variant'] = 'error';
+                $response['title'] = esc_html__( 'Error', 'affiliatepress-affiliate-marketing');
+                $response['msg'] = $affiliatepress_error_msg;
+                wp_send_json( $response );
+                die;
+            }
+
+            if(!current_user_can('affiliatepress_notifications')){
+                $affiliatepress_error_msg = esc_html__( 'Sorry, you do not have permission to perform this action.', 'affiliatepress-affiliate-marketing');
+                $response['variant'] = 'error';
+                $response['title'] = esc_html__( 'Error', 'affiliatepress-affiliate-marketing');
+                $response['msg'] = $affiliatepress_error_msg; 
+                wp_send_json( $response );
+                die;                
+            }
+            
+            $affiliatepress_wpnonce = isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '';// phpcs:ignore
+            $affiliatepress_ap_verify_nonce_flag = wp_verify_nonce($affiliatepress_wpnonce, 'ap_wp_nonce');
+            if (! $affiliatepress_ap_verify_nonce_flag ) {
+                $response['variant']        = 'error';
+                $response['title']          = esc_html__('Error', 'affiliatepress-affiliate-marketing');
+                $response['msg']            = esc_html__('Sorry, Your request can not be processed due to security reason.', 'affiliatepress-affiliate-marketing');
+                echo wp_json_encode($response);
+                exit;
+            }     
+            
+            $affiliatepress_email_notification_status['admin'] = array(
+                'affiliate_account_pending' => true,
+                'affiliate_account_approved'  => true,
+                'affiliate_account_rejected' => true,
+                'commission_registered' => true,
+                'commission_approved' => true,
+                'affiliate_payment_paid' => true,
+                'affiliate_payment_failed'=> true,
+            );
+            $affiliatepress_email_notification_status['affiliate'] = array(
+                'affiliate_account_pending' => true,
+                'affiliate_account_approved'  => true,
+                'affiliate_account_rejected' => true,
+                'commission_registered' => true,
+                'commission_approved' => true,
+                'affiliate_payment_paid' => true,
+                'affiliate_payment_failed'=> true,
+            );
+
+            $affiliatepress_default_notification_data = $this->affiliatepress_get_default_notifications();
+
+            foreach ( $affiliatepress_default_notification_data as $affiliatepress_default_notification_key => $affiliatepress_default_notification_val ) {
+                $affiliatepress_notification_value         = ( $affiliatepress_default_notification_val['ap_notification_status'] == 1 ) ? true : false;
+                $affiliatepress_notification_receiver_type = $affiliatepress_default_notification_val['ap_notification_receiver_type'];
+
+                switch ( $affiliatepress_default_notification_val['ap_notification_slug'] ) {
+                    case 'affiliate_account_pending':
+                        $affiliatepress_email_notification_status[ $affiliatepress_notification_receiver_type ]['affiliate_account_pending'] = $affiliatepress_notification_value;
+                        break;
+                    case 'affiliate_account_approved':
+                        $affiliatepress_email_notification_status[ $affiliatepress_notification_receiver_type ]['affiliate_account_approved'] = $affiliatepress_notification_value;
+                        break;
+                    case 'affiliate_account_rejected':
+                        $affiliatepress_email_notification_status[ $affiliatepress_notification_receiver_type ]['affiliate_account_rejected'] = $affiliatepress_notification_value;
+                        break;
+                    case 'commission_registered':
+                        $affiliatepress_email_notification_status[ $affiliatepress_notification_receiver_type ]['commission_registered'] = $affiliatepress_notification_value;
+                        break;
+                    case 'commission_approved':
+                        $affiliatepress_email_notification_status[ $affiliatepress_notification_receiver_type ]['commission_approved'] = $affiliatepress_notification_value;
+                        break;
+                    case 'affiliate_payment_paid':
+                        $affiliatepress_email_notification_status[ $affiliatepress_notification_receiver_type ]['affiliate_payment_paid'] = $affiliatepress_notification_value;
+                        break;
+                    case 'affiliate_payment_failed':
+                        $affiliatepress_email_notification_status[ $affiliatepress_notification_receiver_type ]['affiliate_payment_failed'] = $affiliatepress_notification_value;
+                        break;
+                }
+            }
+
+            $affiliatepress_email_notification_status = apply_filters('add_affiliatepress_email_notification_status', $affiliatepress_email_notification_status, $affiliatepress_default_notification_data);
+            echo wp_json_encode($affiliatepress_email_notification_status);
+            exit();
+        }
+
+        /**
+     * Get all default notifications
+     *
+     * @return void
+     */
+    function affiliatepress_get_default_notifications()
+    {
+        global $wpdb, $affiliatepress_tbl_ap_notifications;
+        $affiliatepress_default_notifications_data = $wpdb->get_results("SELECT * FROM {$affiliatepress_tbl_ap_notifications} WHERE ap_notification_is_custom = 0", ARRAY_A);// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_notifications is table name defined globally. False Positive alarm
+        return $affiliatepress_default_notifications_data;
+    }
       
         
         /**
@@ -190,7 +299,7 @@ if (! class_exists('affiliatepress_notifications') ) {
                 $response['msg']            = esc_html__('Sorry, Your request can not be processed due to security reason.', 'affiliatepress-affiliate-marketing');
                 echo wp_json_encode($response);
                 exit;
-            }            
+            }
 
             $affiliatepress_notification_slug = (isset($_REQUEST['ap_notification_slug']) && !empty($_REQUEST['ap_notification_slug'])) ? sanitize_text_field($_REQUEST['ap_notification_slug']) : '';// phpcs:ignore
             $affiliatepress_notification_receiver_type = (isset($_REQUEST['ap_notification_receiver_type']) && !empty($_REQUEST['ap_notification_receiver_type'])) ? sanitize_text_field($_REQUEST['ap_notification_receiver_type']) : '';// phpcs:ignore
@@ -338,12 +447,7 @@ if (! class_exists('affiliatepress_notifications') ) {
                     const affiliatepress_return_notification_data = response.data.return_data;                        
                     if(response.data.variant == "success" && affiliatepress_return_notification_data.length != 0){
                         var oldvalue = vm.ap_first_page_loaded;
-                        vm.ap_first_page_loaded = "0";        
-                        if(affiliatepress_return_notification_data.ap_notification_status == "1" || affiliatepress_return_notification_data.ap_notification_status == 1){
-                            vm.affiliatepress_email_notification_status = true;
-                        }else{
-                            vm.affiliatepress_email_notification_status = false;
-                        }
+                        vm.ap_first_page_loaded = "0";  
                         vm.affiliatepress_email_notification_subject = affiliatepress_return_notification_data.ap_notification_subject;
                         var affiliatepress_email_notification_msg = affiliatepress_return_notification_data.ap_notification_message;  
                                              
@@ -366,7 +470,18 @@ if (! class_exists('affiliatepress_notifications') ) {
                     });
                 });           
             },  
-            ';
+            affiliatepress_get_all_email_notification_status(){
+                const vm = this;  
+                var postData = { action:"affiliatepress_email_notification_status", _wpnonce:"'.esc_html(wp_create_nonce('ap_wp_nonce')).'" };
+                axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify( postData ) )
+                .then(function(response){                                               
+                    vm.affiliatepress_email_notification_status = response.data
+                }.bind(this))
+                .catch( function (error) {
+                    console.log(error);
+                });                      
+            },
+        ';
 
             return $affiliatepress_notifications_dynamic_vue_methods;
  
@@ -411,7 +526,26 @@ if (! class_exists('affiliatepress_notifications') ) {
                 'activeTabName'                                   => 'affiliate',
                 'affiliatepress_email_notification_edit_text'     => '',
                 'affiliatepress_email_notification_subject'       => '',
-                'affiliatepress_email_notification_status'        => false,              
+                'affiliatepress_email_notification_status'        => array(
+                    'admin' => array(
+                        'affiliate_account_pending' => true,
+                        'affiliate_account_approved'  => true,
+                        'affiliate_account_rejected' => true,
+                        'commission_registered' => true,
+                        'commission_approved' => true,
+                        'affiliate_payment_paid' => true,
+                        'affiliate_payment_failed'=> true,
+                    ),
+                    'affiliate' => array(
+                        'affiliate_account_pending' => true,
+                        'affiliate_account_approved'  => true,
+                        'affiliate_account_rejected' => true,
+                        'commission_registered' => true,
+                        'commission_approved' => true,
+                        'affiliate_payment_paid' => true,
+                        'affiliate_payment_failed'=> true,
+                    ),
+                ),                       
                 'affiliatepress_affiliate_placeholders'           => $affiliatepress_placeholders,                
                 'affiliatepress_commission_placeholders'          => $affiliatepress_commission_placeholders,
                 'affiliatepress_payment_placeholders'             => $affiliatepress_payment_placeholders,

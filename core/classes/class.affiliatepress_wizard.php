@@ -365,7 +365,7 @@ if (! class_exists('affiliatepress_wizard') ) {
          * @return json
          */
         function affiliatepress_skip_wizard_func(){
-			global $wpdb;
+			global $wpdb,$AffiliatePress;
 			$response              = array();
             $affiliatepress_wpnonce               = isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '';// phpcs:ignore
             $affiliatepress_verify_nonce_flag = wp_verify_nonce($affiliatepress_wpnonce, 'ap_wp_nonce');
@@ -386,6 +386,7 @@ if (! class_exists('affiliatepress_wizard') ) {
                 die;                
             }
 
+            $AffiliatePress->affiliatepress_update_all_auto_load_settings();
 			update_option('affiliatepress_lite_wizard_complete', 1);
 
 			$response['variant']        = 'success';

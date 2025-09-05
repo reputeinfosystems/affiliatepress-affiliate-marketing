@@ -649,7 +649,7 @@ if (! class_exists('affiliatepress_global_options') ) {
             );
 
             $affiliatepress_all_plugin_integration[] = array(
-                'plugin_name'   => esc_html__('Learn Dash', 'affiliatepress-affiliate-marketing'),
+                'plugin_name'   => esc_html__('LearnDash', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'  => 'learndash',
                 'plugin_status' => 1,
             );    

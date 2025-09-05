@@ -5,19 +5,17 @@ Donate link: https://www.affiliatepressplugin.com/
 Requires at least: 5.3.0
 Tested up to: 6.8.2
 Requires PHP: 7.0
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-AffiliatePress is an effortless WordPress plugin to create & manage affiliate programs, track links, and monitor commissions easily within WordPress.
-
 == Description ==
 
-**AffiliatePress is an effortless WordPress plugin to create & manage affiliate programs, track links, and monitor commissions easily within WordPress.**
+**AffiliatePress is Reliable WordPress Affiliate Plugin to create & manage affiliate programs effortlessly, track traffic and set commissions rules easily within WordPress.**
 
-Are you ready to scale your business with Affiliates? Then AffiliatePress is the perfect solution for you. Power up your marketing game by employing Affiliates and pay only on making a conversion or sale. This Affiliate Program Management plugin will streamline and help you with effortless management! 
+Are you ready to scale your business with Affiliates? Then AffiliatePress is the perfect solution for you. Power up your marketing game by employing Affiliates and pay only on making a conversion or sale. AffiliatePress Affiliate Program Management plugin will streamline and help you with effortless management! 
 
-This feature-rich WordPress Plugin is designed with a user-friendly interface for both, business and its affiliates. Customize affiliate links to have a clear distinction between each affiliate. You can easily manage all affiliates from one place by tracking their performance on your Dashboard. 
+This feature-rich WordPress Affiliate Plugin is designed with a user-friendly interface for both, business and its affiliates. Customize affiliate links to have a clear distinction between each affiliate. You can easily manage all affiliates from one place by tracking their performance on your Dashboard. 
 
 Allow Affiliates to have their custom panel to log in and check their progress. They can have a personalized view of their profile, track conversions, and calculate commissions. All from a single, dedicated space. 
 
@@ -26,22 +24,22 @@ Upload unlimited creatives for affiliates to enhance their marketing communicati
 
 **Why AffiliatePress will be the Game changer for you?**
 
-AffiliatePress is the only free affiliate plugin that provides 13+ integration totally free to use.
+AffiliatePress is the only free WordPress affiliate plugin that provides 24+ integration totally free to use.
 
-With AffiliatePress, you get to utilize the features of 13+ integrations, totally free! How? By downloading the Lite Version of AffiliatePress. From form management to memberships, this tool is a game changer with its powerful integrations. 
+With AffiliatePress, you get to utilize the features of 24+ integrations, totally free! How? By downloading the Lite Version of AffiliatePress. From form management to memberships, this tool is a game changer with its powerful integrations. 
 
 
 ###AffiliatePress Affiliate Plugin — Features ✔️
 
 **Unlimited affiliates** —  Expand your Affiliate Network without any restrictions by allowing an unlimited number of affiliates into your program.
 
+**Multiple Commission Rule** —  Set multiple commission rule for Affiliate program which suits your business practice, like recurring commission, tiered commission and many more 
+
 **Affiliate Approve Process** —  Conduct a thorough review before manually approving each affiliate to ensure the quality of the people who promote your products and services.
 
 **Auto Approve Affiliate** —  Set up Auto Approve for seamless affiliate onboarding to save your time and effort. This eliminates friction at any point in the process.
 
 **Custom Affiliate Promotional Link** —  Create unique, customizable, and personalized links for affiliates to easily track products, progress, and conversions.
-
-**Affiliate Own Commission** —  Allow Affiliates to set their own commissions while promoting your products/services. This enables flexible performance-based earning potential.
 
 **Affiliate Email Notification** —  Send automated emails to affiliates about their commission status and track promotional activities.
 
@@ -62,20 +60,42 @@ With AffiliatePress, you get to utilize the features of 13+ integrations, totall
 
 **AffiliatePress integrates with some popular plugins. It integrates with:**
 
+For More Details Visit https://www.affiliatepressplugin.com/
+
+###E-Commerce
 * WooCommerce
-* Easy Digital Downloads
-* ARMember
-* MemberPress
 * SureCart
-* Restrict Content Pro
+* Easy Digital Downloads (EDD)
 * WP EasyCart
-* LifterLMS
-* Simple Membership
+
+###Membership
+* ARMember - WordPress Membership Plugin
+* MemberPress
 * Paid Memberships Pro
+* Ultimate Membership Pro
+* Restrict Content Pro
+* Simple Membership
 * Paid Member Subscriptions
-* GiveWP
+
+###LMS (Learning Management Systems)
+* LearnDash
+* LifterLMS
+* Masteriyo LMS
+* LearnPress
+
+###Form Builders
+* ARForms
 * Ninja Forms
-* Wp Forms
+* WPForms
+* Gravity Forms
+
+###Others / Additional Integrations
+* BookingPress
+* GiveWP 
+* WP Simple Pay 
+* GetPaid 
+* Accept Stripe Payments
+* Download Manager
 
 
 == Installation ==
@@ -108,6 +128,9 @@ Please follow the steps for installation:
 1. AffiliatePress – WordPress Affiliate Plugin
 
 == Changelog ==
+
+= 1.0.2 =
+* Minor bug fixes.
 
 = 1.0.1 =
 * Fixed: Commission not adding from WooCommerce product Purchase directly from Add to cart page.

@@ -29,12 +29,6 @@ if( !class_exists('affiliatepress_easycart') ){
                 /**Add Approved Commisison */
                 add_action( 'wpeasycart_order_paid', array( $this, 'affiliatepress_mark_referral_complete_easycart' ), 10 );
 
-                /**Add Reject Commisison on Refund */
-                add_action( 'wpeasycart_full_order_refund', array( $this, 'affiliatepress_revoke_referral_on_refund_easycart' ), 10 );
-
-                /**Add Reject Commisison after status chnage */
-                add_action( 'wpeasycart_order_status_update', array( $this, 'affiliatepress_reject_commission_status_changes_easycart' ), 10 ,2 );
-
                 /**Add Pending Commisison after status chnage */
                 add_action( 'wpeasycart_order_status_update', array( $this, 'affiliatepress_pending_commission_on_status_change_easycart' ), 10 ,2 );
 
@@ -654,121 +648,6 @@ if( !class_exists('affiliatepress_easycart') ){
 
 
         }
-
-        /**
-         * Revoke the referral when the order is refunded
-         *
-         * @param  int $affiliatepress_order_id
-         * @return void
-         */
-        public function affiliatepress_revoke_referral_on_refund_easycart( $affiliatepress_order_id  ) {
-
-            global $AffiliatePress,$affiliatepress_tbl_ap_affiliate_commissions,$affiliatepress_commission_debug_log_id;
-
-            $affiliatepress_reject_commission_on_refund = $AffiliatePress->affiliatepress_get_settings('wp_easycart_reject_commission_on_refund', 'integrations_settings');
-
-            if($affiliatepress_reject_commission_on_refund == "false"){
-                return;
-            }
-
-            $affiliatepress_order_id = !empty($affiliatepress_order_id) ? $affiliatepress_order_id : 0;
-
-            $affiliatepress_all_commissition_data = $AffiliatePress->affiliatepress_get_all_commission_by_order_and_source($affiliatepress_order_id, $this->affiliatepress_integration_slug);
-
-            if(!empty($affiliatepress_all_commissition_data)){
-
-                foreach($affiliatepress_all_commissition_data as $affiliatepress_commissition_data){
-
-                    if(!empty($affiliatepress_commissition_data)){
-                        $affiliatepress_ap_commission_status = (isset($affiliatepress_commissition_data['ap_commission_status']))? intval($affiliatepress_commissition_data['ap_commission_status']):0;
-                        $affiliatepress_ap_commission_id     = (isset($affiliatepress_commissition_data['ap_commission_id']))?intval($affiliatepress_commissition_data['ap_commission_id']):0;
-                        if($affiliatepress_ap_commission_status == 4){
-                            $affiliatepress_debug_log_msg = sprintf( 'Commission #%s could not be rejected because it was already paid.', $affiliatepress_ap_commission_id );
-                            continue;
-                        }
-                        if($affiliatepress_ap_commission_id != 0){
-        
-                            $affiliatepress_commission_data = array(
-                                'ap_commission_updated_date' => current_time( 'mysql', true ),
-                                'ap_commission_status' 		 => 3
-                            );
-                            $this->affiliatepress_update_record($affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_commission_data, array( 'ap_commission_id' => $affiliatepress_ap_commission_id ));
-                            $affiliatepress_debug_log_msg = sprintf( 'Commission #%s successfully marked as rejected, after order #%s was refunded.', $affiliatepress_ap_commission_id, $affiliatepress_order_id );
-        
-                            do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Commission Reject ', 'affiliatepress_easycart_commission_tracking', $affiliatepress_debug_log_msg, $affiliatepress_commission_debug_log_id);
-        
-                        }
-                    }
-
-                }
-
-            }
-
-        }
-        
-        /**
-         * Function For Chnage status Easycart
-         *
-         * @param  int $affiliatepress_order_id
-         * @param  int $affiliatepress_orderstatus_id
-         * @return void
-         */
-        function affiliatepress_status_changes_easycart(  $affiliatepress_order_id, $affiliatepress_orderstatus_id)
-        {
-
-            global $AffiliatePress,$affiliatepress_tbl_ap_affiliate_commissions,$affiliatepress_commission_debug_log_id;
-
-            $affiliatepress_order_id = !empty($affiliatepress_order_id) ? intval($affiliatepress_order_id) : 0;
-
-            if ($affiliatepress_orderstatus_id != '16' && $affiliatepress_orderstatus_id != '17' && $affiliatepress_orderstatus_id != '19') {
-                return; 
-            }
-
-            $affiliatepress_reject_commission_on_refund = $AffiliatePress->affiliatepress_get_settings('wp_easycart_reject_commission_on_refund', 'integrations_settings');
-
-            if ($affiliatepress_orderstatus_id == '16' || $affiliatepress_orderstatus_id == '17') {
-                if ($affiliatepress_reject_commission_on_refund === "false") {
-                    return;
-                }
-            }
-
-            $affiliatepress_all_commissition_data = $AffiliatePress->affiliatepress_get_all_commission_by_order_and_source($affiliatepress_order_id, $this->affiliatepress_integration_slug);
-
-            if(!empty($affiliatepress_all_commissition_data)){
-
-                foreach($affiliatepress_all_commissition_data as $affiliatepress_commissition_data){
-
-                    if(!empty($affiliatepress_commissition_data)){
-
-                        $affiliatepress_ap_commission_status = (isset($affiliatepress_commissition_data['ap_commission_status']))?intval($affiliatepress_commissition_data['ap_commission_status']):'';
-                        $affiliatepress_ap_commission_id     = (isset($affiliatepress_commissition_data['ap_commission_id']))?intval($affiliatepress_commissition_data['ap_commission_id']):'';
-        
-                        if($affiliatepress_ap_commission_status == 4){
-                            $affiliatepress_debug_log_msg = sprintf( 'Commission #%s could not be rejected because it was already paid.', $affiliatepress_ap_commission_id );
-                            continue;
-                        }
-                        if($affiliatepress_ap_commission_id != 0){
-        
-                            $affiliatepress_commission_data = array(
-                                'ap_commission_updated_date' => current_time( 'mysql', true ),
-                                'ap_commission_status' 		 => 3
-                            );
-                            $this->affiliatepress_update_record($affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_commission_data, array( 'ap_commission_id' => $affiliatepress_ap_commission_id ));
-                            $affiliatepress_debug_log_msg = sprintf( 'Commission #%s successfully marked as rejected, after order #%s was refunded.', $affiliatepress_ap_commission_id, $affiliatepress_order_id );
-        
-                            do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Commission Reject ', 'affiliatepress_easycart_commission_tracking', $affiliatepress_debug_log_msg, $affiliatepress_commission_debug_log_id);
-        
-                        }
-
-                    }
-
-                }
-
-            }
-
-
-
-        }
         
         /**
          * Function For Check Plugin Active
@@ -925,67 +804,7 @@ if( !class_exists('affiliatepress_easycart') ){
             }
         }
         
-        /**
-         * Function For Add Reject Commission
-         *
-         * @param  int $affiliatepress_order_id
-         * @param  int $affiliatepress_orderstatus_id
-         * @return void
-         */
-        function affiliatepress_reject_commission_status_changes_easycart(  $affiliatepress_order_id, $affiliatepress_orderstatus_id)
-        {
-
-            global $AffiliatePress,$affiliatepress_tbl_ap_affiliate_commissions,$affiliatepress_commission_debug_log_id;
-
-            $affiliatepress_order_id = !empty($affiliatepress_order_id) ? $affiliatepress_order_id : 0;
-
-            if ($affiliatepress_orderstatus_id != '16' && $affiliatepress_orderstatus_id != '17' && $affiliatepress_orderstatus_id != '19') {
-                return; 
-            }
-
-            $affiliatepress_reject_commission_on_refund = $AffiliatePress->affiliatepress_get_settings('wp_easycart_reject_commission_on_refund', 'integrations_settings');
-
-            if ($affiliatepress_orderstatus_id == '16' || $affiliatepress_orderstatus_id == '17') {
-                if ($affiliatepress_reject_commission_on_refund === "false") {
-                    return;
-                }
-            }
-
-            $affiliatepress_all_commissition_data = $AffiliatePress->affiliatepress_get_all_commission_by_order_and_source($affiliatepress_order_id, $this->affiliatepress_integration_slug);
-
-            if(!empty($affiliatepress_all_commissition_data)){
-
-                foreach($affiliatepress_all_commissition_data as $affiliatepress_commissition_data){
-
-                    if(!empty($affiliatepress_commissition_data)){
-
-                        $affiliatepress_ap_commission_status = (isset($affiliatepress_commissition_data['ap_commission_status']))?$affiliatepress_commissition_data['ap_commission_status']:'';
-                        $affiliatepress_ap_commission_id     = (isset($affiliatepress_commissition_data['ap_commission_id']))?$affiliatepress_commissition_data['ap_commission_id']:'';
-        
-                        if($affiliatepress_ap_commission_status == 4){
-                            $affiliatepress_debug_log_msg = sprintf( 'Commission #%s could not be rejected because it was already paid.', $affiliatepress_ap_commission_id );
-                            continue;
-                        }
-                        if($affiliatepress_ap_commission_id != 0){
-        
-                            $affiliatepress_commission_data = array(
-                                'ap_commission_updated_date' => current_time( 'mysql', true ),
-                                'ap_commission_status' 		 => 3
-                            );
-                            $this->affiliatepress_update_record($affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_commission_data, array( 'ap_commission_id' => $affiliatepress_ap_commission_id ));
-                            $affiliatepress_debug_log_msg = sprintf( 'Commission #%s successfully marked as rejected, after order #%s was refunded.', $affiliatepress_ap_commission_id, $affiliatepress_order_id );
-        
-                            do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Commission Reject ', 'affiliatepress_easycart_commission_tracking', $affiliatepress_debug_log_msg, $affiliatepress_commission_debug_log_id);
-        
-                        }
-                    }
-
-                }
-
-            }
-
-
-        }
+       
 
     }
 }

@@ -73,7 +73,7 @@
                                 <?php
                                     $affiliatepress_tab_menu = "";
                                     $affiliatepress_tab_menu = apply_filters( 'affiliatepress_extra_tab_menu_labels', $affiliatepress_tab_menu );
-                                    echo $affiliatepress_tab_menu;
+                                    echo $affiliatepress_tab_menu;//phpcs:ignore
                                 ?>
                             </el-row>
                         </div>
@@ -396,7 +396,7 @@
                                 <?php
                                     $affiliatepress_link_tab = "";
                                     $affiliatepress_link_tab = apply_filters( 'affiliatepress_extra_add_link_tab_labels', $affiliatepress_link_tab );
-                                    echo $affiliatepress_link_tab;
+                                    echo $affiliatepress_link_tab;//phpcs:ignore
                                 ?>
                             </el-row>
                         </div>
@@ -663,7 +663,7 @@
                                 <?php
                                     $affiliatepress_paymnet_tab = "";
                                     $affiliatepress_paymnet_tab = apply_filters( 'affiliatepress_extra_add_paymnet_tab_labels', $affiliatepress_paymnet_tab );
-                                    echo $affiliatepress_paymnet_tab;
+                                    echo $affiliatepress_paymnet_tab;//phpcs:ignore
                                 ?>
                             </el-row>
                         </div>
@@ -1039,7 +1039,7 @@
                     <?php
                         $affiliatepress_tab = "";
                         $affiliatepress_tab = apply_filters( 'affiliatepress_extra_tab_add_labels', $affiliatepress_tab );
-                        echo $affiliatepress_tab;
+                        echo $affiliatepress_tab;//phpcs:ignore
                     ?>   
                     <div class="ap-settings-new-section"></div> 
                     <div class="ap-gs__cb--item">

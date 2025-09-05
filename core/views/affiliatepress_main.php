@@ -266,19 +266,14 @@
              <div class="ap-utp-comparison-btns">
                 <h4><?php esc_html_e('Checkout the Complete Comparison', 'affiliatepress-affiliate-marketing'); ?></h4>
                 <div class="ap-upt-fancy-cb__wrap">
-                    <el-button class="ap-btn--primary" plain type="primary" @click="affiliatepress_redirect_lite_vs_preminum_page" >
-                    <?php esc_html_e('AffiliatePress Lite vs Pro', 'affiliatepress-affiliate-marketing'); ?>
-                    </el-button>
-                    <el-button class="ap-btn--primary ap-upt-btn--primary" plain type="primary" @click="affiliatepress_redirect_lite_vs_other_page">
-                        <?php esc_html_e('AffiliatePress vs Others ', 'affiliatepress-affiliate-marketing'); ?>
-                    </el-button>
+                    <a @click="affiliatepress_redirect_lite_vs_preminum_page" href="javascript:void(0)" class="ap-upgrade-popup-link"> <?php esc_html_e('Lite vs Premium', 'affiliatepress-affiliate-marketing'); ?></a>
                 </div>
             </div>
         </div>
     </div>
      <div class="ap-dialog-footer">
         <el-button type="primary" class="ap-btn--primary ap-utp-btn--primary" @click="affiliatepress_redirect_premium_page">
-            <?php esc_html_e('Go Pro Now', 'affiliatepress-affiliate-marketing'); ?>
+            <?php esc_html_e('Upgrade Now', 'affiliatepress-affiliate-marketing'); ?>
         </el-button>
     </div>
 </el-dialog>

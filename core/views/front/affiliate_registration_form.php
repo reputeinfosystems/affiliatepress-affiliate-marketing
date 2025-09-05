@@ -38,7 +38,7 @@
                             <template #label>
                                 <span class="ap-form-label" v-html="affiliate_field.ap_field_label" :aria-label="affiliate_field.ap_field_label"></span>
                             </template>
-                            <el-input class="ap-form-control" :readonly="(is_user_login == '1')?true:false" type="email" size="large" v-model="affiliates[affiliate_field.ap_form_field_name]" :placeholder="affiliate_field.ap_field_placeholder" />
+                            <el-input class="ap-form-control" :readonly="(is_user_login == '1')?true:false" type="text" size="large" v-model="affiliates[affiliate_field.ap_form_field_name]" :placeholder="affiliate_field.ap_field_placeholder" />
                         </el-form-item>                     
                     </div> 
                     <div v-if="affiliate_field.ap_form_field_type == 'Password' && is_user_login == '0'" class="ap-single-field__form">                    

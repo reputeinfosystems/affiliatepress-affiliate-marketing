@@ -32,8 +32,7 @@ if( !class_exists('affiliatepress_bookingpress') ){
                 /**Add pending Commission After Status Change */
                 add_action('bookingpress_update_payment_details_externally_after_update_status' , array($this , 'affiliatepress_pending_commission_add_after_status_chnage_bookingpress') , 10,1);
 
-                /**Add Reject Commission After Status Change */
-                add_action('bookingpress_update_payment_details_externally_after_update_status' , array($this , 'affiliatepress_reject_commission_on_refund_bookingpress') , 10,1);
+                
 
                 /**Add Disable Option settings */
                 add_action('bookingpress_add_content_after_basic_details' , array($this , 'affiliatepress_disable_commission_Section_add_bookingpress'), 20);
@@ -680,67 +679,6 @@ if( !class_exists('affiliatepress_bookingpress') ){
             }
         }
         
-        /**
-         * Function For Reject Commission add after status change
-         *
-         * @param  array $affiliatepress_paymnet_updated_data
-         * @return void
-         */
-        function affiliatepress_reject_commission_on_refund_bookingpress($affiliatepress_paymnet_updated_data){
-
-            global $AffiliatePress,$affiliatepress_tbl_ap_affiliate_commissions,$affiliatepress_commission_debug_log_id;
-            
-            $affiliatepress_payment_status = isset($affiliatepress_paymnet_updated_data['payment_status']) ? intval($affiliatepress_paymnet_updated_data['payment_status']) : 0;
-
-            if($affiliatepress_payment_status == 3 || $affiliatepress_payment_status == 5){
-
-                $affiliatepress_paymnet_id = isset($affiliatepress_paymnet_updated_data['payment_log_id']) ? intval($affiliatepress_paymnet_updated_data['payment_log_id']) : 0;
-                
-                $affiliatepress_reject_commission_on_refund = $AffiliatePress->affiliatepress_get_settings('bookingpress_reject_commission_on_refund', 'integrations_settings');
-
-                if($affiliatepress_reject_commission_on_refund == "false"){
-                    return;
-                }
-
-                $affiliatepress_all_commission_data = $AffiliatePress->affiliatepress_get_all_commission_by_order_and_source($affiliatepress_paymnet_id, $this->affiliatepress_integration_slug);
-
-                if(!empty($affiliatepress_all_commission_data)){
-                    foreach($affiliatepress_all_commission_data as $affiliatepress_commissition_data){
-            
-                        if(!empty($affiliatepress_commissition_data)){
-                
-                            $affiliatepress_ap_commission_status = (isset($affiliatepress_commissition_data['ap_commission_status']))? intval($affiliatepress_commissition_data['ap_commission_status']):0;
-                            $affiliatepress_ap_commission_id     = (isset($affiliatepress_commissition_data['ap_commission_id']))?intval($affiliatepress_commissition_data['ap_commission_id']):0;
-                            if($affiliatepress_ap_commission_status == 4){
-                                $affiliatepress_debug_log_msg = sprintf( 'Commission #%s could not be rejected because it was already paid.', $affiliatepress_ap_commission_id );
-                                return;
-                            }
-            
-                            if($affiliatepress_ap_commission_id != 0){
-            
-                                $affiliatepress_update_commission_data = array(
-                                    'ap_commission_updated_date' => current_time( 'mysql', true ),
-                                    'ap_commission_status' 		 => 3
-                                );
-            
-                                $this->affiliatepress_update_record($affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_update_commission_data, array( 'ap_commission_id' => $affiliatepress_ap_commission_id ));
-            
-                                $affiliatepress_debug_log_msg = sprintf( 'Commission #%s successfully marked as rejected, after  #%s was refunded.', $affiliatepress_ap_commission_id, $affiliatepress_paymnet_id );
-            
-                                do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Commission Reject ', 'affiliatepress_easy_digital_downloads_commission_tracking', $affiliatepress_debug_log_msg, $affiliatepress_commission_debug_log_id);
-                            
-                            }
-            
-                        }
-                    }
-                }
-                
-            }
-
-
-            
-        }
-
         /**
          * Function For Check Plugin active
          *

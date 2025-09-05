@@ -2,17 +2,20 @@
     if ( ! defined( 'ABSPATH' ) ) { exit; }
     global $AffiliatePress;
 ?>
-<el-main class="ap-main-listing-card-container ap-default-card ap--is-page-non-scrollable-mob" id="ap-all-page-main-container">
+<el-main class="ap-main-listing-card-container ap-default-card ap--is-page-non-scrollable-mob ap-creative-listing-wrapper" id="ap-all-page-main-container">
     <el-row :gutter="12" type="flex" class="ap-head-wrap">
         <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="ap-head-left">
             <h1 class="ap-page-heading"><?php esc_html_e('Manage Creatives', 'affiliatepress-affiliate-marketing'); ?></h1>
         </el-col>
         <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="ap-head-right">
-            <div class="ap-hw-right-btn-group">              
-                <el-button type="primary" @click="open_modal = true" class="ap-btn--primary">
-                    <span class="ap-btn__icon"><?php do_action('affiliatepress_common_svg_code','add_icon'); ?></span>
-                    <span class="ap-btn__label"><?php esc_html_e('Add New', 'affiliatepress-affiliate-marketing'); ?></span>
-                </el-button> 		
+            <div>
+                <div class="ap-hw-right-btn-group">              
+                    <el-button type="primary" @click="open_modal = true" class="ap-btn--primary" :disabled="affiliate_add_disable">
+                        <span class="ap-btn__icon"><?php do_action('affiliatepress_common_svg_code','add_icon'); ?></span>
+                        <span class="ap-btn__label"><?php esc_html_e('Add New', 'affiliatepress-affiliate-marketing'); ?></span>
+                    </el-button> 		
+                </div>
+                <div @click="open_premium_modal" class="ap-premium-text" v-if="is_pro_active != '1'"><?php echo $AffiliatePress->affiliatepress_get_premium_content(); //phpcs:ignore ?></div>
             </div>
         </el-col>                
     </el-row>
@@ -106,28 +109,11 @@
                                                     </span>
                                                 </el-button>
                                             </el-tooltip>
-                                            <el-popconfirm 
-                                                    confirm-button-text="<?php esc_html_e('Delete', 'affiliatepress-affiliate-marketing'); ?>"
-                                                    cancel-button-text="<?php esc_html_e('Cancel', 'affiliatepress-affiliate-marketing'); ?>"
-                                                    confirm-button-type="danger"
-                                                    cancel-button-type="plain"
-                                                    :hide-icon="true"
-                                                    popper-class="el-popover ap-popconfirm-delete"
-                                                    title="<?php esc_html_e('Are you sure you want to delete this creative?', 'affiliatepress-affiliate-marketing'); ?>"
-                                                    @confirm="deleteCreative(scope.row.ap_creative_id,scope.$index)"
-                                                    width="280">  
-                                                    <template #reference>               
-                                                        <el-button class="ap-btn--icon-without-box ap-delete-icon">
-                                                            <el-tooltip popper-class="ap--popover-tool-tip" show-after="300" effect="danger" content="<?php esc_html_e('Delete', 'affiliatepress-affiliate-marketing'); ?>" placement="top">         
-                                                                <span class="ap-small-btn-icon">
-                                                                    <?php do_action('affiliatepress_common_svg_code','delete_icon'); ?>
-                                                                </span>
-                                                            </el-tooltip>
-                                                        </el-button>   
-                                                    </template>                                         
-                                            </el-popconfirm>
-
-                                        </div>
+                                            <?php 
+                                                $affiliatepress_add_creative_action = "";
+                                                $affiliatepress_add_creative_action = apply_filters('affiliatepress_add_creative_action',$affiliatepress_add_creative_action);
+                                                echo $affiliatepress_add_creative_action; //phpcs:ignore
+                                            ?>
                                     </div>                                    
                                 </template>
                             </el-table-column>
@@ -198,27 +184,11 @@
                                                     </span>
                                                 </el-button>
                                             </el-tooltip>
-                                            <el-popconfirm 
-                                                    confirm-button-text="<?php esc_html_e('Delete', 'affiliatepress-affiliate-marketing'); ?>"
-                                                    cancel-button-text="<?php esc_html_e('Cancel', 'affiliatepress-affiliate-marketing'); ?>"
-                                                    confirm-button-type="danger"
-                                                    cancel-button-type="plain"
-                                                    :hide-icon="true"
-                                                    popper-class="el-popover ap-popconfirm-delete"
-                                                    title="<?php esc_html_e('Are you sure you want to delete this creative?', 'affiliatepress-affiliate-marketing'); ?>"
-                                                    @confirm="deleteCreative(scope.row.ap_creative_id,scope.$index)"
-                                                    width="280">  
-                                                    <template #reference>               
-                                                        <el-button class="ap-btn--icon-without-box ap-delete-icon">
-                                                            <el-tooltip popper-class="ap--popover-tool-tip" show-after="300" effect="danger" content="<?php esc_html_e('Delete', 'affiliatepress-affiliate-marketing'); ?>" placement="top">         
-                                                                <span class="ap-small-btn-icon">
-                                                                    <?php do_action('affiliatepress_common_svg_code','delete_icon'); ?>
-                                                                </span>
-                                                            </el-tooltip>
-                                                        </el-button>   
-                                                    </template>                                         
-                                            </el-popconfirm>
-
+                                            <?php 
+                                                $affiliatepress_add_creative_action = "";
+                                                $affiliatepress_add_creative_action = apply_filters('affiliatepress_add_creative_action',$affiliatepress_add_creative_action);
+                                                echo $affiliatepress_add_creative_action; //phpcs:ignore
+                                            ?>
                                         </div>
                                     </div>                                    
                                 </template>

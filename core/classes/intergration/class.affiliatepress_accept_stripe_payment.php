@@ -29,9 +29,6 @@ if( !class_exists('affiliatepress_accept_stripe_payments') ){
                 
                 /**Add Approved commission */
                 add_action('save_post',array($this, 'affiliatepress_accept_stripe_payment'), 19,1);
-                
-                /**Add reject commission */
-                add_action('save_post',array($this, 'affiliatepress_accept_stripe_payment_canceled'), 19,1);
 
                 // Add the commission settings in download page
                 add_action( 'add_meta_boxes', array($this,'affiliatepress_add_commission_settings_metabox_asp'), 10, 1 );
@@ -586,52 +583,7 @@ if( !class_exists('affiliatepress_accept_stripe_payments') ){
                 }
             }
         }
-        
-        /**
-         * Function For Accept stripe paymnet commission canceled
-         *
-         * @param  integer $affiliatepress_order_id
-         * @return void
-         */
-        function affiliatepress_accept_stripe_payment_canceled( $affiliatepress_order_id)
-        {
-            global $wpdb, $affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_commission_debug_log_id ,$affiliatepress_tracking ,$AffiliatePress;
-
-            $affiliatepress_order_status = get_post_meta($affiliatepress_order_id, 'asp_order_status', true);
-
-            if($affiliatepress_order_status != "canceled" && $affiliatepress_order_status != "error"){
-                return;
-            }
-
-            $affiliatepress_all_commission_data = $AffiliatePress->affiliatepress_get_all_commission_by_order_and_source($affiliatepress_order_id, $this->affiliatepress_integration_slug);
-
-            if(!empty($affiliatepress_all_commission_data)){
-
-                foreach($affiliatepress_all_commission_data as $affiliatepress_commissition_data){
-                    if(!empty($affiliatepress_commissition_data)){
-                        $affiliatepress_commission_status = (isset($affiliatepress_commissition_data['ap_commission_status']))?intval($affiliatepress_commissition_data['ap_commission_status']):0;
-                        $affiliatepress_commission_id     = (isset($affiliatepress_commissition_data['ap_commission_id']))?intval($affiliatepress_commissition_data['ap_commission_id']):0;
-                        if($affiliatepress_commission_status == 4){
-                            $affiliatepress_msg = sprintf( 'Commission #%s could not be rejected because it was already paid.', $affiliatepress_commission_id );
-                            continue;
-                        }
-                        if($affiliatepress_commission_id != 0){
-        
-                            $affiliatepress_commission_data = array(
-                                'ap_commission_updated_date' => current_time( 'mysql', true ),
-                                'ap_commission_status' 		 => 3
-                            );
-                            $this->affiliatepress_update_record($affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_commission_data, array( 'ap_commission_id' => $affiliatepress_commission_id ));
-                            $affiliatepress_msg = sprintf( 'Commission #%s successfully marked as rejected, after order #%s get error or was cancelled..', $affiliatepress_commission_id, $affiliatepress_order_id );
-        
-                            do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Commission Reject ', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_msg, $affiliatepress_commission_debug_log_id);
-        
-                        }
-                    }
-                }
-            }
-            
-        }
+       
 
     }
 }

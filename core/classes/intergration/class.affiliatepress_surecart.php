@@ -30,9 +30,6 @@ if( !class_exists('affiliatepress_surecart') ){
                 // Update the status of the commission to "unpaid", thus marking it as complete.
                 add_action( 'surecart/order_paid', array($this,'affiliatepress_accept_pending_commission_surecart'),10,1);
 
-                // Update the status of the commission to "rejected" when the originating order is refunded.
-                add_action( 'surecart/refund_created', array($this,'affiliatepress_reject_commission_on_refund_surecart'),10,1);
-
                 /* Add surecart Backend Product List */
                 add_filter('affiliatepress_get_source_product',array($this,'affiliatepress_get_source_product_func_surecart'),10,3);
                 
@@ -524,59 +521,6 @@ if( !class_exists('affiliatepress_surecart') ){
                 }
             }
 
-        }
-
-
-                
-        /**
-         * Function For add reject commission
-         *
-         * @param  object $refund
-         * @return void
-         */
-        function affiliatepress_reject_commission_on_refund_surecart( $refund ) {
-            global $AffiliatePress,$affiliatepress_tbl_ap_affiliate_commissions,$affiliatepress_commission_debug_log_id;
-
-            $affiliatepress_reject_commission_on_refund = $AffiliatePress->affiliatepress_get_settings('surecart_reject_commission_on_refund', 'integrations_settings');
-           
-            if($affiliatepress_reject_commission_on_refund == "false"){
-                return;
-            }
-
-            $refund = \SureCart\Models\Refund::with( [ 'charge', 'charge.checkout', 'checkout.order' ] )->find( $refund->id );
-
-            $refrance_id =$refund->charge->checkout->order->id;
-
-            $affiliatepress_all_commission_data = $AffiliatePress->affiliatepress_get_all_commission_by_order_and_source($refrance_id, $this->affiliatepress_integration_slug);
-
-            if(!empty($affiliatepress_all_commission_data)){
-                foreach($affiliatepress_all_commission_data as $affiliatepress_commission_data){
-
-                    if(!empty($affiliatepress_commission_data)){
-
-                        $affiliatepress_ap_commission_status = (isset($affiliatepress_commission_data['ap_commission_status']))?intval($affiliatepress_commission_data['ap_commission_status']):0;
-                        $affiliatepress_ap_commission_id     = (isset($affiliatepress_commission_data['ap_commission_id']))?intval($affiliatepress_commission_data['ap_commission_id']):0;
-        
-                        if($affiliatepress_ap_commission_status == 4){
-                            $affiliatepress_debug_log_msg = sprintf( 'Commission #%s could not be rejected because it was already paid.', $affiliatepress_ap_commission_id );
-                            return;
-                        }
-                        if($affiliatepress_ap_commission_id != 0){
-        
-                            $affiliatepress_commission_data = array(
-                                'ap_commission_updated_date' => current_time( 'mysql', true ),
-                                'ap_commission_status' 		 => 3
-                            );
-                            $this->affiliatepress_update_record($affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_commission_data, array( 'ap_commission_id' => $affiliatepress_ap_commission_id ));
-                            $affiliatepress_debug_log_msg = sprintf( 'Commission #%s successfully marked as rejected, after order #%s was refunded.', $affiliatepress_ap_commission_id, $affiliatepress_order_id );
-        
-                            do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Commission Reject ', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_debug_log_msg, $affiliatepress_commission_debug_log_id);
-        
-                        }
-                    }
-                }
-            }
-          
         }
 
     }

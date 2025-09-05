@@ -716,7 +716,12 @@ if( !class_exists('affiliatepress_tracking') ){
         function affiliatepress_get_default_commission_status(){
             global $AffiliatePress;
 
-            $affiliatepress_commission_status = $AffiliatePress->affiliatepress_get_settings('default_commission_status', 'commissions_settings');
+            if(!$AffiliatePress->affiliatepress_pro_install()){
+                $affiliatepress_commission_status = "2";
+            }
+	    else {
+	    	$affiliatepress_commission_status = $AffiliatePress->affiliatepress_get_settings('default_commission_status', 'commissions_settings');
+	    }
 
             return $affiliatepress_commission_status;
         }

@@ -30,10 +30,7 @@ if( !class_exists('affiliatepress_armember') ){
 
                 /**Add Approved Commission */
                 add_action( 'arm_after_accept_bank_transfer_payment', array($this,'affiliatepress_approve_commission'), 15, 3 );
-
-                /**Add reject commission on Refund */
-                add_action( 'arm_refund_subscription_gateway_action' , array($this,'affiliatepress_refund_commission'), 15, 3 );
-
+                
                 /**Add disable option Settings */
                 add_action( 'arm_display_field_add_membership_plan', array( $this, 'affiliatepress_display_field_add_membership_plan_page_func' ) );
 
@@ -754,80 +751,6 @@ if( !class_exists('affiliatepress_armember') ){
                 }
 
             }
-
-
-        }
-        
-        /**
-         * Function For Armember Reject commission add
-         *
-         * @param  integer $affiliatepress_user_id
-         * @param  integer $affiliatepress_plan_id
-         * @param  array $affiliatepress_arm_refund_data
-         * @return void
-        */
-        function affiliatepress_refund_commission($affiliatepress_user_id, $affiliatepress_plan_id, $affiliatepress_arm_refund_data){
-
-            global $wpdb, $affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_commission_debug_log_id,$AffiliatePress;
-
-            $affiliatepress_arm_transaction_id = !empty($affiliatepress_arm_refund_data['arm_transaction_id']) ? sanitize_text_field($affiliatepress_arm_refund_data['arm_transaction_id']) : '';//phpcs:ignore
-
-            $affiliatepress_tbl_arm_payment_log = $this->affiliatepress_tablename_prepare($wpdb->prefix . 'arm_payment_log'); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'arm_payment_log' contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
-
-            $affiliatepress_record_data = $wpdb->get_row( $wpdb->prepare( "SELECT arm_log_id FROM {$affiliatepress_tbl_arm_payment_log} WHERE arm_transaction_id = %d",$affiliatepress_arm_transaction_id));// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arm_payment_log is a table name. false alarm 
-
-            if(isset($affiliatepress_record_data->arm_log_id) && $affiliatepress_record_data->arm_log_id != 0){
-
-                $affiliatepress_order_id = $affiliatepress_record_data->arm_log_id;
-     
-                $affiliatepress_reject_commission_on_refund = $AffiliatePress->affiliatepress_get_settings('armember_reject_commission_on_refund', 'integrations_settings');
-
-                if($affiliatepress_reject_commission_on_refund == "false"){
-                    return;
-                }
-
-                $affiliatepress_all_ap_commissition_data = $AffiliatePress->affiliatepress_get_all_commission_by_order_and_source($affiliatepress_order_id, $this->affiliatepress_integration_slug);
-
-                if(!empty($affiliatepress_all_ap_commissition_data)){
-
-                    foreach($affiliatepress_all_ap_commissition_data as $affiliatepress_ap_commissition_data){
-
-                        if(!empty($affiliatepress_ap_commissition_data)){
-
-                            $affiliatepress_ap_commission_status = (isset($affiliatepress_ap_commissition_data['ap_commission_status']))?$affiliatepress_ap_commissition_data['ap_commission_status']:'';
-        
-                            $affiliatepress_ap_commission_id     = (isset($affiliatepress_ap_commissition_data['ap_commission_id']))?$affiliatepress_ap_commissition_data['ap_commission_id']:'';
-                            if($affiliatepress_ap_commission_status == 4){
-                                $affiliatepress_debug_log_msg = sprintf( 'Commission #%s could not be rejected because it was already paid.', $affiliatepress_ap_commission_id );
-                                return;
-                            }
-        
-                            if($affiliatepress_ap_commission_id != 0){
-        
-                                $affiliatepress_commission_update_data = array(
-                                    'ap_commission_updated_date' => current_time('mysql', true),
-                                    'ap_commission_status' => 3
-                                );
-                            
-                                $this->affiliatepress_update_record($affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_commission_update_data, array( 'ap_commission_id' => $affiliatepress_ap_commission_id ));
-                            
-                                $affiliatepress_debug_log_msg = sprintf( 'Commission #%s successfully marked as rejected, after order #%s was refunded.', $affiliatepress_ap_commission_id, $affiliatepress_order_id );
-            
-                                do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Commission Approve ', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_debug_log_msg, $affiliatepress_commission_debug_log_id);
-                            
-                            }
-
-                        }
-
-                    }
-
-                }
-
-
-
-            }
-
-
         }
     }
 }

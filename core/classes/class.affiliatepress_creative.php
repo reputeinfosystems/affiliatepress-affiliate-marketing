@@ -23,7 +23,7 @@ if (! class_exists('affiliatepress_creative') ) {
             add_action('affiliatepress_creative_dynamic_view_load', array( $this, 'affiliatepress_creative_dynamic_view_load_func' ), 10);
 
             /* Vue Method */
-            add_filter('affiliatepress_creative_dynamic_vue_methods',array($this,'affiliatepress_creative_dynamic_vue_methods_func'),10,1);
+            add_filter('affiliatepress_creative_dynamic_vue_methods',array($this,'affiliatepress_creative_dynamic_vue_methods_func'),5,1);
 
             /* Dynamic On Load Method */
             add_filter('affiliatepress_creative_dynamic_on_load_methods', array( $this, 'affiliatepress_creative_dynamic_on_load_methods_func'), 10, 1);
@@ -34,11 +34,8 @@ if (! class_exists('affiliatepress_creative') ) {
             /* Change Creative Status */
             add_action('wp_ajax_affiliatepress_change_creative_status', array( $this, 'affiliatepress_change_creative_status_func' ));
 
-            /* Bulk Action */
-            add_action('wp_ajax_affiliatepress_creative_bulk_action', array( $this, 'affiliatepress_creative_bulk_action_func' ));            
-
-            /* Delete Affiliate */
-            add_action('wp_ajax_affiliatepress_delete_creative', array( $this, 'affiliatepress_delete_creative' ));
+             /* Bulk Action */
+             add_action('wp_ajax_affiliatepress_creative_bulk_status_change', array( $this, 'affiliatepress_creativen_bulk_status_change_func' ));  
 
             /* Add Creative */
             add_action('wp_ajax_affiliatepress_add_creative', array( $this, 'affiliatepress_add_creative_func' ));            
@@ -51,9 +48,8 @@ if (! class_exists('affiliatepress_creative') ) {
 
             /* Remove Creative Image */
             add_action( 'wp_ajax_affiliatepress_remove_creative_avatar', array( $this, 'affiliatepress_remove_creative_avatar_func'));
-
+            
         }
-        
         
         /**
          * Function for remove creative image
@@ -377,11 +373,14 @@ if (! class_exists('affiliatepress_creative') ) {
                     $response['variant'] = 'success';
                     $response['title']   = esc_html__('Sucess', 'affiliatepress-affiliate-marketing');
                     $response['msg']     = esc_html__('Creative successfully updated.', 'affiliatepress-affiliate-marketing');                    
-                }else{
-                    $affiliatepress_creative_id = $this->affiliatepress_insert_record($affiliatepress_tbl_ap_creative, $affiliatepress_args);                    
-                    $response['variant'] = 'success';
-                    $response['title']   = esc_html__('Sucess', 'affiliatepress-affiliate-marketing');
-                    $response['msg']     = esc_html__('Creative successfully added.', 'affiliatepress-affiliate-marketing');                    
+                }else{           
+                    $affiliatepress_creative_id = apply_filters('affiliatepress_add_creative',$affiliatepress_creative_id ,$affiliatepress_args);
+
+                    if(!empty($affiliatepress_creative_id)){
+                        $response['variant'] = 'success';
+                        $response['title']   = esc_html__('Sucess', 'affiliatepress-affiliate-marketing');
+                        $response['msg']     = esc_html__('Creative successfully added.', 'affiliatepress-affiliate-marketing'); 
+                    }
                 }
 
                 if($affiliatepress_creative_type == 'image'){
@@ -434,83 +433,10 @@ if (! class_exists('affiliatepress_creative') ) {
             wp_send_json($response);
             die();            
         }
-       
-        /**
-         * Function for delete single creative
-         *
-         * @param  integer $affiliatepress_creative_id
-         * @return json
-         */
-        function affiliatepress_delete_creative($affiliatepress_creative_id = ''){
-            global $wpdb, $affiliatepress_tbl_ap_creative,$AffiliatePress;
-            $affiliatepress_ap_check_authorization = $this->affiliatepress_ap_check_authentication( 'delete_affiliate', true, 'ap_wp_nonce' );            
-            $response = array();
-            $response['variant'] = 'error';
-            $response['title']   = esc_html__( 'Error', 'affiliatepress-affiliate-marketing');
-            $response['msg']     = esc_html__( 'Affiliates not deleted.', 'affiliatepress-affiliate-marketing');
-            if( preg_match( '/error/', $affiliatepress_ap_check_authorization ) ){
-                $affiliatepress_auth_error = explode( '^|^', $affiliatepress_ap_check_authorization );
-                $affiliatepress_error_msg = !empty( $affiliatepress_auth_error[1] ) ? $affiliatepress_auth_error[1] : esc_html__( 'Sorry. Something went wrong while processing the request', 'affiliatepress-affiliate-marketing');
-                $response['variant'] = 'error';
-                $response['title'] = esc_html__( 'Error', 'affiliatepress-affiliate-marketing');
-                $response['msg'] = $affiliatepress_error_msg;
-                wp_send_json( $response );
-                die;
-            }
 
-            if(!current_user_can('affiliatepress_creative')){
-                $affiliatepress_error_msg = esc_html__( 'Sorry, you do not have permission to perform this action.', 'affiliatepress-affiliate-marketing');
-                $response['variant'] = 'error';
-                $response['title'] = esc_html__( 'Error', 'affiliatepress-affiliate-marketing');
-                $response['msg'] = $affiliatepress_error_msg; 
-                wp_send_json( $response );
-                die;                
-            }
-            
-            $affiliatepress_wpnonce = isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '';// phpcs:ignore
-            $affiliatepress_ap_verify_nonce_flag = wp_verify_nonce($affiliatepress_wpnonce, 'ap_wp_nonce');
-            if (! $affiliatepress_ap_verify_nonce_flag ) {
-                $response['variant']        = 'error';
-                $response['title']          = esc_html__('Error', 'affiliatepress-affiliate-marketing');
-                $response['msg']            = esc_html__('Sorry, Your request can not be processed due to security reason.', 'affiliatepress-affiliate-marketing');
-                echo wp_json_encode($response);
-                exit;
-            }
-
-            if(empty($affiliatepress_creative_id)){
-                $affiliatepress_creative_id = (isset($_POST['ap_creative_id']))?intval($_POST['ap_creative_id']):0;// phpcs:ignore 
-            }
-            if($affiliatepress_creative_id){
-                $this->affiliatepress_delete_record($affiliatepress_tbl_ap_creative, array( 'ap_creative_id' => $affiliatepress_creative_id ), array( '%d' ));
-                
-                $response['variant'] = 'success';
-                $response['title']   = esc_html__('Success', 'affiliatepress-affiliate-marketing');
-                $response['msg']     = esc_html__('Creative has been deleted successfully.', 'affiliatepress-affiliate-marketing');
-                $return              = true;
-                if (isset($_POST['action']) && sanitize_text_field($_POST['action']) == 'affiliatepress_delete_creative' ) { // phpcs:ignore
-                    wp_send_json($response);
-                }
-                return $return;
-            }
-            $affiliatepress_error_msg = esc_html__( 'Creative not deleted.', 'affiliatepress-affiliate-marketing');
-            $response['variant'] = 'warning';
-            $response['title']   = esc_html__('warning', 'affiliatepress-affiliate-marketing');
-            $response['msg']     = $affiliatepress_error_msg;
-            $return              = false;
-            if (isset($_POST['action']) && sanitize_text_field($_POST['action']) == 'affiliatepress_delete_creative' ) { // phpcs:ignore
-                wp_send_json($response);
-            }
-            return $return;
-        }
-
-        /**
-         * Function for creative bulk action perform
-         *
-         * @return json
-        */
-        function affiliatepress_creative_bulk_action_func(){        
-            global $wpdb, $affiliatepress_tbl_ap_creative,$AffiliatePress;
-            $affiliatepress_ap_check_authorization = $this->affiliatepress_ap_check_authentication( 'delete_creative', true, 'ap_wp_nonce' );            
+        function affiliatepress_creativen_bulk_status_change_func(){
+            global $wpdb, $affiliatepress_tbl_ap_creative, $AffiliatePress;
+            $affiliatepress_ap_check_authorization = $this->affiliatepress_ap_check_authentication( 'change_creative_status', true, 'ap_wp_nonce' ); // phpcs:ignore
             $response = array();
             $response['variant'] = 'error';
             $response['title']   = esc_html__( 'Error', 'affiliatepress-affiliate-marketing');
@@ -544,36 +470,46 @@ if (! class_exists('affiliatepress_creative') ) {
                 exit;
             }  
 
-            if (! empty($_POST['bulk_action']) && sanitize_text_field($_POST['bulk_action']) == 'delete' ) { // phpcs:ignore 
-                $affiliatepress_delete_ids = (isset($_POST['ids']))?stripslashes_deep($_POST['ids']):'';// phpcs:ignore 
-                if(!empty($affiliatepress_delete_ids)){
-                    $affiliatepress_delete_ids = json_decode($affiliatepress_delete_ids, true);
+            if (!empty($_POST['bulk_action'])) { // phpcs:ignore
+                // phpcs:ignore because already sanitize using below function affiliatepress_array_sanatize_integer_field
+                $affiliatepress_creative_ids = (isset($_POST['ids']))?stripslashes_deep($_POST['ids']):'';// phpcs:ignore 
+                if(!empty($affiliatepress_creative_ids)){
+                    $affiliatepress_creative_ids = json_decode($affiliatepress_creative_ids, true);
                 }
-                if(is_array($affiliatepress_delete_ids)){
-                    $affiliatepress_delete_ids = ! empty($affiliatepress_delete_ids) ? array_map(array( $AffiliatePress, 'affiliatepress_array_sanatize_integer_field' ), $affiliatepress_delete_ids) : array(); // phpcs:ignore
-                    if (!empty($affiliatepress_delete_ids)) {
-                        foreach ( $affiliatepress_delete_ids as $affiliatepress_delete_key => $affiliatepress_delete_val ) {
-                            if (is_array($affiliatepress_delete_val) ) {
-                                $affiliatepress_delete_val = (isset($affiliatepress_delete_val['item_id']))?intval($affiliatepress_delete_val['item_id']):0;
+                $affiliatepress_bulk_action = sanitize_text_field($_POST['bulk_action']); // phpcs:ignore 
+                $affiliatepress_new_status  = ($affiliatepress_bulk_action == 'active')?1:(($affiliatepress_bulk_action == 'inactive')?0:'');
+
+                if(is_array($affiliatepress_creative_ids) && ($affiliatepress_new_status == 0 || $affiliatepress_new_status == 1)){
+                    $affiliatepress_creative_ids = ! empty($affiliatepress_creative_ids) ? array_map(array( $AffiliatePress, 'affiliatepress_array_sanatize_integer_field' ), $affiliatepress_creative_ids) : array(); // phpcs:ignore                    
+                    if (!empty($affiliatepress_creative_ids)) {
+                        foreach ( $affiliatepress_creative_ids as $affiliatepress_creative_key => $affiliatepress_creative_id ) {
+                            if (is_array($affiliatepress_creative_id) ) {
+                                $affiliatepress_creative_id = intval($affiliatepress_creative_id['item_id']);
+                            }else{
+                                $affiliatepress_creative_id = intval($affiliatepress_creative_id);
+                            }                            
+                            $affiliatepress_creative_rec = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_creative, 'ap_creative_id,ap_creative_status', 'WHERE ap_creative_id = %d', array( $affiliatepress_creative_id), '', '', '', false, true, ARRAY_A);                            
+                            $affiliatepress_creative_id = (isset($affiliatepress_creative_rec['ap_creative_id']))?intval($affiliatepress_creative_rec['ap_creative_id']):0;
+                            $affiliatepress_old_status = (isset($affiliatepress_creative_rec['ap_creative_status']))?intval($affiliatepress_creative_rec['ap_creative_status']):0;
+                            if($affiliatepress_creative_id != 0 && $affiliatepress_creative_id){
+
+                                $this->affiliatepress_update_record($affiliatepress_tbl_ap_creative, array('ap_creative_status' => $affiliatepress_new_status), array( 'ap_creative_id' => $affiliatepress_creative_id ));
+                                $response['id']         = $affiliatepress_creative_id;
+                                $response['variant']    = 'success';
+                                $response['title']      = esc_html__('Success', 'affiliatepress-affiliate-marketing');
+                                $response['msg']        = esc_html__('Creative status has been updated successfully.', 'affiliatepress-affiliate-marketing');                                
+                                do_action('affiliatepress_after_commissions_status_change',$affiliatepress_creative_id,$affiliatepress_new_status,$affiliatepress_old_status,'backend');
+                                
+                                //do_action('affiliatepress_backend_after_commissions_status_change',$affiliatepress_creative_id,$affiliatepress_new_status,$affiliatepress_old_status);
+
                             }
-                            $return = $this->affiliatepress_delete_creative($affiliatepress_delete_val);
-                            if ($return ) {
-                                $response['variant'] = 'success';
-                                $response['title']   = esc_html__('Success', 'affiliatepress-affiliate-marketing');
-                                $response['msg']     = esc_html__('Creative has been deleted successfully.', 'affiliatepress-affiliate-marketing');
-                            } else {
-                                $response['variant'] = 'warning';
-                                $response['title']   = esc_html__('Warning', 'affiliatepress-affiliate-marketing');
-                                $response['msg']     = esc_html__('Could not delete creative. This creative not deleted.', 'affiliatepress-affiliate-marketing');
-                                wp_send_json($response);
-                                exit;
-                            }                                                
+                                                                           
                         }
                     }
                 }
             }
-            wp_send_json($response);
-        }        
+            wp_send_json($response);  
+        }
 
         /**
          * Function for creative status change
@@ -800,6 +736,8 @@ if (! class_exists('affiliatepress_creative') ) {
             $affiliatepress_creative_vue_data_fields['all_creatives_status'] = $affiliatepress_all_creatives_status;
             $affiliatepress_creative_vue_data_fields['affiliates']['affiliate_user_name'] = '';
 
+            $affiliatepress_creative_vue_data_fields = apply_filters('affiliatepress_backend_modify_creative_data_fields', $affiliatepress_creative_vue_data_fields);
+
             $affiliatepress_creative_vue_data_fields = wp_json_encode($affiliatepress_creative_vue_data_fields);
 
             return $affiliatepress_creative_vue_data_fields;
@@ -814,6 +752,9 @@ if (! class_exists('affiliatepress_creative') ) {
          */
         function affiliatepress_creative_dynamic_vue_methods_func($affiliatepress_creative_dynamic_vue_methods){
             global $affiliatepress_notification_duration;
+
+            $affiliatepress_add_other_bulk_action = "";
+            $affiliatepress_add_other_bulk_action .= apply_filters('affiliatepress_add_other_bulk_action', $affiliatepress_add_other_bulk_action);
 
             $affiliatepress_creative_dynamic_vue_methods.='
             handleSizeChange(val) {
@@ -911,7 +852,6 @@ if (! class_exists('affiliatepress_creative') ) {
                     } 
                     if(response.data.creatives.image_list != undefined){
                         vm.creatives.image_list = response.data.creatives.image_list;
-                        console.log(" image_list : "+vm.creatives.image_list);
                     }                    
                     if(response.data.creatives.creative_shortcode != undefined){
                         vm.creatives.creative_shortcode = response.data.creatives.creative_shortcode;
@@ -1003,33 +943,6 @@ if (! class_exists('affiliatepress_creative') ) {
                     }
                 });
             },            
-            deleteCreative(ap_creative_id,index){
-                const vm = this;
-                var postData = { action:"affiliatepress_delete_creative", ap_creative_id: ap_creative_id, _wpnonce:"'.esc_html(wp_create_nonce('ap_wp_nonce')).'" };
-                axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify( postData ) )
-                .then( function (response) {
-                    if(response.data.variant == "success"){
-                        vm.items.splice(index, 1);
-                        vm.loadCreatives();                        
-                    }
-                    vm.$notify({
-                        title: response.data.title,
-                        message: response.data.msg,
-                        type: response.data.variant,
-                        customClass: response.data.variant+"_notification",
-                        duration:'.intval($affiliatepress_notification_duration).', 
-                    });
-                }.bind(this) )
-                .catch( function (error) {
-                    vm.$notify({
-                        title: "'.esc_html__('Error', 'affiliatepress-affiliate-marketing').'",
-                        message: "'.esc_html__('Something went wrong..', 'affiliatepress-affiliate-marketing').'",
-                        type: "error",
-                        customClass: "error_notification",
-                        duration:'.intval($affiliatepress_notification_duration).',                      
-                    });
-                });
-            },  
             applyFilter(){
                 const vm = this;
                 vm.currentPage = 1;
@@ -1179,7 +1092,6 @@ if (! class_exists('affiliatepress_creative') ) {
                 var temp_data = [];
                 Object.values(items_obj).forEach(val => {
                     temp_data.push({"item_id" : val.ap_creative_id});
-                    this.bulk_action = "delete";
                 });
                 this.multipleSelection = temp_data;
                 if(temp_data.length > 0){
@@ -1203,9 +1115,9 @@ if (! class_exists('affiliatepress_creative') ) {
                         duration:'.intval($affiliatepress_notification_duration).', 
                     });
                 }else{
-                    if(this.multipleSelection.length > 0 && this.bulk_action == "delete"){
+                    if(this.multipleSelection.length > 0 && (this.bulk_action == "active" || this.bulk_action == "inactive")){
                         var bulk_action_postdata = {
-                            action:"affiliatepress_creative_bulk_action",
+                            action:"affiliatepress_creative_bulk_status_change",
                             ids: vm.multipleSelectionVal,
                             bulk_action: this.bulk_action,
                             _wpnonce:"'.esc_html(wp_create_nonce('ap_wp_nonce')).'",
@@ -1217,12 +1129,12 @@ if (! class_exists('affiliatepress_creative') ) {
                                 message: response.data.msg,
                                 type: response.data.variant,
                                 customClass: response.data.variant+"_notification",
-                                duration:'.intval($affiliatepress_notification_duration).', 
+                                duration:'.intval($affiliatepress_notification_duration).',  
                             });
                             vm.loadCreatives(true);                     
                             vm.is_multiple_checked = false;
                             vm.multipleSelection = []; 
-                            vm.multipleSelectionVal = "";                                    
+                            vm.multipleSelectionVal = "";      
                         }).catch(function(error){
                             console.log(error);
                             vm.is_display_loader = "0";
@@ -1231,12 +1143,11 @@ if (! class_exists('affiliatepress_creative') ) {
                                 message: "'.esc_html__('Something went wrong..', 'affiliatepress-affiliate-marketing').'",
                                 type: "error",
                                 customClass: "error_notification",
-                                duration:'.intval($affiliatepress_notification_duration).',  
+                                duration:'.intval($affiliatepress_notification_duration).',    
                             });
-                        });                        
-
-
+                        });                                                
                     }
+                    '.$affiliatepress_add_other_bulk_action.'
                 }
             },    
             affiliatepress_full_row_clickable(row){
@@ -1286,9 +1197,13 @@ if (! class_exists('affiliatepress_creative') ) {
                         'label' => esc_html__('Bulk Action', 'affiliatepress-affiliate-marketing'),
                     ),
                     array(
-                        'value' => 'delete',
-                        'label' => esc_html__('Delete', 'affiliatepress-affiliate-marketing'),
-                    ),
+                        'value' => 'active',
+                        'label' => esc_html__('Active', 'affiliatepress-affiliate-marketing'),
+                    ), 
+                    array(
+                        'value' => 'inactive',
+                        'label' => esc_html__('Inactive', 'affiliatepress-affiliate-marketing'),
+                    ),                     
                 ),
                 'loading'                    => false,
                 'creatives_search'           => array(
@@ -1398,6 +1313,7 @@ if (! class_exists('affiliatepress_creative') ) {
                         'value' => '500',
                     ),
                 ),
+                'affiliate_add_disable' => true,
 
             );
         }
