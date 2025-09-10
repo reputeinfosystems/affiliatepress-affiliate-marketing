@@ -1,4 +1,4 @@
-<?php
+<?php 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 if (! class_exists('AffiliatePress') ) {
@@ -125,7 +125,11 @@ if (! class_exists('AffiliatePress') ) {
             add_action( 'admin_init', array( $this, 'affiliatepress_add_plugin_privacy_content_func' ), 20 );
 
             add_action('user_register', array($this,'affiliatepress_add_capabilities_to_new_user'));
-            add_action('set_user_role', array($this, 'affiliatepress_assign_caps_on_role_change'), 10, 3); 
+            add_action('set_user_role', array($this, 'affiliatepress_assign_caps_on_role_change'), 10, 3);
+
+            if (! function_exists('is_plugin_active') ) {
+                include ABSPATH . '/wp-admin/includes/plugin.php';
+            }
 
             if (is_plugin_active('wp-rocket/wp-rocket.php') && ! is_admin() ) {
                 add_filter('script_loader_tag', array( $this, 'affiliatepress_prevent_rocket_loader_script' ), 10, 2);
@@ -812,7 +816,7 @@ if (! class_exists('AffiliatePress') ) {
         {
             global $affiliatepress_version, $AffiliatePress;
             $affiliatepress_old_version = get_option('affiliatepress_version', true);
-            if (version_compare($affiliatepress_old_version, '1.0.2', '<') ) {
+            if (version_compare($affiliatepress_old_version, '1.0.3', '<') ) {
                 $affiliatepress_load_upgrade_file = AFFILIATEPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $affiliatepress_load_upgrade_file;
                 $AffiliatePress->affiliatepress_send_anonymous_data_cron();
@@ -1111,7 +1115,7 @@ if (! class_exists('AffiliatePress') ) {
          * @return boolean 
          */
         function affiliatepress_pro_install(){
-            $affiliatepress_flag = true; 
+            $affiliatepress_flag = true;
             if ( ! function_exists( 'is_plugin_active' ) ) {
                 require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
             }
@@ -2779,7 +2783,7 @@ if (! class_exists('AffiliatePress') ) {
 			
 			$script = htmlspecialchars($tag);
 
-			$regex = '/(.*?)(<script(\s)(.*?)(\s)id=(\'|\")affiliatepress(.*)\-(after|before)(\'|\"))\>(.*?)/';
+			$regex = '/(.*?)(<script(\s)(.*?)(|\s)id=(\'|\")affiliatepress(.*)\-(after|before)(\'|\"))\>(.*?)/';
 
             $handle_arr = ['wcap_vue_js'];
 
