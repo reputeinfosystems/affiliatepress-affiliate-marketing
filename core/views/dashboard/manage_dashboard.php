@@ -2,7 +2,7 @@
     if ( ! defined( 'ABSPATH' ) ) { exit; }
     global $AffiliatePress;
 ?>
-<el-main class="ap-main-listing-card-container ap--is-page-non-scrollable-mob" id="ap-all-page-main-container">
+<el-main class="ap-main-listing-card-container ap--is-page-non-scrollable-mob ap---dashboard-page" id="ap-all-page-main-container">
     <div class="ap-back-loader-container ap-dashboard-loader" v-if="ap_first_page_loaded == '1'" id="ap-page-loading-loader">
         <div class="ap-back-loader"></div>
     </div>    
@@ -185,20 +185,16 @@
                 <div class="ap-dash-listing-title ap-dash-valuable-title">
                     <?php esc_html_e('Recent Commissions', 'affiliatepress-affiliate-marketing'); ?>
                 </div>
-                <div id="ap-loader-div" v-if="commissions.length == 0">
-                    <el-row type="flex">
-                        <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+                <div class="ap-table-container ap-listing-multi-without">
+                    <el-table ref="multipleTable" class="ap-manage-appointment-items" :data="commissions"> 
+                        <template #empty>
                             <div class="ap-data-empty-view">
                                 <div class="ap-ev-left-vector">
                                     <?php do_action('affiliatepress_common_svg_code','empty_view'); ?>
-                                    <h4 class="no-data-found-text"><?php esc_html_e('No Data Found!', 'affiliatepress-affiliate-marketing'); ?></h4>
-                                </div>                       
+                                    <div class="no-data-found-text"> <?php esc_html_e('No Data Found!', 'affiliatepress-affiliate-marketing'); ?></div>
+                                </div>
                             </div>
-                        </el-col>
-                    </el-row>
-                </div>
-                <div v-else class="ap-table-container ap-listing-multi-without">
-                    <el-table ref="multipleTable" class="ap-manage-appointment-items" :data="commissions"> 
+                        </template>                   
                         <el-table-column header-align="center" align="center" min-width="90" prop="ap_commission_id" label="ID">
                             <template #default="scope">
                                 <span>#{{ scope.row.ap_commission_id }}</span>
@@ -261,22 +257,17 @@
         <div v-if="current_grid_screen_size != 'desktop'" class="ap-default-card ap-dashboard-listing-data ap-dashboard-listing-data-mobile">
             <div class="ap-dash-listing-wrapper">
                 <div class="ap-dash-listing-title"><?php esc_html_e('Recent Commissions', 'affiliatepress-affiliate-marketing'); ?></div>
-                <div id="ap-loader-div" v-if="commissions.length == 0">
-                    <el-row type="flex">
-                        <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-                            <div class="ap-data-empty-view">
-                                <div class="ap-ev-left-vector">
-                                    <?php do_action('affiliatepress_common_svg_code','empty_view'); ?>
-                                    <h4 class="no-data-found-text"><?php esc_html_e('No Data Found!', 'affiliatepress-affiliate-marketing'); ?></h4>
-                                </div>                       
-                            </div>
-                        </el-col>
-                    </el-row>
-                </div>
-                <div v-else class="ap-table-container">
+                <div class="ap-table-container">
                     <div class="ap-tc__wrapper ap-small-screen-table">
-                        
                         <el-table ref="multipleTable" class="ap-manage-appointment-items" :data="commissions" @row-click="affiliatepress_full_row_clickable">
+                            <template #empty>
+                                <div class="ap-data-empty-view">
+                                    <div class="ap-ev-left-vector">
+                                        <?php do_action('affiliatepress_common_svg_code','empty_view'); ?>
+                                        <div class="no-data-found-text"> <?php esc_html_e('No Data Found!', 'affiliatepress-affiliate-marketing'); ?></div>
+                                    </div>
+                                </div>
+                            </template>          
                             <el-table-column type="expand">
                                 <template slot-scope="scope" #default="scope">
                                 <div class="ap-table-expand-view-wapper">
@@ -356,8 +347,10 @@
         </div>
     </div>    
 </el-main>
-<?php  
-
+<?php
+    $affiliatepress_load_file_name = AFFILIATEPRESS_VIEWS_DIR . '/affiliatepress_footer.php';
+    $affiliatepress_load_file_name = apply_filters('affiliatepress_modify_footer_content', $affiliatepress_load_file_name,1);
+    require $affiliatepress_load_file_name;
 ?>
 
 

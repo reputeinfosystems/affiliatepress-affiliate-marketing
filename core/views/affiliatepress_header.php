@@ -5,33 +5,10 @@
     $request_module = ( ! empty($_REQUEST['page']) && ( $_REQUEST['page'] != 'affiliatepress' ) ) ? sanitize_text_field(str_replace('affiliatepress_', '', $_REQUEST['page'])) : 'dashboard'; // phpcs:ignore
     $request_action = ( ! empty($_REQUEST['action']) ) ? sanitize_text_field($_REQUEST['action']) : 'forms'; // phpcs:ignore
 
-    $affiliatepress_logoimage = AFFILIATEPRESS_IMAGES_URL . '/affiliatepress-logo.svg';  
+    $affiliatepress_logoimage = AFFILIATEPRESS_IMAGES_URL . '/affiliatepress-logo.svg';
 
 if(!empty($request_module) && $request_module != 'lite_wizard'){
-?>
-<?php
-    if(!$AffiliatePress->affiliatepress_pro_install()){
-    	$affiliatepress_lifetime_deal_notice_show = get_option('affiliatepress_lifetime_deal_notice_dismissed');
-    	if( $affiliatepress_lifetime_deal_notice_show != "1" )
-	{
-    ?>
-        <div class="ap-header-deal-belt-wrapper">
-            <div class="ap-belt-content">
-                <div class="ap-belt-main-content">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_8111_5858)"><path d="M8 0C3.58862 0 0 3.58862 0 8C0 12.4114 3.58862 16 8 16C12.4114 16 16 12.4114 16 8C16 3.58862 12.4114 0 8 0ZM11.8047 12.1379C11.6747 12.2679 11.504 12.3334 11.3334 12.3334C11.1627 12.3334 10.9919 12.2679 10.8621 12.1379L7.52869 8.80469C7.40332 8.68005 7.33337 8.51062 7.33337 8.33337V4C7.33337 3.63135 7.63196 3.33337 8 3.33337C8.36804 3.33337 8.66663 3.63135 8.66663 4V8.05737L11.8047 11.1953C12.0653 11.4561 12.0653 11.8773 11.8047 12.1379Z" fill="#A8ACAF"/></g><defs><clipPath id="clip0_8111_5858"><rect width="16" height="16" fill="white"/></clipPath></defs></svg>
-                    <span class="ap-first-content">Limited Time Offer</span>
-                    <span @click="affiliatepress_redirect_pricing_page"  class="ap-sec-content">Introducing <span class="ap-deal-content">Lifetime Deal</span> Starting at <span class="ap-deal-content">$169</span></span>
-                    <div class="ap-deal-close">
-                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" @click="affiliatepress_lifetime_deal_close">
-                        <path d="M13.5 13.5L9 9M9 9L4.5 4.5M9 9L13.5 4.5M9 9L4.5 13.5" stroke="#A8ACAF" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-        </div>
-    <?php
-    	}
-    }
+    echo $AffiliatePress->affiliatepress_lifetime_deal_header_belt();//phpcs:ignore
 ?>
 <div class="ap-header-navbar">
     <div class="ap-header-navbar-wrap">

@@ -64,6 +64,11 @@ global $AffiliatePress;
                                                     <el-switch v-model="integrations_setting_form.woocommerce_reject_commission_on_refund"/>                                         
                                                 </el-form-item>
                                             </el-col>
+                                            <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-else>
+                                                <el-form-item prop="affiliate_integration_refund_disabled_switch">
+                                                    <el-switch v-model="affiliate_integration_refund_disabled_switch" :disabled="integration_reject_commission_disable"/>
+                                                </el-form-item>
+                                            </el-col>
                                         </el-row>
                                         <?php do_action('affiliatepress_add_woocommerce_integrations_settings'); ?>
                                     </el-col>
@@ -99,6 +104,11 @@ global $AffiliatePress;
                                             <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-if="integration_reject_commission_disable == false">		
                                                 <el-form-item prop="armember_reject_commission_on_refund">
                                                     <el-switch  v-model="integrations_setting_form.armember_reject_commission_on_refund"/>                                         
+                                                </el-form-item>
+                                            </el-col>
+                                            <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-else>
+                                                <el-form-item prop="affiliate_integration_refund_disabled_switch">
+                                                    <el-switch v-model="affiliate_integration_refund_disabled_switch" :disabled="integration_reject_commission_disable"/>
                                                 </el-form-item>
                                             </el-col>
                                         </el-row> 
@@ -148,6 +158,11 @@ global $AffiliatePress;
                                                     <el-switch  v-model="integrations_setting_form.easy_digital_downloads_reject_commission_on_refund"/>                                         
                                                 </el-form-item>
                                             </el-col>
+                                            <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-else>
+                                                <el-form-item prop="affiliate_integration_refund_disabled_switch">
+                                                    <el-switch v-model="affiliate_integration_refund_disabled_switch" :disabled="integration_reject_commission_disable"/>
+                                                </el-form-item>
+                                            </el-col>
                                         </el-row>
                                         <?php do_action('affiliatepress_add_easy_digital_downloads_integrations_settings'); ?>
                                     </el-col>
@@ -173,6 +188,11 @@ global $AffiliatePress;
                                             <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-if="integration_reject_commission_disable == false">				
                                                 <el-form-item prop="bookingpress_reject_commission_on_refund">
                                                     <el-switch  v-model="integrations_setting_form.bookingpress_reject_commission_on_refund"/>                                         
+                                                </el-form-item>
+                                            </el-col>
+                                            <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-else>
+                                                <el-form-item prop="affiliate_integration_refund_disabled_switch">
+                                                    <el-switch v-model="affiliate_integration_refund_disabled_switch" :disabled="integration_reject_commission_disable"/>
                                                 </el-form-item>
                                             </el-col>
                                         </el-row>
@@ -210,6 +230,11 @@ global $AffiliatePress;
                                             <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-if="integration_reject_commission_disable == false">				
                                                 <el-form-item prop="memberpress_reject_commission_on_refund">
                                                     <el-switch  v-model="integrations_setting_form.memberpress_reject_commission_on_refund"/>                                         
+                                                </el-form-item>
+                                            </el-col>
+                                            <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-else>
+                                                <el-form-item prop="affiliate_integration_refund_disabled_switch">
+                                                    <el-switch v-model="affiliate_integration_refund_disabled_switch" :disabled="integration_reject_commission_disable"/>
                                                 </el-form-item>
                                             </el-col>
                                         </el-row>
@@ -285,6 +310,11 @@ global $AffiliatePress;
                                                     <el-switch  v-model="integrations_setting_form.restrict_content_reject_commission_on_refund"/>                                         
                                                 </el-form-item>
                                             </el-col>
+                                            <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-else>
+                                                <el-form-item prop="affiliate_integration_refund_disabled_switch">
+                                                    <el-switch v-model="affiliate_integration_refund_disabled_switch" :disabled="integration_reject_commission_disable"/>
+                                                </el-form-item>
+                                            </el-col>
                                         </el-row>
                                         <?php do_action('affiliatepress_add_restrict_content_pro_integrations_settings'); ?>
                                     </el-col>
@@ -332,6 +362,11 @@ global $AffiliatePress;
                                                     <el-switch v-model="integrations_setting_form.wp_easycart_reject_commission_on_refund"/>                                         
                                                 </el-form-item>
                                             </el-col>
+                                            <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-else>
+                                                <el-form-item prop="affiliate_integration_refund_disabled_switch">
+                                                    <el-switch v-model="affiliate_integration_refund_disabled_switch" :disabled="integration_reject_commission_disable"/>
+                                                </el-form-item>
+                                            </el-col>
                                         </el-row>
                                         <?php do_action('affiliatepress_add_wp_easycart_integrations_settings'); ?>
                                     </el-col>
@@ -357,6 +392,11 @@ global $AffiliatePress;
                                             <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-if="integration_reject_commission_disable == false">			
                                                 <el-form-item prop="lifter_lms_reject_commission_on_refund">
                                                     <el-switch  v-model="integrations_setting_form.lifter_lms_reject_commission_on_refund"/>                                         
+                                                </el-form-item>
+                                            </el-col>
+                                            <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-else>
+                                                <el-form-item prop="affiliate_integration_refund_disabled_switch">
+                                                    <el-switch v-model="affiliate_integration_refund_disabled_switch" :disabled="integration_reject_commission_disable"/>
                                                 </el-form-item>
                                             </el-col>
                                         </el-row>
@@ -437,6 +477,11 @@ global $AffiliatePress;
                                                 <el-switch  v-model="integrations_setting_form.paid_memberships_pro_reject_commission_on_refund"/>          
                                             </el-form-item>
                                         </el-col>   
+                                        <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-else>
+                                            <el-form-item prop="affiliate_integration_refund_disabled_switch">
+                                                <el-switch v-model="affiliate_integration_refund_disabled_switch" :disabled="integration_reject_commission_disable"/>
+                                            </el-form-item>
+                                        </el-col>
                                     </el-row>
                                     <?php do_action('affiliatepress_add_paid_memberships_pro_integrations_settings'); ?>
                                     </el-col>
@@ -474,6 +519,11 @@ global $AffiliatePress;
                                                     <el-switch  v-model="integrations_setting_form.paid_memberships_subscriptions_reject_commission_on_refund"/>                                         
                                                 </el-form-item>
                                             </el-col>
+                                            <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-else>
+                                                <el-form-item prop="affiliate_integration_refund_disabled_switch">
+                                                    <el-switch v-model="affiliate_integration_refund_disabled_switch" :disabled="integration_reject_commission_disable"/>
+                                                </el-form-item>
+                                            </el-col>
                                         </el-row>
                                         <?php do_action('affiliatepress_add_paid_memberships_subscriptions_integrations_settings'); ?>
                                     </el-col>
@@ -509,6 +559,11 @@ global $AffiliatePress;
                                             <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-if="integration_reject_commission_disable == false">					
                                                 <el-form-item prop="ultimate_membership_pro_reject_commission_on_refund">
                                                     <el-switch  v-model="integrations_setting_form.ultimate_membership_pro_reject_commission_on_refund"/>                                         
+                                                </el-form-item>
+                                            </el-col>
+                                            <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-else>
+                                                <el-form-item prop="affiliate_integration_refund_disabled_switch">
+                                                    <el-switch v-model="affiliate_integration_refund_disabled_switch" :disabled="integration_reject_commission_disable"/>
                                                 </el-form-item>
                                             </el-col>
                                         </el-row>
@@ -572,6 +627,11 @@ global $AffiliatePress;
                                                     <el-switch  v-model="integrations_setting_form.gravity_forms_reject_commission_on_refund"/>                                         
                                                 </el-form-item>
                                             </el-col>
+                                            <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-else>
+                                                <el-form-item prop="affiliate_integration_refund_disabled_switch">
+                                                    <el-switch v-model="affiliate_integration_refund_disabled_switch" :disabled="integration_reject_commission_disable"/>
+                                                </el-form-item>
+                                            </el-col>
                                         </el-row>
                                         <?php do_action('affiliatepress_add_gravity_forms_integrations_settings'); ?>
                                     </el-col>
@@ -615,6 +675,11 @@ global $AffiliatePress;
                                                     <el-switch v-model="integrations_setting_form.masteriyo_lms_reject_commission_on_refund"/>                                         
                                                 </el-form-item>
                                             </el-col>
+                                            <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-else>
+                                                <el-form-item prop="affiliate_integration_refund_disabled_switch">
+                                                    <el-switch v-model="affiliate_integration_refund_disabled_switch" :disabled="integration_reject_commission_disable"/>
+                                                </el-form-item>
+                                            </el-col>
                                         </el-row>
                                         <el-row type="flex" v-if="integrations_setting_form.enable_masteriyo_lms === true" class="ap-setting-warning">
                                             <el-col :xs="24" :sm="24" :md="24" :lg="14" :xl="24" class="ap-gs__cb-item-left">
@@ -650,6 +715,11 @@ global $AffiliatePress;
                                                     <el-switch  v-model="integrations_setting_form.getpaid_reject_commission_on_refund"/>                                         
                                                 </el-form-item>
                                             </el-col>
+                                            <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-else>
+                                                <el-form-item prop="affiliate_integration_refund_disabled_switch">
+                                                    <el-switch v-model="affiliate_integration_refund_disabled_switch" :disabled="integration_reject_commission_disable"/>
+                                                </el-form-item>
+                                            </el-col>
                                         </el-row>   
                                         <?php do_action('affiliatepress_add_getpaid_integrations_settings'); ?>
                                     </el-col>
@@ -675,6 +745,11 @@ global $AffiliatePress;
                                             <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-if="integration_reject_commission_disable == false">				
                                                 <el-form-item prop="learnpress_reject_commission_on_refund">
                                                     <el-switch  v-model="integrations_setting_form.learnpress_reject_commission_on_refund"/>                                         
+                                                </el-form-item>
+                                            </el-col>
+                                            <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-else>
+                                                <el-form-item prop="affiliate_integration_refund_disabled_switch">
+                                                    <el-switch v-model="affiliate_integration_refund_disabled_switch" :disabled="integration_reject_commission_disable"/>
                                                 </el-form-item>
                                             </el-col>
                                         </el-row>   
@@ -724,6 +799,11 @@ global $AffiliatePress;
                                                     <el-switch v-model="integrations_setting_form.accept_stripe_payments_reject_commission_on_refund"/>                                         
                                                 </el-form-item>
                                             </el-col>
+                                            <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-else>
+                                                <el-form-item prop="affiliate_integration_refund_disabled_switch">
+                                                    <el-switch v-model="affiliate_integration_refund_disabled_switch" :disabled="integration_reject_commission_disable"/>
+                                                </el-form-item>
+                                            </el-col>
                                         </el-row>
                                         <?php do_action('affiliatepress_add_accept_stripe_payments_integrations_settings'); ?>
                                     </el-col>
@@ -749,6 +829,11 @@ global $AffiliatePress;
                                             <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-if="integration_reject_commission_disable == false">			
                                                 <el-form-item prop="download_manager_reject_commission_on_refund">
                                                     <el-switch  v-model="integrations_setting_form.download_manager_reject_commission_on_refund"/>                                         
+                                                </el-form-item>
+                                            </el-col>
+                                            <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-else>
+                                                <el-form-item prop="affiliate_integration_refund_disabled_switch">
+                                                    <el-switch v-model="affiliate_integration_refund_disabled_switch" :disabled="integration_reject_commission_disable"/>
                                                 </el-form-item>
                                             </el-col>
                                         </el-row>

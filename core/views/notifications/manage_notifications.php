@@ -211,8 +211,9 @@
         </div>
     </div>
 </el-main>
-<?php  
-
+<?php
+    $affiliatepress_load_file_name = AFFILIATEPRESS_VIEWS_DIR . '/affiliatepress_footer.php';
+    $affiliatepress_load_file_name = apply_filters('affiliatepress_modify_footer_content', $affiliatepress_load_file_name,1);
+    require $affiliatepress_load_file_name;
 ?>
-
 

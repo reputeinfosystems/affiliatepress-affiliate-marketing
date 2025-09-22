@@ -2881,6 +2881,7 @@ if (! class_exists('affiliatepress_settings') ) {
             $affiliatepress_dynamic_setting_data_fields['is_display_reset_wizard_setting_btn'] = false;
 
             $affiliatepress_dynamic_setting_data_fields['integration_reject_commission_disable'] = true;
+            $affiliatepress_dynamic_setting_data_fields['affiliate_integration_refund_disabled_switch'] = true;
 
             $affiliatepress_dynamic_setting_data_fields['integrations_setting_form'] = array(
                 'enable_woocommerce' => false,

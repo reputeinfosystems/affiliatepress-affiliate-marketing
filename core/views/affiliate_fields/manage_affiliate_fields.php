@@ -30,7 +30,46 @@
             </div>
             <div class="ap-customize-body-wrapper">
                 <el-row type="flex" :gutter="32">
-                    <el-col :xs="18" :sm="18" :md="18" :lg="18" :xl="18">
+                    <el-col :xs="5" :sm="7" :md="7" :lg="5" :xl="5">
+                        <div class="ap-customize-step-side-panel ap-side-panel-disabled">
+                            <div class="ap-cs__items" id="ap-input-fields">
+                                <div class="ap-restricted">
+                                    <h5 class="ap-form-item-field-heading"><?php esc_html_e( 'Form Elements', 'affiliatepress-affiliate-marketing' ); ?>
+                                    <div @click="open_premium_modal" class="ap-premium-text" v-if="is_pro_active != '1'"><?php echo $AffiliatePress->affiliatepress_get_premium_content(); //phpcs:ignore ?></div>
+                                    </h5>
+                                </div>
+                                <div data-type="single_line" class="ap-cs__item">
+                                    <span class="material-icons-round">short_text</span>
+                                    <p><?php esc_html_e( 'Text Field', 'affiliatepress-affiliate-marketing' ); ?></p>
+                                </div>
+                                <div data-type="textarea" class="ap-cs__item">
+                                    <span class="material-icons-round">notes</span>
+                                    <p><?php esc_html_e( 'Textarea', 'affiliatepress-affiliate-marketing' ); ?></p>
+                                </div>
+                                <div data-type="checkbox" class="ap-cs__item">
+                                    <span class="material-icons-round">check_box</span>
+                                    <p><?php esc_html_e( 'Checkbox', 'affiliatepress-affiliate-marketing' ); ?></p>
+                                </div>
+                                <div data-type="radio" class="ap-cs__item">
+                                    <span class="material-icons-round">radio_button_checked</span>
+                                    <p><?php esc_html_e( 'Radio', 'affiliatepress-affiliate-marketing' ); ?></p>
+                                </div>
+                                <div data-type="dropdown" class="ap-cs__item">
+                                    <span class="material-icons-round">arrow_drop_down_circle</span>
+                                    <p><?php esc_html_e( 'Dropdown', 'affiliatepress-affiliate-marketing' ); ?></p>
+                                </div>
+                                <div data-type="datepicker" class="ap-cs__item">
+                                    <span class="material-icons-round">insert_invitation</span>
+                                    <p><?php esc_html_e( 'DatePicker', 'affiliatepress-affiliate-marketing' ); ?></p>
+                                </div>
+                                <div data-type="file_upload" class="ap-cs__item">
+                                    <span class="material-icons-round">upload</span>
+                                    <p><?php esc_html_e( 'File Upload', 'affiliatepress-affiliate-marketing' ); ?></p>
+                                </div>             
+                            </div>
+                        </div>
+                    </el-col>
+                    <el-col :xs="12" :sm="10" :md="10" :lg="13" :xl="13">
                         <div class="ap-customize-field-settings-body-container">
                             <el-row>
                                 <draggable v-model="field_settings_fields" item-key="id" class="list-group" ghost-class="ghost" @start="dragging = true" @end="endDragposistion" :move="updateFieldPos">   
@@ -290,8 +329,10 @@
         </el-container>
 </div>
 </el-main>
-<?php  
-
+<?php
+    $affiliatepress_load_file_name = AFFILIATEPRESS_VIEWS_DIR . '/affiliatepress_footer.php';
+    $affiliatepress_load_file_name = apply_filters('affiliatepress_modify_footer_content', $affiliatepress_load_file_name,1);
+    require $affiliatepress_load_file_name;
 ?>
 
 

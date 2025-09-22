@@ -28,6 +28,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
 
             /* Login functionality */
             add_action('wp_ajax_nopriv_affiliatepress_affiliate_login_account', array($this, 'affiliatepress_affiliate_login_account_func'), 10); 
+            add_action('wp_ajax_affiliatepress_affiliate_login_account', array($this, 'affiliatepress_affiliate_login_account_func'), 10);
             
             /**Function for set remember cookie */
             add_filter('auth_cookie_expiration', array($this,'affiliatepress_custom_remember_me_duration'), 10, 3);
@@ -76,8 +77,28 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             /* Upload Profile Image */
             add_action('wp_ajax_affiliatepress_upload_edit_profile_image', array( $this, 'affiliatepress_upload_edit_profile_image_func' ), 10);
 
+            add_action('wp_ajax_affiliatepress_update_nonce_page_load', array( $this, 'affiliatepress_update_nonce_page_load_func' ), 10);
+            add_action('wp_ajax_nopriv_affiliatepress_update_nonce_page_load', array( $this, 'affiliatepress_update_nonce_page_load_func' ), 10);
+
         }
-           
+
+        function affiliatepress_update_nonce_page_load_func(){
+            $response = array();
+            $response['variant'] = 'error';
+            $response['title']   = esc_html__( 'Error', 'affiliatepress-affiliate-marketing');
+            $response['msg']     = esc_html__( 'Something went wrong..', 'affiliatepress-affiliate-marketing');
+            
+            $affiliatepress_updated_nonce = esc_html(wp_create_nonce('ap_wp_nonce'));
+
+            if(!empty($affiliatepress_updated_nonce)){
+                $response['variant'] = 'success';
+                $response['title']   = esc_html__('Success', 'affiliatepress-affiliate-marketing');
+                $response['affiliatepress_updated_nonce'] = $affiliatepress_updated_nonce;
+            }
+
+            echo wp_json_encode($response);
+            exit;
+        }
                 
                 
         /**
@@ -402,20 +423,31 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
          */
         function affiliatepress_affiliate_panel_dynamic_on_load_methods_func($affiliatepress_affiliate_panel_dynamic_on_load_methods){
 
+            global $affiliatepress_notification_duration;
+
             $affiliatepress_affiliate_panel_dynamic_on_load_methods.='
                 var vm = this;
                 var container = document.getElementById("ap-vue-cont-id");
-                    function getScreenSize(width) {
+                var url = new URL(window.location.href);
+                if(url.searchParams.has("ap-nocache")){
+                    url.searchParams.delete("ap-nocache");
+                    window.history.replaceState({}, document.title, url.toString());
+                    if (!sessionStorage.getItem("ap_uid_cleaned")) {
+                        sessionStorage.setItem("ap_uid_cleaned", "1");
+                        window.location.reload();
+                    }
+                }
+                function getScreenSize(width) {
                         if (width >= 1200) return "desktop";
                         else if (width < 1200 && width >= 768) return "tablet";
                         else if (width < 768) return "mobile";
-                    }
-                    function updateScreenSize() {
+                }
+                function updateScreenSize() {
                         if (!container) return;
                         var width = container.offsetWidth;
                         vm.current_screen_size = getScreenSize(width);
-                    }
-                    function waitForStableContainerWidth(callback) {
+                }
+                function waitForStableContainerWidth(callback) {
                         var lastWidth = 0;
                         var stableCount = 0;
                         var maxTries = 20;
@@ -436,21 +468,42 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                             }
                         }
                         check();
-                    }
-                    waitForStableContainerWidth(function() {
+                }
+                waitForStableContainerWidth(function() {
                         updateScreenSize();
-                    });
-                    window.addEventListener("resize", function(event) {
+                });
+                window.addEventListener("resize", function(event) {
                         updateScreenSize();
-                    });
+                });
                 setTimeout(function(){
                     updateScreenSize();
+                    const postData = new FormData();
+                    postData.append("action", "affiliatepress_update_nonce_page_load");
+                    postData.append("_wpnonce", "'.esc_html(wp_create_nonce('ap_wp_nonce')).'");
+                    axios.post( affiliatepress_ajax_obj.ajax_url, postData )
+                    .then( function (response) {
+                        if(response.data.variant == "success"){
+                            document.getElementById("_wpnonce").value = response.data.affiliatepress_updated_nonce;
+                            if(vm.is_login == "true" && vm.allow_user_access == "true"){
+                                vm.affiliatepress_change_tab("dashboard",true);
+                                vm.is_display_tab_content_loader = "1";
+                                vm.affiliatepress_onload_func();
+                            }
+                        }else{ 
+                            vm.$notify({
+                                title: response.data.title,
+                                message: response.data.msg,
+                                type: response.data.variant,
+                                customClass: response.data.variant+"_notification",                                
+                                duration:'.intval($affiliatepress_notification_duration).',
+                            });    
+                        }
+                    }.bind(this) )
+                    .catch( function (error) {   
+                        console.log(error);
+                    });
                     vm.affiliatepress_load_panel_form(); 
-                    if(vm.is_login == "true" && vm.allow_user_access == "true"){
-                        vm.affiliatepress_change_tab("dashboard",true);
-                        vm.is_display_tab_content_loader = "1";
-                        vm.affiliatepress_onload_func();
-                    }
+                    
                     if((vm.is_login == "false") || (vm.is_login == "true" && vm.allow_user_access == "false" && vm.allow_signup == "true")){
                         vm.loadHCaptcha();
                     }
@@ -523,22 +576,6 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 $affiliatepress_dashboard_paid_earning = $AffiliatePress->affiliatepress_price_formatter_with_currency_symbol(round($affiliatepress_dashboard_paid_earning,2));  
                 $affiliatepress_dashboard_unpaid_earning = $AffiliatePress->affiliatepress_price_formatter_with_currency_symbol(round($affiliatepress_dashboard_unpaid_earning,2));
 
-
-
-                /*
-                $affiliatepress_dashboard_total_earning = floatval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_commissions, 'SUM(ap_commission_amount)', 'WHERE ap_affiliates_id  = %d AND ap_commission_status IN (1,4) AND DATE(ap_commission_created_date) >= %s AND DATE(ap_commission_created_date) <= %s ', array( $affiliatepress_affiliate_id,$affiliatepress_dashboard_start_date,$affiliatepress_dashboard_end_date), '', '', '', true, false,ARRAY_A));
-                
-
-                $affiliatepress_dashboard_paid_earning = floatval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_commissions, 'SUM(ap_commission_amount)', 'WHERE ap_affiliates_id  = %d AND ap_commission_status IN (4) AND DATE(ap_commission_created_date) >= %s AND DATE(ap_commission_created_date) <= %s ', array( $affiliatepress_affiliate_id,$affiliatepress_dashboard_start_date,$affiliatepress_dashboard_end_date), '', '', '', true, false,ARRAY_A));
-                
-                
-                $affiliatepress_dashboard_unpaid_earning = floatval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_commissions, 'SUM(ap_commission_amount)', 'WHERE ap_affiliates_id  = %d AND ap_commission_status IN (1) AND DATE(ap_commission_created_date) >= %s AND DATE(ap_commission_created_date) <= %s ', array( $affiliatepress_affiliate_id,$affiliatepress_dashboard_start_date,$affiliatepress_dashboard_end_date), '', '', '', true, false,ARRAY_A));
-                  
-                
-                $affiliatepress_dashboard_total_commission = intval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_commissions, 'COUNT(ap_commission_id)', 'WHERE ap_affiliates_id  = %d AND ap_commission_status IN (1,4) AND DATE(ap_commission_created_date) >= %s AND DATE(ap_commission_created_date) <= %s ', array( $affiliatepress_affiliate_id,$affiliatepress_dashboard_start_date,$affiliatepress_dashboard_end_date), '', '', '', true, false,ARRAY_A));
-                $affiliatepress_dashboard_total_visits = intval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_visits, 'COUNT(ap_visit_id)', 'WHERE ap_affiliates_id  = %d  AND DATE(ap_visit_created_date) >= %s AND DATE(ap_visit_created_date) <= %s ', array( $affiliatepress_affiliate_id,$affiliatepress_dashboard_start_date,$affiliatepress_dashboard_end_date), '', '', '', true, false,ARRAY_A));
-                */
-
             }else{
 
                 $affiliatepress_dashboard_total_earning    = 0;
@@ -563,20 +600,6 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 $affiliatepress_dashboard_total_earning = $AffiliatePress->affiliatepress_price_formatter_with_currency_symbol(round($affiliatepress_dashboard_total_earning,2));
                 $affiliatepress_dashboard_paid_earning = $AffiliatePress->affiliatepress_price_formatter_with_currency_symbol(round($affiliatepress_dashboard_paid_earning,2));  
                 $affiliatepress_dashboard_unpaid_earning = $AffiliatePress->affiliatepress_price_formatter_with_currency_symbol(round($affiliatepress_dashboard_unpaid_earning,2));
-
-                /*
-                $affiliatepress_dashboard_total_earning = floatval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_commissions, 'SUM(ap_commission_amount)', 'WHERE ap_affiliates_id  = %d AND ap_commission_status IN (1,4)', array( $affiliatepress_affiliate_id ), '', '', '', true, false,ARRAY_A));
-                $affiliatepress_dashboard_total_earning = $AffiliatePress->affiliatepress_price_formatter_with_currency_symbol(round($affiliatepress_dashboard_total_earning,2));
-
-                $affiliatepress_dashboard_paid_earning = floatval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_commissions, 'SUM(ap_commission_amount)', 'WHERE ap_affiliates_id  = %d AND ap_commission_status IN (4)', array( $affiliatepress_affiliate_id ), '', '', '', true, false,ARRAY_A));
-                $affiliatepress_dashboard_paid_earning = $AffiliatePress->affiliatepress_price_formatter_with_currency_symbol(round($affiliatepress_dashboard_paid_earning,2));
-
-                $affiliatepress_dashboard_unpaid_earning = floatval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_commissions, 'SUM(ap_commission_amount)', 'WHERE ap_affiliates_id  = %d AND ap_commission_status IN (1)', array( $affiliatepress_affiliate_id ), '', '', '', true, false,ARRAY_A));
-                $affiliatepress_dashboard_unpaid_earning = $AffiliatePress->affiliatepress_price_formatter_with_currency_symbol(round($affiliatepress_dashboard_unpaid_earning,2));
-
-                $affiliatepress_dashboard_total_commission = intval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_commissions, 'COUNT(ap_commission_id)', 'WHERE ap_affiliates_id  = %d AND ap_commission_status IN (1,4)', array( $affiliatepress_affiliate_id), '', '', '', true, false,ARRAY_A));
-                $affiliatepress_dashboard_total_visits = intval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_visits, 'COUNT(ap_visit_id)', 'WHERE ap_affiliates_id  = %d  ', array( $affiliatepress_affiliate_id), '', '', '', true, false,ARRAY_A));
-                */
 
             }
 
@@ -609,24 +632,11 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                     foreach($affiliatepress_total_year_dates as $affiliatepress_key=>$affiliatepress_value){
 
                         $affiliatepress_revenue_chart_data['labels'][]   = $affiliatepress_value;   
-                        
-                        
-                        /*
-
-                        $affiliatepress_day_total_commission = floatval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_commissions, 'SUM(ap_commission_amount)', 'WHERE ap_affiliates_id  = %d AND ap_commission_status IN (1,4) AND DATE_FORMAT(DATE(ap_commission_created_date),"%Y") = %s ', array($affiliatepress_affiliate_id,$affiliatepress_key), '', '', '', true, false,ARRAY_A));
-                        $affiliatepress_revenue_chart_data['earning_values'][] = round($affiliatepress_day_total_commission,2);
-                        
-                        $affiliatepress_total_commission = intval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_commissions, 'COUNT(ap_commission_id)', 'WHERE ap_affiliates_id  = %d AND ap_commission_status IN (1,4) AND  DATE_FORMAT(DATE(ap_commission_created_date),"%Y") = %s ', array( $affiliatepress_affiliate_id,$affiliatepress_key), '', '', '', true, false,ARRAY_A));
-                        $affiliatepress_revenue_chart_data['commission_count'][] = $affiliatepress_total_commission;
-
-                        */
 
                         $affiliatepress_day_total_commission = 0;
                         $affiliatepress_total_commission   = 0;
 
                         $affiliatepress_dashboard_report_data = $wpdb->get_row( $wpdb->prepare( "SELECT sum(ap_affiliate_report_total_commission) as total_commission_count, SUM(ap_affiliate_report_total_commission_amount) as total_commission_amount FROM {$affiliatepress_tbl_ap_affiliate_report} as report WHERE report.ap_affiliates_id = %d  AND DATE_FORMAT(DATE(ap_affiliate_report_date),'%Y') = %s", $affiliatepress_affiliate_id, $affiliatepress_key), ARRAY_A );  // phpcs:ignore WordPress.DB.DirectDatabaseQuery,  WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_report is table name defined globally & already prepare by affiliatepress_tablename_prepare function. False Positive alarm
-
-
 
                         if(!empty($affiliatepress_dashboard_report_data)){
                             $affiliatepress_day_total_commission = floatval($affiliatepress_dashboard_report_data['total_commission_amount']);
@@ -634,10 +644,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                         }
 
                         $affiliatepress_revenue_chart_data['earning_values'][] = round($affiliatepress_day_total_commission,2);
-                        $affiliatepress_revenue_chart_data['commission_count'][] =  $affiliatepress_total_commission;                        
-
-
-
+                        $affiliatepress_revenue_chart_data['commission_count'][] =  $affiliatepress_total_commission;       
                     }
                 }  
             }else if(!empty($affiliatepress_total_months_dates) && count($affiliatepress_total_months_dates) > 1 && $affiliatepress_has_dates_only == false){
@@ -645,7 +652,6 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                     foreach($affiliatepress_total_months_dates as $affiliatepress_key=>$affiliatepress_value){
 
                         $affiliatepress_revenue_chart_data['labels'][] = $affiliatepress_value;
-
 
                         $affiliatepress_day_total_commission = 0;
                         $affiliatepress_total_commission   = 0;
@@ -658,15 +664,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                         }
 
                         $affiliatepress_revenue_chart_data['earning_values'][] = round($affiliatepress_day_total_commission,2);
-                        $affiliatepress_revenue_chart_data['commission_count'][] =  $affiliatepress_total_commission;                        
-
-                        /*
-                        $affiliatepress_day_total_commission = floatval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_commissions, 'SUM(ap_commission_amount)', 'WHERE ap_affiliates_id  = %d AND ap_commission_status IN (1,4) AND DATE_FORMAT(DATE(ap_commission_created_date),"%m-%Y") = %s ', array($affiliatepress_affiliate_id,$affiliatepress_key), '', '', '', true, false,ARRAY_A));
-                        $affiliatepress_revenue_chart_data['earning_values'][] = round($affiliatepress_day_total_commission,2);
-
-                        $affiliatepress_total_commission = intval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_commissions, 'COUNT(ap_commission_id)', 'WHERE ap_affiliates_id  = %d AND ap_commission_status IN (1,4) AND  DATE_FORMAT(DATE(ap_commission_created_date),"%m-%Y") = %s ', array( $affiliatepress_affiliate_id,$affiliatepress_key), '', '', '', true, false,ARRAY_A));
-                        $affiliatepress_revenue_chart_data['commission_count'][] = $affiliatepress_total_commission;                        
-                        */
+                        $affiliatepress_revenue_chart_data['commission_count'][] =  $affiliatepress_total_commission; 
                     }
                 }                
             }else{
@@ -690,14 +688,6 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                         $affiliatepress_revenue_chart_data['earning_values'][]   = round($affiliatepress_day_total_commission,2);
                         $affiliatepress_revenue_chart_data['commission_count'][] =  $affiliatepress_total_commission;
 
-                        /*
-                        $affiliatepress_day_total_commission = floatval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_commissions, 'SUM(ap_commission_amount)', 'WHERE ap_affiliates_id  = %d AND ap_commission_status IN (1,4) AND DATE(ap_commission_created_date) = %s ', array($affiliatepress_affiliate_id,$affiliatepress_key), '', '', '', true, false,ARRAY_A));
-                        $affiliatepress_revenue_chart_data['earning_values'][] = round($affiliatepress_day_total_commission,2);
-
-                        $affiliatepress_total_commission = intval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_commissions, 'COUNT(ap_commission_id)', 'WHERE ap_affiliates_id  = %d AND ap_commission_status IN (1,4) AND DATE(ap_commission_created_date) = %s ', array( $affiliatepress_affiliate_id,$affiliatepress_key), '', '', '', true, false,ARRAY_A));
-                        $affiliatepress_revenue_chart_data['commission_count'][] = $affiliatepress_total_commission;
-                        */
-
                     }
                 }
             }
@@ -713,9 +703,8 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             $response['dashboard_total_commission'] = intval($affiliatepress_dashboard_total_commission);
             $response['dashboard_total_visits']     = intval($affiliatepress_dashboard_total_visits); 
             $response['revenue_chart_data']         = $affiliatepress_revenue_chart_data;      
-            $response['affiliate_panel_labels']     = $affiliatepress_panel_labels;       
-
-
+            $response['affiliate_panel_labels']     = $affiliatepress_panel_labels; 
+            
             wp_send_json($response);
             exit();
 
@@ -2079,6 +2068,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                     $affiliatepress_affiliate_account_page_id = $AffiliatePress->affiliatepress_get_settings('affiliate_account_page_id', 'affiliate_settings');
                     $affiliatepress_affiliate_login_page_url  = get_permalink($affiliatepress_affiliate_account_page_id);  
                     $affiliatepress_affiliate_login_page_url = apply_filters('affiliatepress_modify_affiliate_panel_redirect_link', $affiliatepress_affiliate_login_page_url);
+                    $affiliatepress_affiliate_login_page_url = add_query_arg( 'ap-nocache',current_time('timestamp'),$affiliatepress_affiliate_login_page_url);
                     $response['after_register_redirect'] = $affiliatepress_affiliate_login_page_url;                
 				}
 			}
@@ -2479,12 +2469,14 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                         ap_wpnonce_pre_fetch = ap_wpnonce_pre_fetch.value;
                     }                    
                     vm.affiliate_visit_loader = "1";
+                    vm.is_apply_disabled = true;
                     vm.enabled = true;
                     affiliatespress_search_data = vm.visits_search;
                     var postData = { action:"affiliatepress_get_affiliate_visits",currentpage:vm.visits_currentPage,  perpage:vm.visits_perpage, order_by:vm.visits_order_by, order:vm.visits_order, search_data: affiliatespress_search_data, _wpnonce:ap_wpnonce_pre_fetch };
                     axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify( postData ) )
                     .then( function(response){                    
                         vm.affiliate_visit_loader   = "0";
+                        vm.is_apply_disabled = false;
                         vm.is_display_tab_content_loader = "0";                                     
                         if(response.data.variant == "success"){                            
                             vm.visits_items      = response.data.items;                      
@@ -2572,12 +2564,14 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                         ap_wpnonce_pre_fetch = ap_wpnonce_pre_fetch.value;
                     }                    
                     vm.affiliate_creative_loader = "1";
+                    vm.is_apply_disabled = true;
                     vm.enabled = true;
                     affiliatespress_search_data = vm.creative_search;
                     var postData = { action:"affiliatepress_get_affiliate_creatives",currentpage:vm.creative_currentPage,  perpage:vm.creative_perpage, order_by:vm.creative_order_by, order:vm.creative_order, search_data: affiliatespress_search_data, _wpnonce:ap_wpnonce_pre_fetch };
                     axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify( postData ) )
                     .then( function(response){                    
                         vm.affiliate_creative_loader     = "0";
+                        vm.is_apply_disabled = false;
                         vm.is_display_tab_content_loader = "0";                                     
                         if(response.data.variant == "success"){                            
                             vm.creative_items      = response.data.items;                      
@@ -2849,6 +2843,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                     }else{
                         ap_wpnonce_pre_fetch = ap_wpnonce_pre_fetch.value;
                     }                    
+                    vm.is_apply_disabled = true;
                     vm.affiliate_commission_loader = "1";
                     vm.enabled = true;
                     affiliatespress_search_data = vm.commissions_search;
@@ -2856,7 +2851,8 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                     axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify( postData ) )
                     .then( function(response){                    
                         vm.affiliate_commission_loader = "0"; 
-                        vm.is_display_tab_content_loader = "0";                                     
+                        vm.is_display_tab_content_loader = "0";    
+                        vm.is_apply_disabled = false;                                 
                         if(response.data.variant == "success"){                                                   
                             vm.commission_items      = response.data.items;                                                  
                             vm.commission_totalItems = response.data.total; 
@@ -2992,13 +2988,15 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                         ap_wpnonce_pre_fetch = ap_wpnonce_pre_fetch.value;
                     }                    
                     vm.affiliate_payments_loader = "1";
+                    vm.is_apply_disabled = true;
                     vm.enabled = true;
                     affiliatespress_search_data = vm.payments_search;
                     var postData = { action:"affiliatepress_get_affiliate_payments",currentpage:vm.payments_currentPage,  perpage:vm.payments_perpage, order_by:vm.payments_order_by, order:vm.payments_order, search_data: affiliatespress_search_data, _wpnonce:ap_wpnonce_pre_fetch };
                     axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify( postData ) )
                     .then( function(response){                    
                         vm.affiliate_payments_loader = "0"; 
-                        vm.is_display_tab_content_loader = "0";                                     
+                        vm.is_display_tab_content_loader = "0"; 
+                        vm.is_apply_disabled = false;                                    
                         if(response.data.variant == "success"){                                                   
                             vm.payments_items      = response.data.items;                                                  
                             vm.payments_totalItems = response.data.total; 
@@ -3088,11 +3086,15 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                     }else{
                         ap_wpnonce_pre_fetch = ap_wpnonce_pre_fetch.value;
                     }
+                    vm.affiliate_dashboard_loader   = "1";
+                    vm.is_apply_disabled = true;
                     var postData = { action:"affiliatepress_get_dashboard_data", _wpnonce:ap_wpnonce_pre_fetch,"dashboard_date_range":vm.dashboard_date_range };
                     axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify( postData ) )
                     .then( function(response){                                            
                         vm.is_display_tab_content_loader = "0";                                     
-                        if(response.data.variant == "success"){                                                   
+                        if(response.data.variant == "success"){      
+                            vm.affiliate_dashboard_loader   = "0"; 
+                            vm.is_apply_disabled = false;                                            
                             vm.dashboard_total_earning      = response.data.dashboard_total_earning;
                             vm.dashboard_paid_earning       = response.data.dashboard_paid_earning;
                             vm.dashboard_unpaid_earning     = response.data.dashboard_unpaid_earning;
@@ -3469,7 +3471,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                                         window.location.href = response.data.after_register_redirect;
                                     }else{
                                         window.location.href = window.location.href; 
-                                    }                              									
+                                    }
 								}
 							}.bind(this) )
 							.catch( function (error) {                    
@@ -3854,6 +3856,8 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             $affiliatepress_dynamic_data_fields['dashboard_unpaid_earning']   = '';
             $affiliatepress_dynamic_data_fields['dashboard_total_visits']     = '';
             $affiliatepress_dynamic_data_fields['dashboard_total_commission'] = '';
+            $affiliatepress_dynamic_data_fields['affiliate_dashboard_loader'] = '0';
+            $affiliatepress_dynamic_data_fields['is_apply_disabled'] = false;
             $affiliatepress_dynamic_data_fields['revenue_chart_data']         = array();
 
             
@@ -4257,7 +4261,11 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 wp_enqueue_script('affiliatepress_axios_js');                
                 wp_enqueue_script('affiliatepress_wordpress_vue_qs_js');
                 wp_enqueue_script('affiliatepress_element_js');
-                wp_enqueue_script( 'moment' );               
+
+                $affiliatepress_affiliate_id = $this->affiliatepress_check_affiliate_user_allow_to_access_func();
+                if(!empty($affiliatepress_affiliate_id)){
+                    wp_enqueue_script( 'moment' );            
+                }
                 wp_enqueue_script('affiliatepress_charts_js');
 
                 $affiliatepress_enable_google_recaptcha = $AffiliatePress->affiliatepress_get_settings('enable_google_recaptcha', 'affiliate_settings');

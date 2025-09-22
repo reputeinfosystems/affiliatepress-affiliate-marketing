@@ -36,7 +36,7 @@ if (! defined('AFFILIATEPRESS_FS_METHOD') ) {
 }
 
 global $affiliatepress_version, $affiliatepress_website_url;
-$affiliatepress_version = "1.0.3";
+$affiliatepress_version = "1.1";
 
 $affiliatepress_website_url = "https://www.affiliatepressplugin.com/";
 
@@ -357,7 +357,7 @@ function affiliatepress_plugin_links($links, $file){
             $links['deactivate'] = $deactivation_link;
         }
 
-        $link = '<a title="' . esc_html__('Upgrade To Premium', 'affiliatepress-affiliate-marketing') . '" href='.$affiliatepress_website_url.'pricing/?utm_source=liteversion&utm_medium=plugin&utm_campaign=Upgrade+to+Premium&utm_id=affiliatepress_2" style="font-weight:bold;">' . esc_html__('Upgrade To Premium', 'affiliatepress-affiliate-marketing') . '</a>';
+        $link = '<a class="ap-plugin-upgrade-to-pro" title="' . esc_html__('Upgrade To Premium', 'affiliatepress-affiliate-marketing') . '" href='.$affiliatepress_website_url.'pricing/?utm_source=liteversion&utm_medium=plugin&utm_campaign=Upgrade+to+Premium&utm_id=affiliatepress_2" style="font-weight:bold;">' . esc_html__('Upgrade To Premium', 'affiliatepress-affiliate-marketing') . '</a>';
         array_unshift($links, $link); /* Add Link To First Position */
     }
     return $links;

@@ -65,7 +65,7 @@
                                             </span>
                                         </label>
                                         <el-form-item prop="tracking_cookie_days">
-                                            <el-input-number v-model="affiliate_setting_form.tracking_cookie_days" class="ap-form-control--number" :min="0" :max="80" size="large" />                                    
+                                            <el-input-number v-model="affiliate_setting_form.tracking_cookie_days" class="ap-form-control--number" :min="0" :max="180" size="large" />                                    
                                         </el-form-item>
                                         <div class="ap-field-desc"><?php esc_html_e('Set value to "0" for maximum cookie duration.', 'affiliatepress-affiliate-marketing'); ?></div>
                                     </div>

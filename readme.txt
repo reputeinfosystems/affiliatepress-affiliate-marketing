@@ -5,7 +5,7 @@ Donate link: https://www.affiliatepressplugin.com/
 Requires at least: 5.3.0
 Tested up to: 6.8.2
 Requires PHP: 7.0
-Stable tag: 1.0.3
+Stable tag: 1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -128,6 +128,10 @@ Please follow the steps for installation:
 1. AffiliatePress – WordPress Affiliate Plugin
 
 == Changelog ==
+= 1.1 =
+* Updated: Tracking Cookie Days increased to 180 days.
+* Other Minor bug fixes.
+
 = 1.0.3 =
 * Minor bug fixes.
 

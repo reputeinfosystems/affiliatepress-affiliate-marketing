@@ -429,7 +429,7 @@
                                         </div>
                                     </div>
                                     <div class="ap-tf-btn-group ap-filter-popup-btn-group">
-                                        <el-button @click="applypopupPaymentFilter" class="ap-btn--primary ap-btn--full-width" plain type="primary">
+                                        <el-button @click="applypopupPaymentFilter" class="ap-btn--primary ap-btn--full-width" plain type="primary" :disabled="is_apply_disabled">
                                             <span class="ap-btn__label" :aria-label="affiliate_panel_labels.apply" v-html="affiliate_panel_labels.apply"></span>
                                         </el-button>
                                         <el-button @click="resetpopuppayment" class="ap-btn--second ap-btn--full-width">
@@ -466,7 +466,7 @@
                                     </el-col> 
                                     <el-col class="ap-front-filter-btn" :xs="24" :sm="24" :md="24" :lg="7" :xl="7">
                                         <div class="ap-tf-btn-group">
-                                            <el-button @click="applyPaymentFilter" class="ap-btn--primary" plain type="primary">
+                                            <el-button @click="applyPaymentFilter" class="ap-btn--primary" plain type="primary" :disabled="is_apply_disabled">
                                                 <span class="ap-btn__label" :aria-label="affiliate_panel_labels.apply" v-html="affiliate_panel_labels.apply"></span>
                                             </el-button>
                                             <el-button @click="resetpayments" class="ap-btn--second" v-if="payments_search.ap_payment_created_date != '' || payments_search.payment_status != ''">
@@ -590,7 +590,7 @@
                                     </div>
                                 </div>
                                 <div class="ap-tf-btn-group ap-filter-popup-btn-group">
-                                    <el-button @click="applypopupCommissionFilter" class="ap-btn--primary ap-btn--full-width" plain type="primary">
+                                    <el-button @click="applypopupCommissionFilter" class="ap-btn--primary ap-btn--full-width" plain type="primary" :disabled="is_apply_disabled">
                                         <span class="ap-btn__label" :aria-label="affiliate_panel_labels.apply" v-html="affiliate_panel_labels.apply"></span>
                                     </el-button>
                                     <el-button @click="resetpopupcommission" class="ap-btn--second ap-btn--full-width">
@@ -626,7 +626,7 @@
                                     </el-col> 
                                     <el-col class="ap-front-filter-btn" :xs="24" :sm="24" :md="24" :lg="7" :xl="7">
                                         <div class="ap-tf-btn-group">
-                                            <el-button @click="applyCommissionsFilter" class="ap-btn--primary" plain type="primary">
+                                            <el-button @click="applyCommissionsFilter" class="ap-btn--primary" plain type="primary" :disabled="is_apply_disabled">
                                                 <span class="ap-btn__label" :aria-label="affiliate_panel_labels.apply" v-html="affiliate_panel_labels.apply"></span>
                                             </el-button>
                                             <el-button @click="resetcommissions" class="ap-btn--second" v-if="commissions_search.ap_commission_search_date != '' || commissions_search.commission_status != ''">
@@ -752,125 +752,136 @@
                             </div>
                         </div>
                         <div v-if="is_display_tab_content_loader == '0'" class="ap-panel-detail">
-                                <div class="ap-affiliate-panel-content-header ap-affiliat-panel-pading">
-                                    <div class="ap-tab-heading" v-html="affiliate_panel_labels.dashboard_affiliate_dashboard" :aria-label="affiliate_panel_labels.dashboard_affiliate_dashboard"></div>
+                            <div class="ap-affiliate-panel-content-header ap-affiliat-panel-pading">
+                                <div class="ap-tab-heading" v-html="affiliate_panel_labels.dashboard_affiliate_dashboard" :aria-label="affiliate_panel_labels.dashboard_affiliate_dashboard"></div>
+                            </div>
+                            <div class="ap-table-filter ap-affiliat-panel-pading">
+                                <el-row type="flex" :gutter="24">
+                                    <el-col class="ap-padding-right-16" :xs="24" :sm="24" :md="11" :lg="11" :xl="11">   
+                                        <div>  
+                                            <el-date-picker :teleported="false" popper-class="ap-date-range-picker-widget-wrapper ap-date-range-picker-sidebar-widget-wrapper" value-format="YYYY-MM-DD" :format="ap_common_date_format" v-model="dashboard_date_range" class="ap-form-date-range-control ap-form-full-width-control ap-padding-right-16" type="daterange" size="large" :start-placeholder="affiliate_panel_labels.start_date" :end-placeholder="affiliate_panel_labels.end_date"  :shortcuts="shortcuts" :default-time="defaultTime"/>
+                                        </div>       
+                                    </el-col> 
+                                    <el-col class="ap-front-filter-btn" :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
+                                        <div class="ap-tf-btn-group">
+                                            <el-button @click="change_dashboard_date" class="ap-btn--primary" plain type="primary" :disabled="is_apply_disabled">
+                                                <span class="ap-btn__label" v-html="affiliate_panel_labels.apply" :aria-label="affiliate_panel_labels.apply"></span>
+                                            </el-button>
+                                        </div>
+                                    </el-col>
+                                </el-row>
+                            </div> 
+                            <div class="ap-panel-data-container ap-aff-panel-table">
+                                <div class="ap-front-content-data">
+                                    <div class="ap-panel-loader ap-panel-inner-loader" v-if="affiliate_dashboard_loader == '1'">
+                                        <div class="ap-front-loader-container ap-panel-front-loader">
+                                            <div class="ap-front-loader"></div>
+                                        </div>
+                                    </div>               
+                                    <div v-if="affiliate_dashboard_loader == '0'">
+                                        <div class="ap-cards-container ap-affiliat-panel-pading">
+                                                <el-row :gutter="24" type="flex">
+                                                    <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="8">
+                                                        <el-card class="ap-box-card">
+                                                            <div class="ap-box-card-flex">
+                                                                <div class="ap-box-card-icon">
+                                                                    <?php do_action('affiliatepress_common_affiliate_panel_svg_code','total_earnings') ?>
+                                                                </div>
+                                                                <div class="ap-box-right">
+                                                                    <div class="header">
+                                                                        <span v-html="affiliate_panel_labels.dashboard_total_earnings" :aria-label="affiliate_panel_labels.dashboard_total_earnings"></span>
+                                                                    </div>
+                                                                    <div class="ap-box-card-value" v-html="dashboard_total_earning" :aria-label="dashboard_total_earning"></div>
+                                                                </div>
+                                                        </div>
+                                                        </el-card>
+                                                    </el-col>
+                                                    <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="8">
+                                                        <el-card class="ap-box-card">
+                                                            <div class="ap-box-card-flex">
+                                                                <div class="ap-box-card-icon">
+                                                                    <?php do_action('affiliatepress_common_affiliate_panel_svg_code','paid_earnings') ?>
+                                                                </div>
+                                                                <div class="ap-box-right">
+                                                                    <div class="header">
+                                                                    <span v-html="affiliate_panel_labels.dashboard_paid_earnings" :aria-label="affiliate_panel_labels.dashboard_paid_earnings"></span>
+                                                                    </div>
+                                                                    <div class="ap-box-card-value" v-html="dashboard_paid_earning" :aria-label="dashboard_paid_earning"></div>
+                                                                </div>
+                                                        </div>
+                                                        </el-card>
+                                                    </el-col>
+                                                    <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="8">
+                                                        <el-card class="ap-box-card">
+                                                            <div class="ap-box-card-flex">
+                                                                <div class="ap-box-card-icon">
+                                                                    <?php do_action('affiliatepress_common_affiliate_panel_svg_code','unpaid_earnings') ?>
+                                                                </div>
+                                                                <div class="ap-box-right">
+                                                                    <div class="header">
+                                                                    <span v-html="affiliate_panel_labels.dashboard_unpaid_earnings" :aria-label="affiliate_panel_labels.dashboard_unpaid_earnings"></span>
+                                                                    </div>
+                                                                    <div class="ap-box-card-value" v-html="dashboard_unpaid_earning" :aria-label="dashboard_unpaid_earning"></div>
+                                                                </div>
+                                                        </div>
+                                                        </el-card>
+                                                    </el-col>
+                                                    <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="8">
+                                                        <el-card class="ap-box-card">
+                                                            <div class="ap-box-card-flex">
+                                                                <div class="ap-box-card-icon">
+                                                                    <?php do_action('affiliatepress_common_affiliate_panel_svg_code','visits') ?>
+                                                                </div>
+                                                                <div class="ap-box-right">
+                                                                    <div class="header">
+                                                                    <span v-html="affiliate_panel_labels.dashboard_visits_count" :aria-label="affiliate_panel_labels.dashboard_visits_count"></span>
+                                                                    </div>
+                                                                    <div class="ap-box-card-value" v-html="dashboard_total_visits" :aria-label="dashboard_total_visits"></div>
+                                                                </div>
+                                                        </div>
+                                                        </el-card>
+                                                    </el-col>
+                                                    <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="8">
+                                                        <el-card class="ap-box-card">
+                                                            <div class="ap-box-card-flex">
+                                                                <div class="ap-box-card-icon">
+                                                                    <?php do_action('affiliatepress_common_affiliate_panel_svg_code','total_commission') ?>
+                                                                </div>
+                                                                <div class="ap-box-right">
+                                                                    <div class="header">
+                                                                    <span v-html="affiliate_panel_labels.dashboard_commissions_count" :aria-label="affiliate_panel_labels.dashboard_commissions_count"></span>
+                                                                    </div>
+                                                                    <div class="ap-box-card-value" v-html="dashboard_total_commission" :aria-label="dashboard_total_commission"></div>
+                                                                </div>
+                                                        </div>
+                                                        </el-card>
+                                                    </el-col>
+                                                    <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="8">
+                                                        <el-card class="ap-box-card">
+                                                            <div class="ap-box-card-flex">
+                                                                <div class="ap-box-card-icon">
+                                                                    <?php do_action('affiliatepress_common_affiliate_panel_svg_code','commission_rate') ?>
+                                                                </div>
+                                                                <div class="ap-box-right">
+                                                                    <div class="header">
+                                                                    <span v-html="affiliate_panel_labels.dashboard_commission_rate" :aria-label="affiliate_panel_labels.dashboard_commission_rate"></span>
+                                                                    </div>
+                                                                    <div class="ap-box-card-value" v-html="default_commission_rate" :aria-label="default_commission_rate"></div>
+                                                                </div>
+                                                        </div>
+                                                        </el-card>
+                                                    </el-col>
+                                                </el-row>
+                                        </div>  
+                                        <div class="ap-chart-data-card ap-affiliat-panel-pading">
+                                                <div class="ap-tab-heading" v-html="affiliate_panel_labels.dashboard_reports" :aria-label="affiliate_panel_labels.dashboard_reports"></div>
+                                                <div class="ap-chart-data">
+                                                    <canvas class="ap-canvas-chart-data" id="revenue_chart"></canvas>                                        
+                                                </div>                                    
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="ap-table-filter ap-affiliat-panel-pading">
-                                    <el-row type="flex" :gutter="24">
-                                        <el-col class="ap-padding-right-16" :xs="24" :sm="24" :md="11" :lg="11" :xl="11">   
-                                            <div>  
-                                                <el-date-picker :teleported="false" popper-class="ap-date-range-picker-widget-wrapper ap-date-range-picker-sidebar-widget-wrapper" value-format="YYYY-MM-DD" :format="ap_common_date_format" v-model="dashboard_date_range" class="ap-form-date-range-control ap-form-full-width-control ap-padding-right-16" type="daterange" size="large" :start-placeholder="affiliate_panel_labels.start_date" :end-placeholder="affiliate_panel_labels.end_date"  :shortcuts="shortcuts" :default-time="defaultTime"/>
-                                            </div>       
-                                        </el-col> 
-                                        <el-col class="ap-front-filter-btn" :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
-                                            <div class="ap-tf-btn-group">
-                                                <el-button @click="change_dashboard_date" class="ap-btn--primary" plain type="primary">
-                                                    <span class="ap-btn__label" v-html="affiliate_panel_labels.apply" :aria-label="affiliate_panel_labels.apply"></span>
-                                                </el-button>
-                                            </div>
-                                        </el-col>
-                                    </el-row>
-                                </div>              
-                                <div class="ap-cards-container ap-affiliat-panel-pading">
-                                    <el-row :gutter="24" type="flex">
-                                        <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="8">
-                                            <el-card class="ap-box-card">
-                                                <div class="ap-box-card-flex">
-                                                    <div class="ap-box-card-icon">
-                                                        <?php do_action('affiliatepress_common_affiliate_panel_svg_code','total_earnings') ?>
-                                                    </div>
-                                                    <div class="ap-box-right">
-                                                        <div class="header">
-                                                            <span v-html="affiliate_panel_labels.dashboard_total_earnings" :aria-label="affiliate_panel_labels.dashboard_total_earnings"></span>
-                                                        </div>
-                                                        <div class="ap-box-card-value" v-html="dashboard_total_earning" :aria-label="dashboard_total_earning"></div>
-                                                    </div>
-                                               </div>
-                                            </el-card>
-                                        </el-col>
-                                        <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="8">
-                                            <el-card class="ap-box-card">
-                                                <div class="ap-box-card-flex">
-                                                    <div class="ap-box-card-icon">
-                                                        <?php do_action('affiliatepress_common_affiliate_panel_svg_code','paid_earnings') ?>
-                                                    </div>
-                                                    <div class="ap-box-right">
-                                                        <div class="header">
-                                                        <span v-html="affiliate_panel_labels.dashboard_paid_earnings" :aria-label="affiliate_panel_labels.dashboard_paid_earnings"></span>
-                                                        </div>
-                                                        <div class="ap-box-card-value" v-html="dashboard_paid_earning" :aria-label="dashboard_paid_earning"></div>
-                                                    </div>
-                                               </div>
-                                            </el-card>
-                                        </el-col>
-                                        <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="8">
-                                            <el-card class="ap-box-card">
-                                                <div class="ap-box-card-flex">
-                                                    <div class="ap-box-card-icon">
-                                                        <?php do_action('affiliatepress_common_affiliate_panel_svg_code','unpaid_earnings') ?>
-                                                    </div>
-                                                    <div class="ap-box-right">
-                                                        <div class="header">
-                                                        <span v-html="affiliate_panel_labels.dashboard_unpaid_earnings" :aria-label="affiliate_panel_labels.dashboard_unpaid_earnings"></span>
-                                                        </div>
-                                                        <div class="ap-box-card-value" v-html="dashboard_unpaid_earning" :aria-label="dashboard_unpaid_earning"></div>
-                                                    </div>
-                                               </div>
-                                            </el-card>
-                                        </el-col>
-                                        <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="8">
-                                            <el-card class="ap-box-card">
-                                                <div class="ap-box-card-flex">
-                                                    <div class="ap-box-card-icon">
-                                                        <?php do_action('affiliatepress_common_affiliate_panel_svg_code','visits') ?>
-                                                    </div>
-                                                    <div class="ap-box-right">
-                                                        <div class="header">
-                                                        <span v-html="affiliate_panel_labels.dashboard_visits_count" :aria-label="affiliate_panel_labels.dashboard_visits_count"></span>
-                                                        </div>
-                                                        <div class="ap-box-card-value" v-html="dashboard_total_visits" :aria-label="dashboard_total_visits"></div>
-                                                    </div>
-                                               </div>
-                                            </el-card>
-                                        </el-col>
-                                        <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="8">
-                                            <el-card class="ap-box-card">
-                                                <div class="ap-box-card-flex">
-                                                    <div class="ap-box-card-icon">
-                                                        <?php do_action('affiliatepress_common_affiliate_panel_svg_code','total_commission') ?>
-                                                    </div>
-                                                    <div class="ap-box-right">
-                                                        <div class="header">
-                                                        <span v-html="affiliate_panel_labels.dashboard_commissions_count" :aria-label="affiliate_panel_labels.dashboard_commissions_count"></span>
-                                                        </div>
-                                                        <div class="ap-box-card-value" v-html="dashboard_total_commission" :aria-label="dashboard_total_commission"></div>
-                                                    </div>
-                                               </div>
-                                            </el-card>
-                                        </el-col>
-                                        <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="8">
-                                            <el-card class="ap-box-card">
-                                                <div class="ap-box-card-flex">
-                                                    <div class="ap-box-card-icon">
-                                                        <?php do_action('affiliatepress_common_affiliate_panel_svg_code','commission_rate') ?>
-                                                    </div>
-                                                    <div class="ap-box-right">
-                                                        <div class="header">
-                                                        <span v-html="affiliate_panel_labels.dashboard_commission_rate" :aria-label="affiliate_panel_labels.dashboard_commission_rate"></span>
-                                                        </div>
-                                                        <div class="ap-box-card-value" v-html="default_commission_rate" :aria-label="default_commission_rate"></div>
-                                                    </div>
-                                               </div>
-                                            </el-card>
-                                        </el-col>
-                                    </el-row>
-                                </div>  
-                                <div class="ap-chart-data-card ap-affiliat-panel-pading">
-                                    <div class="ap-tab-heading" v-html="affiliate_panel_labels.dashboard_reports" :aria-label="affiliate_panel_labels.dashboard_reports"></div>
-                                    <div class="ap-chart-data">
-                                        <canvas class="ap-canvas-chart-data" id="revenue_chart"></canvas>                                        
-                                    </div>                                    
-                                </div>
+                            </div>
                         </div>
                     </div>   
                     <div v-if="affiliate_current_tab == 'visit'" class="ap-affiliate-panel-content">
@@ -903,7 +914,7 @@
                                         </div>
                                     </div>
                                     <div class="ap-tf-btn-group ap-filter-popup-btn-group">
-                                        <el-button @click="applypopupVisitFilter" class="ap-btn--primary ap-btn--full-width" plain type="primary">
+                                        <el-button @click="applypopupVisitFilter" class="ap-btn--primary ap-btn--full-width" plain type="primary" :disabled="is_apply_disabled">
                                             <span class="ap-btn__label" :aria-label="affiliate_panel_labels.apply" v-html="affiliate_panel_labels.apply"></span>
                                         </el-button>
                                         <el-button @click="resetpopupvisit" class="ap-btn--second ap-btn--full-width">
@@ -941,7 +952,7 @@
                                     </el-col> 
                                     <el-col class="ap-front-filter-btn" :xs="24" :sm="24" :md="24" :lg="7" :xl="7">
                                         <div class="ap-tf-btn-group">
-                                            <el-button @click="applyVisitFilter"  class="ap-btn--primary" plain type="primary">
+                                            <el-button @click="applyVisitFilter"  class="ap-btn--primary" plain type="primary" :disabled="is_apply_disabled">
                                                 <span class="ap-btn__label" :aria-label="affiliate_panel_labels.apply" v-html="affiliate_panel_labels.apply"></span>
                                             </el-button>
                                             <el-button @click="resetvisit" class="ap-btn--second" v-if="visits_search.ap_visit_date != '' || visits_search.visit_type != ''">
@@ -1150,16 +1161,13 @@
                                         <span class="ap-btn__label" :aria-label="affiliate_panel_labels.link_generate_affiliate_link" v-html="affiliate_panel_labels.link_generate_affiliate_link"></span>
                                     </el-button>                                
                                 </div>
-                                <el-dialog modal-class="ap-affiliate-dialog ap-mobile-full-screen-dialog ap-mobile-center-popup" v-model="open_modal" title="" width="630">
+                                <el-dialog modal-class="ap-affiliate-dialog ap-mobile-full-screen-dialog ap-mobile-center-popup" v-model="open_modal" title="" width="630" >
                                     <div class="ap-affiliate-dialog">
                                         <div @click="open_modal = false" class="ap-dialog-close Fap-mobile-diplay">
                                             <?php do_action('affiliatepress_common_affiliate_panel_svg_code','close_dialog'); ?>
                                         </div>
                                         <div class="ap-affiliate-dialog-header">
                                             <div class="ap-tab-heading" :aria-label="affiliate_panel_labels.link_generate_custome_affiliate_links" v-html="affiliate_panel_labels.link_generate_custome_affiliate_links"></div>
-                                            <div @click="open_modal = false" class="ap-dialog-close1 ap-flex-center ap-cursor-pointer ap-desktop-diplay" tabindex="0" @keydown.enter.prevent="open_modal = false">
-                                                <?php do_action('affiliatepress_common_affiliate_panel_svg_code','close_dialog'); ?>
-                                            </div>
                                         </div>
                                         <div class="ap-affiliate-dialog-body">
                                             <div class="ap-affiliate-dialog-subtitle ap-mobile-detail-txt" :aria-label="affiliate_panel_labels.link_generate_link_description" v-html="affiliate_panel_labels.link_generate_link_description"></div>
@@ -1294,7 +1302,7 @@
                                     </el-col> 
                                     <el-col class="ap-front-filter-btn" :xs="24" :sm="24" :md="24" :lg="7" :xl="7">
                                         <div class="ap-tf-btn-group">
-                                            <el-button @click="applyCreativeFilter" class="ap-btn--primary" plain type="primary">
+                                            <el-button @click="applyCreativeFilter" class="ap-btn--primary" plain type="primary" :disabled="is_apply_disabled">
                                                 <span class="ap-btn__label" :aria-label="affiliate_panel_labels.apply" v-html="affiliate_panel_labels.apply"></span>
                                             </el-button>
                                             <el-button @click="resetcreative" class="ap-btn--second" v-if="creative_search.ap_creative_name != '' || creative_search.creative_type != ''">
@@ -1445,7 +1453,7 @@
                                 </div>
                             </div>
                             <div class="ap-tf-btn-group ap-filter-popup-btn-group">
-                                <el-button @click="applypopupCreativeFilter" class="ap-btn--primary ap-btn--full-width" plain type="primary">
+                                <el-button @click="applypopupCreativeFilter" class="ap-btn--primary ap-btn--full-width" plain type="primary" :disabled="is_apply_disabled">
                                     <span class="ap-btn__label"  :aria-label="affiliate_panel_labels.apply" v-html="affiliate_panel_labels.apply"></span>
                                 </el-button>
                                 <el-button @click="resetcreative" class="ap-btn--second ap-btn--full-width">

@@ -145,10 +145,6 @@ if (! class_exists('affiliatepress_dashboard') ) {
                 $affiliatepress_dashboard_total_commission_count = 0;
                 $affiliatepress_dashboard_total_visits_count = 0;
 
-                /*
-                $affiliatepress_dashboard_report_data = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_report, 'SUM(ap_affiliate_report_total_commission) as total_commission_count,  sum(ap_affiliate_report_visits) as total_visits_count, SUM(ap_affiliate_report_total_commission_amount) as total_commission_amount, sum(ap_affiliate_report_paid_commission_amount) as paid_commission_amount, sum(ap_affiliate_report_unpaid_commission_amount) as unpaid_commission_amount', 'WHERE  DATE(ap_affiliate_report_date) >= %s AND DATE(ap_affiliate_report_date) <= %s ', array( $affiliatepress_dashboard_start_date,$affiliatepress_dashboard_end_date), '', '', '', false, true,ARRAY_A);
-                */
-
                 $affiliatepress_dashboard_report_data = $wpdb->get_row( $wpdb->prepare( "SELECT SUM(ap_affiliate_report_total_commission) as total_commission_count,  sum(ap_affiliate_report_visits) as total_visits_count, SUM(ap_affiliate_report_total_commission_amount) as total_commission_amount, sum(ap_affiliate_report_total_commission_revenue) as total_revenue_amount, sum(ap_affiliate_report_unpaid_commission_amount) as unpaid_commission_amount FROM {$affiliatepress_tbl_ap_affiliate_report} as report Inner Join {$affiliatepress_tbl_ap_affiliates} as affiliate ON report.ap_affiliates_id = affiliate.ap_affiliates_id  WHERE affiliate.ap_affiliates_status = %d AND DATE(ap_affiliate_report_date) >= %s AND DATE(ap_affiliate_report_date) <= %s", 1, $affiliatepress_dashboard_start_date,$affiliatepress_dashboard_end_date), ARRAY_A );  // phpcs:ignore WordPress.DB.DirectDatabaseQuery,  WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_report is table name defined globally & already prepare by affiliatepress_tablename_prepare function. False Positive alarm
 
                 if(!empty($affiliatepress_dashboard_report_data)){
@@ -281,9 +277,6 @@ if (! class_exists('affiliatepress_dashboard') ) {
                         $affiliatepress_day_total_commission = 0;
                         $affiliatepress_total_visits_count   = 0;
 
-                        /*
-                        $affiliatepress_dashboard_report_data = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_report, 'sum(ap_affiliate_report_visits) as total_visits_count, SUM(ap_affiliate_report_total_commission_amount) as total_commission_amount', 'WHERE DATE_FORMAT(DATE(ap_affiliate_report_date),"%Y") = %s ', array( $affiliatepress_key ), '', '', '', false, true,ARRAY_A);
-                        */
                         $affiliatepress_dashboard_report_data = $wpdb->get_row( $wpdb->prepare( "SELECT sum(ap_affiliate_report_visits) as total_visits_count, SUM(ap_affiliate_report_total_commission_revenue) as total_commission_amount FROM {$affiliatepress_tbl_ap_affiliate_report} as report Inner Join {$affiliatepress_tbl_ap_affiliates} as affiliate ON report.ap_affiliates_id = affiliate.ap_affiliates_id  WHERE affiliate.ap_affiliates_status = %d  AND DATE_FORMAT(DATE(ap_affiliate_report_date),'%Y') = %s", 1, $affiliatepress_key), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,  WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_report is table name defined globally & already prepare by affiliatepress_tablename_prepare function. False Positive alarm
 
                         if(!empty($affiliatepress_dashboard_report_data)){
@@ -345,10 +338,6 @@ if (! class_exists('affiliatepress_dashboard') ) {
                 $affiliatepress_all_earning_arr = array();
                 $affiliatepress_all_visits_arr = array();
                 $affiliatepress_all_affiliate_arr = array();
-
-                /*
-                $affiliatepress_dashboard_report_data = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_report.' ', 'ap_affiliate_report_date, sum(ap_affiliate_report_visits) as total_visits_count, sum(ap_affiliate_report_total_commission_amount) as total_commission_amount', 'WHERE (DATE(ap_affiliate_report_date) >= %s AND DATE(ap_affiliate_report_date) <= %s) ', array($affiliatepress_dashboard_start_date, $affiliatepress_dashboard_end_date ), 'GROUP BY ap_affiliate_report_date', '', '', false, false,ARRAY_A);
-                */
 
                 $affiliatepress_dashboard_report_data = $wpdb->get_results( $wpdb->prepare( "SELECT ap_affiliate_report_date, sum(ap_affiliate_report_visits) as total_visits_count, sum(ap_affiliate_report_total_commission_revenue) as total_commission_amount FROM {$affiliatepress_tbl_ap_affiliate_report} as report Inner Join {$affiliatepress_tbl_ap_affiliates} as affiliate ON report.ap_affiliates_id = affiliate.ap_affiliates_id  WHERE affiliate.ap_affiliates_status = %d  AND (DATE(ap_affiliate_report_date) >= %s AND DATE(ap_affiliate_report_date) <= %s) GROUP BY ap_affiliate_report_date ", 1, $affiliatepress_dashboard_start_date, $affiliatepress_dashboard_end_date), ARRAY_A );  // phpcs:ignore WordPress.DB.DirectDatabaseQuery,  WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_report is table name defined globally & already prepare by affiliatepress_tablename_prepare function. False Positive alarm
 

@@ -32,8 +32,32 @@ if (! class_exists('affiliatepress_affiliate_register') ) {
          * @return void
          */
         function affiliatepress_affiliate_registration_dynamic_on_load_methods_func($affiliatepress_affiliate_registration_dynamic_method){
+            
+            global $affiliatepress_notification_duration;
+            
             $affiliatepress_affiliate_registration_dynamic_method.='
-                this.loadHCaptcha();
+                    const postData = new FormData();
+                    postData.append("action", "affiliatepress_update_nonce_page_load");
+                    postData.append("_wpnonce", "'.esc_html(wp_create_nonce('ap_wp_nonce')).'");
+
+                    axios.post( affiliatepress_ajax_obj.ajax_url, postData )
+                    .then( function (response) {
+                        if(response.data.variant == "success"){
+                            document.getElementById("_wpnonce").value = response.data.affiliatepress_updated_nonce;
+                            this.loadHCaptcha();
+                        }else{ 
+                            vm.$notify({
+                                title: response.data.title,
+                                message: response.data.msg,
+                                type: response.data.variant,
+                                customClass: response.data.variant+"_notification",                                
+                                duration:'.intval($affiliatepress_notification_duration).',
+                            });    
+                        }
+                    }.bind(this) )
+                    .catch( function (error) {   
+                        console.log(error);
+                    });
             ';
             return $affiliatepress_affiliate_registration_dynamic_method;
         }

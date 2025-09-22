@@ -133,6 +133,17 @@ if (! class_exists('AffiliatePress') ) {
 
             if (is_plugin_active('wp-rocket/wp-rocket.php') && ! is_admin() ) {
                 add_filter('script_loader_tag', array( $this, 'affiliatepress_prevent_rocket_loader_script' ), 10, 2);
+                add_filter('rocket_delay_js_exclusions',array($this,'affiliatepress_wp_rocket_excluded_js') ,20);
+            }
+
+            if (is_plugin_active('wp-optimize/wp-optimize.php') && ! is_admin() ) {
+                add_filter('script_loader_tag', array( $this, 'affiliatepress_wp_optimize_excluded_delay_js' ), 10, 3);
+                /** Enable merging of JavaScript files  --its option exclude for add */
+                add_filter( 'wp-optimize-minify-default-exclusions', array($this,'affiliatepress_wp_optimize_minify_exclude_scripts'),10,1);
+            }
+
+            if (is_plugin_active('wp-hummingbird/wp-hummingbird.php') && ! is_admin() ) {
+                add_filter('wphb_delay_js_exclusions', array( $this, 'affiliatepress_hummingbird_excluded_delay_js' ), 10, 1);
             }
 
             if (! is_admin() ) {
@@ -143,6 +154,21 @@ if (! class_exists('AffiliatePress') ) {
             /**lifetime deal notice dismissed */
             add_action('wp_ajax_affiliatepress_lifetime_deal_close', array( $this, 'affiliatepress_lifetime_deal_close_func' ));   
 
+            add_action('admin_init', array( $this, 'affiliatepress_get_lifetime_deal_content' ), 10);
+
+            add_filter( 'admin_body_class',array($this,'affiliatepress_add_admin_page_css') );
+
+        }
+
+        function affiliatepress_add_admin_page_css( $classes ) {
+            $screen = get_current_screen();
+        
+            // Check if we're on AffiliatePress admin pages
+            if ( isset( $_REQUEST['page'] ) && strpos( $_REQUEST['page'], 'affiliatepress' ) !== false ) {
+                $classes .= ' ap-affiliate-admin-page';
+            }
+        
+            return $classes;
         }
 
         /**
@@ -656,6 +682,8 @@ if (! class_exists('AffiliatePress') ) {
                         body.rtl .affiliatepresslite-deactivate-form-footer p{ justify-content: space-between;}
                         body.rtl .affiliatepress-deactivate-btn-cancel:hover ,.affiliatepress-deactivate-btn-cancel{margin-left: 10px; }
                         .affiliatepress-pro-notice-plugin-label{ color: #000000; }
+                        .ap-plugin-upgrade-to-pro{ color: #6858e0;}
+                        a.ap-plugin-upgrade-to-pro:hover{color: #6858e0;}
                         @media (max-width: 768px){
                             .affiliatepresslite-deactivate-reason{
                                 /* height: 20px !important;
@@ -816,7 +844,7 @@ if (! class_exists('AffiliatePress') ) {
         {
             global $affiliatepress_version, $AffiliatePress;
             $affiliatepress_old_version = get_option('affiliatepress_version', true);
-            if (version_compare($affiliatepress_old_version, '1.0.3', '<') ) {
+            if (version_compare($affiliatepress_old_version, '1.1', '<') ) {
                 $affiliatepress_load_upgrade_file = AFFILIATEPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $affiliatepress_load_upgrade_file;
                 $AffiliatePress->affiliatepress_send_anonymous_data_cron();
@@ -2420,6 +2448,10 @@ if (! class_exists('AffiliatePress') ) {
                             const vm = this;
                             window.open("'.$affiliatepress_website_url.'pricing/?utm_source=liteversion&utm_medium=plugin&utm_campaign=Upgrade+to+Premium&utm_id=affiliatepress_2");
                         },
+                        affiliatepress_redirect_website(){
+                            const vm = this;
+                            window.open("'.$affiliatepress_website_url.'");
+                        },
                         affiliatepress_redirect_lite_vs_preminum_page(){
                             const vm = this;
                             window.open("'.$affiliatepress_website_url.'affiliate-lite-vs-pro/");
@@ -2847,6 +2879,104 @@ if (! class_exists('AffiliatePress') ) {
                 return str_replace(' src', ' data-cfasync="false" src', $tag);
             } else {
                 return $tag;
+            }
+        }
+
+        function affiliatepress_get_excluded_js() {
+            $affiliatepress_js =  array(
+                'affiliatepress_front_js',
+                'affiliatepress_element_js',
+                'affiliatepress_axios_js',
+                'affiliatepress_social_sharing_js', //pro js
+            );
+
+            return $affiliatepress_js;
+        }
+
+        function affiliatepress_get_excluded_js_with_file() {
+            $affiliatepress_js =  array(
+                'affiliatepress_axios.min.js',
+                'affiliatepress_vue.min.js',
+                'affiliatepress_element.min.js',
+                'social-sharing.js', //pro js
+            );
+
+            return $affiliatepress_js;
+        }
+
+         /**
+         * Function for excluded delay js wp rocket
+         *
+         * @param  mixed $affiliatepress_bytes
+         * @return void
+        */
+        function affiliatepress_wp_rocket_excluded_js( $excluded_js ) {
+
+            if( !is_array($excluded_js) )
+            {
+                $excluded_js = array();
+            }
+
+            $affiliatepress_js = $this->affiliatepress_get_excluded_js();
+
+            if(!empty($affiliatepress_js)){
+                return array_merge( $excluded_js, $affiliatepress_js );
+            }else{
+                return $excluded_js;
+            }
+        }
+
+        /**
+         * Function for excluded delay js wp optimize
+         * 
+        */
+        function affiliatepress_wp_optimize_excluded_delay_js($tag, $handle, $src ) {
+
+            $exclude_handles = $this->affiliatepress_get_excluded_js();
+        
+            if ( in_array( $handle, $exclude_handles, true ) ) {
+                $tag = str_replace( '<script ', '<script data-no-delay-js ', $tag );
+            }
+        
+            return $tag;
+        }
+
+        /**
+         * Function for excluded Enable merging of JavaScript files  wp optimize
+         *
+         * @param  mixed $handles
+         * @return array
+        */
+        function affiliatepress_wp_optimize_minify_exclude_scripts( $handles ) {
+
+            if( !is_array($handles) )
+            {
+                $handles = array();
+            }
+
+            $affiliatepress_js = $this->affiliatepress_get_excluded_js_with_file();
+
+            if(!empty($affiliatepress_js)){
+                return array_merge( $handles, $affiliatepress_js );
+            }else{
+                return $handles;
+            }
+        }
+
+        function affiliatepress_hummingbird_excluded_delay_js( $scripts ) {
+
+            if( !is_array($scripts) )
+            {
+                $scripts = array();
+            }
+
+            $affiliatepress_js = $this->affiliatepress_get_excluded_js_with_file();
+            $affiliatepress_js[] = 'moment.min.js';
+
+            if(!empty($affiliatepress_js)){
+                return array_merge( $scripts, $affiliatepress_js );
+            }else{
+                return $scripts;
             }
         }
 
@@ -4605,12 +4735,12 @@ if (! class_exists('AffiliatePress') ) {
         function affiliatepress_common_svg_code_func($affiliatepress_type){
             if($affiliatepress_type == 'empty_view'){
             ?>
-                <svg width="221" height="220" viewBox="0 0 221 220" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect class="ap-empty-data-svg-icon-background-color" width="220" height="220" transform="translate(0.5)" fill="white"/>
-                    <path class="ap-empty-data-svg-icon-color" d="M162.056 82C172.012 82 176.99 82.0004 180.793 83.9424C184.138 85.6506 186.858 88.3758 188.562 91.7285C190.5 95.54 190.5 100.53 190.5 110.509V151.491C190.5 161.47 190.5 166.46 188.562 170.271C186.859 173.624 184.138 176.35 180.793 178.058C176.99 180 172.012 180 162.056 180H58.9443C48.988 180 44.0099 180 40.207 178.058C36.8619 176.35 34.1419 173.624 32.4375 170.271C30.4998 166.46 30.5 161.47 30.5 151.491V110.509C30.5 100.53 30.4998 95.54 32.4375 91.7285C34.1419 88.3759 36.862 85.6506 40.207 83.9424C44.0099 82.0003 48.988 82 58.9443 82H92.5V97.5869C92.5001 108.227 101.348 117 112.172 117C118.478 117 124.407 113.92 128.172 108.88C130.619 105.52 131.843 101.32 131.843 97.2129C131.843 95.2532 130.243 93.6671 128.267 93.667C126.29 93.667 124.69 95.2531 124.689 97.2129C124.689 99.8262 123.843 102.627 122.337 104.773C119.984 108.04 116.125 110 112.172 110C105.301 110 99.6535 104.4 99.6533 97.5869V82H162.056Z" fill="#6858E0" fill-opacity="0.2"/>
-                    <path class="ap-empty-data-svg-icon-color" d="M78.0537 56C85.3291 56 88.9673 56.0001 92.2383 57.3447C92.761 57.5596 93.2662 57.8048 93.7666 58.0869C92.9453 60.6203 92.5 63.3243 92.5 66.1338V82H58.9443C48.988 82 44.0099 82.0003 40.207 83.9424C36.862 85.6506 34.1419 88.3759 32.4375 91.7285C30.6 95.3428 30.5069 100.017 30.502 109H30.5V82.5C30.5 74.2688 30.4997 70.1529 31.8545 66.9062C33.6611 62.5775 37.1268 59.1378 41.4883 57.3447C44.7595 56 48.9065 56 57.2002 56H78.0537Z" fill="#6858E0" fill-opacity="0.3"/>
-                    <path class="ap-empty-data-svg-icon-color" d="M162.055 82H144.266C137.678 82 132.69 75.9333 134.007 69.5867L136.831 48.2133C136.925 47.4667 137.584 47 138.149 47C138.525 47 138.807 47.0933 139.09 47.4667L146.243 55.4H159.985L166.95 47.3733C167.232 47.0933 167.608 46.9067 167.891 46.9067C168.456 46.9067 169.114 47.28 169.208 48.0267L172.314 69.7733C173.538 76.12 168.55 82 162.055 82ZM149.161 74.16C146.431 73.5067 142.102 73.5067 139.278 74.16C138.807 74.2533 138.525 74.72 138.619 75.1867C138.713 75.6533 139.09 75.9333 139.56 75.9333C139.655 75.9333 139.749 75.9333 139.749 75.9333C142.196 75.3733 146.243 75.3733 148.69 75.9333C149.161 76.0267 149.725 75.7467 149.82 75.28C149.914 74.8133 149.631 74.2533 149.161 74.16ZM165.632 74.16C162.902 73.5067 158.573 73.5067 155.749 74.16C155.279 74.2533 154.996 74.72 155.09 75.1867C155.184 75.6533 155.561 75.9333 156.032 75.9333C156.126 75.9333 156.22 75.9333 156.22 75.9333C158.667 75.3733 162.714 75.3733 165.161 75.9333C165.632 76.0267 166.197 75.7467 166.291 75.28C166.385 74.8133 166.103 74.2533 165.632 74.16ZM92.5 66.1333V78.5467V82V97.5867C92.5 108.227 101.347 117 112.171 117C118.477 117 124.407 113.92 128.172 108.88C130.619 105.52 131.843 101.32 131.843 97.2133C131.843 95.2533 130.242 93.6667 128.266 93.6667C126.289 93.6667 124.689 95.2533 124.689 97.2133C124.689 99.8267 123.842 102.627 122.336 104.773C119.983 108.04 116.124 110 112.171 110C105.3 110 99.6532 104.4 99.6532 97.5867V82H137.678C136.549 81.3467 135.513 80.4133 134.666 79.3867C132.313 76.4933 131.372 72.8533 132.125 69.2133L134.948 47.84C135.043 47.1867 135.419 46.6267 135.796 46.16C131.184 42.3333 125.254 40 118.76 40C104.265 40 92.5 51.6667 92.5 66.1333Z" fill="#6858E0" fill-opacity="0.8"/>
-                    <path class="ap-empty-data-svg-icon-color" d="M187.999 31.0315V29.1704L195.057 18.9477V18.8598H188.636V16H199.389V17.9973L192.485 28.0835V28.1717H199.5V31.0315H187.999ZM178.956 36.0161V34.8119L183.523 28.1972V28.1403H179.368V26.2898H186.326V27.5822L181.858 34.1085V34.1657H186.398V36.0161H178.956ZM171.5 40V39.1242L174.822 34.3135V34.2721H171.8V32.9263H176.86V33.8663L173.611 38.6127V38.6542H176.912V40H171.5Z" fill="#6858E0" fill-opacity="0.8"/>
+                <svg width="161" height="160" viewBox="0 0 221 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect class="ap-empty-data-svg-icon-background-color" width="160" height="160" transform="translate(0.5)" fill="white"/>
+                <path class="ap-empty-data-svg-icon-color" d="M162.056 82C172.012 82 176.99 82.0004 180.793 83.9424C184.138 85.6506 186.858 88.3758 188.562 91.7285C190.5 95.54 190.5 100.53 190.5 110.509V151.491C190.5 161.47 190.5 166.46 188.562 170.271C186.859 173.624 184.138 176.35 180.793 178.058C176.99 180 172.012 180 162.056 180H58.9443C48.988 180 44.0099 180 40.207 178.058C36.8619 176.35 34.1419 173.624 32.4375 170.271C30.4998 166.46 30.5 161.47 30.5 151.491V110.509C30.5 100.53 30.4998 95.54 32.4375 91.7285C34.1419 88.3759 36.862 85.6506 40.207 83.9424C44.0099 82.0003 48.988 82 58.9443 82H92.5V97.5869C92.5001 108.227 101.348 117 112.172 117C118.478 117 124.407 113.92 128.172 108.88C130.619 105.52 131.843 101.32 131.843 97.2129C131.843 95.2532 130.243 93.6671 128.267 93.667C126.29 93.667 124.69 95.2531 124.689 97.2129C124.689 99.8262 123.843 102.627 122.337 104.773C119.984 108.04 116.125 110 112.172 110C105.301 110 99.6535 104.4 99.6533 97.5869V82H162.056Z" fill="#6858E0" fill-opacity="0.2"/>
+                <path class="ap-empty-data-svg-icon-color" d="M78.0537 56C85.3291 56 88.9673 56.0001 92.2383 57.3447C92.761 57.5596 93.2662 57.8048 93.7666 58.0869C92.9453 60.6203 92.5 63.3243 92.5 66.1338V82H58.9443C48.988 82 44.0099 82.0003 40.207 83.9424C36.862 85.6506 34.1419 88.3759 32.4375 91.7285C30.6 95.3428 30.5069 100.017 30.502 109H30.5V82.5C30.5 74.2688 30.4997 70.1529 31.8545 66.9062C33.6611 62.5775 37.1268 59.1378 41.4883 57.3447C44.7595 56 48.9065 56 57.2002 56H78.0537Z" fill="#6858E0" fill-opacity="0.3"/>
+                <path class="ap-empty-data-svg-icon-color" d="M162.055 82H144.266C137.678 82 132.69 75.9333 134.007 69.5867L136.831 48.2133C136.925 47.4667 137.584 47 138.149 47C138.525 47 138.807 47.0933 139.09 47.4667L146.243 55.4H159.985L166.95 47.3733C167.232 47.0933 167.608 46.9067 167.891 46.9067C168.456 46.9067 169.114 47.28 169.208 48.0267L172.314 69.7733C173.538 76.12 168.55 82 162.055 82ZM149.161 74.16C146.431 73.5067 142.102 73.5067 139.278 74.16C138.807 74.2533 138.525 74.72 138.619 75.1867C138.713 75.6533 139.09 75.9333 139.56 75.9333C139.655 75.9333 139.749 75.9333 139.749 75.9333C142.196 75.3733 146.243 75.3733 148.69 75.9333C149.161 76.0267 149.725 75.7467 149.82 75.28C149.914 74.8133 149.631 74.2533 149.161 74.16ZM165.632 74.16C162.902 73.5067 158.573 73.5067 155.749 74.16C155.279 74.2533 154.996 74.72 155.09 75.1867C155.184 75.6533 155.561 75.9333 156.032 75.9333C156.126 75.9333 156.22 75.9333 156.22 75.9333C158.667 75.3733 162.714 75.3733 165.161 75.9333C165.632 76.0267 166.197 75.7467 166.291 75.28C166.385 74.8133 166.103 74.2533 165.632 74.16ZM92.5 66.1333V78.5467V82V97.5867C92.5 108.227 101.347 117 112.171 117C118.477 117 124.407 113.92 128.172 108.88C130.619 105.52 131.843 101.32 131.843 97.2133C131.843 95.2533 130.242 93.6667 128.266 93.6667C126.289 93.6667 124.689 95.2533 124.689 97.2133C124.689 99.8267 123.842 102.627 122.336 104.773C119.983 108.04 116.124 110 112.171 110C105.3 110 99.6532 104.4 99.6532 97.5867V82H137.678C136.549 81.3467 135.513 80.4133 134.666 79.3867C132.313 76.4933 131.372 72.8533 132.125 69.2133L134.948 47.84C135.043 47.1867 135.419 46.6267 135.796 46.16C131.184 42.3333 125.254 40 118.76 40C104.265 40 92.5 51.6667 92.5 66.1333Z" fill="#6858E0" fill-opacity="0.8"/>
+                <path class="ap-empty-data-svg-icon-color" d="M187.999 31.0315V29.1704L195.057 18.9477V18.8598H188.636V16H199.389V17.9973L192.485 28.0835V28.1717H199.5V31.0315H187.999ZM178.956 36.0161V34.8119L183.523 28.1972V28.1403H179.368V26.2898H186.326V27.5822L181.858 34.1085V34.1657H186.398V36.0161H178.956ZM171.5 40V39.1242L174.822 34.3135V34.2721H171.8V32.9263H176.86V33.8663L173.611 38.6127V38.6542H176.912V40H171.5Z" fill="#6858E0" fill-opacity="0.8"/>
                 </svg>
 
             <?php 
@@ -4861,10 +4991,7 @@ if (! class_exists('AffiliatePress') ) {
             $affiliatepress_content = '
                 <div class="ap-premium-content" @click="open_premium_modal">
                     <div>
-                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M14.7602 14.498H3.24016C2.64472 14.498 2.16016 14.9826 2.16016 15.578C2.16016 16.1735 2.64472 16.658 3.24016 16.658H14.7602C15.3556 16.658 15.8402 16.1735 15.8402 15.578C15.8402 14.9826 15.3556 14.498 14.7602 14.498Z" fill="#FA6732"/>
-                        <path d="M16.56 3.59945C15.7659 3.59945 15.12 4.24531 15.12 5.03945C15.12 5.57298 15.4152 6.03448 15.8479 6.2836C15.0149 8.25639 13.7153 9.46672 12.5006 9.35727C11.1499 9.24713 10.0483 7.65016 9.44061 4.97825C10.2196 4.78095 10.8 4.07895 10.8 3.23945C10.8 2.24657 9.99285 1.43945 8.99996 1.43945C8.00708 1.43945 7.19996 2.24657 7.19996 3.23945C7.19996 4.07898 7.78029 4.78098 8.55932 4.97825C7.95164 7.65016 6.85002 9.24713 5.49932 9.35727C4.28973 9.46672 2.98434 8.25639 2.15205 6.2836C2.58476 6.03448 2.87996 5.57295 2.87996 5.03945C2.87996 4.24531 2.23411 3.59945 1.43996 3.59945C0.645855 3.59945 0 4.24531 0 5.03945C0 5.77819 0.561586 6.38154 1.2787 6.4636L2.66544 13.6795H15.3346L16.7213 6.4636C17.4384 6.38154 18 5.77819 18 5.03945C18 4.24531 17.3541 3.59945 16.56 3.59945Z" fill="#FA6732"/>
-                        </svg>
+                        <svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.1199 11.8872H2.87992C2.35064 11.8872 1.91992 12.3179 1.91992 12.8472C1.91992 13.3765 2.35064 13.8072 2.87992 13.8072H13.1199C13.6492 13.8072 14.0799 13.3765 14.0799 12.8472C14.0799 12.3179 13.6492 11.8872 13.1199 11.8872Z" fill="#FA6732"/><path d="M14.72 2.20003C14.0141 2.20003 13.44 2.77412 13.44 3.48003C13.44 3.95428 13.7024 4.3645 14.087 4.58594C13.3466 6.33953 12.1913 7.41537 11.1117 7.31809C9.91103 7.22019 8.93181 5.80065 8.39166 3.42562C9.08412 3.25025 9.59997 2.62625 9.59997 1.88003C9.59997 0.997467 8.88253 0.280029 7.99997 0.280029C7.11741 0.280029 6.39997 0.997467 6.39997 1.88003C6.39997 2.62628 6.91581 3.25028 7.60828 3.42562C7.06812 5.80065 6.08891 7.22019 4.88828 7.31809C3.81309 7.41537 2.65275 6.33953 1.91294 4.58594C2.29756 4.3645 2.55997 3.95425 2.55997 3.48003C2.55997 2.77412 1.98588 2.20003 1.27997 2.20003C0.574094 2.20003 0 2.77412 0 3.48003C0 4.13669 0.499188 4.673 1.13663 4.74594L2.36928 11.16H13.6307L14.8633 4.74594C15.5008 4.673 16 4.13669 16 3.48003C16 2.77412 15.4259 2.20003 14.72 2.20003Z" fill="#FA6732"/></svg>
                     </div>
                     <div class="ap-premium-content-text">'.esc_html__('Premium', 'affiliatepress-affiliate-marketing').'</div>
                 </div>
@@ -4895,7 +5022,8 @@ if (! class_exists('AffiliatePress') ) {
                 wp_send_json( $response );
                 die;                
             }
-			update_option('affiliatepress_lifetime_deal_notice_dismissed', 1);
+
+            update_option('affiliatepress_lifetime_deal_notice_dismissed', current_time('timestamp'));
 
 			$response['variant']        = 'success';
 			$response['title']          = esc_html__('Success', 'affiliatepress-affiliate-marketing');
@@ -4905,8 +5033,88 @@ if (! class_exists('AffiliatePress') ) {
 			exit;
         }
 
+         /**lifetime deal content get */
+        function affiliatepress_get_lifetime_deal_content(){
 
+            global $affiliatepress_website_url,$AffiliatePress;
 
+            if($AffiliatePress->affiliatepress_pro_install()){
+                return;
+            }
+
+            $affiliatepress_lifetime_deal_content = get_transient( 'affiliatepress_lifetime_deal_content' );
+            if(!empty($affiliatepress_lifetime_deal_content)){
+                return;
+            }
+
+            $affiliatepress_lifetime_deal_res = wp_remote_post(
+                $affiliatepress_website_url.'ap_misc/ap_exclusive_offers_at_panel.php',
+                array(
+                    'method'    => 'POST',
+                    'timeout'   => 45,
+                    'sslverify' => false,
+                    'body'      => array(
+                        'affiliatepress_lifetime_deal' => 1,
+                    ),
+                )
+            ); 
+            
+            if ( ! is_wp_error( $affiliatepress_lifetime_deal_res ) ) {
+                $affiliatepress_body_res = base64_decode( $affiliatepress_lifetime_deal_res['body'] );
+                if ( ! empty( $affiliatepress_body_res ) ) {
+                    $affiliatepress_lifetime_deal_content = json_decode( $affiliatepress_body_res, true );
+                    if(is_array($affiliatepress_lifetime_deal_content)){
+                        set_transient( 'affiliatepress_lifetime_deal_content', $affiliatepress_body_res, 86400 );
+                    }
+                }
+            }
+        }
+
+        /** affiliatepress lifetime deal content  */
+        function affiliatepress_lifetime_deal_header_belt(){
+
+            global $AffiliatePress;
+
+            $affiliatepress_lifetime_deal_belt = "";
+            if(!$AffiliatePress->affiliatepress_pro_install()){
+
+                $affiliatepress_get_lifetime_deal_content = "";  
+                $affiliatepress_lifetime_deal_content = get_transient( 'affiliatepress_lifetime_deal_content' );              
+                if(empty($affiliatepress_lifetime_deal_content)){
+                    return $affiliatepress_lifetime_deal_belt;
+                }
+
+                $affiliatepress_lifetime_deal_content = json_decode( $affiliatepress_lifetime_deal_content, true );
+                $affiliatepress_get_lifetime_deal_content = $affiliatepress_lifetime_deal_content['lifetime_deal_content'];
+
+                $affiliatepress_lifetime_deal_start_time = $affiliatepress_lifetime_deal_content['deal_start_date'];
+                $affiliatepress_lifetime_deal_end_time   = $affiliatepress_lifetime_deal_content['deal_end_date'];
+                $current_time = time();
+        
+                $affiliatepress_lifetime_deal_notice_show = get_option('affiliatepress_lifetime_deal_notice_dismissed');
+        
+                $affiliatepress_is_in_deal_period = ($current_time >= $affiliatepress_lifetime_deal_start_time && $current_time <= $affiliatepress_lifetime_deal_end_time);
+                $affiliatepress_dismissed_this_sale = ($affiliatepress_lifetime_deal_notice_show >= $affiliatepress_lifetime_deal_start_time && $affiliatepress_lifetime_deal_notice_show <= $affiliatepress_lifetime_deal_end_time);
+        
+                if ($affiliatepress_is_in_deal_period && !$affiliatepress_dismissed_this_sale) 
+                {
+                    $affiliatepress_lifetime_deal_belt = '<div class="ap-header-deal-belt-wrapper">
+                        <div class="ap-belt-content">
+                            <div class="ap-belt-main-content">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_8111_5858)"><path d="M8 0C3.58862 0 0 3.58862 0 8C0 12.4114 3.58862 16 8 16C12.4114 16 16 12.4114 16 8C16 3.58862 12.4114 0 8 0ZM11.8047 12.1379C11.6747 12.2679 11.504 12.3334 11.3334 12.3334C11.1627 12.3334 10.9919 12.2679 10.8621 12.1379L7.52869 8.80469C7.40332 8.68005 7.33337 8.51062 7.33337 8.33337V4C7.33337 3.63135 7.63196 3.33337 8 3.33337C8.36804 3.33337 8.66663 3.63135 8.66663 4V8.05737L11.8047 11.1953C12.0653 11.4561 12.0653 11.8773 11.8047 12.1379Z" fill="#A8ACAF"/></g><defs><clipPath id="clip0_8111_5858"><rect width="16" height="16" fill="white"/></clipPath></defs></svg>
+                                '.$affiliatepress_get_lifetime_deal_content.'
+                                <div class="ap-deal-close">
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" @click="affiliatepress_lifetime_deal_close">
+                                    <path d="M13.5 13.5L9 9M9 9L4.5 4.5M9 9L13.5 4.5M9 9L4.5 13.5" stroke="#A8ACAF" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>';
+                }
+            }
+            return $affiliatepress_lifetime_deal_belt;
+        }
     }
 }
 global $AffiliatePress;
