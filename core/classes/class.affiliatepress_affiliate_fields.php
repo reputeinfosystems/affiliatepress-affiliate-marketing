@@ -206,6 +206,7 @@ if (! class_exists('affiliatepress_affiliate_fields') ) {
             $affiliatepress_field_message_settings_data = ! empty($_POST['field_message_settings']) ? array_map(array( $this, 'affiliatepress_sanitize_affiliatepress_fields' ), $_POST['field_message_settings']) : array(); // phpcs:ignore
 
             foreach ($affiliatepress_field_message_settings_data as $affiliatepress_messsage_settings_name => $affiliatepress_messsage_settings_value) {
+                $affiliatepress_messsage_settings_value = stripslashes_deep($affiliatepress_messsage_settings_value);
                 $AffiliatePress->affiliatepress_update_settings($affiliatepress_messsage_settings_name, 'message_settings' , $affiliatepress_messsage_settings_value);
             }
 

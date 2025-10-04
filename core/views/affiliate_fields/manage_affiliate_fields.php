@@ -86,7 +86,7 @@
                                                         </div>
                                                         <div class="ap-cfs-ic--head__field-controls">
                                                             <div class="ap-cfs-ic--head__fc-swtich">
-                                                            <el-switch v-model="element.is_required" size="small" :disabled="element.is_edit == '0' || element.field_name == 'terms_and_conditions' ? true :false"></el-switch> 
+                                                            <el-switch v-model="element.is_required" size="small" :disabled="element.is_edit == '0' || element.field_name == 'terms_and_conditions' ? true :false || element.field_name == 'ap_affiliates_payment_email' ? true :false"></el-switch> 
                                                                 <label class="ap-csf-field-required"><?php esc_html_e('Required', 'affiliatepress-affiliate-marketing'); ?></label>
                                                             </div>
                                                             <div class="ap-cfs-ic--head__fc-actions">

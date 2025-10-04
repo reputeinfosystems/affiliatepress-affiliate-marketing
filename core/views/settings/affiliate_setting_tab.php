@@ -90,6 +90,20 @@
                                 </el-col>
                             </el-row>
                             <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row" :gutter="32">
+                                <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" class="ap-gs__cb-item-left">
+                                    <div class="ap-combine-field">
+                                        <label>
+                                            <span class="ap-form-label"><?php esc_html_e('Default Affiliate URL Format', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </label>
+                                        <el-form-item prop="affiliate_setting_form.default_url_type">
+                                            <el-select class="ap-form-control" v-model="affiliate_setting_form.default_url_type" placeholder="<?php esc_html_e('Select Affiliate URL Formate', 'affiliatepress-affiliate-marketing'); ?>" size="large">
+                                                <el-option v-for="item in affiliatepress_url_types" :key="item.value" :label="item.text" :value="item.value"></el-option>
+                                            </el-select>                                       
+                                        </el-form-item>
+                                    </div>
+                                </el-col>
+                            </el-row>
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row" :gutter="32">
                                 <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
                                     <el-row type="flex" :gutter="32">
                                         <el-col :xs="20" :sm="20" :md="20" :lg="12" :xl="12" class="ap-gs__cb-item-left">
@@ -231,7 +245,7 @@
                                         <el-select class="ap-form-control" v-model="affiliate_setting_form.affiliate_account_page_id" placeholder="Select Page" size="large">
                                             <el-option v-for="item in all_wordpress_pages" :key="item.value" :key="item.id" :label="item.title" :value="''+item.id"/>
                                         </el-select>
-                                    </el-form-item>                                
+                                    </el-form-item>
                                     </div>
                                 </el-col>
                                 <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-gs__cb-item-left">                                

@@ -23,9 +23,6 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             /* Function for add forgotpassword functionality */
             add_action('wp_ajax_nopriv_affiliatepress_forgot_password_account', array($this, 'affiliatepress_forgot_password_account_func'), 10);
 
-            /* Send Affiliate Reset Password Link */
-            add_filter('affiliatepress_allow_password_reset',array($this,'affiliatepress_allow_password_reset_func'),10,2);
-
             /* Login functionality */
             add_action('wp_ajax_nopriv_affiliatepress_affiliate_login_account', array($this, 'affiliatepress_affiliate_login_account_func'), 10); 
             add_action('wp_ajax_affiliatepress_affiliate_login_account', array($this, 'affiliatepress_affiliate_login_account_func'), 10);
@@ -170,7 +167,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
         */
         function affiliatepress_close_account_request_func(){
             
-            global $wpdb, $AffiliatePress, $affiliatepress_email_notifications;
+            global $wpdb, $AffiliatePress, $affiliatepress_email_notifications,$affiliatepress_affiliates;
             
             $response              = array();
             $affiliatepress_wpnonce               = isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '';// phpcs:ignore
@@ -193,31 +190,26 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 wp_send_json($response);
                 exit();                
             }
+            
             if($affiliatepress_affiliate_id){
 
-                $affiliatepress_admin_email_subject = esc_html__('Affiliate Account Closure Request', 'affiliatepress-affiliate-marketing');						
-                $affiliatepress_admin_email_content = sprintf( esc_html__( 'Dear Admin, %1$s We have received a request from an affiliate user to close their account. Below are the details: %2$s Affiliate Username: %3$s %4$s Affiliate User Email: %5$s %6$s Date of Request: %7$s %8$s Thank you for your prompt attention to this matter.', 'affiliatepress-affiliate-marketing'), '<br/>','<br/>', '%affiliate_user_name%', '<br/>', '%affiliate_email%', '<br/>', '%request_date%', '<br/>' ); // phpcs:ignore
+                $affiliatepress_self_close_account =  $AffiliatePress->affiliatepress_get_settings('affiliate_user_self_closed_account', 'affiliate_settings');
+                if($affiliatepress_self_close_account == "false"){
+                    wp_send_json($response);
+                    exit();                
+                }
 
-                $affiliatepress_admin_email = $AffiliatePress->affiliatepress_get_settings('admin_email', 'email_notification_settings');
-                $affiliatepress_from_name = $AffiliatePress->affiliatepress_get_settings('sender_name', 'email_notification_settings');
-                $affiliatepress_from_email = $AffiliatePress->affiliatepress_get_settings('sender_email', 'email_notification_settings');
-                $reply_to_name = $AffiliatePress->affiliatepress_get_settings('sender_name', 'email_notification_settings');
-                $reply_to = $AffiliatePress->affiliatepress_get_settings('sender_email', 'email_notification_settings');   
-                
-                $affiliatepress_affiliate_user_name = $AffiliatePress->affiliatepress_get_affiliate_user_name_by_id('',$affiliatepress_affiliate_id);
-                $affiliatepress_affiliate_user_email = $AffiliatePress->affiliatepress_get_affiliate_user_email_by_affiliate_id($affiliatepress_affiliate_id);
-                $request_date = date('Y-m-d',current_time('timestamp'));// phpcs:ignore
+                $affiliatepress_affiliates->affiliatepress_affiliate_delete_data($affiliatepress_affiliate_id);
+                $affiliatepress_affiliate_account_page_id = $AffiliatePress->affiliatepress_get_settings('affiliate_account_page_id', 'affiliate_settings');
+                $affiliatepress_affiliate_login_page_url  = get_permalink($affiliatepress_affiliate_account_page_id);  
+                $affiliatepress_affiliate_login_page_url = apply_filters('affiliatepress_modify_affiliate_panel_redirect_link', $affiliatepress_affiliate_login_page_url);
+                $affiliatepress_affiliate_login_page_url = add_query_arg( 'ap-nocache',current_time('timestamp'),$affiliatepress_affiliate_login_page_url);
+                wp_logout();
 
-                $affiliatepress_admin_email_content = str_replace('%affiliate_user_name%',$affiliatepress_affiliate_user_name,$affiliatepress_admin_email_content);
-                $affiliatepress_admin_email_content = str_replace('%affiliate_email%',$affiliatepress_affiliate_user_email,$affiliatepress_admin_email_content);
-                $affiliatepress_admin_email_content = str_replace('%request_date%',$request_date,$affiliatepress_admin_email_content);
-                
-                $affiliatepress_email_notifications->affiliatepress_send_custom_email_notifications( $affiliatepress_admin_email, stripslashes_deep( $affiliatepress_admin_email_subject ), stripslashes_deep( $affiliatepress_admin_email_content ), stripslashes_deep( $affiliatepress_from_name ), $affiliatepress_from_email, $reply_to, stripslashes_deep( $reply_to_name ) );
-                
                 $response['variant'] = 'success';
                 $response['title']   = esc_html__('Success', 'affiliatepress-affiliate-marketing');
                 $response['msg']     = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('account_closure_request_success', 'message_settings'));
-
+                $response['delete_account_url'] = $affiliatepress_affiliate_login_page_url;
                 wp_send_json($response);
                 exit(); 
 
@@ -2077,28 +2069,6 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
         }
 
         /**
-         * Function for allow affiliate reset link
-         *
-         * @param  mixed $affiliatepress_allow_affiliate
-         * @param  mixed $affiliatepress_user_id
-         * @return void
-        */
-        function affiliatepress_allow_password_reset_func($affiliatepress_allow_affiliate,$affiliatepress_user_id){
-            global $affiliatepress_tbl_ap_affiliates;
-            if($affiliatepress_user_id){
-                $affiliatepress_affiliates_id = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliates, 'ap_affiliates_id', 'WHERE ap_affiliates_user_id  = %d', array( $affiliatepress_user_id ), '', '', '', true, false,ARRAY_A);
-                if($affiliatepress_affiliates_id){
-                    $affiliatepress_allow_affiliate = true; 
-                }else{
-                    $affiliatepress_allow_affiliate = false;
-                }
-            }else{
-                $affiliatepress_allow_affiliate = false;    
-            }
-            return $affiliatepress_allow_affiliate;
-        }
-                
-        /**
          * Function for add forget password functionality
          *
          * @return void
@@ -2144,7 +2114,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
 		 */
 		function affiliatepress_send_forgotpassword_email($affiliatepress_email){
 			
-			global $affiliatePress,$wpdb;	
+			global $affiliatePress,$wpdb,$affiliatepress_other_debug_log_id;	
 			$affiliatepress_user_data = "";	
 			if ( empty( $affiliatepress_email ) ) {
 				return false;
@@ -2167,7 +2137,8 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
 			
 			do_action('affiliatepress_retrieve_password', $affiliatepress_user_login);
 		
-			$affiliatepress_allow = apply_filters('affiliatepress_allow_password_reset', true, $affiliatepress_user_data->ID);
+			$affiliatepress_allow = true;
+			$affiliatepress_allow = apply_filters('affiliatepress_allow_password_reset', $affiliatepress_allow, $affiliatepress_user_data->ID);
 
 			if ( ! $affiliatepress_allow )
 				return false;
@@ -2176,20 +2147,21 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
 			
 			$affiliatepress_key = get_password_reset_key($affiliatepress_user_data);			
 			$affiliatepress_message = esc_html__('Someone requested that the password be reset for the following account:', 'affiliatepress-affiliate-marketing') . "\r\n\r\n";
-			$affiliatepress_message .= network_home_url( '/' ) . "\r\n\r\n";
+			$affiliatepress_message .= network_home_url( '/' ) . "\r\n\r\n ";
 			/* translators: 1. Username */
 			$affiliatepress_message .= sprintf(esc_html__('Username: %s', 'affiliatepress-affiliate-marketing'), $affiliatepress_user_login) . "\r\n\r\n";
 			$affiliatepress_message .= esc_html__('If this was a mistake, just ignore this email and nothing will happen.', 'affiliatepress-affiliate-marketing') . "\r\n\r\n";
-			$affiliatepress_message .= esc_html__('To reset your password, visit the following address:', 'affiliatepress-affiliate-marketing') . "\r\n\r\n";
+			$affiliatepress_message .= esc_html__('To reset your password, visit the following address:', 'affiliatepress-affiliate-marketing') . "\r\n\r\n ";
 			$affiliatepress_password_reset_link = network_site_url("wp-login.php?action=rp&key=$affiliatepress_key&login=" . rawurlencode($affiliatepress_user_login), 'login');
-			$affiliatepress_message .= $affiliatepress_password_reset_link."\r\n";
+			$affiliatepress_message .= $affiliatepress_password_reset_link." \r\n";
 
 			$affiliatepress_blogname = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
 
 			$affiliatepress_title = sprintf( esc_html__('[%s] Password Reset', 'affiliatepress-affiliate-marketing'), $affiliatepress_blogname );	// phpcs:ignore
 			$affiliatepress_title = apply_filters('retrieve_password_title', $affiliatepress_title);
-			$affiliatepress_message = apply_filters('retrieve_password_message', $affiliatepress_message, $affiliatepress_key, $affiliatepress_user_login, $affiliatepress_user_data);			            
+			$affiliatepress_message = apply_filters('retrieve_password_message', $affiliatepress_message, $affiliatepress_key, $affiliatepress_user_login, $affiliatepress_user_data);	
 
+            do_action('affiliatepress_other_debug_log_entry', 'email_notification_debug_logs', 'Forget Password Action', 'affiliatepress_email_notiifcation', $affiliatepress_message, $affiliatepress_other_debug_log_id);
             wp_mail($affiliatepress_user_email, $affiliatepress_title, $affiliatepress_message);
 
 			return true;
@@ -3046,13 +3018,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                         vm.affiliate_close_account_loader = "0";                                     
                         if(response.data.variant == "success"){                            
                             vm.open_close_account_modal = false;
-                            vm.$notify({
-                                title: response.data.title,
-                                message: response.data.msg,
-                                type: response.data.variant,
-                                customClass: response.data.variant+"_notification",
-                                duration:'.intval($affiliatepress_notification_duration).',
-                            }); 
+                            window.location.href = response.data.delete_account_url;
                         }else{
                             vm.$notify({
                                 title: response.data.title,
@@ -4068,11 +4034,19 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                                 $affiliatepress_dynamic_data_fields['rules'][$affiliatepress_form_field_name][1]['message'] = (!empty($affiliatepress_field_error_message))?stripslashes_deep($affiliatepress_field_error_message):'';
                             }
                         }else{
-                            $affiliatepress_dynamic_data_fields['rules'][$affiliatepress_form_field_name] = array(
+                            $affiliatepress_dynamic_data_fields['rules'][$affiliatepress_form_field_name][] = array(
                                 'required' => true,
                                 'message'  => (!empty($affiliatepress_field_error_message))?stripslashes_deep($affiliatepress_field_error_message):'',
                                 'trigger'  => 'blur',                                    
                             );                            
+                        }
+
+                        if ($affiliatepress_field['ap_form_field_name'] === 'ap_affiliates_payment_email' || strpos($affiliatepress_field['ap_form_field_name'], 'email') !== false) {
+                            $affiliatepress_dynamic_data_fields['rules'][$affiliatepress_form_field_name][] = array(
+                                'type'    => 'email',
+                                'message' => (!empty($affiliatepress_field_error_message)) ? stripslashes_deep($affiliatepress_field_error_message) : 'Please enter valid email address',
+                                'trigger' => 'blur',
+                            );
                         }
                     }
 
@@ -4080,8 +4054,9 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             }
             $affiliatepress_dynamic_data_fields['affiliate_edit_profile_loader'] = "0";
             $affiliatepress_dynamic_data_fields['affiliate_fields'] = $affiliatepress_fields;
-
-
+            $affiliatepress_paymnet_email_show_panel  = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_form_fields, 'ap_show_profile_field', 'WHERE ap_form_field_name = %s', array('ap_affiliates_payment_email'), '', '', '', false, true,ARRAY_A);  
+            $affiliatepress_show_paymnet_email_panel = isset($affiliatepress_paymnet_email_show_panel['ap_show_profile_field']) ? intval($affiliatepress_paymnet_email_show_panel['ap_show_profile_field']) : 1;
+            $affiliatepress_dynamic_data_fields['affiliatepress_paymnet_email_show_panel'] = $affiliatepress_show_paymnet_email_panel; 
 
             $affiliatepress_dynamic_data_fields['affiliate_change_password_loader'] = "0"; 
             $affiliatepress_dynamic_data_fields['affiliate_change_password'] = array(

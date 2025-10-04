@@ -125,7 +125,7 @@ if (! class_exists('affiliatepress_settings') ) {
         ?>
             <div class="ap-gs__cb--item">
                 <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-wizard-redirect" :gutter="32">
-                    <el-col :xs="22" :sm="22" :md="22" :lg="14" :xl="14" class="ap-gs__cb-item-left">
+                    <el-col :xs="22" :sm="22" :md="22" :lg="20" :xl="20" class="ap-gs__cb-item-left">
                         <el-row type="flex" class="ap-gs--tabs-fields-label">
                             <div class="ap-gs__cb--item-heading">
                                 <?php esc_html_e('Setup Wizard', 'affiliatepress-affiliate-marketing'); ?>
@@ -135,7 +135,7 @@ if (! class_exists('affiliatepress_settings') ) {
                             <div><?php esc_html_e('If you need to run the setup wizard again, Please click the button bellow.', 'affiliatepress-affiliate-marketing'); ?></div>
                         </el-row>
                     </el-col>
-                    <el-col :xs="2" :sm="2" :md="2" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
+                    <el-col :xs="2" :sm="2" :md="2" :lg="4" :xl="4" class="ap-gs__cb-item-right">				
                         <el-form-item>                       
                             <span class="ap-redirect-btn"  @click="affiliatepress_resetup_wizard()"><?php do_action('affiliatepress_common_svg_code','redirect_icon'); ?></span>    
                         </el-form-item> 
@@ -2029,6 +2029,7 @@ if (! class_exists('affiliatepress_settings') ) {
                     'currency_symbol_position'           => 'before',
                     'number_of_decimals'                 => '2',
                     'currency_separator'                 => 'comma-dot',
+                    'default_url_type'                   => 'affiliate_default_url',
                 ), 
                 'rules_commissions'                   => array(
                     'default_discount_val'  => array(
@@ -2865,8 +2866,10 @@ if (! class_exists('affiliatepress_settings') ) {
 
             $affiliatepress_global_options_data = $affiliatepress_global_options->affiliatepress_global_options();
             $affiliatepress_weekly_cycle_days = (isset($affiliatepress_global_options_data['weekly_cycle_days']))?$affiliatepress_global_options_data['weekly_cycle_days']:array();
+            $affiliatepress_url_types = (isset($affiliatepress_global_options_data['url_types']))?$affiliatepress_global_options_data['url_types']:array();
 
             $affiliatepress_dynamic_setting_data_fields['weekly_cycle_days'] = $affiliatepress_weekly_cycle_days;
+            $affiliatepress_dynamic_setting_data_fields['affiliatepress_url_types'] = $affiliatepress_url_types;
             $affiliatepress_selected_tab_name  = !empty($_REQUEST['setting_page']) ? sanitize_text_field($_REQUEST['setting_page']) : 'affiliate_settings'; // phpcs:ignore         
             $affiliatepress_dynamic_setting_data_fields['selected_tab_name'] = $affiliatepress_selected_tab_name;     
             $affiliatepress_dynamic_setting_data_fields['affiliate_setting_form']['enable_hcaptcha']     = false;
@@ -3456,6 +3459,26 @@ if (! class_exists('affiliatepress_settings') ) {
                     el.style.margin = "0";
                     el.style.padding = "0";
                     setTimeout(() => done(), 400);
+                },
+                ap_active_integration(integration) {
+                    this.$nextTick(() => {
+                        const el = document.getElementById(`ap-enable-integration-${integration}`);
+                        if (el) {
+                            const rect = el.getBoundingClientRect();
+                            const fullyVisible =
+                            rect.top >= 120 &&
+                            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight);
+                            if (!fullyVisible) {
+                                const defaultOffset = 120;
+                                const elementPosition = el.getBoundingClientRect().top + window.pageYOffset;
+                                const offsetPosition = elementPosition - defaultOffset;
+                                window.scrollTo({
+                                    top: offsetPosition,
+                                    behavior: "smooth"
+                                });
+                            }
+                        }
+                    });
                 },
             ';
 

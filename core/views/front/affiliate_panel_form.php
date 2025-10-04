@@ -70,10 +70,11 @@
                     </el-form>
                     <div :class="(show_register_form == '0')?'ap-hide-form':''">
                     <el-form @submit.native.prevent ref="affiliates_reg_form_data" :rules="rules" require-asterisk-position="right" :model="affiliates" label-position="top"> 
+                        <div class="el-form-item__error el-form-item is-error el-input__wrapper el-input__inner el-checkbox el-checkbox--large is-checked ap-form-label ap-custom-checkbox--is-label el-checkbox__input is-checked el-checkbox__original el-checkbox__inner el-checkbox__label" style="display:none"></div> 
                             <div class="ap-front-page-title" :aria-label="affiliate_panel_labels.create_an_account" v-html="affiliate_panel_labels.create_an_account"></div>
                             <div class="ap-front-page-sub-title" :aria-label="affiliate_panel_labels.create_account_description" v-html="affiliate_panel_labels.create_account_description"></div>
                             <div v-for="affiliate_field in affiliate_fields">                    
-                                <div v-if="affiliate_field.ap_form_field_type == 'Text' && affiliate_field.ap_field_is_default == '1'" class="ap-single-field__form">                    
+                                <div v-if="affiliate_field.ap_form_field_type == 'Text' && affiliate_field.ap_field_is_default == '1'" class="ap-single-field__form" :class="affiliate_field.ap_field_class">                    
                                     <el-form-item :prop="affiliate_field.ap_form_field_name">
                                         <template #label>
                                             <span class="ap-form-label" v-html="affiliate_field.ap_field_label" :aria-label="affiliate_field.ap_field_label"></span>
@@ -81,7 +82,7 @@
                                         <el-input class="ap-form-control" :readonly="(is_user_login == '1' && affiliate_field.ap_form_field_name == 'username')?true:false"  type="text" size="large" v-model="affiliates[affiliate_field.ap_form_field_name]" :placeholder="affiliate_field.ap_field_placeholder" />
                                     </el-form-item>                     
                                 </div>
-                                <div v-if="affiliate_field.ap_form_field_type == 'Email'" class="ap-single-field__form">                    
+                                <div v-if="affiliate_field.ap_form_field_type == 'Email'" class="ap-single-field__form" :class="affiliate_field.ap_field_class">                    
                                     <el-form-item :prop="affiliate_field.ap_form_field_name">
                                         <template #label>
                                             <span class="ap-form-label" v-html="affiliate_field.ap_field_label" :aria-label="affiliate_field.ap_field_label"></span>
@@ -89,7 +90,7 @@
                                         <el-input class="ap-form-control" :readonly="(is_user_login == '1')?true:false" type="text" size="large" v-model="affiliates[affiliate_field.ap_form_field_name]" :placeholder="affiliate_field.ap_field_placeholder" />
                                     </el-form-item>                     
                                 </div> 
-                                <div v-if="affiliate_field.ap_form_field_type == 'Password' && is_user_login == '0'" class="ap-single-field__form">                    
+                                <div v-if="affiliate_field.ap_form_field_type == 'Password' && is_user_login == '0'" class="ap-single-field__form" :class="affiliate_field.ap_field_class">                    
                                     <el-form-item :prop="affiliate_field.ap_form_field_name">
                                         <template #label>
                                             <span class="ap-form-label" v-html="affiliate_field.ap_field_label" :aria-label="affiliate_field.ap_field_label"></span>
@@ -97,7 +98,7 @@
                                         <el-input class="ap-form-control" type="password" :show-password="true" v-model="affiliates[affiliate_field.ap_form_field_name]" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
                                     </el-form-item>                     
                                 </div>  
-                                <div v-if="affiliate_field.ap_form_field_type == 'Textarea' && affiliate_field.ap_field_is_default == '1'" class="ap-single-field__form">                    
+                                <div v-if="affiliate_field.ap_form_field_type == 'Textarea' && affiliate_field.ap_field_is_default == '1'" class="ap-single-field__form" :class="affiliate_field.ap_field_class">                    
                                     <el-form-item :prop="affiliate_field.ap_form_field_name">
                                         <template #label>
                                             <span class="ap-form-label" v-html="affiliate_field.ap_field_label" :aria-label="affiliate_field.ap_field_label"></span>
@@ -105,7 +106,7 @@
                                         <el-input class="ap-form-control" type="textarea" :rows="4" size="large" v-model="affiliates[affiliate_field.ap_form_field_name]" :placeholder="affiliate_field.ap_field_placeholder" />
                                     </el-form-item>                     
                                 </div>  
-                                <div v-if="affiliate_field.ap_form_field_type == 'terms_and_conditions'" class="ap-single-field__form ap-checkbox-control ap-checkbox-control-single ap-term-condition-box">                    
+                                <div v-if="affiliate_field.ap_form_field_type == 'terms_and_conditions'" class="ap-single-field__form ap-checkbox-control ap-checkbox-control-single ap-term-condition-box" :class="affiliate_field.ap_field_class">                    
                                     <el-form-item :prop="affiliate_field.ap_form_field_name">                            
                                         <el-checkbox class="ap-form-label ap-custom-checkbox--is-label" @change="register_terms_and_condition(affiliate_field.ap_form_field_name)" v-model="affiliates[affiliate_field.ap_form_field_name]" size="large"><div v-html="affiliate_field.ap_field_label"></div></el-checkbox>                            
                                     </el-form-item>                     
@@ -175,7 +176,10 @@
             </div>
             <div class="ap-box-card-value ap-affiliate-not-allow-msg ap-mt-20">{{ not_allow_user_affiliate_panel }}</div>                 
         </div>
-        <div class="ap-main-reg-card-container" v-if="is_login == 'true' && allow_user_access == 'false' && allow_signup == 'true'" style="display:none;" :style="(is_affiliate_form_loader == '1') ? 'display:block;' : ''">
+        <div class="ap-main-reg-card-container" v-if="is_login == 'true' && allow_user_access == 'false' && allow_signup == 'true'">
+            <div style="display:none;" :style="(is_affiliate_form_loader == '0') ? 'display:block;' : ''" class="ap-front-loader-container" id="ap-page-front-loading-loader">
+                <div class="ap-front-loader"></div>
+            </div>
             <div class="ap-front-toast-notification --ap-error ap-front-msg-panel" style="display:none;" :style="(is_display_error == '1') ? 'display:block;' : ''">
                 <div class="ap-front-tn-body">                                                
                     <p>{{ is_error_msg }}</p>                        
@@ -191,13 +195,14 @@
                     <p class="ap-success-register-message">{{ register_form_msg }}</p>
                 </div>
             </div>                          
-            <div class="ap-main-reg-frm-body ap-single-form">
+            <div class="ap-main-reg-frm-body ap-single-form" :style="(is_affiliate_form_loader == '1') ? 'display:block;' : 'display:none'">
 
-                <el-form style="display:none;" :style="(is_show_register_form == 'true') ? 'display:block;' : ''"  @submit.native.prevent ref="affiliates_reg_form_data" :rules="rules" require-asterisk-position="right" :model="affiliates" label-position="top">    
+                <el-form style="display:none;" :style="(is_show_register_form == 'true') ? 'display:block;' : ''"  @submit.native.prevent ref="affiliates_reg_form_data" :rules="rules" require-asterisk-position="right" :model="affiliates" label-position="top">  
+                    <div class="el-form-item__error el-form-item is-error el-input__wrapper el-input__inner el-checkbox el-checkbox--large is-checked ap-form-label ap-custom-checkbox--is-label el-checkbox__input is-checked el-checkbox__original el-checkbox__inner el-checkbox__label" style="display:none"></div>   
                         <div class="ap-front-page-title" :aria-label="affiliate_panel_labels.create_an_account" v-html="affiliate_panel_labels.create_an_account"></div>
                         <div class="ap-front-page-sub-title" :aria-label="affiliate_panel_labels.create_account_description" v-html="affiliate_panel_labels.create_account_description"></div>
                         <div v-for="affiliate_field in affiliate_fields">                    
-                            <div v-if="affiliate_field.ap_form_field_type == 'Text' && affiliate_field.ap_field_is_default == '1'" class="ap-single-field__form">                    
+                            <div v-if="affiliate_field.ap_form_field_type == 'Text' && affiliate_field.ap_field_is_default == '1'" class="ap-single-field__form" :class="affiliate_field.ap_field_class">                    
                                 <el-form-item :prop="affiliate_field.ap_form_field_name">
                                     <template #label>
                                         <span class="ap-form-label" v-html="affiliate_field.ap_field_label"></span>
@@ -205,7 +210,7 @@
                                     <el-input class="ap-form-control" :readonly="(is_user_login == '1' && affiliate_field.ap_form_field_name == 'username')?true:false"  type="text" size="large" v-model="affiliates[affiliate_field.ap_form_field_name]" :placeholder="affiliate_field.ap_field_placeholder" />
                                 </el-form-item>                     
                             </div>
-                            <div v-if="affiliate_field.ap_form_field_type == 'Email'" class="ap-single-field__form">                    
+                            <div v-if="affiliate_field.ap_form_field_type == 'Email'" class="ap-single-field__form" :class="affiliate_field.ap_field_class">                    
                                 <el-form-item :prop="affiliate_field.ap_form_field_name">
                                     <template #label>
                                         <span class="ap-form-label" v-html="affiliate_field.ap_field_label"></span>
@@ -213,7 +218,7 @@
                                     <el-input class="ap-form-control" :readonly="(is_user_login == '1')?true:false" type="text" size="large" v-model="affiliates[affiliate_field.ap_form_field_name]" :placeholder="affiliate_field.ap_field_placeholder" />
                                 </el-form-item>                     
                             </div> 
-                            <div v-if="affiliate_field.ap_form_field_type == 'Password' && is_user_login == '0'" class="ap-single-field__form">                    
+                            <div v-if="affiliate_field.ap_form_field_type == 'Password' && is_user_login == '0'" class="ap-single-field__form" :class="affiliate_field.ap_field_class">                    
                                 <el-form-item :prop="affiliate_field.ap_form_field_name">
                                     <template #label>
                                         <span class="ap-form-label" v-html="affiliate_field.ap_field_label"></span>
@@ -221,7 +226,7 @@
                                     <el-input class="ap-form-control" type="password" :show-password="true" v-model="affiliates[affiliate_field.ap_form_field_name]" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
                                 </el-form-item>                     
                             </div>  
-                            <div v-if="affiliate_field.ap_form_field_type == 'Textarea' && affiliate_field.ap_field_is_default == '1'" class="ap-single-field__form">                    
+                            <div v-if="affiliate_field.ap_form_field_type == 'Textarea' && affiliate_field.ap_field_is_default == '1'" class="ap-single-field__form" :class="affiliate_field.ap_field_class">                    
                                 <el-form-item :prop="affiliate_field.ap_form_field_name">
                                     <template #label>
                                         <span class="ap-form-label" v-html="affiliate_field.ap_field_label"></span>
@@ -229,7 +234,7 @@
                                     <el-input class="ap-form-control" type="textarea" :rows="4" size="large" v-model="affiliates[affiliate_field.ap_form_field_name]" :placeholder="affiliate_field.ap_field_placeholder" />
                                 </el-form-item>                     
                             </div>  
-                            <div v-if="affiliate_field.ap_form_field_type == 'terms_and_conditions'" class="ap-single-field__form ap-checkbox-control ap-checkbox-control-single ap-term-condition-box">                    
+                            <div v-if="affiliate_field.ap_form_field_type == 'terms_and_conditions'" class="ap-single-field__form ap-checkbox-control ap-checkbox-control-single ap-term-condition-box" :class="affiliate_field.ap_field_class">                    
                                 <el-form-item :prop="affiliate_field.ap_form_field_name">                            
                                     <el-checkbox class="ap-form-label ap-custom-checkbox--is-label" v-model="affiliates[affiliate_field.ap_form_field_name]" size="large"><div v-html="affiliate_field.ap_field_label"></div></el-checkbox>                            
                                 </el-form-item>                     
@@ -243,7 +248,7 @@
                         </div>                
                         <div class="ap-frm-btn">
                             <el-button native-type="submit" :disabled="(is_display_reg_save_loader == '1')?true:false" :class="(is_display_reg_save_loader == '1') ? 'ap-btn--is-loader' : ''" @click="registerAffiliate()" class="ap-btn--primary ap-btn--big ap-form-full-width-control"  type="primary">
-                                <span class="ap-btn__label" :aria-label="affiliate_panel_labels.signin" v-html="affiliate_panel_labels.signin"></span>
+                                <span class="ap-btn__label" :aria-label="affiliate_panel_labels.create_account_button" v-html="affiliate_panel_labels.create_account_button"></span>
                                 <div class="ap-btn--loader__circles">
                                     <div></div>
                                     <div></div>
@@ -1504,7 +1509,7 @@
                                         <el-form @submit.native.prevent ref="affiliates_profile_form_data" :rules="rules" require-asterisk-position="right" :model="affiliates_profile_fields" label-position="top">
                                         <div v-for="affiliate_field in affiliate_fields">
 
-                                            <div v-if="affiliate_field.ap_form_field_type == 'Text' && affiliate_field.ap_form_field_name != 'ap_affiliates_payment_email'" class="ap-single-field__form">                    
+                                            <div v-if="affiliate_field.ap_form_field_type == 'Text' && affiliate_field.ap_form_field_name != 'ap_affiliates_payment_email' && affiliate_field.ap_field_is_default == '1'" class="ap-single-field__form">                    
                                                 <el-form-item :prop="affiliate_field.ap_form_field_name">
                                                     <template #label>
                                                         <span class="ap-form-label" v-html="affiliate_field.ap_field_label" :aria-label="affiliate_field.ap_field_label"></span>
@@ -1520,7 +1525,7 @@
                                                     <el-input :readonly="(affiliate_field.ap_form_field_name == 'email')?true:false" class="ap-form-control" type="text" size="large" v-model="affiliates_profile_fields[affiliate_field.ap_form_field_name]" :placeholder="affiliate_field.ap_field_placeholder" />
                                                 </el-form-item>                     
                                             </div>                                                                     
-                                            <div v-if="affiliate_field.ap_form_field_type == 'Textarea'" class="ap-single-field__form">                    
+                                            <div v-if="affiliate_field.ap_form_field_type == 'Textarea' && affiliate_field.ap_field_is_default == '1'" class="ap-single-field__form">                    
                                                 <el-form-item :prop="affiliate_field.ap_form_field_name">
                                                     <template #label>
                                                         <span class="ap-form-label" v-html="affiliate_field.ap_field_label" :aria-label="affiliate_field.ap_field_label"></span>
@@ -1529,8 +1534,7 @@
                                                 </el-form-item>                     
                                             </div>
                                         </div>
-
-                                        <div v-if="affiliate_fields.length != 0" class="ap-other-prof-setting">
+                                        <div v-if="affiliate_fields.length != 0 && affiliatepress_paymnet_email_show_panel != 0" class="ap-other-prof-setting">
                                             <div class="ap-profile-sub-heading" :aria-label="affiliate_panel_labels.paymnet_detail" v-html="affiliate_panel_labels.paymnet_detail"></div>    
                                             <div  class="ap-single-field__form">                    
                                                 <el-form-item prop="ap_affiliates_payment_email">
@@ -1605,7 +1609,7 @@
                                         </el-form>
                                     </div>
                                 </div>
-                                <div class="ap-profile-edit-wrapper">
+                                <div class="ap-profile-edit-wrapper" v-if="affiliate_user_self_closed_account == 'true'">
                                     <el-row class="ap-delete-account-row" type="flex" justify="space-between" align="middle">
                                         <div class="ap-delete-account-left">
                                             <div class="ap-profile-sub-heading" :aria-label="affiliate_panel_labels.delete_account">

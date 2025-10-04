@@ -64,6 +64,9 @@ if (! class_exists('affiliatepress_commissions') ) {
             /**get user details */
             add_action('wp_ajax_affiliatepress_get_affiliate_user_details', array( $this, 'affiliatepress_get_affiliate_user_details_func' ));   
 
+            /* before delete affiliate commisison product delete */
+            add_action('affiliatepress_before_delete_affiliate',array($this,'affiliatepress_before_delete_affiliate_commission_delete_func'),10,1);
+
         }
                
          
@@ -1169,6 +1172,19 @@ if (! class_exists('affiliatepress_commissions') ) {
             
             wp_send_json($response);
             exit;            
+        }
+
+        function affiliatepress_before_delete_affiliate_commission_delete_func($affiliatepress_affiliate_id){
+
+            global $affiliatepress_tbl_ap_affiliate_commissions,$affiliatepress_tbl_ap_commission_products;
+
+            $affiliatepress_get_commisison_ids = $this->affiliatepress_select_record(true, '', $affiliatepress_tbl_ap_affiliate_commissions, 'ap_commission_id', 'WHERE ap_affiliates_id  = %d', array( $affiliatepress_affiliate_id), '', '', '', false, false,ARRAY_A);
+
+            foreach ($affiliatepress_get_commisison_ids as $affiliatepress_commisison_data) {
+                $affiliatepress_commission_id = isset($affiliatepress_commisison_data['ap_commission_id']) ? intval($affiliatepress_commisison_data['ap_commission_id']) : 0;
+
+                $this->affiliatepress_delete_record($affiliatepress_tbl_ap_commission_products, array( 'ap_commission_id' => $affiliatepress_commission_id ), array('%d'));
+            }
         }
 
                 

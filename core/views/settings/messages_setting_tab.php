@@ -797,7 +797,7 @@
                                 </el-col>
                                 <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-settings-col ap-gs__cb-item-left" >
                                     <div class="ap-combine-field">
-                                        <label><span class="ap-form-label"><?php esc_html_e('Are you sure you want to Close Account?', 'affiliatepress-affiliate-marketing'); ?></span></label>    
+                                        <label><span class="ap-form-label"><?php esc_html_e('Are you sure you want to delete your account?', 'affiliatepress-affiliate-marketing'); ?></span></label>    
                                         <el-form-item prop="delete_account_confirmation_msg">
                                             <el-input class="ap-form-control" type="text" v-model="messages_setting_form.delete_account_confirmation_msg" size="large"  />
                                         </el-form-item>
@@ -813,7 +813,7 @@
                                 </el-col>
                                 <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-settings-col ap-gs__cb-item-left" >
                                     <div class="ap-combine-field">
-                                        <label><span class="ap-form-label"><?php esc_html_e('Close Button', 'affiliatepress-affiliate-marketing'); ?></span></label>    
+                                        <label><span class="ap-form-label"><?php esc_html_e('Delete Button', 'affiliatepress-affiliate-marketing'); ?></span></label>    
                                         <el-form-item prop="delete_account_close_button">
                                             <el-input class="ap-form-control" type="text" v-model="messages_setting_form.delete_account_close_button" size="large"  />
                                         </el-form-item>

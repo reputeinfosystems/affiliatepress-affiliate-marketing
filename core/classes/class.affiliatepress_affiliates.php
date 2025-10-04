@@ -1192,19 +1192,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
             }
             if($affiliatepress_affiliates_id){
                 
-                $affiliatepress_affiliates_user_id = $this->affiliatepress_select_record(true, '', $affiliatepress_tbl_ap_affiliates, 'ap_affiliates_user_id', 'WHERE ap_affiliates_id  = %d', array( $affiliatepress_affiliates_id), '', '', '', true, false,ARRAY_A);
-
-                do_action('affiliatepress_before_delete_affiliate', $affiliatepress_affiliates_id);
-
-                $this->affiliatepress_delete_record($affiliatepress_tbl_ap_affiliates, array( 'ap_affiliates_id' => $affiliatepress_affiliates_id ), array('%d'));
-                $this->affiliatepress_delete_record($affiliatepress_tbl_ap_affiliate_commissions, array( 'ap_affiliates_id' => $affiliatepress_affiliates_id ), array('%d'));
-                $this->affiliatepress_delete_record($affiliatepress_tbl_ap_affiliate_visits, array( 'ap_affiliates_id' => $affiliatepress_affiliates_id ), array('%d'));
-
-                if($affiliatepress_affiliates_user_id){
-                    $this->affiliatepress_remove_affiliate_user_role($affiliatepress_affiliates_user_id);
-                }                
-                                
-                do_action('affiliatepress_after_delete_affiliate',$affiliatepress_affiliates_id);
+                $this->affiliatepress_affiliate_delete_data($affiliatepress_affiliates_id);
 
                 $response['variant'] = 'success';
                 $response['title']   = esc_html__('Success', 'affiliatepress-affiliate-marketing');
@@ -1225,6 +1213,27 @@ if (! class_exists('affiliatepress_affiliates') ) {
             }
             return $return;
 
+        }
+
+        function affiliatepress_affiliate_delete_data($affiliatepress_affiliates_id){
+
+            global $affiliatepress_tbl_ap_affiliates,$affiliatepress_tbl_ap_affiliate_commissions,$affiliatepress_tbl_ap_affiliate_visits,$affiliatepress_tbl_ap_affiliate_links,$affiliatepress_tbl_ap_customer;
+
+            $affiliatepress_affiliates_user_id = $this->affiliatepress_select_record(true, '', $affiliatepress_tbl_ap_affiliates, 'ap_affiliates_user_id', 'WHERE ap_affiliates_id  = %d', array( $affiliatepress_affiliates_id), '', '', '', true, false,ARRAY_A);
+
+            do_action('affiliatepress_before_delete_affiliate', $affiliatepress_affiliates_id);
+
+            $this->affiliatepress_delete_record($affiliatepress_tbl_ap_affiliates, array( 'ap_affiliates_id' => $affiliatepress_affiliates_id ), array('%d'));
+            $this->affiliatepress_delete_record($affiliatepress_tbl_ap_affiliate_commissions, array( 'ap_affiliates_id' => $affiliatepress_affiliates_id ), array('%d'));
+            $this->affiliatepress_delete_record($affiliatepress_tbl_ap_affiliate_visits, array( 'ap_affiliates_id' => $affiliatepress_affiliates_id ), array('%d'));
+            $this->affiliatepress_delete_record($affiliatepress_tbl_ap_affiliate_links, array( 'ap_affiliates_id' => $affiliatepress_affiliates_id ), array('%d'));
+            $this->affiliatepress_delete_record($affiliatepress_tbl_ap_customer, array( 'ap_affiliates_id' => $affiliatepress_affiliates_id ), array('%d'));
+
+            if($affiliatepress_affiliates_user_id){
+                $this->affiliatepress_remove_affiliate_user_role($affiliatepress_affiliates_user_id);
+            }                
+                                
+            do_action('affiliatepress_after_delete_affiliate',$affiliatepress_affiliates_id);
         }
 
         /**
@@ -1843,7 +1852,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
         function affiliatepress_affiliates_dynamic_data_fields_func($affiliatepress_affiliate_vue_data_fields){            
             
             global $AffiliatePress,$affiliatepress_affiliate_vue_data_fields,$wpdb,$affiliatepress_tbl_ap_affiliate_form_fields;
-            $affiliatepress_fields = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_form_fields, '*', 'WHERE  ap_form_field_name <> %s', array( 'terms_and_conditions' ), '', 'order by ap_field_position ASC', '', false, false,ARRAY_A);           
+            $affiliatepress_fields = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_form_fields, '*', 'WHERE  ap_form_field_name <> %s AND ap_show_profile_field = %d', array( 'terms_and_conditions' , 1), '', 'order by ap_field_position ASC', '', false, false,ARRAY_A);           
             $affiliatepress_affiliate_vue_data_fields['affiliate_fields'] = array();
 
             $affiliatepress_import_fields = array();

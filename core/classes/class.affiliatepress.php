@@ -844,7 +844,7 @@ if (! class_exists('AffiliatePress') ) {
         {
             global $affiliatepress_version, $AffiliatePress;
             $affiliatepress_old_version = get_option('affiliatepress_version', true);
-            if (version_compare($affiliatepress_old_version, '1.1', '<') ) {
+            if (version_compare($affiliatepress_old_version, '1.2', '<') ) {
                 $affiliatepress_load_upgrade_file = AFFILIATEPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $affiliatepress_load_upgrade_file;
                 $AffiliatePress->affiliatepress_send_anonymous_data_cron();
@@ -1821,14 +1821,34 @@ if (! class_exists('AffiliatePress') ) {
          * @param  integer $affiliatepress_affiliate_id
          * @return string
         */
-        function affiliatepress_encode_affiliate_id($affiliatepress_affiliate_id){            
+        function affiliatepress_encode_affiliate_id($affiliatepress_affiliate_id){   
+            
+            global $AffiliatePress;
+            $affiliatepress_default_link_type = $AffiliatePress->affiliatepress_get_settings('default_url_type', 'affiliate_settings');
+            
             if($affiliatepress_affiliate_id){
-                $affiliatepress_alphabet = "abcdefghijklmnopqrstuvwxyz12345679";
-                $random_index = wp_rand(0, strlen($affiliatepress_alphabet) - 1);
-                $random_alphabet = $affiliatepress_alphabet[$random_index];
-                $random_index = wp_rand(0, strlen($affiliatepress_alphabet) - 1);                                                                
-                $affiliatepress_encode_id = 'a'.base_convert($affiliatepress_affiliate_id,10,36).'9';
-                return $affiliatepress_encode_id;
+
+                if($affiliatepress_default_link_type == 'affiliate_default_url'){
+                    $affiliatepress_alphabet = "abcdefghijklmnopqrstuvwxyz12345679";
+                    $random_index = wp_rand(0, strlen($affiliatepress_alphabet) - 1);
+                    $random_alphabet = $affiliatepress_alphabet[$random_index];
+                    $random_index = wp_rand(0, strlen($affiliatepress_alphabet) - 1);                                                                
+                    $affiliatepress_encode_id = 'a'.base_convert($affiliatepress_affiliate_id,10,36).'9';
+                    return $affiliatepress_encode_id;
+                }
+                elseif ($affiliatepress_default_link_type == "id") {
+                    return $affiliatepress_affiliate_id;
+                }
+                elseif ($affiliatepress_default_link_type == "username") {
+                    $affiliatepress_user_id = $this->affiliatepress_get_affiliate_user_id($affiliatepress_affiliate_id);
+                    $affiliatepress_user_name = $this->affiliatepress_get_affiliate_username($affiliatepress_user_id,$affiliatepress_affiliate_id);
+                    return $affiliatepress_user_name;
+                }
+                elseif ($affiliatepress_default_link_type == "md5") {
+                    $affiliatepress_md5_id = md5($affiliatepress_affiliate_id);
+                    return $affiliatepress_md5_id;
+                }
+                
             }else{
                 return $affiliatepress_affiliate_id;
             }
@@ -1840,16 +1860,38 @@ if (! class_exists('AffiliatePress') ) {
          * @param  integer $affiliatepress_affiliate_id
          * @return integer
         */
-        function affiliatepress_decode_affiliate_id($affiliatepress_affiliate_id){            
-            if($affiliatepress_affiliate_id){                
-                if(!empty($affiliatepress_affiliate_id)){
-                    $affiliatepress_affiliate_id = substr($affiliatepress_affiliate_id, 1);
-                }                
-                if(!empty($affiliatepress_affiliate_id)){
-                    $affiliatepress_affiliate_id = substr($affiliatepress_affiliate_id, 0, -1);   
-                }                                               
-                $affiliatepress_decode_id = base_convert($affiliatepress_affiliate_id,36,10);
-                return $affiliatepress_decode_id;                                 
+        function affiliatepress_decode_affiliate_id($affiliatepress_affiliate_id){  
+            
+            global $wpdb,$AffiliatePress,$affiliatepress_tbl_ap_affiliates;
+            $affiliatepress_default_link_type = $AffiliatePress->affiliatepress_get_settings('default_url_type', 'affiliate_settings');
+            
+            if($affiliatepress_affiliate_id){   
+                if($affiliatepress_default_link_type == "affiliate_default_url"){
+                    if(!empty($affiliatepress_affiliate_id)){
+                        $affiliatepress_affiliate_id = substr($affiliatepress_affiliate_id, 1);
+                    }                
+                    if(!empty($affiliatepress_affiliate_id)){
+                        $affiliatepress_affiliate_id = substr($affiliatepress_affiliate_id, 0, -1);   
+                    }                                               
+                    $affiliatepress_decode_id = base_convert($affiliatepress_affiliate_id,36,10);
+                    return $affiliatepress_decode_id;                                 
+                }
+                elseif ($affiliatepress_default_link_type == "id"){
+                    return $affiliatepress_affiliate_id;
+                } 
+                elseif ($affiliatepress_default_link_type == "username"){
+                    $affiliatepress_user_data = get_user_by('login', $affiliatepress_affiliate_id);
+                    if ($affiliatepress_user_data) {
+                        $affiliatepress_user_id = $affiliatepress_user_data->ID;
+                        $affiliatepress_affiliate_id = $this->affiliatepress_get_affiliate_id_by_userid($affiliatepress_user_id);
+
+                        return $affiliatepress_affiliate_id;
+                    }
+                }
+                elseif ($affiliatepress_default_link_type == "md5"){
+                    $affiliatepress_actual_affiliate_id = $wpdb->get_var( $wpdb->prepare( "SELECT ap_affiliates_id as encoding_id FROM $affiliatepress_tbl_ap_affiliates WHERE md5(ap_affiliates_id) = %s ", $affiliatepress_affiliate_id ) ); //phpcs:ignore
+                    return $affiliatepress_actual_affiliate_id;
+                }
             }else{
                 return $affiliatepress_affiliate_id;
             }
@@ -2017,6 +2059,43 @@ if (! class_exists('AffiliatePress') ) {
                 }
             }            
             return $affiliatepress_affiliate_user_name;
+        }
+
+         /**
+         * Function for get username by User ID
+         *
+         * @param  integer $affiliatepress_user_id
+         * @return string
+        */
+        function affiliatepress_get_affiliate_username($affiliatepress_user_id = '',$affiliatepress_affiliate_id = ''){
+            $affiliatepress_affiliate_user_name = '';  
+            global $affiliatepress_tbl_ap_affiliates;  
+            if(empty($affiliatepress_user_id) && !empty($affiliatepress_affiliate_id)){
+                $affiliatepress_user_id = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliates, 'ap_affiliates_user_id', 'WHERE ap_affiliates_id = %d', array( $affiliatepress_affiliate_id ), '', '', '', true, false,ARRAY_A);
+            }            
+            if($affiliatepress_user_id){                
+                $affiliatepress_user_info = get_userdata($affiliatepress_user_id);
+                if ($affiliatepress_user_info) {
+                    $affiliatepress_username = $affiliatepress_user_info->user_login;
+                    $affiliatepress_affiliate_user_name =  $affiliatepress_username;
+                }
+            }            
+            return $affiliatepress_affiliate_user_name;
+        }
+
+        /**
+         * Function for get affiliate user id
+         *
+         * @param  mixed $affiliatepress_affiliate_id
+         * @return integer
+        */
+        function affiliatepress_get_affiliate_id_by_userid($affiliatepress_user_id = ''){
+            global $affiliatepress_tbl_ap_affiliates;
+            $affiliatepress_affiliate_id = 0;
+            if($affiliatepress_user_id){
+                $affiliatepress_affiliate_id = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliates, 'ap_affiliates_id', 'WHERE ap_affiliates_user_id = %d', array( $affiliatepress_user_id ), '', '', '', true, false,ARRAY_A);
+            }
+            return $affiliatepress_affiliate_id;
         }
 
         /**
@@ -3479,6 +3558,7 @@ if (! class_exists('AffiliatePress') ) {
                 array('ap_setting_name' => 'day_of_billing_cycle','ap_setting_value' => '3','ap_setting_type' => 'commissions_settings','auto_load'=>0,'type'=>'integer'),
                 array('ap_setting_name' => 'payment_default_currency','ap_setting_value' => 'USD','ap_setting_type' => 'affiliate_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'currency_symbol_position','ap_setting_value' => 'before','ap_setting_type' => 'affiliate_settings','auto_load'=>1,'type'=>'text'),
+                array('ap_setting_name' => 'default_url_type','ap_setting_value' => 'affiliate_default_url','ap_setting_type' => 'affiliate_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'currency_separator','ap_setting_value' => 'comma-dot','ap_setting_type' => 'affiliate_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'number_of_decimals','ap_setting_value' => '2','ap_setting_type' => 'affiliate_settings','auto_load'=>1,'type'=>'integer'),
                 array('ap_setting_name' => 'enable_woocommerce','ap_setting_value' => 'false','ap_setting_type' => 'integrations_settings','auto_load'=>1,'type'=>'text'),
@@ -3670,9 +3750,9 @@ if (! class_exists('AffiliatePress') ) {
                 array('ap_setting_name' => 'login_login_description','ap_setting_value' => esc_html__('Stay updated on your professional world', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'login_user_name','ap_setting_value' => esc_html__('Username or Email Address', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'login_user_name_placeholder','ap_setting_value' => esc_html__('Enter Email Address', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
-                array('ap_setting_name' => 'delete_account_confirmation_msg','ap_setting_value' => esc_html__('Are you sure you want to Close Account?', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'delete_account_confirmation_msg','ap_setting_value' => esc_html__('Are you sure you want to delete your account?', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'delete_account_cancel_button','ap_setting_value' => esc_html__('Cancel', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
-                array('ap_setting_name' => 'delete_account_close_button','ap_setting_value' => esc_html__('Close', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'delete_account_close_button','ap_setting_value' => esc_html__('Delete', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'delete_account_confirmation_description','ap_setting_value' => esc_html__('Delete the account will be delete all the records under the account.', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'login_password','ap_setting_value' => esc_html__('Password', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'login_password_placeholder','ap_setting_value' => esc_html__('Enter Password', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
@@ -3855,7 +3935,7 @@ if (! class_exists('AffiliatePress') ) {
                 'ap_affiliates_payment_email'  => array(
                     'field_name'     => 'ap_affiliates_payment_email',
                     'field_type'     => 'Text',
-                    'is_edit'        => 0,
+                    'is_edit'        => 1,
                     'is_required'    => 1,
                     'label'          => wp_kses_post( esc_html__('Payout Email', 'affiliatepress-affiliate-marketing') ),
                     'placeholder'    => wp_kses_post( esc_html__('Enter payment email', 'affiliatepress-affiliate-marketing') ),
@@ -4726,6 +4806,26 @@ if (! class_exists('AffiliatePress') ) {
                     }
                 }
             }
+
+            $affiliatepress_args = array(
+                'role'   => 'affiliatepress-affiliate-user',
+                'fields' => 'ID',
+            );
+            $affiliatepress_users = get_users($affiliatepress_args);
+            if (!empty($affiliatepress_users)) {
+                foreach ($affiliatepress_users as $user_id) {
+                    $user = new WP_User($user_id);
+                    $user->remove_role('affiliatepress-affiliate-user');
+                    $affiliatepressroles = $AffiliatePress->affiliatepress_capabilities(); 
+                    foreach ($affiliatepressroles as $cap => $desc) {
+                        if ($user->has_cap($cap)) {
+                            $user->remove_cap($cap);
+                        }
+                    }
+                    delete_user_meta($user_id, 'affiliatepress_affiliate_user');
+                }
+            }
+            
         }
         
         /**
@@ -5034,27 +5134,75 @@ if (! class_exists('AffiliatePress') ) {
         }
 
          /**lifetime deal content get */
-        function affiliatepress_get_lifetime_deal_content(){
+         function affiliatepress_get_lifetime_deal_content(){
 
             global $affiliatepress_website_url,$AffiliatePress;
-
-            if($AffiliatePress->affiliatepress_pro_install()){
-                return;
-            }
 
             $affiliatepress_lifetime_deal_content = get_transient( 'affiliatepress_lifetime_deal_content' );
             if(!empty($affiliatepress_lifetime_deal_content)){
                 return;
             }
 
+            $affiliatepress_lite             = get_option('affiliatepress_version');
+            $affiliatepress_lite             = !empty($affiliatepress_lite) ? $affiliatepress_lite : '';
+            $affiliatepress_is_aplite   = !empty($affiliatepress_lite) ? 1 : 0;
+            $affiliatepress_pro              = get_option('affiliatepress_pro_version');
+            $affiliatepress_pro              = !empty($affiliatepress_pro) ? $affiliatepress_pro : '';
+            $affiliatepress_is_appro   = !empty($affiliatepress_pro) ? 1 : 0;
+            $affiliatepress_apactiveAddonlist =  array(); 
+            $affiliatepress_apinactiveAddonlist =  array(); 
+
+            $affiliatepress_addons_res = wp_remote_post(
+                $affiliatepress_website_url.'ap_misc/addons_list.php',
+                array(
+                    'method'    => 'POST',
+                    'timeout'   => 45,
+                    'sslverify' => false,
+                    'body'      => array(
+                        'affiliatepress_addons_list' => 1,
+                    ),
+                )
+            );
+
+            if ( ! is_wp_error( $affiliatepress_addons_res ) ) {
+                $affiliatepress_body_res = base64_decode( $affiliatepress_addons_res['body'] );
+                if ( ! empty( $affiliatepress_body_res ) ) {
+                    $affiliatepress_body_res = json_decode( $affiliatepress_body_res, true );
+                    foreach ( $affiliatepress_body_res as $affiliatepress_body_key => $affiliatepress_body_data_arr ) {  
+                        foreach ( $affiliatepress_body_data_arr as $affiliatepress_body_data_key => $affiliatepress_body_val ) {
+                            if(!empty($affiliatepress_body_val['addon_installer'])) {
+                                if(file_exists( WP_PLUGIN_DIR . '/'.$affiliatepress_body_val['addon_installer'])) {        
+                                    $is_addon_active = is_plugin_active($affiliatepress_body_val['addon_installer']);
+                                    if($is_addon_active) {
+                                        $affiliatepress_apactiveAddonlist[$affiliatepress_body_val['addon_name']] = $affiliatepress_body_val['addon_version'];
+                                    } else {
+                                        $affiliatepress_apinactiveAddonlist[$affiliatepress_body_val['addon_name']] = $affiliatepress_body_val['addon_version'];
+                                    } 
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            $affiliatepress_userdata = array();
+            $affiliatepress_userdata['is_aplite'] = $affiliatepress_is_aplite;
+            $affiliatepress_userdata['is_appro'] = $affiliatepress_is_appro;
+            $affiliatepress_userdata['activeaddonlist'] = $affiliatepress_apactiveAddonlist;
+            $affiliatepress_userdata['inactiveaddonlist'] = $affiliatepress_apinactiveAddonlist;
+            $affiliatepress_userdata['domain'] = parse_url(home_url(), PHP_URL_HOST);
+            $affiliatepress_userdata =  wp_json_encode($affiliatepress_userdata);
+
+            $url = $affiliatepress_website_url.'ap_misc/ap_exclusive_offers_at_panel.php';
             $affiliatepress_lifetime_deal_res = wp_remote_post(
-                $affiliatepress_website_url.'ap_misc/ap_exclusive_offers_at_panel.php',
+                $url,
                 array(
                     'method'    => 'POST',
                     'timeout'   => 45,
                     'sslverify' => false,
                     'body'      => array(
                         'affiliatepress_lifetime_deal' => 1,
+                        'ap_user_all_data' =>  wp_json_encode($affiliatepress_userdata)
                     ),
                 )
             ); 

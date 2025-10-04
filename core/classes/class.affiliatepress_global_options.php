@@ -487,6 +487,24 @@ if (! class_exists('affiliatepress_global_options') ) {
                         'value' => '7',
                         'text'  => esc_html__('Sunday', 'affiliatepress-affiliate-marketing'),
                     )                   
+                ),
+                'url_types' => array(
+                    array(
+                        'value' => 'affiliate_default_url',
+                        'text'  => esc_html__('Affiliate ID (Encoded ID)', 'affiliatepress-affiliate-marketing'),
+                    ),
+                    array(
+                        'value' => 'id',
+                        'text'  => esc_html__('Affiliate ID (Plain ID)', 'affiliatepress-affiliate-marketing'),
+                    ),
+                    array(
+                        'value' => 'username',
+                        'text'  => esc_html__('WordPress Username', 'affiliatepress-affiliate-marketing'),
+                    ),
+                    array(
+                        'value' => 'md5',
+                        'text'  => esc_html__('MD5 Hashed Affiliate ID', 'affiliatepress-affiliate-marketing'),
+                    ),      
                 )
             );            
             $affiliatepress_global_data = apply_filters('affiliatepress_add_global_option_data', $affiliatepress_global_data);
@@ -564,7 +582,7 @@ if (! class_exists('affiliatepress_global_options') ) {
             ); 
 
             $affiliatepress_all_plugin_integration[] = array(
-                'plugin_name'   => esc_html__('Wp Forms', 'affiliatepress-affiliate-marketing'),
+                'plugin_name'   => esc_html__('WPForms', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'   => 'wp_forms',
                 'plugin_status' => 1,
             );

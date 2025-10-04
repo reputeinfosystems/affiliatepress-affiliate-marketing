@@ -14,7 +14,15 @@ if (version_compare($affiliatepress_old_version, '1.0.2', '<') ) {
     }
 }
 
-$affiliatepress_new_version = '1.1';
+if (version_compare($affiliatepress_old_version, '1.2', '<') ) 
+{
+    global $affiliatepress_tbl_ap_affiliate_form_fields,$AffiliatePress;
+    $this->affiliatepress_update_record($affiliatepress_tbl_ap_affiliate_form_fields, array('ap_field_edit'=>1), array( 'ap_form_field_name' => 'ap_affiliates_payment_email' ));
+    $AffiliatePress->affiliatepress_update_settings('default_url_type','affiliate_settings','affiliate_default_url');
+}
+
+
+$affiliatepress_new_version = '1.2';
 update_option('affiliatepress_new_version_installed', 1);
 update_option('affiliatepress_version', $affiliatepress_new_version);
 update_option('affiliatepress_updated_date_' . $affiliatepress_new_version, current_time('mysql'));
