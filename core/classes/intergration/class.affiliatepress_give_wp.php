@@ -45,6 +45,13 @@ if( !class_exists('affiliatepress_give') ){
                 /**Add Reject Commission After Delete */
                 add_action( 'give_payment_delete', array( $this, 'affiliatepress_revoke_referral_on_delete_givewp' ), 10 );
 
+                if($this->affiliatepress_check_givewp_version()){
+
+                    add_action( 'givewp_form_builder_enqueue_scripts', array( $this, 'affiliatepress_disable_settings_add_givewp' ) );
+
+                    add_action( 'givewp_form_builder_updated', array( $this, 'affiliatepress_save_give_settings_data' ), 10, 2 );
+                }
+
             }
 
             if($affiliatepress_is_give_active)
@@ -152,6 +159,77 @@ if( !class_exists('affiliatepress_give') ){
             );
 
             return $affiliatepress_settings;
+        }
+
+         /**
+         * Function For Add Disable Commission in give wp form builder
+         *
+         * @param  
+         * @return array
+         */
+        function affiliatepress_disable_settings_add_givewp() {
+            if ( ! is_admin() ) return;
+
+            $affiliatepress_is_give_wp_forms = ( isset($_GET['post_type'], $_GET['page']) && $_GET['post_type'] === 'give_forms' &&  $_GET['page'] === 'givewp-form-builder'); // phpcs:ignore
+            if ( ! $affiliatepress_is_give_wp_forms ) {
+                return;
+            }
+
+            wp_register_script('affiliatepress_give_settings', AFFILIATEPRESS_URL . 'js/affiliatepress_give.js', array('wp-hooks', 'wp-i18n', 'wp-element', 'wp-components', 'react', 'react-dom'), AFFILIATEPRESS_VERSION,  false);
+            wp_enqueue_script('affiliatepress_give_settings');
+
+            $affiliatepress_form_id = 0;
+            $affiliatepress_doantion_form_id = isset($_GET['donationFormID']) ? intval($_GET['donationFormID']) : 0;// phpcs:ignore
+            $affiliatepress_post_form_id = isset($_GET['post']) ? intval($_GET['post']) : 0;// phpcs:ignore
+            $affiliatepress_get_form_id = isset($_GET['id']) ? intval($_GET['id']) : 0;// phpcs:ignore
+
+            if ( $affiliatepress_doantion_form_id > 0 ) {
+                $affiliatepress_form_id = $affiliatepress_doantion_form_id;
+            } elseif ( $affiliatepress_post_form_id > 0 ) {
+                $affiliatepress_form_id = $affiliatepress_post_form_id;
+            } elseif ( $affiliatepress_get_form_id > 0 ) {
+                $affiliatepress_form_id = $affiliatepress_get_form_id;
+            } else {
+                $affiliatepress_form_id = 0;
+            }
+
+            $affiliatepress_allow_commission = $affiliatepress_form_id ? give_get_meta($affiliatepress_form_id, 'affiliatepress_give_disable_commission', true) : false;
+
+            $affiliatepress_give_settings = array(
+                'affiliatepress_allow_give_commision' => (bool) $affiliatepress_allow_commission,
+                'formId'                              => $affiliatepress_form_id,
+                'nonce'                               => wp_create_nonce('affiliatepress_give_save_settings'),
+                'strings'                             => [
+                    'sectionTitle'           => esc_html__('AffiliatePress', 'affiliatepress-affiliate-marketing'),
+                    'allow_commission_label' => esc_html__('Enable Commission', 'affiliatepress-affiliate-marketing'),
+                    'allow_commission_desc'  => esc_html__('Enable affiliate commission creation for this donation form', 'affiliatepress-affiliate-marketing'),
+                ],
+            );
+
+            wp_localize_script(
+                'affiliatepress_give_settings',
+                'affiliate_give_settings',
+                $affiliatepress_give_settings
+            );
+        }
+
+        
+        function affiliatepress_save_give_settings_data($form, $request){
+            $settings = $request->get_param('settings');
+        
+            if ( is_string( $settings ) ) {
+                $settings = json_decode( $settings, true );
+            }
+        
+            // Enable/Disable commission
+            if ( isset( $settings['affiliatepress_allow_give_commision'] ) ) {
+                $value = $settings['affiliatepress_allow_give_commision'];
+                if ( true === $value || 'true' === $value || '1' === $value || 1 === $value ) {
+                    give_update_meta( $form->id, 'affiliatepress_give_disable_commission', '1', '', 'form' );
+                } else {
+                    give_delete_meta( $form->id, 'affiliatepress_give_disable_commission', '', 'form' );
+                }
+            }
         }
 
         /**
@@ -608,6 +686,31 @@ if( !class_exists('affiliatepress_give') ){
             }
             return $affiliatepress_flag;
         }
+
+        /**
+         * Function For Check Plugin version
+         *
+         * @return void
+         */
+        function affiliatepress_check_givewp_version()
+        {
+            $affiliatepress_flag = false;
+
+            if ( ! function_exists( 'is_plugin_active' ) ) {
+                require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+            }
+            
+            if ( is_plugin_active( 'give/give.php' ) ) {
+                $affiliatepress_give_data = get_plugin_data( WP_PLUGIN_DIR .'/give/give.php');
+                $affiliatepress_give_version = isset($affiliatepress_give_data['Version']) ? $affiliatepress_give_data['Version'] : '';
+                if(version_compare( $affiliatepress_give_version, '3.0', '>=' )){
+                    $affiliatepress_flag = true;
+                }
+            }
+
+            return $affiliatepress_flag;
+        }
+        
         
         /**
          * Function For Check Enable iuntegration settings

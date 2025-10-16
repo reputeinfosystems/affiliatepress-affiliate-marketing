@@ -304,22 +304,6 @@
                                             </el-form-item>
                                         </div>
                                     </div>
-                                    <div class="ap-message-settings-wrapper">
-                                        <div class="ap-message-label"><?php esc_html_e( 'hCaptcha verification failed', 'affiliatepress-affiliate-marketing' ); ?></div>
-                                        <div class="ap-message-text"> 
-                                            <el-form-item prop="hcaptcha_verification_failed">
-                                                <el-input class="ap-form-control" type="text" v-model="messages_setting_form.hcaptcha_verification_failed" size="large"  />                                                                             
-                                            </el-form-item>
-                                        </div>
-                                    </div>
-                                    <div class="ap-message-settings-wrapper">
-                                        <div class="ap-message-label"><?php esc_html_e( 'reCAPTCHA verification failed', 'affiliatepress-affiliate-marketing' ); ?></div>
-                                        <div class="ap-message-text"> 
-                                            <el-form-item prop="recaptcha_verification_failed">
-                                                <el-input class="ap-form-control" type="text" v-model="messages_setting_form.recaptcha_verification_failed" size="large"  />                                                                             
-                                            </el-form-item>
-                                        </div>
-                                    </div>
                                 </el-form>  
                             </div>
                         </div>

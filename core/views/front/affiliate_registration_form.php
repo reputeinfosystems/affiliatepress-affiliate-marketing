@@ -63,13 +63,7 @@
                             <el-checkbox class="ap-form-label ap-custom-checkbox--is-label" @change="register_terms_and_condition(affiliate_field.ap_form_field_name)" v-model="affiliates[affiliate_field.ap_form_field_name]" size="large"><div v-html="affiliate_field.ap_field_label" ></div></el-checkbox>                            
                         </el-form-item>                     
                     </div>                                                                              
-                </div>                
-                <div v-if="hcaptcha_site_key != ''" class="ap-single-field__form">                    
-                    <div class="el-form-item">                      
-                        <div class="h-captcha" id="h-captcha" data-sitekey="<?php echo isset($affiliatepress_get_setting_data['hcaptcha_site_key'])?esc_html($affiliatepress_get_setting_data['hcaptcha_site_key']):''; ?>" data-callback="onHCaptchaVerify" data-theme="light"></div>                        
-                    </div> 
-                    <input type="hidden" id="ap-h-captcha-val">                    
-                </div>                
+                </div> 
                 <div class="ap-frm-btn">
                     <el-button native-type="submit" :disabled="(is_display_reg_save_loader == '1')?true:false" :class="(is_display_reg_save_loader == '1') ? 'ap-btn--is-loader' : ''" @click="registerAffiliate()" class="ap-btn--primary ap-btn--big ap-form-full-width-control"  type="primary">
                         <span class="ap-btn__label" :aria-label="affiliate_panel_labels.create_account_button" v-html="affiliate_panel_labels.create_account_button"></span>

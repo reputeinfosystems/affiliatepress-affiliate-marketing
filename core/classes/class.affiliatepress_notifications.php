@@ -102,7 +102,7 @@ if (! class_exists('affiliatepress_notifications') ) {
                 
                 $affiliatepress_ap_notification_message  = htmlspecialchars_decode(stripslashes_deep($affiliatepress_ap_notification_message));
 
-                $affiliatepress_email_notification_status = ! empty($_REQUEST['ap_notification_status'][ $affiliatepress_ap_notification_receiver_type ][ $affiliatepress_ap_notification_slug ]) ? sanitize_text_field($_REQUEST['ap_notification_status'][ $affiliatepress_ap_notification_receiver_type ][ $affiliatepress_ap_notification_slug ]) : '';
+                $affiliatepress_email_notification_status = ! empty($_REQUEST['ap_notification_status'][ $affiliatepress_ap_notification_receiver_type ][ $affiliatepress_ap_notification_slug ]) ? sanitize_text_field(wp_unslash($_REQUEST['ap_notification_status'][ $affiliatepress_ap_notification_receiver_type ][ $affiliatepress_ap_notification_slug ])) : '';
 
                 $affiliatepress_notification_status = ($affiliatepress_email_notification_status == "true") ? 1 : 0;
                 
@@ -251,7 +251,7 @@ if (! class_exists('affiliatepress_notifications') ) {
     function affiliatepress_get_default_notifications()
     {
         global $wpdb, $affiliatepress_tbl_ap_notifications;
-        $affiliatepress_default_notifications_data = $wpdb->get_results("SELECT * FROM {$affiliatepress_tbl_ap_notifications} WHERE ap_notification_is_custom = 0", ARRAY_A);// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_notifications is table name defined globally. False Positive alarm
+        $affiliatepress_default_notifications_data = $wpdb->get_results("SELECT * FROM {$affiliatepress_tbl_ap_notifications} WHERE ap_notification_is_custom = 0", ARRAY_A);// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_notifications is table name already prepare in "affiliatepress_tablename_prepare". False Positive alarm
         return $affiliatepress_default_notifications_data;
     }
       

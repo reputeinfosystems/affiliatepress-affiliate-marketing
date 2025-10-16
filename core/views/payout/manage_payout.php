@@ -64,7 +64,7 @@
                                         </div>
                                     </div>
                                 </template>                   
-                                <el-table-column align="center" header-align="center" width="80" prop="ap_affiliates_id" label="<?php esc_html_e('ID', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by="ap_affiliates_id">
+                                <el-table-column align="center" header-align="center" width="80" prop="ap_payout_id" label="<?php esc_html_e('ID', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by="ap_payout_id">
                                     <template #default="scope">
                                         <span>#{{ scope.row.ap_payout_id }}</span>
                                     </template>

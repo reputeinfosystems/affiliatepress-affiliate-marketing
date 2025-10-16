@@ -1704,6 +1704,8 @@ if (! class_exists('affiliatepress_commissions') ) {
                     vm.order_by = "ap_commission_created_date"; 
                 }else if(prop == "ap_commission_source"){
                     vm.order_by = "ap_commission_source";                    
+                }else if(prop == "ap_commission_id"){
+                    vm.order_by = "ap_commission_id";
                 }
                 if(vm.order_by){
                     if(order == "descending"){

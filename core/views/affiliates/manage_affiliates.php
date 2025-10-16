@@ -87,7 +87,7 @@
                                     <div class="ap-table-column-avatar-with-detail">
                                     <el-image class="ap-table-column-avatar" :src="scope.row.affiliates_avatar"></el-image>
                                     <div class="ap-item__avatar-detail-col">
-                                        <div class="ap-item_detail-label ap-affiliate-name-col">{{scope.row.full_name}} <el-tooltip popper-class="ap--popover-tool-tip" show-after="300" effect="dark" content="Link" placement="top">
+                                        <div class="ap-item_detail-label ap-affiliate-name-col">{{scope.row.full_name}} <el-tooltip popper-class="ap--popover-tool-tip" show-after="300" effect="dark" content="<?php esc_html_e('Affiliate Link', 'affiliatepress-affiliate-marketing'); ?>" placement="top">
                                                 <el-button @click="copy_affiliate_link(scope.row.affiliates_link)" class="ap-btn--icon-only-box">
                                                     <span class="ap-small-btn-icon ap-edit-icon">
                                                         <?php do_action('affiliatepress_common_svg_code','link_icon'); ?>
@@ -114,15 +114,15 @@
                                     </div>                                  
                                 </template>
                             </el-table-column>         
-                            <el-table-column align="right" header-align="right" prop="paid_earning" width="130" label="<?php esc_html_e('Paid Earnings', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by='paid_earning'></el-table-column>
+                            <el-table-column align="right" header-align="right" prop="paid_earning" width="130" label="<?php esc_html_e('Paid Earnings', 'affiliatepress-affiliate-marketing'); ?>"></el-table-column>
                             <el-table-column class-name="ap-padding-left-col-20" align="right" header-align="right" width="150" prop="current_commission_rate" label="<?php esc_html_e('Commission Rate', 'affiliatepress-affiliate-marketing'); ?>">
                                 <template #default="scope">
                                     <span>{{ scope.row.current_commission_rate }}</span>
                                 </template>
                             </el-table-column>                        
-                            <el-table-column class-name="ap-padding-right-col" align="right" header-align="right" prop="unpaid_earning" width="150" label="<?php esc_html_e('Unpaid Earnings', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by='unpaid_earning'></el-table-column>
-                            <el-table-column class-name="ap-padding-left-col-20" prop="total_visit" min-width="130" label="<?php esc_html_e('Total Visit', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by='total_visit'></el-table-column>
-                            <el-table-column class-name="ap-action-column" prop="converted_user" min-width="150" label="<?php esc_html_e('Converted', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by='converted_user'>
+                            <el-table-column class-name="ap-padding-right-col" align="right" header-align="right" prop="unpaid_earning" width="150" label="<?php esc_html_e('Unpaid Earnings', 'affiliatepress-affiliate-marketing'); ?>"></el-table-column>
+                            <el-table-column class-name="ap-padding-left-col-20" prop="total_visit" min-width="130" label="<?php esc_html_e('Total Visit', 'affiliatepress-affiliate-marketing'); ?>"></el-table-column>
+                            <el-table-column class-name="ap-action-column" prop="converted_user" min-width="150" label="<?php esc_html_e('Converted', 'affiliatepress-affiliate-marketing'); ?>">
                                 <template #default="scope">
                                     <span>{{ scope.row.converted_user }}</span>
                                     <div class="ap-table-actions-wrap">
@@ -206,7 +206,7 @@
                                     <div class="ap-table-column-avatar-with-detail">
                                     <el-image class="ap-table-column-avatar" :src="scope.row.affiliates_avatar"></el-image>
                                     <div class="ap-item__avatar-detail-col">
-                                        <div class="ap-item_detail-label ap-affiliate-name-col">{{scope.row.full_name}} <el-tooltip popper-class="ap--popover-tool-tip" show-after="300" effect="dark" content="Link" placement="top">
+                                        <div class="ap-item_detail-label ap-affiliate-name-col">{{scope.row.full_name}} <el-tooltip popper-class="ap--popover-tool-tip" show-after="300" effect="dark" content="<?php esc_html_e('Affiliate Link', 'affiliatepress-affiliate-marketing'); ?>" placement="top">
                                                 <el-button @click="copy_affiliate_link(scope.row.affiliates_link)" class="ap-btn--icon-only-box">
                                                     <span class="ap-small-btn-icon ap-edit-icon">
                                                         <?php do_action('affiliatepress_common_svg_code','link_icon'); ?>
@@ -233,8 +233,8 @@
                                     </div>                                  
                                 </template>
                             </el-table-column>     
-                            <el-table-column align="center" prop="paid_earning" width="70" label="<?php esc_html_e('Paid', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by='paid_earning'></el-table-column>
-                            <el-table-column class-name="ap-action-column" prop="unpaid_earning" min-width="150" width="150" label="<?php esc_html_e('Unpaid', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by='unpaid_earning'>
+                            <el-table-column align="center" prop="paid_earning" width="70" label="<?php esc_html_e('Paid', 'affiliatepress-affiliate-marketing'); ?>"></el-table-column>
+                            <el-table-column class-name="ap-action-column" prop="unpaid_earning" min-width="150" width="150" label="<?php esc_html_e('Unpaid', 'affiliatepress-affiliate-marketing'); ?>">
                                 <template #default="scope">
                                     <span>{{ scope.row.unpaid_earning }}</span>
                                     <div class="ap-table-actions-wrap">
@@ -426,12 +426,20 @@
                                         <el-input class="ap-form-control" type="password" :show-password="true" v-model="affiliates.password" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
                                     </el-form-item>                     
                                 </div>
-                                <div v-if="affiliate_field.ap_form_field_name == 'ap_affiliates_payment_email'" class="ap-single-field__form">
-                                    <el-form-item class="ap-combine-field" prop="ap_affiliates_payment_email">
+                                <div v-if="affiliate_field.ap_form_field_name == 'ap_affiliates_payment_email' && affiliates.ap_affiliates_id == ''" class="ap-single-field__form">
+                                    <el-form-item class="ap-combine-field" prop="ap_affiliates_payment_email_add">
                                         <template #label>
                                             <span class="ap-form-label">{{affiliate_field.ap_field_label}}</span>
                                         </template>                
-                                        <el-input class="ap-form-control" type="text" v-model="affiliates.ap_affiliates_payment_email" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
+                                        <el-input class="ap-form-control" type="text" v-model="affiliates.ap_affiliates_payment_email_add" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
+                                    </el-form-item>                     
+                                </div>
+                                <div v-if="affiliate_field.ap_form_field_name == 'ap_affiliates_payment_email' && affiliates.ap_affiliates_id != ''" class="ap-single-field__form">
+                                    <el-form-item class="ap-combine-field" prop="ap_affiliates_payment_email_edit">
+                                        <template #label>
+                                            <span class="ap-form-label">{{affiliate_field.ap_field_label}}</span>
+                                        </template>                
+                                        <el-input class="ap-form-control" type="text" v-model="affiliates.ap_affiliates_payment_email_edit" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
                                     </el-form-item>                     
                                 </div>
                                 <div v-if="affiliate_field.ap_form_field_name == 'ap_affiliates_website'" class="ap-single-field__form">

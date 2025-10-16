@@ -672,6 +672,7 @@ if (! class_exists('affiliatepress_global_options') ) {
                 'plugin_status' => 1,
             );    
 
+            $affiliatepress_all_plugin_integration = apply_filters( 'affiliatepress_add_other_integration', $affiliatepress_all_plugin_integration);
 
             return $affiliatepress_all_plugin_integration;
         }

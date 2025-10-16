@@ -730,8 +730,6 @@ if (! class_exists('affiliatepress_affiliate_fields') ) {
                 ),
                 'messages_setting_form'=>array(
                     'login_error_message'                   => '',
-                    'hcaptcha_verification_failed'          => '',
-                    'recaptcha_verification_failed'         => '',
                     'affiliate_register_with_auto_approved' => '', 
                     'affiliate_register_with_pending'       => '',
                     'username_already_exists'               => '',
@@ -750,20 +748,6 @@ if (! class_exists('affiliatepress_affiliate_fields') ) {
                 ),
                 'rules_messages'=> array(
                     'login_error_message'  => array(
-                        array(
-                            'required' => true,
-                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
-                            'trigger'  => 'blur',
-                        ),
-                    ),
-                    'hcaptcha_verification_failed'  => array(
-                        array(
-                            'required' => true,
-                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
-                            'trigger'  => 'blur',
-                        ),
-                    ),
-                    'recaptcha_verification_failed'  => array(
                         array(
                             'required' => true,
                             'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),

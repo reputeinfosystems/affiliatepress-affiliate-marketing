@@ -47,13 +47,7 @@
                                 <el-checkbox v-model="affiliatepress_login_form.affiliatepress_is_remember" class="ap-form-label ap-custom-checkbox--is-label" size="large"><div :aria-label="affiliate_panel_labels.login_remember_me" v-html="affiliate_panel_labels.login_remember_me"></div></el-checkbox>
                                 <div><a href="javascript:void(0);" @click="showForgotpassword()" class="ap-acnt-link ap-acnt-link-forgot ap-title-text-color" :aria-label="affiliate_panel_labels.login_forgot_password" v-html="affiliate_panel_labels.login_forgot_password"></a></div>
                             </div>      
-                        </div>
-                        <div v-if="hcaptcha_site_key != ''" class="ap-single-field__form">                    
-                            <div class="el-form-item">                      
-                                <div class="h-captcha" id="h-captcha" data-sitekey="<?php echo isset($affiliatepress_get_setting_data['hcaptcha_site_key'])?esc_html($affiliatepress_get_setting_data['hcaptcha_site_key']):''; ?>" data-callback="onHCaptchaVerify" data-theme="light"></div>                        
-                            </div> 
-                            <input type="hidden" id="ap-h-captcha-val">                    
-                        </div>                         
+                        </div>                
                         <div class="ap-frm-btn">
                             <el-button native-type="submit" @click="affiliatepress_affiliate_login" :disabled="(login_form_loader == '1')?true:false" :class="(login_form_loader == '1') ? 'ap-btn--is-loader' : ''" class="ap-btn--primary ap-btn--big ap-form-full-width-control"  type="primary">
                                 <span class="ap-btn__label" :aria-label="affiliate_panel_labels.login_signin_button" v-html="affiliate_panel_labels.login_signin_button"></span>
@@ -111,13 +105,7 @@
                                         <el-checkbox class="ap-form-label ap-custom-checkbox--is-label" @change="register_terms_and_condition(affiliate_field.ap_form_field_name)" v-model="affiliates[affiliate_field.ap_form_field_name]" size="large"><div v-html="affiliate_field.ap_field_label"></div></el-checkbox>                            
                                     </el-form-item>                     
                                 </div>                                                                              
-                            </div>                
-                            <div v-if="hcaptcha_site_key != ''" class="ap-single-field__form">                    
-                                <div class="el-form-item">                      
-                                    <div class="h-captcha" id="h-captcha" data-sitekey="<?php echo isset($affiliatepress_get_setting_data['hcaptcha_site_key'])?esc_html($affiliatepress_get_setting_data['hcaptcha_site_key']):''; ?>" data-callback="onHCaptchaVerifyRegister" data-theme="light"></div>                     
-                                </div> 
-                                <input type="hidden" id="ap-h-captcha-val-register">                    
-                            </div>                
+                            </div>
                             <div class="ap-frm-btn">
                                 <el-button native-type="submit" :disabled="(is_display_reg_save_loader == '1')?true:false" :class="(is_display_reg_save_loader == '1') ? 'ap-btn--is-loader' : ''" @click="registerAffiliate()" class="ap-btn--primary ap-btn--big ap-form-full-width-control"  type="primary">
                                     <span class="ap-btn__label" :aria-label="affiliate_panel_labels.create_account_button" v-html="affiliate_panel_labels.create_account_button"></span>
@@ -239,13 +227,7 @@
                                     <el-checkbox class="ap-form-label ap-custom-checkbox--is-label" v-model="affiliates[affiliate_field.ap_form_field_name]" size="large"><div v-html="affiliate_field.ap_field_label"></div></el-checkbox>                            
                                 </el-form-item>                     
                             </div>                                                                              
-                        </div>                
-                        <div v-if="hcaptcha_site_key != ''" class="ap-single-field__form">                    
-                            <div class="el-form-item">                      
-                                <div class="h-captcha" id="h-captcha" data-sitekey="<?php echo isset($affiliatepress_get_setting_data['hcaptcha_site_key'])?esc_html($affiliatepress_get_setting_data['hcaptcha_site_key']):''; ?>" data-callback="onHCaptchaVerifyRegister" data-theme="light"></div>                     
-                            </div> 
-                            <input type="hidden" id="ap-h-captcha-val-register">                    
-                        </div>                
+                        </div>  
                         <div class="ap-frm-btn">
                             <el-button native-type="submit" :disabled="(is_display_reg_save_loader == '1')?true:false" :class="(is_display_reg_save_loader == '1') ? 'ap-btn--is-loader' : ''" @click="registerAffiliate()" class="ap-btn--primary ap-btn--big ap-form-full-width-control"  type="primary">
                                 <span class="ap-btn__label" :aria-label="affiliate_panel_labels.create_account_button" v-html="affiliate_panel_labels.create_account_button"></span>
@@ -762,12 +744,12 @@
                             </div>
                             <div class="ap-table-filter ap-affiliat-panel-pading">
                                 <el-row type="flex" :gutter="24">
-                                    <el-col class="ap-padding-right-16" :xs="24" :sm="24" :md="11" :lg="11" :xl="11">   
+                                    <el-col class="ap-padding-right-16" :xs="24" :sm="24" :md="12" :lg="12" :xl="12">   
                                         <div>  
                                             <el-date-picker :teleported="false" popper-class="ap-date-range-picker-widget-wrapper ap-date-range-picker-sidebar-widget-wrapper" value-format="YYYY-MM-DD" :format="ap_common_date_format" v-model="dashboard_date_range" class="ap-form-date-range-control ap-form-full-width-control ap-padding-right-16" type="daterange" size="large" :start-placeholder="affiliate_panel_labels.start_date" :end-placeholder="affiliate_panel_labels.end_date"  :shortcuts="shortcuts" :default-time="defaultTime"/>
                                         </div>       
                                     </el-col> 
-                                    <el-col class="ap-front-filter-btn" :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
+                                    <el-col class="ap-front-filter-btn" :xs="24" :sm="24" :md="7" :lg="7" :xl="7">
                                         <div class="ap-tf-btn-group">
                                             <el-button @click="change_dashboard_date" class="ap-btn--primary" plain type="primary" :disabled="is_apply_disabled">
                                                 <span class="ap-btn__label" v-html="affiliate_panel_labels.apply" :aria-label="affiliate_panel_labels.apply"></span>
@@ -911,7 +893,8 @@
                                             </div>
                                             <div class="ap-single-field__form">  
                                                 <span class="ap-form-label" aria-label="affiliate_panel_labels.visit_select_type" v-html="affiliate_panel_labels.visit_select_type"></span>
-                                                <el-select class="ap-form-control" size="large" v-model="visits_search.visit_type" :placeholder="affiliate_panel_labels.visit_select_type" :popper-append-to-body="false" popper-class="ap-el-select--is-with-navbar">                            
+                                                <el-select class="ap-form-control" size="large" v-model="visits_search.visit_type" :placeholder="affiliate_panel_labels.visit_select_type" :popper-append-to-body="false" popper-class="ap-el-select--is-with-navbar">   
+                                                    <el-option :label="affiliate_panel_labels.visit_all" value="all_visit"></el-option>                                  
                                                     <el-option :label="affiliate_panel_labels.visit_converted" value="converted"></el-option>
                                                     <el-option :label="affiliate_panel_labels.visit_unconverted_status" value="not_converted"></el-option>                           
                                                 </el-select>
@@ -947,7 +930,8 @@
                                             </el-col>
                                             <el-col class="ap-padding-right-16" :xs="24" :sm="24" :md="24" :lg="7" :xl="7">   
                                                 <div>    
-                                                    <el-select class="ap-form-control" size="large" v-model="visits_search.visit_type" :placeholder="affiliate_panel_labels.visit_select_type" :popper-append-to-body="false" popper-class="ap-el-select--is-with-navbar">                            
+                                                    <el-select class="ap-form-control" size="large" v-model="visits_search.visit_type" :placeholder="affiliate_panel_labels.visit_select_type" :popper-append-to-body="false" popper-class="ap-el-select--is-with-navbar">       
+                                                        <el-option :label="affiliate_panel_labels.visit_all" value="all_visit"></el-option>                              
                                                         <el-option :label="affiliate_panel_labels.visit_converted" value="converted"></el-option>
                                                         <el-option :label="affiliate_panel_labels.visit_unconverted_status" value="not_converted"></el-option>                           
                                                     </el-select>
@@ -960,7 +944,7 @@
                                             <el-button @click="applyVisitFilter"  class="ap-btn--primary" plain type="primary" :disabled="is_apply_disabled">
                                                 <span class="ap-btn__label" :aria-label="affiliate_panel_labels.apply" v-html="affiliate_panel_labels.apply"></span>
                                             </el-button>
-                                            <el-button @click="resetvisit" class="ap-btn--second" v-if="visits_search.ap_visit_date != '' || visits_search.visit_type != ''">
+                                            <el-button @click="resetvisit" class="ap-btn--second" v-if="visits_search.ap_visit_date != '' || visits_search.visit_type != 'all_visit'">
                                                 <span class="ap-btn__label" :aria-label="affiliate_panel_labels.reset" v-html="affiliate_panel_labels.reset"></span>
                                             </el-button>
                                         </div>

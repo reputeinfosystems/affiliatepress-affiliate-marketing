@@ -756,7 +756,7 @@ if( !class_exists('affiliatepress_tracking') ){
         */
         function affiliatepress_check_product_disabled( $affiliatepress_product){
 
-            global $affiliatepress_commission_debug_log_id,$wpdb;
+            global $affiliatepress_commission_debug_log_id,$wpdb,$affiliatepress_give;
             $affiliatepress_prodcut_id = isset($affiliatepress_product['product_id']) ? intval($affiliatepress_product['product_id']) : 0;
             $affiliatepress_source = isset($affiliatepress_product['source']) ? sanitize_text_field($affiliatepress_product['source']) : '';
 
@@ -843,11 +843,19 @@ if( !class_exists('affiliatepress_tracking') ){
 
                 $affiliatepress_disable_commission = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_give_formmeta_meta, 'meta_value', 'WHERE form_id = %d AND meta_key = %s ', array($affiliatepress_prodcut_id,'affiliatepress_give_disable_commission'), '', '', '', false, true,'');
 
-                $affiliatepress_disable_commission = $affiliatepress_disable_commission->meta_value;
+                $affiliatepress_disable_commission = !empty($affiliatepress_disable_commission) ? $affiliatepress_disable_commission->meta_value : '';
                 
                 if($affiliatepress_disable_commission !== "on") 
                 {
                     $affiliatepress_product_disable = true;
+                }
+
+                if($affiliatepress_give->affiliatepress_check_givewp_version()){
+                    if(!$affiliatepress_disable_commission){
+                        $affiliatepress_product_disable = true;
+                    }else{
+                        $affiliatepress_product_disable = false;
+                    }
                 }
 
                 $affiliatepress_product_disable = apply_filters('affiliatepress_allowed_product_give_wp' , $affiliatepress_product_disable , $affiliatepress_product);

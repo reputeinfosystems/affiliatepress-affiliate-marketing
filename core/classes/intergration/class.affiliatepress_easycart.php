@@ -68,7 +68,7 @@ if( !class_exists('affiliatepress_easycart') ){
         {
             global $affiliatepress_ajaxurl;
 
-            wp_register_script('affiliatepress_easycart', AFFILIATEPRESS_URL . '/js/affiliatepress_easycart.js', array('jquery'), AFFILIATEPRESS_VERSION);// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
+            wp_register_script('affiliatepress_easycart', AFFILIATEPRESS_URL . 'js/affiliatepress_easycart.js', array('jquery'), AFFILIATEPRESS_VERSION);// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
             wp_enqueue_script('affiliatepress_easycart');
 
             if ( ! function_exists( 'is_plugin_active' ) ) {

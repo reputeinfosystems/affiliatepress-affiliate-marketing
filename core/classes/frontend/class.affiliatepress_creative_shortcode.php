@@ -70,15 +70,15 @@ if (! class_exists('affiliatepress_creative_shortcode') ) {
             global $AffiliatePress;
             
             /* AffiliatePress Front CSS */
-            wp_register_style('affiliatepress_front_variables_css', AFFILIATEPRESS_URL . '/css/affiliatepress_front_variables.css', array(), AFFILIATEPRESS_VERSION);
+            wp_register_style('affiliatepress_front_variables_css', AFFILIATEPRESS_URL . 'css/affiliatepress_front_variables.css', array(), AFFILIATEPRESS_VERSION);
 
             $affiliatepress_custom_css = $AffiliatePress->affiliatepress_front_dynamic_variable_add();
             wp_add_inline_style('affiliatepress_front_variables_css', $affiliatepress_custom_css,'after');
 
-            wp_register_style('affiliatepress_elements_front_css', AFFILIATEPRESS_URL . '/css/affiliatepress_elements_front.css', array(), AFFILIATEPRESS_VERSION);
-            wp_register_style('affiliatepress_component_css', AFFILIATEPRESS_URL . '/css/affiliatepress_component.css', array(), AFFILIATEPRESS_VERSION);            
-            wp_register_style('affiliatepress_front_css', AFFILIATEPRESS_URL . '/css/affiliatepress_front.css', array(), AFFILIATEPRESS_VERSION);
-            wp_register_style('affiliatepress_front_rtl_css', AFFILIATEPRESS_URL . '/css/affiliatepress_front_rtl.css', array(), AFFILIATEPRESS_VERSION);
+            wp_register_style('affiliatepress_elements_front_css', AFFILIATEPRESS_URL . 'css/affiliatepress_elements_front.css', array(), AFFILIATEPRESS_VERSION);
+            wp_register_style('affiliatepress_component_css', AFFILIATEPRESS_URL . 'css/affiliatepress_component.css', array(), AFFILIATEPRESS_VERSION);            
+            wp_register_style('affiliatepress_front_css', AFFILIATEPRESS_URL . 'css/affiliatepress_front.css', array(), AFFILIATEPRESS_VERSION);
+            wp_register_style('affiliatepress_front_rtl_css', AFFILIATEPRESS_URL . 'css/affiliatepress_front_rtl.css', array(), AFFILIATEPRESS_VERSION);
 
             if($affiliatepress_force_enqueue == 1){
 
@@ -104,10 +104,10 @@ if (! class_exists('affiliatepress_creative_shortcode') ) {
         function affiliatepress_set_front_js($affiliatepress_force_enqueue = 0 ){
 
             /* Plugin JS File */
-            wp_register_script('affiliatepress_front_js', AFFILIATEPRESS_URL . '/js/affiliatepress_vue.min.js', array(), AFFILIATEPRESS_VERSION,false);
-            wp_register_script('affiliatepress_axios_js', AFFILIATEPRESS_URL . '/js/affiliatepress_axios.min.js', array(), AFFILIATEPRESS_VERSION,false); 
-            wp_register_script('affiliatepress_wordpress_vue_qs_js', AFFILIATEPRESS_URL . '/js/affiliatepress_wordpress_vue_qs_helper.js', array(), AFFILIATEPRESS_VERSION,false); 
-            wp_register_script('affiliatepress_element_js', AFFILIATEPRESS_URL . '/js/affiliatepress_element.min.js', array(), AFFILIATEPRESS_VERSION,false);
+            wp_register_script('affiliatepress_front_js', AFFILIATEPRESS_URL . 'js/affiliatepress_vue.min.js', array(), AFFILIATEPRESS_VERSION,false);
+            wp_register_script('affiliatepress_axios_js', AFFILIATEPRESS_URL . 'js/affiliatepress_axios.min.js', array(), AFFILIATEPRESS_VERSION,false); 
+            wp_register_script('affiliatepress_wordpress_vue_qs_js', AFFILIATEPRESS_URL . 'js/affiliatepress_wordpress_vue_qs_helper.js', array(), AFFILIATEPRESS_VERSION,false); 
+            wp_register_script('affiliatepress_element_js', AFFILIATEPRESS_URL . 'js/affiliatepress_element.min.js', array(), AFFILIATEPRESS_VERSION,false);
             
 
             if($affiliatepress_force_enqueue == 1){

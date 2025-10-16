@@ -214,7 +214,8 @@ if( !class_exists('AffiliatePress_Core') ){
                     'download_debug_payment_logs',
                     'clear_debug_payment_logs' ,
                     'save_reset_appearance_color',
-                    'reset_wizard'                                   
+                    'reset_wizard',
+                    'get_page_url'                                 
                 ),
                 'affiliatepress_creative' => array(
                     'retrieve_creative',

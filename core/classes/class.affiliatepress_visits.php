@@ -353,13 +353,12 @@ if (! class_exists('affiliatepress_visits') ) {
                 var vm = this;
                 if(prop == "full_name"){
                     vm.order_by = "first_name"; 
-                }                
-                if(prop == "full_name"){
-                    vm.order_by = "first_name"; 
                 }else if(prop == "ap_visit_created_date"){
                     vm.order_by = "ap_visit_created_date"; 
                 }else if(prop == "ap_commission_id"){
                     vm.order_by = "ap_commission_id"; 
+                }else if(prop == "ap_visit_id"){
+                    vm.order_by = "ap_visit_id"; 
                 }
                 if(vm.order_by){
                     if(order == "descending"){

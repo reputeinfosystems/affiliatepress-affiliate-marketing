@@ -667,7 +667,9 @@ if (! class_exists('affiliatepress_payout') ) {
                                         $this->affiliatepress_update_record($affiliatepress_tbl_ap_affiliate_commissions, array('ap_commission_status'=>$affiliatepress_ap_payment_status), array( 'ap_commission_id' => $affiliatepress_payment_commission['ap_commission_id'] ));
                                     }
 
-                                }                            
+                                }     
+                                
+                                do_action('affiliatepress_after_change_payment_status',$affiliatepress_payment_id,$affiliatepress_ap_payment_status);
                             }
     
                         }
@@ -2184,6 +2186,9 @@ if (! class_exists('affiliatepress_payout') ) {
             }
             if(prop == "ap_formated_payout_amount"){
                 vm.order_by = "payout_amount"; 
+            }
+            if(prop == "ap_payout_id"){
+                vm.order_by = "ap_payout_id"; 
             }
             if(vm.order_by){
                 if(order == "descending"){

@@ -65,7 +65,10 @@ if (! class_exists('affiliatepress_settings') ) {
             add_action('affiliatepress_extra_affiliate_setting_section_html',array($this,'affiliatepress_extra_affiliate_setting_section_html_func'),14);
 
             /**Resetup Wizard */
-            add_action('wp_ajax_affiliatepress_resetup_wizard',array($this,'affiliatepress_resetup_wizard_fun'));            
+            add_action('wp_ajax_affiliatepress_resetup_wizard',array($this,'affiliatepress_resetup_wizard_fun'));       
+            
+            /** Reset Color & Font  */
+            add_action('wp_ajax_affiliatepress_get_page_url',array($this,'affiliatepress_get_page_url_func'));
         }
 
         /**
@@ -914,7 +917,7 @@ if (! class_exists('affiliatepress_settings') ) {
          */
         function affiliatepress_dynamic_setting_data_fields(){
             
-            global $affiliatepress_global_options,$affiliatepress_dynamic_setting_data_fields, $affiliatepress_affiliates;
+            global $affiliatepress_global_options,$affiliatepress_dynamic_setting_data_fields, $affiliatepress_affiliates, $AffiliatePress;
 
             $affiliatepress_options                    = $affiliatepress_global_options->affiliatepress_global_options();
             
@@ -948,11 +951,16 @@ if (! class_exists('affiliatepress_settings') ) {
             
             $affiliatepress_all_affiliates_status = $affiliatepress_affiliates->affiliatepress_all_affiliates_status();
 
+            $affiliatepress_affiliate_account_page_id = $AffiliatePress->affiliatepress_get_settings('affiliate_account_page_id', 'affiliate_settings');
+            $affiliatepress_affiliate_register_page_id = $AffiliatePress->affiliatepress_get_settings('affiliate_registration_page_id', 'affiliate_settings');
+
             $affiliatepress_dynamic_setting_data_fields = array(
                 'modal_loading'                    => 'false',
                 'flags_img_url'                    => AFFILIATEPRESS_IMAGES_URL,
                 'all_currency_with_code'           => $affiliatepress_all_currency_with_code,
                 'currency_countries'               => $affiliatepress_countries_currency_details,
+                'affiliate_account_page_url'         => get_permalink($affiliatepress_affiliate_account_page_id),
+                'affiliate_register_page_url'         => get_permalink($affiliatepress_affiliate_register_page_id),
                 'modals'                           => array(
                     'general_setting_modal'      => false,
                     'company_setting_modal'      => false,
@@ -1394,6 +1402,13 @@ if (! class_exists('affiliatepress_settings') ) {
                             'trigger'  => 'blur',
                         ),
                     ), 
+                    'visit_all' => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ),
                     'visit_landing_url'  => array(
                         array(
                             'required' => true,
@@ -1926,6 +1941,7 @@ if (! class_exists('affiliatepress_settings') ) {
                     'visit_compaign'               => '',
                     'visit_ip_address'             => '',
                     'visit_converted'              => '',
+                    'visit_all'                    => '',
                     'visit_landing_url'            => '',
                     'visit_referrer_url'           => '',
                     'visit_direct_trafic'          => '',
@@ -2872,13 +2888,6 @@ if (! class_exists('affiliatepress_settings') ) {
             $affiliatepress_dynamic_setting_data_fields['affiliatepress_url_types'] = $affiliatepress_url_types;
             $affiliatepress_selected_tab_name  = !empty($_REQUEST['setting_page']) ? sanitize_text_field($_REQUEST['setting_page']) : 'affiliate_settings'; // phpcs:ignore         
             $affiliatepress_dynamic_setting_data_fields['selected_tab_name'] = $affiliatepress_selected_tab_name;     
-            $affiliatepress_dynamic_setting_data_fields['affiliate_setting_form']['enable_hcaptcha']     = false;
-            $affiliatepress_dynamic_setting_data_fields['affiliate_setting_form']['hcaptcha_site_key']   = '';
-            $affiliatepress_dynamic_setting_data_fields['affiliate_setting_form']['hcaptcha_secret_key'] = '';
-
-            $affiliatepress_dynamic_setting_data_fields['affiliate_setting_form']['enable_google_recaptcha']     = false;
-            $affiliatepress_dynamic_setting_data_fields['affiliate_setting_form']['google_recaptcha_site_key']   = '';
-            $affiliatepress_dynamic_setting_data_fields['affiliate_setting_form']['google_recaptcha_secret_key'] = '';
 
             $affiliatepress_dynamic_setting_data_fields['is_display_reset_wizard_setting'] = 0;
             $affiliatepress_dynamic_setting_data_fields['is_display_reset_wizard_setting_btn'] = false;
@@ -3480,6 +3489,23 @@ if (! class_exists('affiliatepress_settings') ) {
                         }
                     });
                 },
+                affiliatepress_get_page_url(affiliate_page_id,type){
+                    const vm = this;  
+                    var postdata = [];       
+                    postdata.action = "affiliatepress_get_page_url";    
+                    postdata.affiliate_type = type; 
+                    postdata.affiliate_page_id = affiliate_page_id; 
+                    postdata._wpnonce = "'.esc_html(wp_create_nonce("ap_wp_nonce")).'";
+                    axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify(postdata)).then(function(response){   
+                        if(response.data.variant == "success"){
+                            vm.affiliate_account_page_url = response.data.affiliate_account_page_url;
+                            vm.affiliate_register_page_url = response.data.affiliate_register_page_url;
+                        }
+                    }.bind(this) )
+                    .catch( function (error) {
+                        console.log(error);
+                    });
+                },
             ';
 
             $affiliatepress_settings_dynamic_vue_methods = apply_filters('affiliatepress_settings_add_dynamic_vue_methods', $affiliatepress_settings_dynamic_vue_methods); 
@@ -3547,6 +3573,75 @@ if (! class_exists('affiliatepress_settings') ) {
             $response['variant'] = 'success';
             $response['title'] = esc_html__('Success',  'affiliatepress-affiliate-marketing');
             $response['msg'] = esc_html__('Configuration reset successfully.','affiliatepress-affiliate-marketing');
+
+            echo json_encode($response);
+            exit;            
+        }
+
+         /**
+         * Function for reset color option
+         *
+         * @return json
+        */
+        function affiliatepress_get_page_url_func(){
+            global $AffiliatePress;
+
+            $affiliatepress_ap_check_authorization = $this->affiliatepress_ap_check_authentication( 'get_page_url', true, 'ap_wp_nonce' ); 
+
+            $response = array();
+            $response['variant'] = 'error';
+            $response['title']   = esc_html__( 'Error', 'affiliatepress-affiliate-marketing');
+            $response['msg']     = esc_html__( 'Something Wrong', 'affiliatepress-affiliate-marketing');
+
+            if( preg_match('/error/', $affiliatepress_ap_check_authorization)){
+                $affiliatepress_auth_error = explode( '^|^', $affiliatepress_ap_check_authorization );
+                $affiliatepress_error_msg = !empty( $affiliatepress_auth_error[1] ) ? $affiliatepress_auth_error[1] : esc_html__( 'Sorry. Something went wrong while processing the request', 'affiliatepress-affiliate-marketing');
+                $response['variant'] = 'error';
+                $response['title'] = esc_html__( 'Error', 'affiliatepress-affiliate-marketing');
+                $response['msg'] = $affiliatepress_error_msg;
+                wp_send_json( $response );
+                die;
+            }
+
+            if(!current_user_can('affiliatepress_settings')){
+                $affiliatepress_error_msg = esc_html__( 'Sorry, you do not have permission to perform this action.', 'affiliatepress-affiliate-marketing');
+                $response['variant'] = 'error';
+                $response['title'] = esc_html__( 'Error', 'affiliatepress-affiliate-marketing');
+                $response['msg'] = $affiliatepress_error_msg; 
+                wp_send_json( $response );
+                die;                
+            }
+            
+            $affiliatepress_wpnonce               = isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '';// phpcs:ignore
+            $affiliatepress_verify_nonce_flag = wp_verify_nonce($affiliatepress_wpnonce, 'ap_wp_nonce');            
+            if (!$affiliatepress_verify_nonce_flag){
+                $response['variant'] = 'error';
+                $response['title']   = esc_html__('Error', 'affiliatepress-affiliate-marketing');
+                $response['msg']     = esc_html__('Sorry, Your request can not be processed due to security reason.', 'affiliatepress-affiliate-marketing');
+                wp_send_json($response);
+                exit();
+            }
+
+            $affiliatepress_page_id = isset($_POST['affiliate_page_id']) ? intval($_POST['affiliate_page_id']) : 0;
+            $affiliatepress_page_type = isset($_POST['affiliate_type']) ? sanitize_text_field(wp_unslash($_POST['affiliate_type'])) : '';
+
+            if(!empty($affiliatepress_page_id)){
+
+                if($affiliatepress_page_type == "account"){
+                    $response['affiliate_account_page_url'] = get_permalink($affiliatepress_page_id);
+                }else{
+                    $response['affiliate_register_page_url'] =  get_permalink($affiliatepress_page_id);
+                }
+                
+                $response['variant'] = 'success';
+                $response['title'] = esc_html__( 'Success', 'affiliatepress-affiliate-marketing');
+                $response['msg'] =  esc_html__( 'AffiliatePress page link get.', 'affiliatepress-affiliate-marketing');
+                
+            }else{
+                $response['variant'] = 'error';
+                $response['title'] = esc_html__('Error',  'affiliatepress-affiliate-marketing');
+                $response['msg'] = esc_html__('Page Not Found','affiliatepress-affiliate-marketing');
+            }
 
             echo json_encode($response);
             exit;            

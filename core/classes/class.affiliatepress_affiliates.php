@@ -1456,15 +1456,6 @@ if (! class_exists('affiliatepress_affiliates') ) {
 
                     $affiliatepress_unpaid_earning = $AffiliatePress->affiliatepress_price_formatter_with_currency_symbol(round($affiliatepress_unpaid_earning,2));
 
-                    /*
-                    $affiliatepress_paid_earning = floatval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_commissions, 'SUM(ap_commission_amount)', 'WHERE ap_affiliates_id  = %d AND ap_commission_status IN (4)', array( $affiliatepress_affiliate_id ), '', '', '', true, false,ARRAY_A));
-                    
-                    $affiliatepress_unpaid_earning = floatval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_commissions, 'SUM(ap_commission_amount)', 'WHERE ap_affiliates_id  = %d AND ap_commission_status IN (1)', array( $affiliatepress_affiliate_id ), '', '', '', true, false,ARRAY_A));
-                   
-                    $affiliatepress_total_commission = intval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_commissions, 'COUNT(ap_commission_id)', 'WHERE ap_affiliates_id  = %d AND ap_commission_status IN (1,4)', array( $affiliatepress_affiliate_id), '', '', '', true, false,ARRAY_A));
-                    $affiliatepress_total_visits = intval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_visits, 'COUNT(ap_visit_id)', 'WHERE ap_affiliates_id  = %d  ', array( $affiliatepress_affiliate_id), '', '', '', true, false,ARRAY_A));
-                    */
-
                     $affiliatepress_affiliate_link = $AffiliatePress->affiliatepress_get_affiliate_common_link($affiliatepress_single_affiliate['ap_affiliates_id']);
 
                     $affiliatepress_affiliate_link = apply_filters('affiliatepress_modify_affiliate_link' , $affiliatepress_affiliate_link , $affiliatepress_single_affiliate['ap_affiliates_id']);
@@ -1534,7 +1525,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
         */
         function affiliatepress_add_affiliate_func(){
             
-            global $wpdb, $affiliatepress_tbl_ap_affiliates;
+            global $wpdb, $affiliatepress_tbl_ap_affiliates,$affiliatepress_tbl_ap_affiliate_form_fields;
             $affiliatepress_ap_check_authorization = $this->affiliatepress_ap_check_authentication( 'add_affiliate', true, 'ap_wp_nonce' );
             $response = array();
             $response['variant'] = 'error';
@@ -1573,10 +1564,14 @@ if (! class_exists('affiliatepress_affiliates') ) {
             }
 
 
-            $affiliatepress_update_id   = isset($_POST['ap_affiliates_id']) ? intval($_POST['ap_affiliates_id']) : ''; // phpcs:ignore 
+            $affiliatepress_update_id   = isset($_POST['ap_affiliates_id']) ? intval($_POST['ap_affiliates_id']) : ''; // phpcs:ignore
             $affiliatepress_affiliates_user_id  = (isset($_POST['ap_affiliates_user_id']) && $_POST['ap_affiliates_user_id'] != 'add_new') ? intval($_POST['ap_affiliates_user_id']) : sanitize_text_field($_POST['ap_affiliates_user_id']); // phpcs:ignore 
             $affiliatepress_affiliates_status   = isset($_POST['ap_affiliates_status']) ? intval($_POST['ap_affiliates_status']) : 2; // phpcs:ignore 
-            $affiliatepress_affiliates_payment_email = ! empty($_POST['ap_affiliates_payment_email']) ? trim(sanitize_text_field($_POST['ap_affiliates_payment_email'])) : ''; // phpcs:ignore
+            if(empty($affiliatepress_update_id) && $affiliatepress_update_id == 0){
+                $affiliatepress_affiliates_payment_email = ! empty($_POST['ap_affiliates_payment_email_add']) ? trim(sanitize_text_field($_POST['ap_affiliates_payment_email_add'])) : ''; // phpcs:ignore
+            }else{
+                $affiliatepress_affiliates_payment_email = ! empty($_POST['ap_affiliates_payment_email_edit']) ? trim(sanitize_text_field($_POST['ap_affiliates_payment_email_edit'])) : ''; // phpcs:ignore
+            }
             $affiliatepress_affiliates_website = ! empty($_POST['ap_affiliates_website']) ? trim(sanitize_text_field($_POST['ap_affiliates_website'])) : ''; // phpcs:ignore 
             $affiliatepress_affiliates_promote_us = ! empty($_POST['ap_affiliates_promote_us']) ? trim(sanitize_text_field($_POST['ap_affiliates_promote_us'])) : ''; // phpcs:ignore
             $affiliatepress_avatar_url = (isset($_POST['avatar_url'])) ? trim(sanitize_text_field($_POST['avatar_url'])) : ''; // phpcs:ignore 
@@ -1633,13 +1628,39 @@ if (! class_exists('affiliatepress_affiliates') ) {
                 $response['msg']     = esc_html__('Payment email is too long...', 'affiliatepress-affiliate-marketing');
                 wp_send_json($response);
                 die();
-            }  
-            if(empty($affiliatepress_affiliates_payment_email) || !is_email($affiliatepress_affiliates_payment_email)){
-                $response['variant'] = 'error';
-                $response['title']   = esc_html__('Error', 'affiliatepress-affiliate-marketing');
-                $response['msg']     = esc_html__('Please Enter valid payment email.', 'affiliatepress-affiliate-marketing');
-                wp_send_json($response);
-                die();                
+            }
+            $affiliatepress_fields = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_form_fields, '*', 'WHERE  ap_form_field_name <> %s', array( 'terms_and_conditions'), '', 'order by ap_field_position ASC', '', false, false,ARRAY_A);      
+            
+            $affiliatepress_paymnet_show_register = 0;
+            $affiliatepress_paymnet_show_panel = 0;
+            foreach ($affiliatepress_fields as $key => $affiliatepress_field) {
+                if(isset($affiliatepress_field['ap_form_field_name']) && $affiliatepress_field['ap_form_field_name'] == "ap_affiliates_payment_email"){
+                    $affiliatepress_paymnet_show_register = isset($affiliatepress_field['ap_show_signup_field']) ? intval($affiliatepress_field['ap_show_signup_field']) : 0;
+                    $affiliatepress_paymnet_show_panel = isset( $affiliatepress_field['ap_show_profile_field']) ? intval( $affiliatepress_field['ap_show_profile_field']) : 0;
+                }
+                
+            }
+            if(empty($affiliatepress_update_id) && $affiliatepress_update_id == 0){
+                if($affiliatepress_paymnet_show_register == "1"){
+                    if(empty($affiliatepress_affiliates_payment_email) || !is_email($affiliatepress_affiliates_payment_email)){
+                        $response['variant'] = 'error';
+                        $response['title']   = esc_html__('Error', 'affiliatepress-affiliate-marketing');
+                        $response['msg']     = esc_html__('Please Enter valid payment email.', 'affiliatepress-affiliate-marketing');
+                        wp_send_json($response);
+                        die();                
+                    }
+                }
+                
+            }else{
+                if($affiliatepress_paymnet_show_panel == "1"){
+                    if(empty($affiliatepress_affiliates_payment_email) || !is_email($affiliatepress_affiliates_payment_email)){
+                        $response['variant'] = 'error';
+                        $response['title']   = esc_html__('Error', 'affiliatepress-affiliate-marketing');
+                        $response['msg']     = esc_html__('Please Enter valid payment email.', 'affiliatepress-affiliate-marketing');
+                        wp_send_json($response);
+                        die();                
+                    }
+                }
             }
             if (strlen($affiliatepress_affiliates_website) > 255 ) {
                 $response['variant'] = 'error';
@@ -1852,7 +1873,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
         function affiliatepress_affiliates_dynamic_data_fields_func($affiliatepress_affiliate_vue_data_fields){            
             
             global $AffiliatePress,$affiliatepress_affiliate_vue_data_fields,$wpdb,$affiliatepress_tbl_ap_affiliate_form_fields;
-            $affiliatepress_fields = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_form_fields, '*', 'WHERE  ap_form_field_name <> %s AND ap_show_profile_field = %d', array( 'terms_and_conditions' , 1), '', 'order by ap_field_position ASC', '', false, false,ARRAY_A);           
+            $affiliatepress_fields = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_form_fields, '*', 'WHERE  ap_form_field_name <> %s', array( 'terms_and_conditions'), '', 'order by ap_field_position ASC', '', false, false,ARRAY_A);           
             $affiliatepress_affiliate_vue_data_fields['affiliate_fields'] = array();
 
             $affiliatepress_import_fields = array();
@@ -1862,37 +1883,66 @@ if (! class_exists('affiliatepress_affiliates') ) {
             if(!empty($affiliatepress_fields)){
                 foreach($affiliatepress_fields as $affiliatepress_key=>$affiliatepress_field){
 
-                    if($affiliatepress_field['ap_show_signup_field'] == 1){
+                    $affiliatepress_fields[$affiliatepress_key]['ap_field_label'] = stripslashes_deep($affiliatepress_fields[$affiliatepress_key]['ap_field_label']);
+                    $affiliatepress_fields[$affiliatepress_key]['ap_field_placeholder'] = stripslashes_deep($affiliatepress_fields[$affiliatepress_key]['ap_field_placeholder']);
+                    $affiliatepress_fields[$affiliatepress_key]['ap_field_error_message'] = stripslashes_deep($affiliatepress_fields[$affiliatepress_key]['ap_field_error_message']);
+                    $affiliatepress_form_field_name = (isset($affiliatepress_field['ap_form_field_name']))?$affiliatepress_field['ap_form_field_name']:'';
+                    $affiliatepress_field_required = (isset($affiliatepress_field['ap_field_required']))?$affiliatepress_field['ap_field_required']:'';
+                    $affiliatepress_field_error_message = (isset($affiliatepress_field['ap_field_error_message']))?$affiliatepress_field['ap_field_error_message']:'';
 
-                        $affiliatepress_fields[$affiliatepress_key]['ap_field_label'] = stripslashes_deep($affiliatepress_fields[$affiliatepress_key]['ap_field_label']);
-                        $affiliatepress_fields[$affiliatepress_key]['ap_field_placeholder'] = stripslashes_deep($affiliatepress_fields[$affiliatepress_key]['ap_field_placeholder']);
-                        $affiliatepress_fields[$affiliatepress_key]['ap_field_error_message'] = stripslashes_deep($affiliatepress_fields[$affiliatepress_key]['ap_field_error_message']);
-                        $affiliatepress_form_field_name = (isset($affiliatepress_field['ap_form_field_name']))?$affiliatepress_field['ap_form_field_name']:'';
-                        $affiliatepress_field_required = (isset($affiliatepress_field['ap_field_required']))?$affiliatepress_field['ap_field_required']:'';
-                        $affiliatepress_field_error_message = (isset($affiliatepress_field['ap_field_error_message']))?$affiliatepress_field['ap_field_error_message']:'';
+                    $affiliatepress_field_is_default = (isset($affiliatepress_field['ap_field_is_default']))?$affiliatepress_field['ap_field_is_default']:'';
 
-                        $affiliatepress_field_is_default = (isset($affiliatepress_field['ap_field_is_default']))?$affiliatepress_field['ap_field_is_default']:'';
+                    if($affiliatepress_field_required == 1){
 
-                        if($affiliatepress_field_required == 1){
-                            if($affiliatepress_form_field_name == 'email'){                                
-                                $affiliatepress_affiliate_import_rules['email'] = array(
-                                    'required' => true,
-                                    'message' => (!empty($affiliatepress_field_error_message))?stripslashes_deep($affiliatepress_field_error_message):'',
-                                    'trigger' => 'blur',
-                                ); 
+                        if ($affiliatepress_form_field_name == 'ap_affiliates_payment_email') {
+                            unset($affiliatepress_affiliate_vue_data_fields['rules']['ap_affiliates_payment_email']);
+                            if (isset($affiliatepress_field['ap_show_signup_field']) && $affiliatepress_field['ap_show_signup_field'] == 1) {
+                                $affiliatepress_affiliate_vue_data_fields['rules']['ap_affiliates_payment_email_add'] = array(
+                                    array(
+                                        'required' => true,
+                                        'message'  => $affiliatepress_field_error_message,
+                                        'trigger'  => 'blur',
+                                    ),
+                                    array(
+                                        'type' => 'email',
+                                        'message' => $affiliatepress_field_error_message,
+                                        'trigger' => 'blur',
+                                    ),
+                                );
                             }
-                            if(isset($affiliatepress_affiliate_vue_data_fields['rules'][$affiliatepress_form_field_name][0])){
-                                $affiliatepress_affiliate_vue_data_fields['rules'][$affiliatepress_form_field_name][0]['message'] = (!empty($affiliatepress_field_error_message))?stripslashes_deep($affiliatepress_field_error_message):'';
-                            }else{
-                                $affiliatepress_affiliate_vue_data_fields['rules'][$affiliatepress_form_field_name] = array(
-                                    'required' => true,
-                                    'message'  => (!empty($affiliatepress_field_error_message))?stripslashes_deep($affiliatepress_field_error_message):'',
-                                    'trigger'  => 'blur',                                   
-                                );                            
+                            if (isset($affiliatepress_field['ap_show_profile_field']) && $affiliatepress_field['ap_show_profile_field'] == 1) {
+                                $affiliatepress_affiliate_vue_data_fields['rules']['ap_affiliates_payment_email_edit'] = array(
+                                    array(
+                                        'required' => true,
+                                        'message'  => $affiliatepress_field_error_message,
+                                        'trigger'  => 'blur',
+                                    ),
+                                    array(
+                                        'type' => 'email',
+                                        'message' => $affiliatepress_field_error_message,
+                                        'trigger' => 'blur',
+                                    ),
+                                );
                             }
                         }
-  
+                        if($affiliatepress_form_field_name == 'email'){                                
+                            $affiliatepress_affiliate_import_rules['email'] = array(
+                                'required' => true,
+                                'message' => (!empty($affiliatepress_field_error_message))?stripslashes_deep($affiliatepress_field_error_message):'',
+                                'trigger' => 'blur',
+                            ); 
+                        }
+                        if(isset($affiliatepress_affiliate_vue_data_fields['rules'][$affiliatepress_form_field_name][0])){
+                            $affiliatepress_affiliate_vue_data_fields['rules'][$affiliatepress_form_field_name][0]['message'] = (!empty($affiliatepress_field_error_message))?stripslashes_deep($affiliatepress_field_error_message):'';
+                        }else{
+                            $affiliatepress_affiliate_vue_data_fields['rules'][$affiliatepress_form_field_name] = array(
+                                'required' => true,
+                                'message'  => (!empty($affiliatepress_field_error_message))?stripslashes_deep($affiliatepress_field_error_message):'',
+                                'trigger'  => 'blur',                                   
+                            );                            
+                        }
                     }
+
                     $affiliatepress_form_field_name = (isset($affiliatepress_field['ap_form_field_name']))?$affiliatepress_field['ap_form_field_name']:'';
                     $affiliatepress_field_label = (isset($affiliatepress_field['ap_field_label']))?stripslashes_deep($affiliatepress_field['ap_field_label']):'';
                     if($affiliatepress_form_field_name != 'password'){
@@ -1914,8 +1964,6 @@ if (! class_exists('affiliatepress_affiliates') ) {
 
                 }
             }
-
-            
 
             $affiliatepress_import_fields['ap_affiliates_status'] = '2';
             $affiliatepress_affiliate_vue_data_fields['affiliatepress_affiliate_import_rules'] = $affiliatepress_affiliate_import_rules;
@@ -2152,7 +2200,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
                         vm.affiliates.ap_affiliates_user_id = response.data.affiliates.ap_affiliates_user_id;
                     }
                     if(response.data.affiliates.ap_affiliates_payment_email != undefined){
-                        vm.affiliates.ap_affiliates_payment_email = response.data.affiliates.ap_affiliates_payment_email;
+                        vm.affiliates.ap_affiliates_payment_email_edit = response.data.affiliates.ap_affiliates_payment_email;
                     } 
                     if(response.data.affiliates.ap_affiliates_website != undefined){
                         vm.affiliates.ap_affiliates_website = response.data.affiliates.ap_affiliates_website;
@@ -2451,6 +2499,8 @@ if (! class_exists('affiliatepress_affiliates') ) {
                 var vm = this;
                 if(prop == "full_name"){
                     vm.order_by = "first_name"; 
+                }else if(prop == "ap_affiliates_id"){
+                    vm.order_by = "ap_affiliates_id"; 
                 }
                 if(vm.order_by){
                     if(order == "descending"){
@@ -2615,6 +2665,8 @@ if (! class_exists('affiliatepress_affiliates') ) {
                     "ap_affiliates_id"             => "",
                     "ap_affiliates_user_id"        => "",
                     "ap_affiliates_payment_email"  => "",
+                    "ap_affiliates_payment_email_add"=>"",
+                    "ap_affiliates_payment_email_edit"=> "",
                     "ap_affiliates_website"        => "",
                     "ap_affiliates_user_avatar"    => "",
                     "avatar_url"                   => "",

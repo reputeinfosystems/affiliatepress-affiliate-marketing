@@ -242,10 +242,14 @@
                                         <?php esc_html_e('Affiliate Account Page', 'affiliatepress-affiliate-marketing'); ?>
                                     </span></label>
                                     <el-form-item prop="affiliate_account_page_id">
-                                        <el-select class="ap-form-control" v-model="affiliate_setting_form.affiliate_account_page_id" placeholder="Select Page" size="large">
+                                        <el-select @change="affiliatepress_get_page_url($event,'account')" class="ap-form-control" v-model="affiliate_setting_form.affiliate_account_page_id" placeholder="Select Page" size="large">
                                             <el-option v-for="item in all_wordpress_pages" :key="item.value" :key="item.id" :label="item.title" :value="''+item.id"/>
                                         </el-select>
                                     </el-form-item>
+                                    <div class="ap-field-desc">
+                                        <?php esc_html_e('Use [affiliatepress_affiliate_panel] shortcode.', 'affiliatepress-affiliate-marketing'); ?>
+                                        <a class="ap-refrance-link" v-if="affiliate_setting_form.affiliate_account_page_id" :href="affiliate_account_page_url" target="_blank"><?php esc_html_e('Preview', 'affiliatepress-affiliate-marketing'); ?></a>
+                                    </div>
                                     </div>
                                 </el-col>
                                 <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-gs__cb-item-left">                                
@@ -254,10 +258,14 @@
                                             <?php esc_html_e('Affiliate Registration Page', 'affiliatepress-affiliate-marketing'); ?>
                                         </span></label>
                                         <el-form-item prop="affiliate_registration_page_id">			
-                                            <el-select class="ap-form-control" v-model="affiliate_setting_form.affiliate_registration_page_id" placeholder="Select Page" size="large">
+                                            <el-select class="ap-form-control" @change="affiliatepress_get_page_url($event,'register')" v-model="affiliate_setting_form.affiliate_registration_page_id" placeholder="Select Page" size="large">
                                                 <el-option v-for="item in all_wordpress_pages" :key="item.value" :key="item.id" :label="item.title" :value="''+item.id"/>
                                             </el-select>
                                         </el-form-item> 
+                                        <div class="ap-field-desc">
+                                            <?php esc_html_e('Use [affiliatepress_affiliate_registration] shortcode.', 'affiliatepress-affiliate-marketing'); ?>
+                                            <a class="ap-refrance-link" v-if="affiliate_setting_form.affiliate_registration_page_id" :href="affiliate_register_page_url" target="_blank"><?php esc_html_e('Preview', 'affiliatepress-affiliate-marketing'); ?></a>
+                                        </div>
                                     </div>
                                 </el-col>
                             </el-row>                                             
@@ -266,89 +274,7 @@
                             ?>
                         </div>
                     </div>
-                    <div class="ap-settings-new-section"></div>        
-                    <div class="ap-gs__cb--item">
-                        <div class="ap-gs__cb--item-heading ap-gs__cb--item--main-heading">
-                            <?php esc_html_e('Captcha Integrations', 'affiliatepress-affiliate-marketing'); ?>
-                        </div>
-                        <div class="ap-gs__cb--item-body">
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row" :gutter="32">
-                                <el-col :xs="20" :sm="20" :md="20" :lg="14" :xl="14" class="ap-gs__cb-item-left">
-                                    <el-row type="flex" class="ap-gs--tabs-fields-label">
-                                            <h4><?php esc_html_e('hCaptcha', 'affiliatepress-affiliate-marketing'); ?></h4>
-                                    </el-row>
-                                    <el-row type="flex" class="ap-gs--tabs-fields-description">
-                                        <div><?php esc_html_e('Adds hCaptcha to prevent spam and verify users.', 'affiliatepress-affiliate-marketing'); ?></div>
-                                    </el-row>
-                                </el-col>
-                                <el-col :xs="4" :sm="4" :md="4" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
-                                    <el-form-item prop="enable_hcaptcha">
-                                        <el-switch  v-model="affiliate_setting_form.enable_hcaptcha"/>                                         
-                                    </el-form-item> 
-                                </el-col>
-                            </el-row>
-                            <el-row type="flex" :gutter="32" class="ap-gs--tabs-pb__cb-item-row" v-if="affiliate_setting_form.enable_hcaptcha == true">
-                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-gs__cb-item-left ap-gs-col-first">                                
-                                    <div class="ap-combine-field">
-                                    <label><span class="ap-form-label">
-                                        <?php esc_html_e('Site Key', 'affiliatepress-affiliate-marketing'); ?>
-                                    </span></label>
-                                    <el-form-item prop="hcaptcha_site_key">
-                                            <el-input class="ap-form-control" type="text" v-model="affiliate_setting_form.hcaptcha_site_key" size="large" placeholder="<?php esc_html_e('Enter Site Key', 'affiliatepress-affiliate-marketing'); ?>" />                                                                           
-                                        </el-form-item>                         
-                                    </div>
-                                </el-col>
-                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-gs__cb-item-left">                                
-                                    <div class="ap-combine-field">
-                                        <label><span class="ap-form-label">
-                                            <?php esc_html_e('Secret Key', 'affiliatepress-affiliate-marketing'); ?>
-                                        </span></label>
-                                        <el-form-item prop="hcaptcha_secret_key">
-                                            <el-input class="ap-form-control" type="text" v-model="affiliate_setting_form.hcaptcha_secret_key" size="large" placeholder="<?php esc_html_e('Enter Secret Key', 'affiliatepress-affiliate-marketing'); ?>" />                                       
-                                        </el-form-item> 
-                                    </div>
-                                </el-col>
-                            </el-row> 
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row" :gutter="32">
-                                <el-col :xs="20" :sm="20" :md="20" :lg="14" :xl="14" class="ap-gs__cb-item-left">
-                                    <el-row type="flex" class="ap-gs--tabs-fields-label">
-                                        <h4><?php esc_html_e('Google reCAPTCHA v3', 'affiliatepress-affiliate-marketing'); ?></h4>
-                                    </el-row>
-                                    <el-row type="flex" class="ap-gs--tabs-fields-description">
-                                        <div><?php esc_html_e('Uses Google reCAPTCHA v3 to protect against bots silently.', 'affiliatepress-affiliate-marketing'); ?></div>
-                                    </el-row>
-                                </el-col>
-                                <el-col :xs="4" :sm="4" :md="4" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
-                                    <el-form-item prop="enable_google_recaptcha">
-                                        <el-switch  v-model="affiliate_setting_form.enable_google_recaptcha"/>                                         
-                                    </el-form-item>  
-                                </el-col>
-                            </el-row> 
-                            <el-row type="flex" :gutter="32" class="ap-gs--tabs-pb__cb-item-row" v-if="affiliate_setting_form.enable_google_recaptcha == true">
-                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-gs__cb-item-left ap-gs-col-first">                                
-                                    <div class="ap-combine-field">
-                                        <label><span class="ap-form-label">
-                                            <?php esc_html_e('Site Key', 'affiliatepress-affiliate-marketing'); ?>
-                                        </span></label>
-                                        <el-form-item prop="google_recaptcha_site_key">
-                                            <el-input class="ap-form-control" type="text" v-model="affiliate_setting_form.google_recaptcha_site_key" size="large" placeholder="<?php esc_html_e('Enter Site Key', 'affiliatepress-affiliate-marketing'); ?>" />                                                                           
-                                        </el-form-item> 
-                                    </div>
-                                </el-col>
-                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-gs__cb-item-left">                                
-                                    <div class="ap-combine-field">
-                                        <label><span class="ap-form-label">
-                                            <?php esc_html_e('Secret Key', 'affiliatepress-affiliate-marketing'); ?>
-                                        </span></label>
-                                        <el-form-item prop="google_recaptcha_secret_key">
-                                            <el-input class="ap-form-control" type="text" v-model="affiliate_setting_form.google_recaptcha_secret_key" size="large" placeholder="<?php esc_html_e('Enter Secret Key', 'affiliatepress-affiliate-marketing'); ?>" />                                       
-                                        </el-form-item>    
-                                    </div>
-                                </el-col>
-                            </el-row>
-                        </div>
-                    </div>
-                    <div class="ap-settings-new-section"></div>   
+                    <div class="ap-settings-new-section"></div>
                     <?php 
                         do_action('affiliatepress_extra_affiliate_setting_section_html');
                     ?>         

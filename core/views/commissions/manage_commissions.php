@@ -309,12 +309,12 @@
                                         </div>                                    
                                     </template> 
                             </el-table-column>
-                            <el-table-column class-name="ap-action-column"  align="right" header-align="right" prop="ap_commission_amount" width="90" label="<?php esc_html_e('Commission', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by='ap_commission_created_date'>
+                            <el-table-column class-name="ap-action-column"  align="right" header-align="right" prop="ap_commission_amount" width="90" label="<?php esc_html_e('Commission', 'affiliatepress-affiliate-marketing'); ?>">
                                 <template #default="scope">
                                 <span>{{scope.row.ap_formated_commission_amount}}</span>
                                 </template>                            
                             </el-table-column> 
-                            <el-table-column class-name="ap-action-column"  prop="ap_commission_created_date"  min-width="90" width="90" label="<?php esc_html_e('Date', 'affiliatepress-affiliate-marketing'); ?>">
+                            <el-table-column class-name="ap-action-column"  prop="ap_commission_created_date"  min-width="90" width="90" label="<?php esc_html_e('Date', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by='ap_commission_created_date'>
                                     <template #default="scope">
                                         <span>{{scope.row.commission_created_date_formated}}</span>
                                         <div class="ap-table-actions-wrap">

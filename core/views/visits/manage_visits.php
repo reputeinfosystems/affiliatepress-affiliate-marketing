@@ -21,16 +21,16 @@
                                 <el-input class="ap-form-control" v-model="visits_search.ap_affiliates_user" size="large" placeholder="<?php esc_html_e('Enter Affiliate Name', 'affiliatepress-affiliate-marketing'); ?>" @keyup.enter="applyFilter()"/>                    
                             </div>
                         </el-col>
-                        <el-col class="ap-padding-right-16" :xs="24" :sm="24" :md="24" :lg="12" :xl="12">    
+                        <el-col class="ap-padding-right-16" :xs="24" :sm="24" :md="24" :lg="11" :xl="11">    
                             <div class="ap-combine-field">
                                 <el-date-picker popper-class="ap-date-range-picker-widget-wrapper" value-format="YYYY-MM-DD" :format="ap_common_date_format" v-model="visits_search.ap_visit_date" class="ap-form-date-range-control ap-form-full-width-control ap-padding-right-16" type="daterange" size="large" :start-placeholder="affiliatepress_start_date" :end-placeholder="affiliatepress_end_date" :default-time="defaultTime"/>
                             </div>                    
                         </el-col>
-                        <el-col class="ap-padding-right-16" :xs="24" :sm="24" :md="24" :lg="5" :xl="5">    
+                        <el-col class="ap-padding-right-16" :xs="24" :sm="24" :md="24" :lg="6" :xl="6">    
                             <div class="ap-combine-field">   
-                                <el-select class="ap-form-control" size="large" v-model="visits_search.visit_type" placeholder="<?php esc_html_e('Visit Type', 'affiliatepress-affiliate-marketing'); ?>" :popper-append-to-body="false" popper-class="ap-el-select--is-with-navbar">                            
+                                <el-select class="ap-form-control" size="large" v-model="visits_search.visit_type" placeholder="<?php esc_html_e('Conversion Status', 'affiliatepress-affiliate-marketing'); ?>" :popper-append-to-body="false" popper-class="ap-el-select--is-with-navbar">                            
                                     <el-option label="<?php esc_html_e('Converted', 'affiliatepress-affiliate-marketing'); ?>" value="converted"></el-option>
-                                    <el-option label="<?php esc_html_e('Unconverted', 'affiliatepress-affiliate-marketing'); ?>" value="not_converted"></el-option>
+                                    <el-option label="<?php esc_html_e('Not converted', 'affiliatepress-affiliate-marketing'); ?>" value="not_converted"></el-option>
                                 </el-select>
                             </div>                    
                         </el-col>             
@@ -62,7 +62,7 @@
                                         </div>
                                     </div>
                                 </template>
-                                <el-table-column align="center" header-align="center" width="80" prop="ap_visit_id" label="<?php esc_html_e('ID', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by="ap_visit_id">
+                                <el-table-column align="center" header-align="center" width="100" prop="ap_visit_id" label="<?php esc_html_e('ID', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by="ap_visit_id">
                                     <template #default="scope">
                                         <span>#{{ scope.row.ap_visit_id }}</span>
                                     </template>
@@ -120,10 +120,9 @@
                                         </el-popover>
                                     </template>
                                 </el-table-column>
-                                <el-table-column prop="ap_affiliates_campaign_name" min-width="150" label="<?php esc_html_e('Campaign Name', 'affiliatepress-affiliate-marketing'); ?>"></el-table-column>
                                 <el-table-column prop="ap_visit_ip_address" min-width="90" label="<?php esc_html_e('IP Address', 'affiliatepress-affiliate-marketing'); ?>"></el-table-column>
-                                <el-table-column prop="ap_visit_landing_url" min-width="200" label="<?php esc_html_e('Landing URL', 'affiliatepress-affiliate-marketing'); ?>"></el-table-column>
-                                <el-table-column prop="ap_referrer_url" min-width="200" label="<?php esc_html_e('Referrer URL', 'affiliatepress-affiliate-marketing'); ?>">
+                                <el-table-column prop="ap_visit_landing_url" min-width="250" label="<?php esc_html_e('Landing URL', 'affiliatepress-affiliate-marketing'); ?>"></el-table-column>
+                                <el-table-column prop="ap_referrer_url" min-width="150" label="<?php esc_html_e('Referrer URL', 'affiliatepress-affiliate-marketing'); ?>">
                                     <template #default="scope">
                                         <span v-if="scope.row.ap_referrer_url">{{ scope.row.ap_referrer_url }}</span>
                                         <span v-else> <?php esc_html_e('Direct traffic', 'affiliatepress-affiliate-marketing'); ?> </span>
@@ -233,8 +232,7 @@
                                         </el-popover>
                                     </template>
                                 </el-table-column>
-                            <el-table-column prop="ap_affiliates_campaign_name" min-width="90" label="<?php esc_html_e('Compaign', 'affiliatepress-affiliate-marketing'); ?>"></el-table-column>
-                            <el-table-column min-width="55" prop="ap_visit_id" label="<?php esc_html_e('IP Address', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by="ap_visit_id">
+                            <el-table-column min-width="55" prop="ap_visit_id" label="<?php esc_html_e('IP Address', 'affiliatepress-affiliate-marketing'); ?>">
                                 <template #default="scope">
                                     <span>{{scope.row.ap_visit_ip_address}}</span>
                                 </template>
