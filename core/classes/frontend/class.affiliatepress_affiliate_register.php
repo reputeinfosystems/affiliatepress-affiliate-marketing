@@ -104,6 +104,28 @@ if (! class_exists('affiliatepress_affiliate_register') ) {
 
             $affiliatepress_username         = ! empty($_POST['username']) ? sanitize_text_field($_POST['username']) : ''; // phpcs:ignore 
 
+            $affiliatepress_password = ! empty($_POST['password']) ? sanitize_text_field(wp_unslash($_POST['password'])) : ''; 
+
+            $affiliatepress_confirm_password_field_settings = $AffiliatePress->affiliatepress_get_settings('confirm_password_field', 'field_settings');
+            $affiliatepress_confirm_password_field_settings = !empty($affiliatepress_confirm_password_field_settings) ? maybe_unserialize($affiliatepress_confirm_password_field_settings) : array();
+
+            if(!empty($affiliatepress_confirm_password_field_settings) && is_array($affiliatepress_confirm_password_field_settings)){
+
+                $affiliatepress_is_display_confirm_password = isset($affiliatepress_confirm_password_field_settings['enable_confirm_password']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['enable_confirm_password']) : '';
+                $affiliatepress_confirm_password_validation_msg = isset($affiliatepress_confirm_password_field_settings['confirm_password_validation_msg']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['confirm_password_validation_msg']) : '';
+
+                if($affiliatepress_is_display_confirm_password == "true"){
+                    $affiliatepress_confirm_password = ! empty($_POST['confirm_password']) ? sanitize_text_field(wp_unslash($_POST['confirm_password'])) : ''; 
+                    if ($affiliatepress_password !== $affiliatepress_confirm_password) {
+                        $response['msg'] = $affiliatepress_confirm_password_validation_msg.'.';
+                        wp_send_json($response);
+                        die();
+                    }
+                }
+
+            
+            }
+
             if (!is_user_logged_in() && (empty($affiliatepress_username) || ! preg_match('/^[A-Za-z0-9._-]+$/', $affiliatepress_username))) {
                 $response['msg'] = esc_html__('Entered username is invalid.', 'affiliatepress-affiliate-marketing');
                 wp_send_json($response);
@@ -382,7 +404,7 @@ if (! class_exists('affiliatepress_affiliate_register') ) {
                     vm.is_display_error = "0";
                     vm.is_error_msg = "";                    
                 },                                           
-                async registerAffiliate(){                
+                async registerAffiliate(){
                     const vm = this;
                     var ap_wpnonce_pre = "' . $affiliatepress_nonce . '";
                     var parentDiv = document.getElementById("ap-none-field");
@@ -462,6 +484,25 @@ if (! class_exists('affiliatepress_affiliate_register') ) {
                     var vm = this;
                     window.location.href = vm.affiliate_login_page_url;
                 },
+                async validatePassword(rule, value) {
+                    if (value && this.affiliates.confirm_password) {
+                        if (this.$refs.affiliates_reg_form_data) {
+                            try {
+                                await this.$refs.affiliates_reg_form_data.validateField("confirm_password");
+                            } catch (e) {
+                                // ignore confirm password errors
+                            }
+                        }
+                    }
+                    return true;
+                },
+                validateConfirmPassword(rule, value, callback) {
+                    if (value !== this.affiliates.password) {
+                        callback(new Error(this.confirm_password_field.confirm_password_validation_msg));
+                    } else {
+                        callback();
+                    }
+                },
             ';
             return $affiliatepress_affiliate_registration_vue_method;
         }
@@ -480,7 +521,7 @@ if (! class_exists('affiliatepress_affiliate_register') ) {
             $affiliatepress_dynamic_data_fields['is_error_msg'] = "";
             $affiliatepress_dynamic_data_fields['is_display_error'] = "0";
             $affiliatepress_dynamic_data_fields['is_success_msg'] = "";
-            $affiliatepress_dynamic_data_fields['is_display_success'] = "0";            
+            $affiliatepress_dynamic_data_fields['is_display_success'] = "0";
             $affiliatepress_current_user_id = get_current_user_id();
                       
 
@@ -494,10 +535,32 @@ if (! class_exists('affiliatepress_affiliate_register') ) {
                 'lastname'                     => "",
                 'email'                        => "",
                 'password'                     => "",
+                'confirm_password'             => "",
                 "ap_affiliates_user_id"        => "",
                 "ap_affiliates_payment_email"  => "",
                 "ap_affiliates_website"        => "",
             );
+
+            $affiliatepress_confirm_password_field_settings = $AffiliatePress->affiliatepress_get_settings('confirm_password_field', 'field_settings');
+            $affiliatepress_confirm_password_field_settings = !empty($affiliatepress_confirm_password_field_settings) ? maybe_unserialize($affiliatepress_confirm_password_field_settings) : array();
+
+            if(!empty($affiliatepress_confirm_password_field_settings) && is_array($affiliatepress_confirm_password_field_settings)){
+
+                $affiliatepress_is_display_confirm_password = isset($affiliatepress_confirm_password_field_settings['enable_confirm_password']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['enable_confirm_password']) : '';
+                $affiliatepress_confirm_password_label = isset($affiliatepress_confirm_password_field_settings['confirm_password_label']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['confirm_password_label']) : '';
+                $affiliatepress_confirm_password_placeholder =isset($affiliatepress_confirm_password_field_settings['confirm_password_placeholder']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['confirm_password_placeholder']) : '';
+                $affiliatepress_confirm_password_error_msg = isset($affiliatepress_confirm_password_field_settings['confirm_password_error_msg']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['confirm_password_error_msg']) : '';
+                $affiliatepress_confirm_password_validation_msg = isset($affiliatepress_confirm_password_field_settings['confirm_password_validation_msg']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['confirm_password_validation_msg']) : '';
+
+                $affiliatepress_dynamic_data_fields['confirm_password_field'] = array(
+                    'is_display_confirm_password' => $affiliatepress_is_display_confirm_password,
+                    'confirm_password_label'  => $affiliatepress_confirm_password_label,
+                    'confirm_password_placeholder'  => $affiliatepress_confirm_password_placeholder,
+                    'confirm_password_error_msg'  => $affiliatepress_confirm_password_error_msg,
+                    'confirm_password_validation_msg'  => $affiliatepress_confirm_password_validation_msg,
+                );
+
+            }
 
             $affiliatepress_dynamic_data_fields['rules'] = array(
                 'password'  => array(
@@ -761,6 +824,19 @@ if (! class_exists('affiliatepress_affiliate_register') ) {
 				components:{  },
 				data(){
                     var affiliatepress_return_data_reg_form = '.$affiliatepress_dynamic_data_fields.';
+                    if (affiliatepress_return_data_reg_form.rules) {
+                        affiliatepress_return_data_reg_form.rules.confirm_password = [
+                            { required: true, message: affiliatepress_return_data_reg_form.confirm_password_field.confirm_password_error_msg, trigger: "blur" },
+                            { validator: this.validateConfirmPassword, trigger: "blur" }
+                        ];
+                    }
+
+                    if (affiliatepress_return_data_reg_form.rules && affiliatepress_return_data_reg_form.rules.password) {
+                        affiliatepress_return_data_reg_form.rules.password.push({
+                            validator: this.validatePassword,
+                            trigger: ["blur", "change"]
+                        });
+                    }
                     affiliatepress_return_data_reg_form["ap_common_date_format"] = "'.esc_html($affiliatepress_common_date_format).'";  
                     affiliatepress_return_data_reg_form["affiliate_panel_labels"] = '.json_encode($affiliatepress_panel_labels).';
 					return affiliatepress_return_data_reg_form;

@@ -49,7 +49,15 @@
                             </template>
                             <el-input class="ap-form-control" type="password" :show-password="true" v-model="affiliates[affiliate_field.ap_form_field_name]" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
                         </el-form-item>                     
-                    </div>  
+                    </div>
+                    <div v-if="affiliate_field.ap_form_field_type == 'Password' && is_user_login == '0' && confirm_password_field.is_display_confirm_password == 'true'" class="ap-single-field__form" :class="affiliate_field.ap_field_class"> 
+                        <el-form-item prop="confirm_password">
+                            <template #label>
+                                <span class="ap-form-label" v-html="confirm_password_field.confirm_password_label"  :aria-label="confirm_password_field.confirm_password_label"></span>
+                            </template>
+                            <el-input  class="ap-form-control" v-model="affiliates.confirm_password" type="password"  :show-password="true" size="large" :placeholder="confirm_password_field.confirm_password_placeholder"/>
+                        </el-form-item>
+                    </div> 
                     <div v-if="affiliate_field.ap_form_field_type == 'Textarea' && affiliate_field.ap_field_is_default == '1'" class="ap-single-field__form" :class="affiliate_field.ap_field_class">                    
                         <el-form-item :prop="affiliate_field.ap_form_field_name">
                             <template #label>

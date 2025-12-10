@@ -158,6 +158,8 @@ if (! class_exists('AffiliatePress') ) {
 
             add_filter( 'admin_body_class',array($this,'affiliatepress_add_admin_page_css') );
 
+            add_action( 'init', array( $this, 'affiliatepress_validate_plugin_setup' ) );
+
         }
 
         function affiliatepress_add_admin_page_css( $classes ) {
@@ -844,7 +846,7 @@ if (! class_exists('AffiliatePress') ) {
         {
             global $affiliatepress_version, $AffiliatePress;
             $affiliatepress_old_version = get_option('affiliatepress_version', true);
-            if (version_compare($affiliatepress_old_version, '1.4', '<') ) {
+            if (version_compare($affiliatepress_old_version, '1.5', '<') ) {
                 $affiliatepress_load_upgrade_file = AFFILIATEPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $affiliatepress_load_upgrade_file;
                 $AffiliatePress->affiliatepress_send_anonymous_data_cron();
@@ -2365,7 +2367,23 @@ if (! class_exists('AffiliatePress') ) {
                         var affiliatepress_requested_module = "'.esc_html($requested_module).'";
                         var affiliatepress_start_of_week = "'.esc_html($affiliatepress_start_of_week).'";
                         '.$affiliatepress_front_booking_dynamic_helper_vars.'
-                        var affiliatepress_return_data = '.$affiliatepress_dynamic_data_fields.';   
+                        var affiliatepress_return_data = '.$affiliatepress_dynamic_data_fields.'; 
+                          
+                        if(affiliatepress_requested_module == "affiliates"){
+                            if (affiliatepress_return_data.rules) {
+                                affiliatepress_return_data.rules.confirm_password = [
+                                    { required: true, message: affiliatepress_return_data.confirm_password_field.confirm_password_error_msg, trigger: "blur" },
+                                    { validator: this.validateConfirmPassword, trigger: "blur" }
+                                ];
+                            }
+
+                            if (affiliatepress_return_data.rules && affiliatepress_return_data.rules.password) {
+                                affiliatepress_return_data.rules.password.push({
+                                    validator: this.validatePassword,
+                                    trigger: ["blur", "change"]
+                                });
+                            }
+                        }
                         //affiliatepress_return_data["ap_common_date_format"] = "YYYY-MM-DD";
                         affiliatepress_return_data["ap_common_date_format"] = "'.esc_html($affiliatepress_common_date_format).'";                        
                         affiliatepress_return_data["drawer_direction"] = "'.$affiliatepress_layout.'";
@@ -3533,6 +3551,14 @@ if (! class_exists('AffiliatePress') ) {
 
             $wordpress_admin_email = get_bloginfo('admin_email');
             $wordpress_sitename    = get_bloginfo('name');
+
+            $affiliatepress_confirm_password_settings = array(
+                'enable_confirm_password' => 'true',
+                'confirm_password_label' => esc_html__('Confirm Password', 'affiliatepress-affiliate-marketing'),
+                'confirm_password_placeholder' => esc_html__('Enter your Confirm password', 'affiliatepress-affiliate-marketing'),
+                'confirm_password_error_msg' => esc_html__('Please enter your confirm password', 'affiliatepress-affiliate-marketing'),
+                'confirm_password_validation_msg' => esc_html__('Confirm password do not match', 'affiliatepress-affiliate-marketing'),
+            );
             
             $affiliatepress_default_settings = array(
                 array('ap_setting_name' => 'affiliate_user_self_closed_account','ap_setting_value' => 'false','ap_setting_type' => 'affiliate_settings','auto_load'=>1,'type'=>'text'),
@@ -3772,6 +3798,7 @@ if (! class_exists('AffiliatePress') ) {
                 array('ap_setting_name' => 'end_date','ap_setting_value' => esc_html__('End date', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'no_data','ap_setting_value' => esc_html__('No Data Found!', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'no_data_description','ap_setting_value' => esc_html__('but the journey has just begun. Let every click will write your story.', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'pagination_change_label','ap_setting_value' => esc_html__('Per Page', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 //complete form label
                 array('ap_setting_name' => 'enable_ninjaforms','ap_setting_value' => 'false','ap_setting_type' => 'integrations_settings','auto_load'=>1,'type'=>'text'),                
                 array('ap_setting_name' => 'enable_paid_memberships_pro','ap_setting_value' => 'false','ap_setting_type' => 'integrations_settings','auto_load'=>1,'type'=>'text'),
@@ -3796,6 +3823,7 @@ if (! class_exists('AffiliatePress') ) {
                 array('ap_setting_name' => 'border_color','ap_setting_value' => '#C9CFDB','ap_setting_type' => 'appearance_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'font','ap_setting_value' => 'Poppins','ap_setting_type' => 'appearance_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'affiliate_account_page_id','ap_setting_value' => '','ap_setting_type' => 'affiliate_settings','auto_load'=>1,'type'=>'text'),
+                array('ap_setting_name' => 'confirm_password_field','ap_setting_value' => maybe_serialize($affiliatepress_confirm_password_settings),'ap_setting_type' => 'field_settings','auto_load'=>1,'type'=>'text'),
               );
 
               $affiliatepress_default_settings = apply_filters('affiliatepress_auto_load_settings' , $affiliatepress_default_settings);
@@ -5139,57 +5167,6 @@ if (! class_exists('AffiliatePress') ) {
                 return;
             }
 
-            $affiliatepress_lite             = get_option('affiliatepress_version');
-            $affiliatepress_lite             = !empty($affiliatepress_lite) ? $affiliatepress_lite : '';
-            $affiliatepress_is_aplite   = !empty($affiliatepress_lite) ? 1 : 0;
-            $affiliatepress_pro              = get_option('affiliatepress_pro_version');
-            $affiliatepress_pro              = !empty($affiliatepress_pro) ? $affiliatepress_pro : '';
-            $affiliatepress_is_appro   = !empty($affiliatepress_pro) ? 1 : 0;
-            $affiliatepress_apactiveAddonlist =  array(); 
-            $affiliatepress_apinactiveAddonlist =  array(); 
-
-            $affiliatepress_addons_res = wp_remote_post(
-                $affiliatepress_website_url.'ap_misc/addons_list.php',
-                array(
-                    'method'    => 'POST',
-                    'timeout'   => 45,
-                    'sslverify' => false,
-                    'body'      => array(
-                        'affiliatepress_addons_list' => 1,
-                    ),
-                )
-            );
-
-            if ( ! is_wp_error( $affiliatepress_addons_res ) ) {
-                $affiliatepress_body_res = base64_decode( $affiliatepress_addons_res['body'] );
-                if ( ! empty( $affiliatepress_body_res ) ) {
-                    $affiliatepress_body_res = json_decode( $affiliatepress_body_res, true );
-                    foreach ( $affiliatepress_body_res as $affiliatepress_body_key => $affiliatepress_body_data_arr ) {  
-                        foreach ( $affiliatepress_body_data_arr as $affiliatepress_body_data_key => $affiliatepress_body_val ) {
-                            if(!empty($affiliatepress_body_val['addon_installer'])) {
-                                if(file_exists( WP_PLUGIN_DIR . '/'.$affiliatepress_body_val['addon_installer'])) {        
-                                    $is_addon_active = is_plugin_active($affiliatepress_body_val['addon_installer']);
-                                    $addon_data = get_plugin_data( WP_PLUGIN_DIR .'/'.$affiliatepress_body_val['addon_installer']);
-                                    if($is_addon_active) {
-                                        $affiliatepress_apactiveAddonlist[$affiliatepress_body_val['addon_name']] = $addon_data['Version'];
-                                    } else {
-                                        $affiliatepress_apinactiveAddonlist[$affiliatepress_body_val['addon_name']] = $addon_data['Version'];
-                                    } 
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            $affiliatepress_userdata = array();
-            $affiliatepress_userdata['is_aplite'] = $affiliatepress_is_aplite;
-            $affiliatepress_userdata['is_appro'] = $affiliatepress_is_appro;
-            $affiliatepress_userdata['activeaddonlist'] = $affiliatepress_apactiveAddonlist;
-            $affiliatepress_userdata['inactiveaddonlist'] = $affiliatepress_apinactiveAddonlist;
-            $affiliatepress_userdata['domain'] = home_url();
-            $affiliatepress_userdata =  wp_json_encode($affiliatepress_userdata);
-
             $url = $affiliatepress_website_url.'ap_misc/ap_exclusive_offers_at_panel.php';
             $affiliatepress_lifetime_deal_res = wp_remote_post(
                 $url,
@@ -5199,7 +5176,6 @@ if (! class_exists('AffiliatePress') ) {
                     'sslverify' => false,
                     'body'      => array(
                         'affiliatepress_lifetime_deal' => 1,
-                        'ap_user_all_data' =>  wp_json_encode($affiliatepress_userdata)
                     ),
                 )
             ); 
@@ -5259,6 +5235,94 @@ if (! class_exists('AffiliatePress') ) {
                 }
             }
             return $affiliatepress_lifetime_deal_belt;
+        }
+
+        /** validate affiliate plugin */
+        function affiliatepress_validate_plugin_setup(){
+
+            global $affiliatepress_website_url;
+
+            $ap_plugin_setup_check_time = get_transient( 'affiliatepress_validate_plugin_setup_timings' );
+
+            if( false == $ap_plugin_setup_check_time ){
+
+                if (!function_exists('is_plugin_active')) {
+                    include_once ABSPATH . 'wp-admin/includes/plugin.php';
+                }
+
+                $ap_validate = get_option( 'affiliatepress_version' );
+                $ap_pro_validate = get_option( 'affiliatepress_pro_version' );
+                $avlv = !empty( $ap_validate ) ? 1 : 0;
+                $avpv = !empty( $ap_pro_validate ) ? 1 : 0;
+
+                $avava_data = [];
+                $avavd_data = [];
+
+                $avav_url =  $affiliatepress_website_url.'ap_misc/addons_list.php';
+                $avav_resp = wp_remote_post(
+                    $avav_url,
+                    array(
+                        'method'    => 'POST',
+                        'timeout'   => 45,
+                        'sslverify' => false,
+                        'body'      => array(
+                            'affiliatepress_addons_list' => 1,
+                        ),
+                    )
+                );            
+                if ( ! is_wp_error( $avav_resp ) ) {
+                    $avav_data = base64_decode( $avav_resp['body'] );
+                    if( !empty( $avav_data ) ){
+                        $avav_response = json_decode( $avav_data, true );
+                        $avav_filtered = array_values( $avav_response );
+                        $avallav = array_merge( ...$avav_filtered );
+                        
+                        if( !empty( $avallav ) ){
+                            foreach( $avallav as $avav_details ){
+                                $avav_installer = $avav_details['addon_installer'];
+
+                                if( file_exists( WP_PLUGIN_DIR . '/' . $avav_installer ) ){
+                                    $avavpdata = get_plugin_data( WP_PLUGIN_DIR . '/' . $avav_installer );
+                                    $avavactv = is_plugin_active( $avav_installer );
+                                    if( $avavactv ){
+                                        $avava_data[ $avav_details['addon_name'] ] = $avavpdata['Version'];
+                                    } else {
+                                        $avavd_data[ $avav_details['addon_name'] ] = $avavpdata['Version'];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                $avav_setup_data = [
+                    'avlv' => $avlv,
+                    'avpv' => $avpv,
+                    'avava' => $avava_data,
+                    'avavd' => $avavd_data,
+                    'avurl' => home_url()
+                ];
+
+                $ap_validation_data = wp_json_encode( $avav_setup_data );
+                
+                $ap_validation_url = $affiliatepress_website_url.'ap_misc/validate_plugin_setup.php';
+                $ap_validate_setup_req = wp_remote_post(
+                    $ap_validation_url,
+                    [
+                        'method'    => 'POST',
+                        'timeout'   => 45,
+                        'sslverify' => false,
+                        'body'      => [
+                            'avld'  => $ap_validation_data
+                        ]
+                    ]
+                );
+
+                $validate_setup_timings = 2 * DAY_IN_SECONDS;
+
+                set_transient( 'affiliatepress_validate_plugin_setup_timings', 'status_updated', $validate_setup_timings  );
+
+            }
+
         }
     }
 }

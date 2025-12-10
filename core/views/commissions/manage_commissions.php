@@ -25,7 +25,11 @@
                 <el-col :xs="24" :sm="24" :md="24" :lg="18" :xl="13">
                     <el-row type="flex" :gutter="16">
                         <el-col :xs="24" :sm="24" :md="24" :lg="7" :xl="7">
-                                <el-input class="ap-form-control" v-model="commissions_search.ap_affiliates_user" size="large" placeholder="<?php esc_html_e('Enter Affiliate Name', 'affiliatepress-affiliate-marketing'); ?>" @keyup.enter="applyFilter()"/>    
+                            <el-select ref="selectAffUserRef" size="large" class="ap-form-control ap-remove-fields-close" v-model="commissions_search.ap_affiliates_user" @keyup.enter="applyFilter()" filterable placeholder="<?php esc_html_e( 'Enter Affiliate Name', 'affiliatepress-affiliate-marketing'); ?>" @change="affiliatepress_get_existing_affiliate_details($event)" remote reserve-keyword	 :remote-method="get_affiliate_users" :loading="affiliatepress_user_loading" clearable >                                                               
+                                <el-option-group v-for="wp_user_list_cat in AffiliateUsersList" :key="wp_user_list_cat.category" :label="wp_user_list_cat.category">
+                                    <el-option v-for="item in wp_user_list_cat.wp_user_data" :key="item.value" :label="item.label" :value="item.value" ></el-option>                                    
+                                </el-option-group>
+                            </el-select>
                         </el-col>
                         <el-col class="ap-padding-right-16" :xs="24" :sm="24" :md="24" :lg="12" :xl="12">   
                                 <el-date-picker popper-class="ap-date-range-picker-widget-wrapper" value-format="YYYY-MM-DD" :format="ap_common_date_format" v-model="commissions_search.ap_commission_search_date" class="ap-form-date-range-control ap-form-full-width-control ap-padding-right-16" type="daterange" size="large" :start-placeholder="affiliatepress_start_date" :end-placeholder="affiliatepress_end_date" :default-time="defaultTime"/>
@@ -41,7 +45,7 @@
                         <el-button @click="applyFilter()" class="ap-btn--primary" plain type="primary" :disabled="is_apply_disabled">
                             <span class="ap-btn__label"><?php esc_html_e('Apply', 'affiliatepress-affiliate-marketing'); ?></span>
                         </el-button>
-                        <el-button @click="resetFilter" class="ap-btn--second" v-if="commissions_search.ap_affiliates_user != '' || commissions_search.ap_commission_search_date != '' || commissions_search.commission_status != ''">
+                        <el-button @click="resetFilter" class="ap-btn--second" v-if="commissions_search.ap_affiliates_user || (commissions_search.ap_commission_search_date && commissions_search.ap_commission_search_date.length > 0) || commissions_search.commission_status != ''">
                             <span class="ap-btn__label"><?php esc_html_e('Reset', 'affiliatepress-affiliate-marketing'); ?></span>
                         </el-button>
                 </el-col>
@@ -49,7 +53,7 @@
         </div>
         <el-row>
             <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-                <el-container class="ap-table-container">                
+                <el-container class="ap-table-container" :class="(is_display_loader == '1')?'ap-loader_table_container':''">                
                     <div class="ap-back-loader-container" v-if="is_display_loader == '1'">
                         <div class="ap-back-loader"></div>
                     </div>          
@@ -378,6 +382,12 @@
             <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" v-if="pagination_count != 1 && pagination_count != 0">
                 <div class="ap-pagination-left">
                     <p><?php esc_html_e('Showing', 'affiliatepress-affiliate-marketing'); ?> {{ items.length }}&nbsp; <?php esc_html_e('out of', 'affiliatepress-affiliate-marketing'); ?> &nbsp;{{ totalItems }}</p>
+                    <div class="ap-pagination-per-page">
+                        <p><?php esc_html_e('Per Page', 'affiliatepress-affiliate-marketing'); ?></p>
+						<el-select v-model="pagination_length_val" placeholder="Select" @change="changePaginationSize($event)" size="large" class="ap-form-control" popper-class="ap-pagination-dropdown">
+							<el-option v-for="item in pagination_val" :key="item.text" :label="item.text" :value="item.value"></el-option>
+						</el-select>
+					</div>
                 </div>
             </el-col>
             <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-pagination-nav" v-if="pagination_count != 1 && pagination_count != 0">

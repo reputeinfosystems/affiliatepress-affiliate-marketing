@@ -1121,6 +1121,14 @@
                                         </el-form-item>
                                     </div>
                                 </el-col>
+                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-settings-col ap-gs__cb-item-left" >
+                                    <div class="ap-combine-field">
+                                        <label><span class="ap-form-label"><?php esc_html_e('Per Page', 'affiliatepress-affiliate-marketing'); ?></span></label>    
+                                        <el-form-item prop="pagination_change_label">
+                                            <el-input class="ap-form-control" type="text" v-model="messages_setting_form.pagination_change_label" size="large"  />                                         
+                                        </el-form-item>
+                                    </div>
+                                </el-col>
                             </el-row>
                         </div>
                     </div>    

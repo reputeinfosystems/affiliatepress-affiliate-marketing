@@ -1069,18 +1069,10 @@ if (! class_exists('affiliatepress_commissions') ) {
                     
                 }                
                 if (isset($_REQUEST['search_data']['ap_affiliates_user']) && !empty($_REQUEST['search_data']['ap_affiliates_user']) ) {// phpcs:ignore
-                    $affiliatepress_search_name   = sanitize_text_field($_REQUEST['search_data']['ap_affiliates_user']);// phpcs:ignore
 
-                    $affiliatepress_search_name_last = $affiliatepress_search_name;
-                    if(!empty($affiliatepress_search_name)){
-                        $name_parts = explode(' ', $affiliatepress_search_name);                                    
-                        $affiliatepress_search_name = isset($name_parts[0]) ? $name_parts[0] : '';
-                        if(isset($name_parts[1])){
-                            $affiliatepress_search_name_last = isset($name_parts[1]) ? $name_parts[1] : '';
-                        }                                                
-                    }
+                    $affiliatepress_search_id   = intval($_REQUEST['search_data']['ap_affiliates_user']);// phpcs:ignore
 
-                    $affiliatepress_where_clause.= $wpdb->prepare( " AND (affiliate.ap_affiliates_first_name LIKE %s OR affiliate.ap_affiliates_last_name LIKE %s) ", '%'.$affiliatepress_search_name.'%', '%'.$affiliatepress_search_name_last.'%');
+                    $affiliatepress_where_clause.= $wpdb->prepare( " AND (affiliate.ap_affiliates_id = %d) ", $affiliatepress_search_id);
 
                 }
                 if (isset($_REQUEST['search_data']['commission_status']) && !empty($_REQUEST['search_data']['commission_status']) ) {// phpcs:ignore
@@ -1624,7 +1616,11 @@ if (! class_exists('affiliatepress_commissions') ) {
                     vm.is_apply_disabled = false;                                                                           
                     if(response.data.variant == "success"){
                         vm.items = response.data.items;                        
-                        vm.totalItems = response.data.total;            
+                        vm.totalItems = response.data.total;     
+                        var defaultPerPage = '.$this->affiliatepress_per_page_record.';
+                        if(vm.perPage > defaultPerPage && response.data.pagination_count == 1){
+                            response.data.pagination_count = 2;
+                        }       
                         vm.pagination_count = response.data.pagination_count;                     
                     }else{
                         vm.$notify({
@@ -1797,7 +1793,30 @@ if (! class_exists('affiliatepress_commissions') ) {
             editUserclosePopover(){
                 const vm = this;
                 vm.userPopoverVisible = false;
-            },                                                                                                   
+            },    
+            changeCurrentPage(perPage) {
+                const vm = this;
+                var total_item = vm.totalItems;
+                var recored_perpage = perPage;
+                var select_page =  vm.currentPage;                
+                var current_page = Math.ceil(total_item/recored_perpage);
+                if(total_item <= recored_perpage ) {
+                    current_page = 1;
+                } else if(select_page >= current_page ) {
+                    
+                } else {
+                    current_page = select_page;
+                }
+                return current_page;
+            },
+            changePaginationSize(selectedPage) {
+                const vm = this;
+                selectedPage = parseInt( selectedPage );
+                vm.perPage = selectedPage;
+                var current_page = vm.changeCurrentPage(selectedPage);                                        
+                vm.currentPage = current_page;    
+                vm.loadcommissions();
+            },                                                                                               
             ';
 
             return $affiliatepress_commissions_dynamic_vue_methods;
@@ -1837,6 +1856,8 @@ if (! class_exists('affiliatepress_commissions') ) {
 
             $affiliatepress_global_options_data = $affiliatepress_global_options->affiliatepress_global_options();
             $affiliatepress_all_commissions_type = $affiliatepress_global_options_data['commissions_type'];
+
+            $affiliatepress_pagination_value = (isset($affiliatepress_global_options_data['pagination_val']))?$affiliatepress_global_options_data['pagination_val']:array();
 
             $affiliatepress_commissions_vue_data_fields = array(
                 'affiliatepress_user_loading'  => false,
@@ -1943,40 +1964,7 @@ if (! class_exists('affiliatepress_commissions') ) {
                 'pagination_length_val'      => '10',
                 'ref_amount_placeholder'     => esc_html__('Enter Order Amount', 'affiliatepress-affiliate-marketing'),
                 'amount_placeholder'         => esc_html__('Enter Amount', 'affiliatepress-affiliate-marketing'),
-                'pagination_val'             => array(
-                    array(
-                        'text'  => '10',
-                        'value' => '10',
-                    ),
-                    array(
-                        'text'  => '20',
-                        'value' => '20',
-                    ),
-                    array(
-                        'text'  => '50',
-                        'value' => '50',
-                    ),
-                    array(
-                        'text'  => '100',
-                        'value' => '100',
-                    ),
-                    array(
-                        'text'  => '200',
-                        'value' => '200',
-                    ),
-                    array(
-                        'text'  => '300',
-                        'value' => '300',
-                    ),
-                    array(
-                        'text'  => '400',
-                        'value' => '400',
-                    ),
-                    array(
-                        'text'  => '500',
-                        'value' => '500',
-                    ),
-                ),
+                'pagination_val'             => $affiliatepress_pagination_value,
                 'is_get_user_data_loader'     => '0',
                 'userPopoverVisible'          => false,
                 'affiliate_user_details' => array(

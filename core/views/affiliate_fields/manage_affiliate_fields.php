@@ -127,7 +127,37 @@
                                                                                 <span class="ap-form-label"><?php esc_html_e('Show in Affiliate profile', 'affiliatepress-affiliate-marketing'); ?></span>
                                                                             </label>
                                                                             <el-switch  v-model="element.show_profile_field" ></el-switch>
-                                                                        </div>                                                                
+                                                                        </div> 
+                                                                        <div class="ap-fs-item-settings-form-control-item ap-combine-field" v-if="element.field_name == 'password'">
+                                                                            <label>
+                                                                                <span class="ap-form-label"><?php esc_html_e('Enable Confirm Password', 'affiliatepress-affiliate-marketing'); ?></span>
+                                                                            </label>
+                                                                            <el-switch v-model="confirm_password_field.enable_confirm_password"></el-switch>
+                                                                        </div>       
+                                                                        <div class="ap-combine-field ap-fs-item-settings-form-control-item" v-if="element.field_name == 'password' && confirm_password_field.enable_confirm_password == true">
+                                                                            <label>
+                                                                                <span class="ap-form-label"><?php esc_html_e('Confirm password Label', 'affiliatepress-affiliate-marketing'); ?></span>
+                                                                            </label>
+                                                                            <el-input class="ap-form-control" size="large" v-model="confirm_password_field.confirm_password_label"></el-input>
+                                                                        </div>
+                                                                        <div class="ap-combine-field ap-fs-item-settings-form-control-item" v-if="element.field_name == 'password' && confirm_password_field.enable_confirm_password == true">
+                                                                            <label>
+                                                                                <span class="ap-form-label"><?php esc_html_e('Confirm password Placeholder', 'affiliatepress-affiliate-marketing'); ?></span>
+                                                                            </label>
+                                                                            <el-input class="ap-form-control" size="large" v-model="confirm_password_field.confirm_password_placeholder"></el-input>
+                                                                        </div>
+                                                                        <div class="ap-combine-field ap-fs-item-settings-form-control-item" v-if="element.field_name == 'password' && confirm_password_field.enable_confirm_password == true">
+                                                                            <label>
+                                                                                <span class="ap-form-label"><?php esc_html_e('Confirm password Error message', 'affiliatepress-affiliate-marketing'); ?></span>
+                                                                            </label>
+                                                                            <el-input class="ap-form-control" size="large" v-model="confirm_password_field.confirm_password_error_msg"></el-input>
+                                                                        </div>            
+                                                                        <div class="ap-combine-field ap-fs-item-settings-form-control-item" v-if="element.field_name == 'password' && confirm_password_field.enable_confirm_password == true">
+                                                                            <label>
+                                                                                <span class="ap-form-label"><?php esc_html_e('Validation Error message', 'affiliatepress-affiliate-marketing'); ?></span>
+                                                                            </label>
+                                                                            <el-input class="ap-form-control" size="large" v-model="confirm_password_field.confirm_password_validation_msg"></el-input>
+                                                                        </div>                                                  
                                                                         <div class="ap-customize--edit-label-popover--actions">
                                                                             <el-button type="primary" class="ap-btn ap-btn__small ap-btn--primary" @click="closeFieldSettings(element.field_name)"><?php esc_html_e('Save', 'affiliatepress-affiliate-marketing'); ?></el-button>
                                                                         </div>

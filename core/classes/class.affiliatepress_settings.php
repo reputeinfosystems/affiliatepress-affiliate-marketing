@@ -1879,6 +1879,13 @@ if (! class_exists('affiliatepress_settings') ) {
                             'trigger'  => 'blur',
                         ),
                     ),      
+                    'pagination_change_label'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ),      
                 ),                
                 'messages_setting_form'             => array(
 
@@ -2025,6 +2032,7 @@ if (! class_exists('affiliatepress_settings') ) {
                     'end_date'                        => '',
                     'no_data'                         => '',
                     'no_data_description'             => '',
+                    'pagination_change_label'         => '',
                     'filters'=>'',
                     
                 ),
@@ -2126,40 +2134,6 @@ if (! class_exists('affiliatepress_settings') ) {
                         'label'  => 'Yearly',
                         'value' => 'yearly',
                     )
-                ),          
-                'default_pagination'             => array(
-                    array(
-                        'text'  => '10',
-                        'value' => '10',
-                    ),
-                    array(
-                        'text'  => '20',
-                        'value' => '20',
-                    ),
-                    array(
-                        'text'  => '50',
-                        'value' => '50',
-                    ),
-                    array(
-                        'text'  => '100',
-                        'value' => '100',
-                    ),
-                    array(
-                        'text'  => '200',
-                        'value' => '200',
-                    ),
-                    array(
-                        'text'  => '300',
-                        'value' => '300',
-                    ),
-                    array(
-                        'text'  => '400',
-                        'value' => '400',
-                    ),
-                    array(
-                        'text'  => '500',
-                        'value' => '500',
-                    ),
                 ),
                 'default_smtp_secure_options'      => array(
                     array(

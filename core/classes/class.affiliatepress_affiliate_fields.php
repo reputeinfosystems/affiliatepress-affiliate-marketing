@@ -203,12 +203,30 @@ if (! class_exists('affiliatepress_affiliate_fields') ) {
             // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $_REQUEST['field_settings'] contains mixed array and it's been sanitized properly using 'affiliatepress_sanitize_affiliatepress_fields' function
             $affiliatepress_field_settings_data = ! empty($_POST['field_settings']) ? array_map(array( $this, 'affiliatepress_sanitize_affiliatepress_fields' ), $_POST['field_settings']) : array(); // phpcs:ignore
 
-            $affiliatepress_field_message_settings_data = ! empty($_POST['field_message_settings']) ? array_map(array( $this, 'affiliatepress_sanitize_affiliatepress_fields' ), $_POST['field_message_settings']) : array(); // phpcs:ignore
+            $affiliatepress_field_message_settings_data = ! empty($_POST['field_message_settings']) ? array_map(array( $AffiliatePress, 'affiliatepress_array_sanatize_field' ), $_POST['field_message_settings']) : array(); // phpcs:ignore
 
             foreach ($affiliatepress_field_message_settings_data as $affiliatepress_messsage_settings_name => $affiliatepress_messsage_settings_value) {
                 $affiliatepress_messsage_settings_value = stripslashes_deep($affiliatepress_messsage_settings_value);
                 $AffiliatePress->affiliatepress_update_settings($affiliatepress_messsage_settings_name, 'message_settings' , $affiliatepress_messsage_settings_value);
             }
+            
+            $affiliatepress_confirm_password_fields = ! empty($_POST['confirm_password_field']) ? array_map(array( $AffiliatePress, 'affiliatepress_array_sanatize_field' ), wp_unslash($_POST['confirm_password_field'])) : array(); // phpcs:ignore
+
+            $affiliatepress_enable_confirm_password = isset($affiliatepress_confirm_password_fields['enable_confirm_password']) ? sanitize_text_field($affiliatepress_confirm_password_fields['enable_confirm_password']) : "true";
+            $affiliatepress_confirm_password_label = isset($affiliatepress_confirm_password_fields['confirm_password_label']) ? sanitize_text_field($affiliatepress_confirm_password_fields['confirm_password_label']) :esc_html__('Confirm Password', 'affiliatepress-affiliate-marketing');
+            $affiliatepress_confirm_password_placeholder = isset($affiliatepress_confirm_password_fields['confirm_password_placeholder']) ? sanitize_text_field($affiliatepress_confirm_password_fields['confirm_password_placeholder']) :esc_html__('Enter your Confirm password', 'affiliatepress-affiliate-marketing');
+            $affiliatepress_confirm_password_error_msg = isset($affiliatepress_confirm_password_fields['confirm_password_error_msg']) ? sanitize_text_field($affiliatepress_confirm_password_fields['confirm_password_error_msg']) :esc_html__('Please enter your confirm password', 'affiliatepress-affiliate-marketing');
+            $affiliatepress_confirm_password_validation_msg = isset($affiliatepress_confirm_password_fields['confirm_password_validation_msg']) ? sanitize_text_field($affiliatepress_confirm_password_fields['confirm_password_validation_msg']) :esc_html__('Confirm password do not match', 'affiliatepress-affiliate-marketing');
+
+            $affiliatepress_confirm_password_settings = array(
+                'enable_confirm_password' => $affiliatepress_enable_confirm_password,
+                'confirm_password_label' => $affiliatepress_confirm_password_label,
+                'confirm_password_placeholder' => $affiliatepress_confirm_password_placeholder,
+                'confirm_password_error_msg' => $affiliatepress_confirm_password_error_msg,
+                'confirm_password_validation_msg' => $affiliatepress_confirm_password_validation_msg,
+            );
+            $AffiliatePress->affiliatepress_update_settings('confirm_password_field', 'field_settings' , maybe_serialize($affiliatepress_confirm_password_settings));
+            $AffiliatePress->affiliatepress_update_all_auto_load_settings();
 
             if (! empty($affiliatepress_field_settings_data) ) {
 
@@ -376,12 +394,40 @@ if (! class_exists('affiliatepress_affiliate_fields') ) {
 
                 array_push($affiliatepress_field_settings_return_data, $affiliatepress_draggable_field_setting_fields_tmp);
             }
+
+            $affiliatepress_get_confirm_pasoword_field = array();
+            $affiliatepress_confirm_password_field_settings = $AffiliatePress->affiliatepress_get_settings('confirm_password_field', 'field_settings');
+            $affiliatepress_confirm_password_field_settings = !empty($affiliatepress_confirm_password_field_settings) ? maybe_unserialize($affiliatepress_confirm_password_field_settings) : array();
+
+            if(!empty($affiliatepress_confirm_password_field_settings) && is_array($affiliatepress_confirm_password_field_settings)){
+
+                $affiliatepress_enable_confirm_password = isset($affiliatepress_confirm_password_field_settings['enable_confirm_password']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['enable_confirm_password']) : '';
+                $affiliatepress_confirm_password_label = isset($affiliatepress_confirm_password_field_settings['confirm_password_label']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['confirm_password_label']) : '';
+                $affiliatepress_confirm_password_placeholder =isset($affiliatepress_confirm_password_field_settings['confirm_password_placeholder']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['confirm_password_placeholder']) : '';
+                $affiliatepress_confirm_password_error_msg = isset($affiliatepress_confirm_password_field_settings['confirm_password_error_msg']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['confirm_password_error_msg']) : '';
+                $affiliatepress_confirm_password_validation_msg = isset($affiliatepress_confirm_password_field_settings['confirm_password_validation_msg']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['confirm_password_validation_msg']) : '';
+
+                if($affiliatepress_enable_confirm_password == "true"){
+                    $affiliatepress_enable_confirm_password = true;
+                }else{
+                    $affiliatepress_enable_confirm_password = false;
+                }
+
+                $affiliatepress_get_confirm_pasoword_field = array(
+                    'enable_confirm_password' => $affiliatepress_enable_confirm_password,
+                    'confirm_password_label'  => $affiliatepress_confirm_password_label,
+                    'confirm_password_placeholder'  => $affiliatepress_confirm_password_placeholder,
+                    'confirm_password_error_msg'  => $affiliatepress_confirm_password_error_msg,
+                    'confirm_password_validation_msg'  => $affiliatepress_confirm_password_validation_msg,
+                );
+            }
             
             $response['variant']        = 'success';
             $response['title']          = esc_html__('Success', 'affiliatepress-affiliate-marketing');
             $response['msg']            = esc_html__('Field Settings Data Retrieved Successfully', 'affiliatepress-affiliate-marketing');
             $response['field_settings'] = $affiliatepress_field_settings_return_data;
             $response['messages_setting_form'] = $affiliatepress_field_messages_settings_form;
+            $response['confirm_password_field'] = $affiliatepress_get_confirm_pasoword_field;
 
             echo wp_json_encode($response);
             exit();
@@ -469,6 +515,7 @@ if (! class_exists('affiliatepress_affiliate_fields') ) {
                             postData.field_settings = JSON.stringify(vm.field_settings_fields);
                             postData.field_message_settings = vm.messages_setting_form;
                             postData._wpnonce = "'.esc_html(wp_create_nonce("ap_wp_nonce")).'"
+                            postData.confirm_password_field = vm.confirm_password_field;
                             axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify( postData ) )
                             .then( function (response) {
                                 if(response.data.variant == "error"){
@@ -535,7 +582,8 @@ if (! class_exists('affiliatepress_affiliate_fields') ) {
                                 ...value,  
                                 keyName: key 
                             };
-                            });                        
+                            });
+                            vm.confirm_password_field = response.data.confirm_password_field;                  
                             vm.field_settings_fields = arrayFromObject;
                             vm.messages_setting_form = response.data.messages_setting_form;
                             '.$affiliatepress_after_load_field_settings.'
@@ -727,6 +775,13 @@ if (! class_exists('affiliatepress_affiliate_fields') ) {
                         'is_hide'        => 1,
                         'field_position' => 8,
                     ),
+                ),
+                'confirm_password_field' => array(
+                    'enable_confirm_password' => true,
+                    'confirm_password_label'  => esc_html__('Confirm Password', 'affiliatepress-affiliate-marketing'),
+                    'confirm_password_placeholder'  => esc_html__('Enter your Confirm password', 'affiliatepress-affiliate-marketing'),
+                    'confirm_password_error_msg'  => esc_html__('Please enter your confirm password', 'affiliatepress-affiliate-marketing'),
+                    'confirm_password_validation_msg'  => esc_html__('Confirm password do not match', 'affiliatepress-affiliate-marketing'),
                 ),
                 'messages_setting_form'=>array(
                     'login_error_message'                   => '',
@@ -966,41 +1021,6 @@ if (! class_exists('affiliatepress_affiliate_fields') ) {
                             'trigger' => 'blur',
                         ),                        
                     ),                    
-                ),                
-                'pagination_length_val'      => '10',
-                'pagination_val'             => array(
-                    array(
-                        'text'  => '10',
-                        'value' => '10',
-                    ),
-                    array(
-                        'text'  => '20',
-                        'value' => '20',
-                    ),
-                    array(
-                        'text'  => '50',
-                        'value' => '50',
-                    ),
-                    array(
-                        'text'  => '100',
-                        'value' => '100',
-                    ),
-                    array(
-                        'text'  => '200',
-                        'value' => '200',
-                    ),
-                    array(
-                        'text'  => '300',
-                        'value' => '300',
-                    ),
-                    array(
-                        'text'  => '400',
-                        'value' => '400',
-                    ),
-                    array(
-                        'text'  => '500',
-                        'value' => '500',
-                    ),
                 ),
 
             );

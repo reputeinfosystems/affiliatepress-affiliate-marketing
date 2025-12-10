@@ -42,7 +42,7 @@
         </div>
         <el-row >
             <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-                <el-container class="ap-table-container">                
+                <el-container class="ap-table-container" :class="(is_display_loader == '1')?'ap-loader_table_container':''">                
                     <div class="ap-back-loader-container" v-if="is_display_loader == '1'">
                         <div class="ap-back-loader"></div>
                     </div>                
@@ -229,7 +229,12 @@
             <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" v-if="pagination_count != 1 && pagination_count != 0">
                 <div class="ap-pagination-left">
                     <p><?php esc_html_e('Showing', 'affiliatepress-affiliate-marketing'); ?> {{ items.length }}&nbsp; <?php esc_html_e('out of', 'affiliatepress-affiliate-marketing'); ?> &nbsp;{{ totalItems }}</p>
-                    
+                    <div class="ap-pagination-per-page">
+                        <p><?php esc_html_e('Per Page', 'affiliatepress-affiliate-marketing'); ?></p>
+						<el-select v-model="pagination_length_val" placeholder="Select" @change="changePaginationSize($event)" size="large" class="ap-form-control" popper-class="ap-pagination-dropdown">
+							<el-option v-for="item in pagination_val" :key="item.text" :label="item.text" :value="item.value"></el-option>
+						</el-select>
+					</div>
                 </div>
             </el-col>
             <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-pagination-nav" v-if="pagination_count != 1 && pagination_count != 0">

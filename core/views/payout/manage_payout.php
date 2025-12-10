@@ -42,7 +42,7 @@
                     <el-button @click="loadPayouts()" class="ap-btn--primary" plain type="primary" :disabled="is_apply_disabled">
                         <span class="ap-btn__label"><?php esc_html_e('Apply', 'affiliatepress-affiliate-marketing'); ?></span>
                     </el-button>
-                    <el-button @click="resetFilter" class="ap-btn--second" v-if="payout_search.ap_payout_date != '' || payout_search.ap_payout_type!=''">
+                    <el-button @click="resetFilter" class="ap-btn--second" v-if="(payout_search.ap_payout_date && payout_search.ap_payout_date.length > 0) || payout_search.ap_payout_type!=''">
                         <span class="ap-btn__label"><?php esc_html_e('Reset', 'affiliatepress-affiliate-marketing'); ?></span>
                     </el-button>
                 </el-col>
@@ -50,7 +50,7 @@
         </div>
         <el-row>
             <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-                <el-container class="ap-table-container ap-payout-table ap-listing-multi-without">                
+                <el-container class="ap-table-container ap-payout-table ap-listing-multi-without" :class="(is_display_loader == '1')?'ap-loader_table_container':''">                
                     <div class="ap-back-loader-container" v-if="is_display_loader == '1'">
                         <div class="ap-back-loader"></div>
                     </div>                
@@ -250,7 +250,13 @@
             </el-col>         
             <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" v-if="pagination_count != 1 && pagination_count != 0">
                 <div class="ap-pagination-left">
-                    <p><?php esc_html_e('Showing', 'affiliatepress-affiliate-marketing'); ?> {{ items.length }}&nbsp; <?php esc_html_e('out of', 'affiliatepress-affiliate-marketing'); ?> &nbsp;{{ totalItems }}</p>                
+                    <p><?php esc_html_e('Showing', 'affiliatepress-affiliate-marketing'); ?> {{ items.length }}&nbsp; <?php esc_html_e('out of', 'affiliatepress-affiliate-marketing'); ?> &nbsp;{{ totalItems }}</p> 
+                    <div class="ap-pagination-per-page">
+                        <p><?php esc_html_e('Per Page', 'affiliatepress-affiliate-marketing'); ?></p>
+						<el-select v-model="pagination_length_val" placeholder="Select" @change="changePaginationSize($event)" size="large" class="ap-form-control" popper-class="ap-pagination-dropdown">
+							<el-option v-for="item in pagination_val" :key="item.text" :label="item.text" :value="item.value"></el-option>
+						</el-select>
+					</div>               
                 </div>
             </el-col>
             <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-pagination-nav" v-if="pagination_count != 1 && pagination_count != 0">
@@ -393,6 +399,9 @@
                     <div class="ap-dlt__heading"><?php esc_html_e('Edit Payout', 'affiliatepress-affiliate-marketing'); ?></div>            
                 </div>
                 <div id="ap-drawer-body" class="ap-dlt__body">
+                    <div class="ap-back-loader-container" v-if="edit_payout_data == ''" id="ap-page-loading-loader">
+                        <div class="ap-back-loader"></div>
+                    </div>   
                     <div v-if="edit_payout_data != ''" class="ap-dlt__form_body">
                         <div class="ap-payout-detail-box">
                             <div class="ap-dlt__form_title"><?php esc_html_e('Payout Details', 'affiliatepress-affiliate-marketing'); ?></div>

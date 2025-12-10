@@ -428,6 +428,7 @@ if (! class_exists('affiliatepress_dashboard') ) {
 
             $affiliatepress_dashboard_vue_data_fields['dashboard_date_range'] = array($affiliatepress_dashboard_start_date,$affiliatepress_dashboard_end_date);
 
+            $affiliatepress_dashboard_vue_data_fields['dashboard_change_date_loader']       = '0';
             $affiliatepress_dashboard_vue_data_fields['dashboard_total_commission']       = '';
             $affiliatepress_dashboard_vue_data_fields['dashboard_paid_commission']        = '';
             $affiliatepress_dashboard_vue_data_fields['dashboard_unpaid_commission']      = '';
@@ -557,14 +558,13 @@ if (! class_exists('affiliatepress_dashboard') ) {
                 }, 
                 affiliatepress_get_dashboard_detail(){
                     const vm = this;
-                    
+                    vm.dashboard_change_date_loader = "1";
                     var postData = { action:"affiliatepress_backend_dashboard_data", dashboard_date_range:vm.dashboard_date_range, _wpnonce:"'.esc_html(wp_create_nonce('ap_wp_nonce')).'" };
                     axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify( postData ) )
                     .then( function (response) {
                         vm.ap_first_page_loaded = "0";
-                        
                         if(response.data.variant == "success"){      
-                            
+                            vm.dashboard_change_date_loader = "0";
                             vm.dashboard_total_commission = response.data.data.dashboard_total_commission;
                             vm.dashboard_total_affiliate_count = response.data.data.dashboard_total_affiliate_count;
                             vm.dashboard_paid_commission = response.data.data.dashboard_paid_commission;
@@ -785,10 +785,13 @@ if (! class_exists('affiliatepress_dashboard') ) {
         */
         function affiliatepress_dashboard_vue_data_fields(){
 
-            global $affiliatepress_dashboard_vue_data_fields;            
+            global $affiliatepress_dashboard_vue_data_fields,$affiliatepress_global_options;            
             $affiliatepress_pagination          = wp_json_encode(array( 10, 20, 50, 100, 200, 300, 400, 500 ));
             $affiliatepress_pagination_arr      = json_decode($affiliatepress_pagination, true);
             $affiliatepress_pagination_selected = $this->affiliatepress_per_page_record;
+
+            $affiliatepress_global_options_data = $affiliatepress_global_options->affiliatepress_global_options();
+            $affiliatepress_pagination_value = (isset($affiliatepress_global_options_data['pagination_val']))?$affiliatepress_global_options_data['pagination_val']:array();
 
             $affiliatepress_dashboard_vue_data_fields = array(
                 'bulk_action'                => 'bulk_action',
@@ -819,40 +822,7 @@ if (! class_exists('affiliatepress_dashboard') ) {
                 'is_display_save_loader'     => '0',
                 'is_multiple_checked'        => false,              
                 'pagination_length_val'      => '10',
-                'pagination_val'             => array(
-                    array(
-                        'text'  => '10',
-                        'value' => '10',
-                    ),
-                    array(
-                        'text'  => '20',
-                        'value' => '20',
-                    ),
-                    array(
-                        'text'  => '50',
-                        'value' => '50',
-                    ),
-                    array(
-                        'text'  => '100',
-                        'value' => '100',
-                    ),
-                    array(
-                        'text'  => '200',
-                        'value' => '200',
-                    ),
-                    array(
-                        'text'  => '300',
-                        'value' => '300',
-                    ),
-                    array(
-                        'text'  => '400',
-                        'value' => '400',
-                    ),
-                    array(
-                        'text'  => '500',
-                        'value' => '500',
-                    ),
-                ),
+                'pagination_val'             => $affiliatepress_pagination_value,
 
             );
         }

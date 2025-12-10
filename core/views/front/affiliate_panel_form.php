@@ -92,6 +92,14 @@
                                         <el-input class="ap-form-control" type="password" :show-password="true" v-model="affiliates[affiliate_field.ap_form_field_name]" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
                                     </el-form-item>                     
                                 </div>  
+                                <div v-if="affiliate_field.ap_form_field_type == 'Password' && is_user_login == '0' && confirm_password_field.is_display_confirm_password == 'true'" class="ap-single-field__form" :class="affiliate_field.ap_field_class"> 
+                                    <el-form-item prop="confirm_password">
+                                        <template #label>
+                                            <span class="ap-form-label" v-html="confirm_password_field.confirm_password_label"  :aria-label="confirm_password_field.confirm_password_label"></span>
+                                        </template>
+                                        <el-input  class="ap-form-control" v-model="affiliates.confirm_password" type="password"  :show-password="true" size="large" :placeholder="confirm_password_field.confirm_password_placeholder"/>
+                                    </el-form-item>
+                                </div> 
                                 <div v-if="affiliate_field.ap_form_field_type == 'Textarea' && affiliate_field.ap_field_is_default == '1'" class="ap-single-field__form" :class="affiliate_field.ap_field_class">                    
                                     <el-form-item :prop="affiliate_field.ap_form_field_name">
                                         <template #label>
@@ -456,7 +464,7 @@
                                             <el-button @click="applyPaymentFilter" class="ap-btn--primary" plain type="primary" :disabled="is_apply_disabled">
                                                 <span class="ap-btn__label" :aria-label="affiliate_panel_labels.apply" v-html="affiliate_panel_labels.apply"></span>
                                             </el-button>
-                                            <el-button @click="resetpayments" class="ap-btn--second" v-if="payments_search.ap_payment_created_date != '' || payments_search.payment_status != ''">
+                                            <el-button @click="resetpayments" class="ap-btn--second" v-if="(payments_search.ap_payment_created_date && payments_search.ap_payment_created_date != 0) || payments_search.payment_status != ''">
                                                 <span class="ap-btn__label" :aria-label="affiliate_panel_labels.reset" v-html="affiliate_panel_labels.reset"></span>
                                             </el-button>
                                         </div>
@@ -616,7 +624,7 @@
                                             <el-button @click="applyCommissionsFilter" class="ap-btn--primary" plain type="primary" :disabled="is_apply_disabled">
                                                 <span class="ap-btn__label" :aria-label="affiliate_panel_labels.apply" v-html="affiliate_panel_labels.apply"></span>
                                             </el-button>
-                                            <el-button @click="resetcommissions" class="ap-btn--second" v-if="commissions_search.ap_commission_search_date != '' || commissions_search.commission_status != ''">
+                                            <el-button @click="resetcommissions" class="ap-btn--second" v-if="(commissions_search.ap_commission_search_date && commissions_search.ap_commission_search_date.length != 0) || commissions_search.commission_status != ''">
                                                 <span class="ap-btn__label" :aria-label="affiliate_panel_labels.reset" v-html="affiliate_panel_labels.reset"></span>
                                             </el-button>
                                         </div>
@@ -944,7 +952,7 @@
                                             <el-button @click="applyVisitFilter"  class="ap-btn--primary" plain type="primary" :disabled="is_apply_disabled">
                                                 <span class="ap-btn__label" :aria-label="affiliate_panel_labels.apply" v-html="affiliate_panel_labels.apply"></span>
                                             </el-button>
-                                            <el-button @click="resetvisit" class="ap-btn--second" v-if="visits_search.ap_visit_date != '' || visits_search.visit_type != 'all_visit'">
+                                            <el-button @click="resetvisit" class="ap-btn--second" v-if="(visits_search.ap_visit_date && visits_search.ap_visit_date.length != 0) || visits_search.visit_type != 'all_visit'">
                                                 <span class="ap-btn__label" :aria-label="affiliate_panel_labels.reset" v-html="affiliate_panel_labels.reset"></span>
                                             </el-button>
                                         </div>
@@ -974,7 +982,7 @@
                                     <div v-if="visits_items.length != 0 && (current_screen_size == 'tablet' || current_screen_size == 'desktop')" :class="(visits_height)?'ap-panel-visits-table':''" class="ap-visits-table-data ap-horizontal-scroll">
                                         <el-table :class="(affiliate_visit_loader == '1')?'ap-hidden-table':''"  @sort-change="handleVisitSortChange"  :data="visits_items">
                                             <el-table-column prop="" label="" min-width="30"></el-table-column>
-                                            <el-table-column  min-width="90" prop="sr_no" :label="affiliate_panel_labels.visit_serial_number">
+                                            <el-table-column  min-width="60" prop="sr_no" :label="affiliate_panel_labels.visit_serial_number">
                                                 <template #default="scope">
                                                     <span :aria-label="scope.row.sr_no">{{scope.row.sr_no}}</span>
                                                 </template>
@@ -1095,6 +1103,12 @@
                                         <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" >
                                             <div class="ap-pagination-left">
                                                 <p><span :aria-label="visits_pagination_label" v-html="visits_pagination_label">
+                                                <div class="ap-pagination-per-page">
+                                                    <p :aria-label="affiliate_panel_labels.pagination_change_label" v-html="affiliate_panel_labels.pagination_change_label"></p>
+                                                    <el-select v-model="visit_pagination_length_val" placeholder="Select" @change="visitchangePaginationSize($event)" size="large" class="ap-form-control" popper-class="ap-pagination-dropdown">
+                                                        <el-option v-for="item in visit_pagination_val" :key="item.text" :label="item.text" :value="item.value"></el-option>
+                                                    </el-select>
+                                                </div>
                                             </div>
                                         </el-col>
                                         <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" class="ap-pagination-nav">

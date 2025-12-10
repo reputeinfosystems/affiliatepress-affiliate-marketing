@@ -2403,6 +2403,10 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                         if(response.data.variant == "success"){                            
                             vm.visits_items      = response.data.items;                      
                             vm.visits_totalItems = response.data.total;
+                            var defaultPerPage = vm.visits_defaultPerPage;
+                            if(vm.visits_perpage > defaultPerPage && response.data.visits_pagination_count == 1){
+                                response.data.visits_pagination_count = 2;
+                            }
                             vm.visits_pagination_count = response.data.visits_pagination_count;
                             vm.affiliate_panel_labels       = response.data.affiliate_panel_labels;    
                             vm.visits_pagination_label       = response.data.visits_pagination_label;    
@@ -3671,6 +3675,48 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                         }
                     }
                 },
+                visitchangeCurrentPage(perPage) {
+                    const vm = this;
+                    var total_item = vm.visits_totalItems;
+                    var recored_perpage = perPage;
+                    var select_page =  vm.visits_currentPage;                
+                    var current_page = Math.ceil(total_item/recored_perpage);
+                    if(total_item <= recored_perpage ) {
+                        current_page = 1;
+                    } else if(select_page >= current_page ) {
+                        
+                    } else {
+                        current_page = select_page;
+                    }
+                    return current_page;
+                },
+                visitchangePaginationSize(selectedPage) {
+                    const vm = this;
+                    selectedPage = parseInt( selectedPage );
+                    vm.visits_perpage = selectedPage;
+                    var current_page = vm.visitchangeCurrentPage(selectedPage);                                        
+                    vm.visits_currentPage = current_page;    
+                    vm.loadvisits();
+                },
+                async validatePassword(rule, value) {
+                    if (value && this.affiliates.confirm_password) {
+                        if (this.$refs.affiliates_reg_form_data) {
+                            try {
+                                await this.$refs.affiliates_reg_form_data.validateField("confirm_password");
+                            } catch (e) {
+                                // ignore confirm password errors
+                            }
+                        }
+                    }
+                    return true;
+                },
+                validateConfirmPassword(rule, value, callback) {
+                    if (value !== this.affiliates.password) {
+                        callback(new Error(this.confirm_password_field.confirm_password_validation_msg));
+                    } else {
+                        callback();
+                    }
+                },
             ';
 
             return $affiliatepress_affiliate_panel_dynamic_vue_method;
@@ -3686,6 +3732,8 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             global $AffiliatePress,$wpdb,$affiliatepress_tbl_ap_affiliate_form_fields,$affiliatepress_global_options,$affiliatepress_tbl_ap_affiliate_form_fields,$affiliatepress_tbl_ap_affiliates,$affiliatepress_tbl_ap_affiliates_group, $affiliatepress_payout,$affiliatepress_affiliates;
 
             $affiliatepress_options = $affiliatepress_global_options->affiliatepress_global_options();
+
+            $affiliatepress_pagination_value = (isset($affiliatepress_options['fontend_pagination_val']))?$affiliatepress_options['fontend_pagination_val']:array();
 
             $affiliatepress_dynamic_data_fields['is_display_tab_content_loader'] = '1';
             
@@ -3847,12 +3895,15 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             $affiliatepress_dynamic_data_fields['visits_pagination_count'] = 1;
             $affiliatepress_dynamic_data_fields['visits_pagination_label'] = 1;
             $affiliatepress_dynamic_data_fields['visits_perpage'] = 25;
+            $affiliatepress_dynamic_data_fields['visits_defaultPerPage'] = 25;
             $affiliatepress_dynamic_data_fields['visits_currentPage'] = 1;
             $affiliatepress_dynamic_data_fields['visits_height'] = false;
             $affiliatepress_dynamic_data_fields['visits_items'] = [];
             $affiliatepress_dynamic_data_fields['visits_order_by'] = '';
             $affiliatepress_dynamic_data_fields['visits_order'] = '';            
             $affiliatepress_dynamic_data_fields['affiliate_visit_loader'] = '0';
+            $affiliatepress_dynamic_data_fields['visit_pagination_val'] = $affiliatepress_pagination_value;
+            $affiliatepress_dynamic_data_fields['visit_pagination_length_val'] = 25;
 
             /* Affiliate Link Page Data */
             $affiliatepress_dynamic_data_fields['affiliate_link'] = 'http://www.xyz.com';
@@ -3923,10 +3974,31 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 'lastname'                     => "",
                 'email'                        => "",
                 'password'                     => "",
+                'confirm_password'             => "",
                 "ap_affiliates_user_id"        => "",
                 "ap_affiliates_payment_email"  => "",
                 "ap_affiliates_website"        => "",
             );
+
+            $affiliatepress_confirm_password_field_settings = $AffiliatePress->affiliatepress_get_settings('confirm_password_field', 'field_settings');
+            $affiliatepress_confirm_password_field_settings = !empty($affiliatepress_confirm_password_field_settings) ? maybe_unserialize($affiliatepress_confirm_password_field_settings) : array();
+
+            if(!empty($affiliatepress_confirm_password_field_settings) && is_array($affiliatepress_confirm_password_field_settings)){
+
+                $affiliatepress_is_display_confirm_password = isset($affiliatepress_confirm_password_field_settings['enable_confirm_password']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['enable_confirm_password']) : '';
+                $affiliatepress_confirm_password_label = isset($affiliatepress_confirm_password_field_settings['confirm_password_label']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['confirm_password_label']) : '';
+                $affiliatepress_confirm_password_placeholder =isset($affiliatepress_confirm_password_field_settings['confirm_password_placeholder']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['confirm_password_placeholder']) : '';
+                $affiliatepress_confirm_password_error_msg = isset($affiliatepress_confirm_password_field_settings['confirm_password_error_msg']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['confirm_password_error_msg']) : '';
+                $affiliatepress_confirm_password_validation_msg = isset($affiliatepress_confirm_password_field_settings['confirm_password_validation_msg']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['confirm_password_validation_msg']) : '';
+
+                $affiliatepress_dynamic_data_fields['confirm_password_field'] = array(
+                    'is_display_confirm_password' => $affiliatepress_is_display_confirm_password,
+                    'confirm_password_label'  => $affiliatepress_confirm_password_label,
+                    'confirm_password_placeholder'  => $affiliatepress_confirm_password_placeholder,
+                    'confirm_password_error_msg'  => $affiliatepress_confirm_password_error_msg,
+                    'confirm_password_validation_msg'  => $affiliatepress_confirm_password_validation_msg,
+                );
+            }
 
             $affiliatepress_dynamic_data_fields['rules'] = array();
 
@@ -4244,6 +4316,21 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 },				
 				data(){
                     var affiliatepress_affiliate_panel_return_data = '.$affiliatepress_dynamic_data_fields.';
+
+                    if (affiliatepress_affiliate_panel_return_data.rules) {
+                        affiliatepress_affiliate_panel_return_data.rules.confirm_password = [
+                            { required: true, message: affiliatepress_affiliate_panel_return_data.confirm_password_field.confirm_password_error_msg, trigger: "blur" },
+                            { validator: this.validateConfirmPassword, trigger: "blur" }
+                        ];
+                    }
+
+                    if (affiliatepress_affiliate_panel_return_data.rules && affiliatepress_affiliate_panel_return_data.rules.password) {
+                        affiliatepress_affiliate_panel_return_data.rules.password.push({
+                            validator: this.validatePassword,
+                            trigger: ["blur", "change"]
+                        });
+                    }
+
                     affiliatepress_affiliate_panel_return_data["current_screen_size"] = "";
 
                     affiliatepress_affiliate_panel_return_data["affiliatepress_container_dynamic_class"] = "";

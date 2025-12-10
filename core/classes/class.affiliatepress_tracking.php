@@ -427,7 +427,7 @@ if( !class_exists('affiliatepress_tracking') ){
             $affiliatepress_commission_type_priorities = $AffiliatePress->affiliatepress_commission_type_priorities();
             if( !empty($affiliatepress_commission_type_priorities)){
                 asort($affiliatepress_commission_type_priorities);
-
+                
                 foreach ($affiliatepress_commission_type_priorities as $type => $priorities) {
                     $affiliatepress_commission_rules = apply_filters( 'affiliatepress_calculate_commission_amount_'.$type, $affiliatepress_commission_rules, $affiliatepress_amount, $affiliatepress_payment_currency, $affiliatepress_args); 
                 }

@@ -8,7 +8,10 @@
     </div>    
     <div v-if="ap_first_page_loaded == '0'" id="ap-main-container" class="ap-dashboard-main">
 
-        
+        <div class="ap-back-loader-container ap-dashboard-loader" v-if="dashboard_change_date_loader == '1'" id="ap-page-loading-loader">
+            <div class="ap-back-loader"></div>
+        </div>   
+
         <div class="ap-default-card ap-dashboard-count">
             <el-row :gutter="12" type="flex" class="ap-head-wrap1 ap-dashboard-heading-row">
                 <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="ap-head-left">
@@ -20,7 +23,7 @@
                     </div>
                 </el-col>                      
             </el-row>
-            <div class="ap-dashboard-count-box">
+            <div class="ap-dashboard-count-box" v-if="dashboard_change_date_loader != '1'">
                 <el-row :gutter="32" type="flex">
                     <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
                         <div class="ap-dashboard-box">
@@ -150,116 +153,42 @@
                 </el-row>
             </div>
         </div>
-        <div class="ap-dashboard-chart-data">
-            <el-row :gutter="32" type="flex">                
-                <el-col :xs="24" :sm="24" :md="24" :lg="8" :xl="8">
-                    <div class="ap-default-card ap-dashboard-chart-up ap-dashboard-revenue-up">
-                        <div class="ap-dashboard-chart-title"><?php esc_html_e('Commission Revenue', 'affiliatepress-affiliate-marketing'); ?></div>
-                        <div class="ap-dashboard-chart">                            
-                            <canvas class="ap-canvas-chart-data" id="revenue_chart" width="600" height="400"></canvas>                    
-                        </div>
-                    </div>
-                </el-col>
-                <el-col :xs="24" :sm="24" :md="24" :lg="8" :xl="8">
-                    <div class="ap-default-card ap-dashboard-chart-up ap-dashboard-visits-up">
-                        <div class="ap-dashboard-chart-title"><?php esc_html_e('Visits', 'affiliatepress-affiliate-marketing'); ?></div>
-                        <div class="ap-dashboard-chart">                            
-                            <canvas class="ap-canvas-chart-data" id="visit_chart" width="600" height="400"></canvas>                     
-                        </div>
-                    </div>
-                </el-col>  
-                <el-col :xs="24" :sm="24" :md="24" :lg="8" :xl="8">
-                    <div class="ap-default-card ap-dashboard-chart-up">
-                        <div class="ap-dashboard-chart-title"><?php esc_html_e('Affiliates', 'affiliatepress-affiliate-marketing'); ?></div>
-                        <div class="ap-dashboard-chart">                            
-                            <canvas class="ap-canvas-chart-data" id="affiliate_chart" width="600" height="400"></canvas>                     
-                        </div>
-                    </div>
-                </el-col>                                                
-            </el-row>
-        </div>
-
-        
-        <div v-if="current_grid_screen_size == 'desktop'" class="ap-default-card ap-dashboard-listing-data">
-            <div class="ap-dash-listing-wrapper">
-                <div class="ap-dash-listing-title ap-dash-valuable-title">
-                    <?php esc_html_e('Recent Commissions', 'affiliatepress-affiliate-marketing'); ?>
-                </div>
-                <div class="ap-table-container ap-listing-multi-without">
-                    <el-table ref="multipleTable" class="ap-manage-appointment-items" :data="commissions"> 
-                        <template #empty>
-                            <div class="ap-data-empty-view">
-                                <div class="ap-ev-left-vector">
-                                    <?php do_action('affiliatepress_common_svg_code','empty_view'); ?>
-                                    <div class="no-data-found-text"> <?php esc_html_e('No Data Found!', 'affiliatepress-affiliate-marketing'); ?></div>
-                                </div>
+        <div v-if="dashboard_change_date_loader != '1'">
+            <div class="ap-dashboard-chart-data">
+                <el-row :gutter="32" type="flex">                
+                    <el-col :xs="24" :sm="24" :md="24" :lg="8" :xl="8">
+                        <div class="ap-default-card ap-dashboard-chart-up ap-dashboard-revenue-up">
+                            <div class="ap-dashboard-chart-title"><?php esc_html_e('Commission Revenue', 'affiliatepress-affiliate-marketing'); ?></div>
+                            <div class="ap-dashboard-chart">                            
+                                <canvas class="ap-canvas-chart-data" id="revenue_chart" width="600" height="400"></canvas>                    
                             </div>
-                        </template>                   
-                        <el-table-column header-align="center" align="center" min-width="90" prop="ap_commission_id" label="ID">
-                            <template #default="scope">
-                                <span>#{{ scope.row.ap_commission_id }}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column  prop="full_name" min-width="180" label="<?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?>"></el-table-column>
-                        <el-table-column prop="ap_commission_source" min-width="180" label="<?php esc_html_e('Source', 'affiliatepress-affiliate-marketing'); ?>">
-                            <template #default="scope">
-                                <span>{{scope.row.source_plugin_name}}</span>
-                            </template>                             
-                        </el-table-column>
-                        <el-table-column prop="ap_commission_source" width="180" label="<?php esc_html_e('Product', 'affiliatepress-affiliate-marketing'); ?>">
-                            <template #default="scope">
-                                <span>{{scope.row.affiliatepress_commission_product}}</span>
-                            </template>                             
-                        </el-table-column>  
-                        <el-table-column  prop="ap_commission_reference_id" width="90" label="<?php esc_html_e('Reference', 'affiliatepress-affiliate-marketing'); ?>">
-                            <template #default="scope">
-                                <span v-html="scope.row.commission_order_link"></span>
-                            </template>                            
-                        </el-table-column>
-                        <el-table-column align="right" header-align="right" prop="ap_commission_reference_amount" min-width="90" label="<?php esc_html_e('Order Amount', 'affiliatepress-affiliate-marketing'); ?>">
-                            <template #default="scope">
-                                <span>{{scope.row.ap_formated_commission_reference_amount}}</span>
-                            </template>                                                        
-                        </el-table-column>
-                        <el-table-column class-name="ap-padding-left-cls ap-grid-status-align-center" align="center" header-align="center" prop="ap_referrer_url" min-width="220" label="<?php esc_html_e('Status', 'affiliatepress-affiliate-marketing'); ?>">
-                            <template #default="scope">                                    
-                                <div class="ap-table-status-dropdown-wrapper" :class="(scope.row.change_status_loader == 1) ? '__ap-is-loader-active' : ''">
-                                    <div class="ap-status-loader-wrapper" v-if="scope.row.change_status_loader == 1" :class="(scope.row.ap_commission_status == '1' ? 'ap-status--unpaid' : '') || (scope.row.ap_commission_status == '4' ? 'ap-status--active' : '') || (scope.row.ap_commission_status == '2' ? 'ap-status--pending' : '') || (scope.row.ap_commission_status == '3' ? 'ap-status--rejected' : '')">
-                                    <el-image class="ap-status-loader" src="<?php echo esc_url(AFFILIATEPRESS_IMAGES_URL . '/status-loader.gif'); ?>" alt="<?php esc_attr_e('Loader', 'affiliatepress-affiliate-marketing'); ?>"></el-image>
-                                    </div>
-                                    <div v-else>
-                                        <div v-if="scope.row.ap_commission_status == '4'" class="ap-commission-status-active ap-status--active">
-                                            <span>{{commission_status_paid}}</span>
-                                        </div>
-                                        <el-select  v-else class="ap-form-control ap-status-control" :class="(scope.row.ap_commission_status == '1' ? 'ap-status--unpaid' : '') || (scope.row.ap_commission_status == '4' ? 'ap-status--active' : '') || (scope.row.ap_commission_status == '2' ? 'ap-status--pending' : '') || (scope.row.ap_commission_status == '3' ? 'ap-status--rejected' : '')" v-model="scope.row.ap_commission_status" placeholder="Select Status" @change="affiliatepress_change_status(scope.row.ap_commission_id,scope.$index,$event,scope.row.ap_commission_status_org)" popper-class="ap-status-dropdown-popper">
-                                            <el-option-group label="<?php esc_html_e('Change status', 'affiliatepress-affiliate-marketing'); ?>">
-                                                <el-option  v-for="item in all_commissions_status" :key="item.value" :label="item.text" :value="item.value"></el-option>
-                                            </el-option-group>
-                                        </el-select>
-                                    </div>
-                                </div>                                    
-                            </template>                            
-                        </el-table-column>
-                        <el-table-column align="right" header-align="right" prop="ap_commission_amount" min-width="120" label="<?php esc_html_e('Commission Amount', 'affiliatepress-affiliate-marketing'); ?>">
-                            <template #default="scope">
-                                <span>{{scope.row.ap_formated_commission_amount}}</span>
-                            </template>                            
-                        </el-table-column>
-                        <el-table-column class-name="ap-action-column" min-width="120" prop="ap_commission_created_date" min-width="110" label="<?php esc_html_e('Date', 'affiliatepress-affiliate-marketing'); ?>">
-                            <template #default="scope">
-                                <span>{{scope.row.commission_created_date_formated}}</span>                                
-                            </template>                            
-                        </el-table-column>        
-                    </el-table>
-                </div>
+                        </div>
+                    </el-col>
+                    <el-col :xs="24" :sm="24" :md="24" :lg="8" :xl="8">
+                        <div class="ap-default-card ap-dashboard-chart-up ap-dashboard-visits-up">
+                            <div class="ap-dashboard-chart-title"><?php esc_html_e('Visits', 'affiliatepress-affiliate-marketing'); ?></div>
+                            <div class="ap-dashboard-chart">                            
+                                <canvas class="ap-canvas-chart-data" id="visit_chart" width="600" height="400"></canvas>                     
+                            </div>
+                        </div>
+                    </el-col>  
+                    <el-col :xs="24" :sm="24" :md="24" :lg="8" :xl="8">
+                        <div class="ap-default-card ap-dashboard-chart-up">
+                            <div class="ap-dashboard-chart-title"><?php esc_html_e('Affiliates', 'affiliatepress-affiliate-marketing'); ?></div>
+                            <div class="ap-dashboard-chart">                            
+                                <canvas class="ap-canvas-chart-data" id="affiliate_chart" width="600" height="400"></canvas>                     
+                            </div>
+                        </div>
+                    </el-col>                                                
+                </el-row>
             </div>
-        </div>
-        <div v-if="current_grid_screen_size != 'desktop'" class="ap-default-card ap-dashboard-listing-data ap-dashboard-listing-data-mobile">
-            <div class="ap-dash-listing-wrapper">
-                <div class="ap-dash-listing-title"><?php esc_html_e('Recent Commissions', 'affiliatepress-affiliate-marketing'); ?></div>
-                <div class="ap-table-container">
-                    <div class="ap-tc__wrapper ap-small-screen-table">
-                        <el-table ref="multipleTable" class="ap-manage-appointment-items" :data="commissions" @row-click="affiliatepress_full_row_clickable">
+            <div v-if="current_grid_screen_size == 'desktop'" class="ap-default-card ap-dashboard-listing-data">
+                <div class="ap-dash-listing-wrapper">
+                    <div class="ap-dash-listing-title ap-dash-valuable-title">
+                        <?php esc_html_e('Recent Commissions', 'affiliatepress-affiliate-marketing'); ?>
+                    </div>
+                    <div class="ap-table-container ap-listing-multi-without">
+                        <el-table ref="multipleTable" class="ap-manage-appointment-items" :data="commissions"> 
                             <template #empty>
                                 <div class="ap-data-empty-view">
                                     <div class="ap-ev-left-vector">
@@ -267,81 +196,155 @@
                                         <div class="no-data-found-text"> <?php esc_html_e('No Data Found!', 'affiliatepress-affiliate-marketing'); ?></div>
                                     </div>
                                 </div>
-                            </template>          
-                            <el-table-column type="expand">
-                                <template slot-scope="scope" #default="scope">
-                                <div class="ap-table-expand-view-wapper">
-                                    <div class="ap-table-expand-view">
-                                        <div class="ap-table-expand-view-inner">
-                                            <div class="ap-table-expand-label"><?php esc_html_e('Source', 'affiliatepress-affiliate-marketing'); ?></div>
-                                            <div class="ap-table-expand-seprater">:</div>
-                                            <div class="ap-table-expand-value">{{scope.row.source_plugin_name}}</div>
-                                        </div>                          
-                                        <div class="ap-table-expand-view-inner">
-                                            <div class="ap-table-expand-label"><?php esc_html_e('Reference', 'affiliatepress-affiliate-marketing'); ?></div>
-                                            <div class="ap-table-expand-seprater">:</div>
-                                            <div class="ap-table-expand-value">
-                                                <span v-if="scope.row.commission_order_link == ''">-</span>
-                                                <span v-else v-html="scope.row.commission_order_link"></span>                                            
-                                            </div>
-                                        </div> 
-                                        <div class="ap-table-expand-view-inner">
-                                            <div class="ap-table-expand-label"><?php esc_html_e('Order Amount', 'affiliatepress-affiliate-marketing'); ?></div>
-                                            <div class="ap-table-expand-seprater">:</div>
-                                            <div class="ap-table-expand-value">{{scope.row.ap_formated_commission_reference_amount}}</div>
-                                        </div> 
-                                        <div class="ap-table-expand-view-inner">
-                                            <div class="ap-table-expand-label"><?php esc_html_e('Product', 'affiliatepress-affiliate-marketing'); ?></div>
-                                            <div class="ap-table-expand-seprater">:</div>
-                                            <div class="ap-table-expand-value">{{scope.row.affiliatepress_commission_product}}</div>
-                                        </div>                                                                                                               
-                                    </div>
-                                </div>
-                                </template>
-                            </el-table-column>                                                    
-                            <el-table-column min-width="55" prop="ap_commission_id" label="<?php esc_html_e('ID', 'affiliatepress-affiliate-marketing'); ?>">
+                            </template>                   
+                            <el-table-column header-align="center" align="center" min-width="90" prop="ap_commission_id" label="ID">
                                 <template #default="scope">
                                     <span>#{{ scope.row.ap_commission_id }}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column class-name="ap-action-column" prop="ap_commission_created_date" min-width="100" label="<?php esc_html_e('Date', 'affiliatepress-affiliate-marketing'); ?>">
+                            <el-table-column  prop="full_name" min-width="180" label="<?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?>"></el-table-column>
+                            <el-table-column prop="ap_commission_source" min-width="180" label="<?php esc_html_e('Source', 'affiliatepress-affiliate-marketing'); ?>">
                                 <template #default="scope">
-                                    <span>{{scope.row.commission_created_date_formated}}</span>
-
-                                </template>                            
-                            </el-table-column>                         
-                            <el-table-column prop="full_name" width="200" label="<?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?>">
-                                <template #default="scope">
-                                    <span>{{ scope.row.full_name }}</span>
-                                </template>
+                                    <span>{{scope.row.source_plugin_name}}</span>
+                                </template>                             
                             </el-table-column>
-                            <el-table-column class-name="ap-padding-left-cls ap-grid-status-align-center" align="center" header-align="center" prop="status"  min-width="120" label="<?php esc_html_e('Status', 'affiliatepress-affiliate-marketing'); ?>">
-                                    <template #default="scope">                                    
-                                        <div class="ap-table-status-dropdown-wrapper" :class="(scope.row.change_status_loader == 1 ? '__ap-is-loader-active ' : '') + (current_screen_size != 'desktop' ? 'ap-small-screen-status-dropdown' : '')">
-                                            <div class="ap-status-loader-wrapper" v-if="scope.row.change_status_loader == 1" :class="(scope.row.ap_commission_status == '1' ? 'ap-status--unpaid' : '') || (scope.row.ap_commission_status == '4' ? 'ap-status--active' : '') || (scope.row.ap_commission_status == '2' ? 'ap-status--pending' : '') || (scope.row.ap_commission_status == '3' ? 'ap-status--rejected' : '')">
-                                                <el-image class="ap-status-loader" src="<?php echo esc_url(AFFILIATEPRESS_IMAGES_URL . '/status-loader.gif'); ?>" alt="<?php esc_attr_e('Loader', 'affiliatepress-affiliate-marketing'); ?>"></el-image>
+                            <el-table-column prop="ap_commission_source" width="180" label="<?php esc_html_e('Product', 'affiliatepress-affiliate-marketing'); ?>">
+                                <template #default="scope">
+                                    <span>{{scope.row.affiliatepress_commission_product}}</span>
+                                </template>                             
+                            </el-table-column>  
+                            <el-table-column  prop="ap_commission_reference_id" width="90" label="<?php esc_html_e('Reference', 'affiliatepress-affiliate-marketing'); ?>">
+                                <template #default="scope">
+                                    <span v-html="scope.row.commission_order_link"></span>
+                                </template>                            
+                            </el-table-column>
+                            <el-table-column align="right" header-align="right" prop="ap_commission_reference_amount" min-width="90" label="<?php esc_html_e('Order Amount', 'affiliatepress-affiliate-marketing'); ?>">
+                                <template #default="scope">
+                                    <span>{{scope.row.ap_formated_commission_reference_amount}}</span>
+                                </template>                                                        
+                            </el-table-column>
+                            <el-table-column class-name="ap-padding-left-cls ap-grid-status-align-center" align="center" header-align="center" prop="ap_referrer_url" min-width="220" label="<?php esc_html_e('Status', 'affiliatepress-affiliate-marketing'); ?>">
+                                <template #default="scope">                                    
+                                    <div class="ap-table-status-dropdown-wrapper" :class="(scope.row.change_status_loader == 1) ? '__ap-is-loader-active' : ''">
+                                        <div class="ap-status-loader-wrapper" v-if="scope.row.change_status_loader == 1" :class="(scope.row.ap_commission_status == '1' ? 'ap-status--unpaid' : '') || (scope.row.ap_commission_status == '4' ? 'ap-status--active' : '') || (scope.row.ap_commission_status == '2' ? 'ap-status--pending' : '') || (scope.row.ap_commission_status == '3' ? 'ap-status--rejected' : '')">
+                                        <el-image class="ap-status-loader" src="<?php echo esc_url(AFFILIATEPRESS_IMAGES_URL . '/status-loader.gif'); ?>" alt="<?php esc_attr_e('Loader', 'affiliatepress-affiliate-marketing'); ?>"></el-image>
+                                        </div>
+                                        <div v-else>
+                                            <div v-if="scope.row.ap_commission_status == '4'" class="ap-commission-status-active ap-status--active">
+                                                <span>{{commission_status_paid}}</span>
                                             </div>
-                                            <div v-else>
-                                                <div v-if="scope.row.ap_commission_status == '4'" class="ap-commission-status-active ap-status--active">
-                                                    <span>{{commission_status_paid}}</span>
+                                            <el-select  v-else class="ap-form-control ap-status-control" :class="(scope.row.ap_commission_status == '1' ? 'ap-status--unpaid' : '') || (scope.row.ap_commission_status == '4' ? 'ap-status--active' : '') || (scope.row.ap_commission_status == '2' ? 'ap-status--pending' : '') || (scope.row.ap_commission_status == '3' ? 'ap-status--rejected' : '')" v-model="scope.row.ap_commission_status" placeholder="Select Status" @change="affiliatepress_change_status(scope.row.ap_commission_id,scope.$index,$event,scope.row.ap_commission_status_org)" popper-class="ap-status-dropdown-popper">
+                                                <el-option-group label="<?php esc_html_e('Change status', 'affiliatepress-affiliate-marketing'); ?>">
+                                                    <el-option  v-for="item in all_commissions_status" :key="item.value" :label="item.text" :value="item.value"></el-option>
+                                                </el-option-group>
+                                            </el-select>
+                                        </div>
+                                    </div>                                    
+                                </template>                            
+                            </el-table-column>
+                            <el-table-column align="right" header-align="right" prop="ap_commission_amount" min-width="120" label="<?php esc_html_e('Commission Amount', 'affiliatepress-affiliate-marketing'); ?>">
+                                <template #default="scope">
+                                    <span>{{scope.row.ap_formated_commission_amount}}</span>
+                                </template>                            
+                            </el-table-column>
+                            <el-table-column class-name="ap-action-column" min-width="120" prop="ap_commission_created_date" min-width="110" label="<?php esc_html_e('Date', 'affiliatepress-affiliate-marketing'); ?>">
+                                <template #default="scope">
+                                    <span>{{scope.row.commission_created_date_formated}}</span>                                
+                                </template>                            
+                            </el-table-column>        
+                        </el-table>
+                    </div>
+                </div>
+            </div>
+            <div v-if="current_grid_screen_size != 'desktop'" class="ap-default-card ap-dashboard-listing-data ap-dashboard-listing-data-mobile">
+                <div class="ap-dash-listing-wrapper">
+                    <div class="ap-dash-listing-title"><?php esc_html_e('Recent Commissions', 'affiliatepress-affiliate-marketing'); ?></div>
+                    <div class="ap-table-container">
+                        <div class="ap-tc__wrapper ap-small-screen-table">
+                            <el-table ref="multipleTable" class="ap-manage-appointment-items" :data="commissions" @row-click="affiliatepress_full_row_clickable">
+                                <template #empty>
+                                    <div class="ap-data-empty-view">
+                                        <div class="ap-ev-left-vector">
+                                            <?php do_action('affiliatepress_common_svg_code','empty_view'); ?>
+                                            <div class="no-data-found-text"> <?php esc_html_e('No Data Found!', 'affiliatepress-affiliate-marketing'); ?></div>
+                                        </div>
+                                    </div>
+                                </template>          
+                                <el-table-column type="expand">
+                                    <template slot-scope="scope" #default="scope">
+                                    <div class="ap-table-expand-view-wapper">
+                                        <div class="ap-table-expand-view">
+                                            <div class="ap-table-expand-view-inner">
+                                                <div class="ap-table-expand-label"><?php esc_html_e('Source', 'affiliatepress-affiliate-marketing'); ?></div>
+                                                <div class="ap-table-expand-seprater">:</div>
+                                                <div class="ap-table-expand-value">{{scope.row.source_plugin_name}}</div>
+                                            </div>                          
+                                            <div class="ap-table-expand-view-inner">
+                                                <div class="ap-table-expand-label"><?php esc_html_e('Reference', 'affiliatepress-affiliate-marketing'); ?></div>
+                                                <div class="ap-table-expand-seprater">:</div>
+                                                <div class="ap-table-expand-value">
+                                                    <span v-if="scope.row.commission_order_link == ''">-</span>
+                                                    <span v-else v-html="scope.row.commission_order_link"></span>                                            
                                                 </div>
-                                                <el-select v-else class="ap-form-control ap-status-control" :class="(scope.row.ap_commission_status == '1' ? 'ap-status--unpaid' : '') || (scope.row.ap_commission_status == '4' ? 'ap-status--active' : '') || (scope.row.ap_commission_status == '2' ? 'ap-status--pending' : '') || (scope.row.ap_commission_status == '3' ? 'ap-status--rejected' : '')" v-model="scope.row.ap_commission_status" placeholder="Select Status" @change="affiliatepress_change_status(scope.row.ap_commission_id,scope.$index,$event,scope.row.ap_commission_status_org)" popper-class="ap-status-dropdown-popper">
-                                                    <el-option-group label="<?php esc_html_e('Status', 'affiliatepress-affiliate-marketing'); ?>">
-                                                        <el-option  v-for="item in all_commissions_status" :key="item.value" :label="item.text" :value="item.value"></el-option>
-                                                    </el-option-group>
-                                                </el-select>
-                                            </div>
-                                        </div>                                    
-                                    </template> 
-                            </el-table-column>                            
-                            <el-table-column align="right" header-align="right" prop="ap_commission_amount" min-width="100" label="<?php esc_html_e('Commission', 'affiliatepress-affiliate-marketing'); ?>">
+                                            </div> 
+                                            <div class="ap-table-expand-view-inner">
+                                                <div class="ap-table-expand-label"><?php esc_html_e('Order Amount', 'affiliatepress-affiliate-marketing'); ?></div>
+                                                <div class="ap-table-expand-seprater">:</div>
+                                                <div class="ap-table-expand-value">{{scope.row.ap_formated_commission_reference_amount}}</div>
+                                            </div> 
+                                            <div class="ap-table-expand-view-inner">
+                                                <div class="ap-table-expand-label"><?php esc_html_e('Product', 'affiliatepress-affiliate-marketing'); ?></div>
+                                                <div class="ap-table-expand-seprater">:</div>
+                                                <div class="ap-table-expand-value">{{scope.row.affiliatepress_commission_product}}</div>
+                                            </div>                                                                                                               
+                                        </div>
+                                    </div>
+                                    </template>
+                                </el-table-column>                                                    
+                                <el-table-column min-width="55" prop="ap_commission_id" label="<?php esc_html_e('ID', 'affiliatepress-affiliate-marketing'); ?>">
                                     <template #default="scope">
-                                        <span>{{scope.row.ap_formated_commission_amount}}</span>
+                                        <span>#{{ scope.row.ap_commission_id }}</span>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column class-name="ap-action-column" prop="ap_commission_created_date" min-width="100" label="<?php esc_html_e('Date', 'affiliatepress-affiliate-marketing'); ?>">
+                                    <template #default="scope">
+                                        <span>{{scope.row.commission_created_date_formated}}</span>
+
                                     </template>                            
-                            </el-table-column>               
-                        </el-table>    
-                        
-                    </div>                     
+                                </el-table-column>                         
+                                <el-table-column prop="full_name" width="200" label="<?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?>">
+                                    <template #default="scope">
+                                        <span>{{ scope.row.full_name }}</span>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column class-name="ap-padding-left-cls ap-grid-status-align-center" align="center" header-align="center" prop="status"  min-width="120" label="<?php esc_html_e('Status', 'affiliatepress-affiliate-marketing'); ?>">
+                                        <template #default="scope">                                    
+                                            <div class="ap-table-status-dropdown-wrapper" :class="(scope.row.change_status_loader == 1 ? '__ap-is-loader-active ' : '') + (current_screen_size != 'desktop' ? 'ap-small-screen-status-dropdown' : '')">
+                                                <div class="ap-status-loader-wrapper" v-if="scope.row.change_status_loader == 1" :class="(scope.row.ap_commission_status == '1' ? 'ap-status--unpaid' : '') || (scope.row.ap_commission_status == '4' ? 'ap-status--active' : '') || (scope.row.ap_commission_status == '2' ? 'ap-status--pending' : '') || (scope.row.ap_commission_status == '3' ? 'ap-status--rejected' : '')">
+                                                    <el-image class="ap-status-loader" src="<?php echo esc_url(AFFILIATEPRESS_IMAGES_URL . '/status-loader.gif'); ?>" alt="<?php esc_attr_e('Loader', 'affiliatepress-affiliate-marketing'); ?>"></el-image>
+                                                </div>
+                                                <div v-else>
+                                                    <div v-if="scope.row.ap_commission_status == '4'" class="ap-commission-status-active ap-status--active">
+                                                        <span>{{commission_status_paid}}</span>
+                                                    </div>
+                                                    <el-select v-else class="ap-form-control ap-status-control" :class="(scope.row.ap_commission_status == '1' ? 'ap-status--unpaid' : '') || (scope.row.ap_commission_status == '4' ? 'ap-status--active' : '') || (scope.row.ap_commission_status == '2' ? 'ap-status--pending' : '') || (scope.row.ap_commission_status == '3' ? 'ap-status--rejected' : '')" v-model="scope.row.ap_commission_status" placeholder="Select Status" @change="affiliatepress_change_status(scope.row.ap_commission_id,scope.$index,$event,scope.row.ap_commission_status_org)" popper-class="ap-status-dropdown-popper">
+                                                        <el-option-group label="<?php esc_html_e('Status', 'affiliatepress-affiliate-marketing'); ?>">
+                                                            <el-option  v-for="item in all_commissions_status" :key="item.value" :label="item.text" :value="item.value"></el-option>
+                                                        </el-option-group>
+                                                    </el-select>
+                                                </div>
+                                            </div>                                    
+                                        </template> 
+                                </el-table-column>                            
+                                <el-table-column align="right" header-align="right" prop="ap_commission_amount" min-width="100" label="<?php esc_html_e('Commission', 'affiliatepress-affiliate-marketing'); ?>">
+                                        <template #default="scope">
+                                            <span>{{scope.row.ap_formated_commission_amount}}</span>
+                                        </template>                            
+                                </el-table-column>               
+                            </el-table>    
+                            
+                        </div>                     
+                    </div>
                 </div>
             </div>
         </div>

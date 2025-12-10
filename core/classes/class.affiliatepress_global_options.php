@@ -505,7 +505,55 @@ if (! class_exists('affiliatepress_global_options') ) {
                         'value' => 'md5',
                         'text'  => esc_html__('MD5 Hashed Affiliate ID', 'affiliatepress-affiliate-marketing'),
                     ),      
-                )
+                ),
+                'pagination_val'             => array(
+                    array(
+                        'text'  => '10',
+                        'value' => '10',
+                    ),
+                    array(
+                        'text'  => '25',
+                        'value' => '25',
+                    ),
+                    array(
+                        'text'  => '50',
+                        'value' => '50',
+                    ),
+                    array(
+                        'text'  => '100',
+                        'value' => '100',
+                    ),
+                    array(
+                        'text'  => '250',
+                        'value' => '250',
+                    ),
+                    array(
+                        'text'  => '500',
+                        'value' => '500',
+                    ),
+                ),
+                'fontend_pagination_val'             => array(
+                    array(
+                        'text'  => '10',
+                        'value' => '10',
+                    ),
+                    array(
+                        'text'  => '25',
+                        'value' => '25',
+                    ),
+                    array(
+                        'text'  => '50',
+                        'value' => '50',
+                    ),
+                    array(
+                        'text'  => '100',
+                        'value' => '100',
+                    ),
+                    array(
+                        'text'  => '250',
+                        'value' => '250',
+                    ),
+                ),
             );            
             $affiliatepress_global_data = apply_filters('affiliatepress_add_global_option_data', $affiliatepress_global_data);
             return $affiliatepress_global_data;

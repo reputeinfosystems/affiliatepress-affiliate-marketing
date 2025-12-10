@@ -1377,17 +1377,10 @@ if (! class_exists('affiliatepress_affiliates') ) {
                     $affiliatepress_where_clause.= $wpdb->prepare( " AND affiliate.ap_affiliates_status = %d", intval($_REQUEST['search_data']['ap_affiliates_status']) );// phpcs:ignore 
                 }                
                 if (!empty($_REQUEST['search_data']['ap_affiliates_user']) ) {// phpcs:ignore 
-                    $affiliatepress_search_name   = sanitize_text_field($_REQUEST['search_data']['ap_affiliates_user']);// phpcs:ignore                     
-                    $affiliatepress_search_name_last = $affiliatepress_search_name;
-                    if(!empty($affiliatepress_search_name)){
-                        $name_parts = explode(' ', $affiliatepress_search_name);                                    
-                        $affiliatepress_search_name = isset($name_parts[0]) ? $name_parts[0] : '';
-                        if(isset($name_parts[1])){
-                            $affiliatepress_search_name_last = isset($name_parts[1]) ? $name_parts[1] : '';
-                        }                                                
-                    }
+                    
+                    $affiliatepress_search_id   = intval($_REQUEST['search_data']['ap_affiliates_user']);// phpcs:ignore
 
-                    $affiliatepress_where_clause.= $wpdb->prepare( " AND (affiliate.ap_affiliates_first_name LIKE %s OR affiliate.ap_affiliates_last_name LIKE %s) ", '%'.$affiliatepress_search_name.'%' , '%'.$affiliatepress_search_name_last.'%' );
+                    $affiliatepress_where_clause.= $wpdb->prepare( " AND (affiliate.ap_affiliates_id = %d) ", $affiliatepress_search_id);
                 } 
 
             }  
@@ -1525,7 +1518,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
         */
         function affiliatepress_add_affiliate_func(){
             
-            global $wpdb, $affiliatepress_tbl_ap_affiliates,$affiliatepress_tbl_ap_affiliate_form_fields;
+            global $wpdb, $affiliatepress_tbl_ap_affiliates,$affiliatepress_tbl_ap_affiliate_form_fields,$AffiliatePress;
             $affiliatepress_ap_check_authorization = $this->affiliatepress_ap_check_authentication( 'add_affiliate', true, 'ap_wp_nonce' );
             $response = array();
             $response['variant'] = 'error';
@@ -1586,6 +1579,25 @@ if (! class_exists('affiliatepress_affiliates') ) {
                 $affiliatepress_user_pass        = wp_generate_password(12, false);
                 // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $_POST['search_data'] contains password and will be hashed using wp_create_user function. 
                 $affiliatepress_password = ! empty($_POST['password']) ? sanitize_text_field($_POST['password']) : '';// phpcs:ignore
+
+                $affiliatepress_confirm_password_field_settings = $AffiliatePress->affiliatepress_get_settings('confirm_password_field', 'field_settings');
+                $affiliatepress_confirm_password_field_settings = !empty($affiliatepress_confirm_password_field_settings) ? maybe_unserialize($affiliatepress_confirm_password_field_settings) : array();
+    
+                if(!empty($affiliatepress_confirm_password_field_settings) && is_array($affiliatepress_confirm_password_field_settings)){
+    
+                    $affiliatepress_is_display_confirm_password = isset($affiliatepress_confirm_password_field_settings['enable_confirm_password']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['enable_confirm_password']) : '';
+                    $affiliatepress_confirm_password_validation_msg = isset($affiliatepress_confirm_password_field_settings['confirm_password_validation_msg']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['confirm_password_validation_msg']) : '';
+
+                    if($affiliatepress_is_display_confirm_password == "true"){
+                        $affiliatepress_confirm_password = ! empty($_POST['confirm_password']) ? sanitize_text_field(wp_unslash($_POST['confirm_password'])) : ''; 
+                        if ($affiliatepress_password !== $affiliatepress_confirm_password) {
+                            $response['msg'] = $affiliatepress_confirm_password_validation_msg.'.';
+                            wp_send_json($response);
+                            die();
+                        }
+                    }
+
+                }
 
                 if (strlen($affiliatepress_firstname) > 255 ) {
                     $response['msg'] = esc_html__('Firstname is too long...', 'affiliatepress-affiliate-marketing');
@@ -1987,6 +1999,26 @@ if (! class_exists('affiliatepress_affiliates') ) {
             $affiliatepress_affiliate_vue_data_fields['import_count']        = '0';
             $affiliatepress_affiliate_vue_data_fields['duplicate_count']     = '0';
 
+            $affiliatepress_confirm_password_field_settings = $AffiliatePress->affiliatepress_get_settings('confirm_password_field', 'field_settings');
+            $affiliatepress_confirm_password_field_settings = !empty($affiliatepress_confirm_password_field_settings) ? maybe_unserialize($affiliatepress_confirm_password_field_settings) : array();
+
+            if(!empty($affiliatepress_confirm_password_field_settings) && is_array($affiliatepress_confirm_password_field_settings)){
+
+                $affiliatepress_is_display_confirm_password = isset($affiliatepress_confirm_password_field_settings['enable_confirm_password']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['enable_confirm_password']) : '';
+                $affiliatepress_confirm_password_label = isset($affiliatepress_confirm_password_field_settings['confirm_password_label']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['confirm_password_label']) : '';
+                $affiliatepress_confirm_password_placeholder =isset($affiliatepress_confirm_password_field_settings['confirm_password_placeholder']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['confirm_password_placeholder']) : '';
+                $affiliatepress_confirm_password_error_msg = isset($affiliatepress_confirm_password_field_settings['confirm_password_error_msg']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['confirm_password_error_msg']) : '';
+                $affiliatepress_confirm_password_validation_msg = isset($affiliatepress_confirm_password_field_settings['confirm_password_validation_msg']) ? sanitize_text_field($affiliatepress_confirm_password_field_settings['confirm_password_validation_msg']) : '';
+
+                $affiliatepress_affiliate_vue_data_fields['confirm_password_field'] = array(
+                    'is_display_confirm_password' => $affiliatepress_is_display_confirm_password,
+                    'confirm_password_label'  => $affiliatepress_confirm_password_label,
+                    'confirm_password_placeholder'  => $affiliatepress_confirm_password_placeholder,
+                    'confirm_password_error_msg'  => $affiliatepress_confirm_password_error_msg,
+                    'confirm_password_validation_msg'  => $affiliatepress_confirm_password_validation_msg,
+                );
+            }
+
             $affiliatepress_affiliate_vue_data_fields = apply_filters('affiliatepress_backend_modify_affiliate_data_fields', $affiliatepress_affiliate_vue_data_fields);
 
             return wp_json_encode($affiliatepress_affiliate_vue_data_fields);
@@ -2370,6 +2402,10 @@ if (! class_exists('affiliatepress_affiliates') ) {
                     if(response.data.variant == "success"){
                         vm.items = response.data.items;
                         vm.totalItems = response.data.total;
+                        var defaultPerPage = '.$this->affiliatepress_per_page_record.';
+                        if(vm.perPage > defaultPerPage && response.data.pagination_count == 1){
+                            response.data.pagination_count = 2;
+                        }
                         vm.pagination_count = response.data.pagination_count;
                     }else{
                         vm.$notify({
@@ -2586,7 +2622,76 @@ if (! class_exists('affiliatepress_affiliates') ) {
                     return;
                 }
                 vm.$refs.multipleTable.toggleRowExpansion(row);
-            },                                                                                                                                        
+            },  
+            changeCurrentPage(perPage) {
+                const vm = this;
+                var total_item = vm.totalItems;
+                var recored_perpage = perPage;
+                var select_page =  vm.currentPage;                
+                var current_page = Math.ceil(total_item/recored_perpage);
+                if(total_item <= recored_perpage ) {
+                    current_page = 1;
+                } else if(select_page >= current_page ) {
+                    
+                } else {
+                    current_page = select_page;
+                }
+                return current_page;
+            },
+            changePaginationSize(selectedPage) {
+                const vm = this;
+                selectedPage = parseInt( selectedPage );
+                vm.perPage = selectedPage;
+                var current_page = vm.changeCurrentPage(selectedPage);                                        
+                vm.currentPage = current_page;    
+                vm.loadAffiliate();
+            },
+            async validatePassword(rule, value) {
+                if (value && this.affiliates.confirm_password) {
+                    if (this.$refs.affiliates_form_data) {
+                        try {
+                            await this.$refs.affiliates_form_data.validateField("confirm_password");
+                        } catch (e) {
+                            // ignore confirm password errors
+                        }
+                    }
+                }
+                return true;
+            },
+            validateConfirmPassword(rule, value, callback) {
+                if (value !== this.affiliates.password) {
+                    callback(new Error(this.confirm_password_field.confirm_password_validation_msg));
+                } else {
+                    callback();
+                }
+            },
+            affiliatepress_get_existing_affiliate_details(affiliatepress_selected_user_id){
+                const vm = this;  
+                if(vm.$refs["selectAffUserRef"] && vm.$refs["selectAffUserRef"].$el.querySelector("input")){
+                    setTimeout(function(){
+                        vm.$refs["selectAffUserRef"].$el.querySelector("input").blur();
+                    },100);                
+                }        
+                if (typeof vm.$refs["commission_form_data"] != "undefined") {
+                    vm.$refs["commission_form_data"].validateField("ap_affiliates_id");
+                  }                      
+            },
+            get_affiliate_users(query) {
+                const vm = this;	
+                if (query !== "") {
+                    vm.affiliatepress_user_loading = true;                    
+                    var customer_action = { action:"affiliatepress_get_affiliate_users",search_user_str:query,ap_affiliates_user_id:vm.ap_affiliates_user_id,_wpnonce:"'.esc_html(wp_create_nonce('ap_wp_nonce')).'" }                    
+                    axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify( customer_action ) )
+                    .then(function(response){
+                        vm.affiliatepress_user_loading = false;
+                        vm.AffiliateUsersList = response.data.users
+                    }).catch(function(error){
+                        console.log(error)
+                    });
+                } else {
+                    vm.AffiliateUsersList = [];
+                }	
+            },        
             ';
 
             $affiliatepress_affiliates_dynamic_vue_methods = apply_filters('affiliatepress_affiliate_add_dynamic_vue_methods', $affiliatepress_affiliates_dynamic_vue_methods);
@@ -2615,10 +2720,13 @@ if (! class_exists('affiliatepress_affiliates') ) {
         */
         function affiliatepress_affiliates_vue_data_fields(){
 
-            global $affiliatepress_affiliate_vue_data_fields;            
+            global $affiliatepress_affiliate_vue_data_fields,$affiliatepress_global_options;            
             $affiliatepress_pagination          = wp_json_encode(array( 10, 20, 50, 100, 200, 300, 400, 500 ));
             $affiliatepress_pagination_arr      = json_decode($affiliatepress_pagination, true);
             $affiliatepress_pagination_selected = $this->affiliatepress_per_page_record;
+
+            $affiliatepress_global_options_data = $affiliatepress_global_options->affiliatepress_global_options();
+            $affiliatepress_pagination_value = (isset($affiliatepress_global_options_data['pagination_val']))?$affiliatepress_global_options_data['pagination_val']:array();
 
             $affiliatepress_affiliate_vue_data_fields = array(
                 'bulk_action'                => 'bulk_action',
@@ -2662,6 +2770,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
                     'lastname'                     => "",
                     'email'                        => "",
                     'password'                     => "",
+                    'confirm_password'             => "",
                     "ap_affiliates_id"             => "",
                     "ap_affiliates_user_id"        => "",
                     "ap_affiliates_payment_email"  => "",
@@ -2736,43 +2845,9 @@ if (! class_exists('affiliatepress_affiliates') ) {
                             'trigger' => 'blur',
                         ),                        
                     ),                    
-                ),                
-                'pagination_length_val'      => '10',
-                'pagination_val'             => array(
-                    array(
-                        'text'  => '10',
-                        'value' => '10',
-                    ),
-                    array(
-                        'text'  => '20',
-                        'value' => '20',
-                    ),
-                    array(
-                        'text'  => '50',
-                        'value' => '50',
-                    ),
-                    array(
-                        'text'  => '100',
-                        'value' => '100',
-                    ),
-                    array(
-                        'text'  => '200',
-                        'value' => '200',
-                    ),
-                    array(
-                        'text'  => '300',
-                        'value' => '300',
-                    ),
-                    array(
-                        'text'  => '400',
-                        'value' => '400',
-                    ),
-                    array(
-                        'text'  => '500',
-                        'value' => '500',
-                    ),
                 ),
-
+		        'pagination_length_val'      => '10',
+                'pagination_val'             => $affiliatepress_pagination_value,
             );
         }
 
