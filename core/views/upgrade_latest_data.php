@@ -27,7 +27,7 @@ if (version_compare($affiliatepress_old_version, '1.3', '<') )
     $AffiliatePress->affiliatepress_update_settings('visit_all','message_settings',esc_html__('All Visits', 'affiliatepress-affiliate-marketing'));
 }
 
-$affiliatepress_new_version = '1.3';
+$affiliatepress_new_version = '1.4';
 update_option('affiliatepress_new_version_installed', 1);
 update_option('affiliatepress_version', $affiliatepress_new_version);
 update_option('affiliatepress_updated_date_' . $affiliatepress_new_version, current_time('mysql'));

@@ -36,7 +36,7 @@ if (! defined('AFFILIATEPRESS_FS_METHOD') ) {
 }
 
 global $affiliatepress_version, $affiliatepress_website_url;
-$affiliatepress_version = "1.3";
+$affiliatepress_version = "1.4";
 
 $affiliatepress_website_url = "https://www.affiliatepressplugin.com/";
 
@@ -346,17 +346,6 @@ function affiliatepress_plugin_links($links, $file){
     global $wp, $wpdb, $AffiliatePress,$affiliatepress_website_url;
     $main_file = plugin_basename(AFFILIATEPRESS_DIR . 'affiliatepress-affiliate-marketing.php');
     if ($file == $main_file && !is_plugin_active( 'affiliatepress-affiliate-marketing-pro/affiliatepress-affiliate-marketing-pro.php' ) ) {
-
-        if( isset( $links['deactivate'] ) ) {
-            $deactivation_link = $links['deactivate'];
-            // Insert an onClick action to allow form before deactivating
-            $deactivation_link = str_replace( '<a ',
-                '<div class="affiliatepresslite-deactivate-form-wrapper">
-                    <span class="affiliatepresslite-deactivate-form" id="affiliatepresslite-deactivate-form-' . esc_attr('AffiliatePressLite') . '"></span>
-                </div><a id="affiliatepresslite-deactivate-link-' . esc_attr('AffiliatePressLite') . '"', $deactivation_link );
-            $links['deactivate'] = $deactivation_link;
-        }
-
         $link = '<a class="ap-plugin-upgrade-to-pro" title="' . esc_html__('Upgrade To Premium', 'affiliatepress-affiliate-marketing') . '" href='.$affiliatepress_website_url.'pricing/?utm_source=liteversion&utm_medium=plugin&utm_campaign=Upgrade+to+Premium&utm_id=affiliatepress_2" style="font-weight:bold;">' . esc_html__('Upgrade To Premium', 'affiliatepress-affiliate-marketing') . '</a>';
         array_unshift($links, $link); /* Add Link To First Position */
     }

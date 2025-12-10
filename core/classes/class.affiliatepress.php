@@ -708,7 +708,7 @@ if (! class_exists('AffiliatePress') ) {
                 $html                                 .= '<div class="affiliatepresslite-deactivate-form-body">';
                 if (is_array($question_options['list_data_options']) ) {
                     $html .= '<div class="affiliatepresslite-deactivate-options">';
-                    $html .= '<p><strong>' . esc_html__('Before you deactivate the affiliatepress Lite plugin, would you quickly give us your reason for doing so?', 'affiliatepress-affiliate-marketing') . '</strong></p><p>';
+                    $html .= '<p><strong>' . esc_html__('Before you deactivate the AffiliatePress Lite plugin, would you quickly give us your reason for doing so?', 'affiliatepress-affiliate-marketing') . '</strong></p><p>';
     
                     foreach ( $question_options['list_data_options'] as $key => $option ) {
                         $html .= '<input type="radio" class="affiliatepresslite-deactivate-reason" name="affiliatepresslite-deactivate-reason" id="' . esc_attr($key) . '" value="' . esc_attr($key) . '"> <label for="' . esc_attr($key) . '">' . esc_attr($option) . '</label><br>';
@@ -844,7 +844,7 @@ if (! class_exists('AffiliatePress') ) {
         {
             global $affiliatepress_version, $AffiliatePress;
             $affiliatepress_old_version = get_option('affiliatepress_version', true);
-            if (version_compare($affiliatepress_old_version, '1.3', '<') ) {
+            if (version_compare($affiliatepress_old_version, '1.4', '<') ) {
                 $affiliatepress_load_upgrade_file = AFFILIATEPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $affiliatepress_load_upgrade_file;
                 $AffiliatePress->affiliatepress_send_anonymous_data_cron();
