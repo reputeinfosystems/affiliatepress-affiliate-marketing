@@ -35,7 +35,8 @@ if( !class_exists('affiliatepress_wp_simple_pay') ){
 
                     /* Add For Light Version */
                     add_filter('simpay_get_session_args_from_payment_form_request',array( $this,'affiliatepress_track_commission_wpsimplepay_lite'),10,5);			    
-                    add_action('simpay_payment_receipt_viewed',array( $this, 'affiliatepress_commission_wpsimplepay_lite_add' ));
+                    // add_action('simpay_payment_receipt_viewed',array( $this, 'affiliatepress_commission_wpsimplepay_lite_add' ));
+                    add_action('_simpay_payment_confirmation',array( $this, 'affiliatepress_commission_wpsimplepay_lite_add' ) ,10 ,3);
 
                 }
 
@@ -211,7 +212,7 @@ if( !class_exists('affiliatepress_wp_simple_pay') ){
          * @param  array $affiliatepress_payment_data
          * @return void
         */
-        public function affiliatepress_commission_wpsimplepay_lite_add( $affiliatepress_payment_data ){
+        public function affiliatepress_commission_wpsimplepay_lite_add( $affiliatepress_payment_data ,$affiliatepress_paymnet_form ,$afiliatepress_simple_pay_get_data){
             global $AffiliatePress;
             $affiliatepress_payment_info = current( $affiliatepress_payment_data['paymentintents'] );
             $this->affiliatepress_add_pending_commission( null, $affiliatepress_payment_info );

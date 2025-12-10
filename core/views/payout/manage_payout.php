@@ -38,7 +38,7 @@
                         </el-col>
                     </el-row>
                 </el-col>
-                <el-col :xs="24" :sm="24" :md="24" :lg="9" :xl="4">
+                <el-col :xs="24" :sm="24" :md="24" :lg="9" :xl="6">
                     <el-button @click="loadPayouts()" class="ap-btn--primary" plain type="primary" :disabled="is_apply_disabled">
                         <span class="ap-btn__label"><?php esc_html_e('Apply', 'affiliatepress-affiliate-marketing'); ?></span>
                     </el-button>

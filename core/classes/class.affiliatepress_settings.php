@@ -1429,7 +1429,7 @@ if (! class_exists('affiliatepress_settings') ) {
                             'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
                             'trigger'  => 'blur',
                         ),
-                    ),   
+                    ), 
                      'creative_title'  => array(
                         array(
                             'required' => true,
@@ -1952,7 +1952,7 @@ if (! class_exists('affiliatepress_settings') ) {
                     'visit_landing_url'            => '',
                     'visit_referrer_url'           => '',
                     'visit_direct_trafic'          => '',
-                    'visit_unconverted_status'          => '',
+                    'visit_unconverted_status'     => '',
 
                     //Creative
                     'creative_title'                    => '',

@@ -3714,7 +3714,27 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                         callback();
                     }
                 },
-            ';
+                checklandingOverflow(row) {
+                    return (el) => {
+                    if (!el) return;
+
+                    requestAnimationFrame(() => {
+                        const hasOverflow = el.scrollHeight > el.offsetHeight;
+                        row._isOverflow = hasOverflow;
+                    });
+                    };
+                },
+                checkrefgOverflow(row) {
+                    return (el) => {
+                    if (!el) return;
+
+                    requestAnimationFrame(() => {
+                        const hasOverflow = el.scrollHeight > el.offsetHeight;
+                        row._refOverflow = hasOverflow;
+                    });
+                    };
+                },
+                ';
 
             return $affiliatepress_affiliate_panel_dynamic_vue_method;
         }

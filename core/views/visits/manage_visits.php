@@ -40,7 +40,7 @@
                         </el-col>             
                     </el-row>
                 </el-col>   
-                <el-col :xs="24" :sm="24" :md="24" :lg="6" :xl="4">
+                <el-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6">
                         <el-button @click="applyFilter()" class="ap-btn--primary" plain type="primary" :disabled="is_apply_disabled">
                             <span class="ap-btn__label"><?php esc_html_e('Apply', 'affiliatepress-affiliate-marketing'); ?></span>
                         </el-button>
@@ -124,18 +124,40 @@
                                         </el-popover>
                                     </template>
                                 </el-table-column>
-                                <el-table-column prop="ap_visit_ip_address" min-width="90" label="<?php esc_html_e('IP Address', 'affiliatepress-affiliate-marketing'); ?>"></el-table-column>
-                                <el-table-column prop="ap_visit_landing_url" min-width="250" label="<?php esc_html_e('Landing URL', 'affiliatepress-affiliate-marketing'); ?>"></el-table-column>
+                                <el-table-column prop="ap_visit_ip_address" min-width="90" label="<?php esc_html_e('IP Address', 'affiliatepress-affiliate-marketing'); ?>">
+                                    <template #default="scope">
+                                        <div class="ap-visit-ip-wrapper">
+                                            <el-tooltip  v-if="scope.row.ap_visit_country_img_url" popper-class="ap--popover-tool-tip"  show-after="300"  effect="dark" :content="scope.row.ap_visit_country"  placement="top" >
+                                                <el-image  :src="scope.row.ap_visit_country_img_url" class="ap-visit-country-flag"
+                                                ></el-image>
+                                            </el-tooltip>
+                                            <span class="ap-visit-ip-address">
+                                                {{ scope.row.ap_visit_ip_address }}
+                                            </span>
+                                        </div>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="ap_visit_landing_url" min-width="250" label="<?php esc_html_e('Landing URL', 'affiliatepress-affiliate-marketing'); ?>">
+                                    <template #default="scope">
+                                        <div   class="ap-url-wrapper"   :class="{ clickable: scope.row._hasOverflow }" @click="scope.row._hasOverflow ? (scope.row._expanded = true) : null" >
+                                            <div class="ap-url-text" :class="{ expanded: scope.row._expanded }"  :ref="el => checkOverflow(el, scope.row)">{{ scope.row.ap_visit_landing_url }}</div>
+                                            <a  v-if="scope.row._hasOverflow && !scope.row._expanded"  class="ap-more-inline ap-refrance-link"   @click.stop="scope.row._expanded = true">...</a>
+                                        </div>
+                                    </template>
+                                </el-table-column>
                                 <el-table-column prop="ap_referrer_url" min-width="150" label="<?php esc_html_e('Referrer URL', 'affiliatepress-affiliate-marketing'); ?>">
                                     <template #default="scope">
-                                        <span v-if="scope.row.ap_referrer_url">{{ scope.row.ap_referrer_url }}</span>
-                                        <span v-else> <?php esc_html_e('Direct traffic', 'affiliatepress-affiliate-marketing'); ?> </span>
-                                    </template>                         
+                                        <div   v-if="scope.row.ap_referrer_url"  class="ap-url-wrapper" :class="{ clickable: scope.row._ref_hasOverflow }" @click="scope.row._ref_hasOverflow ? (scope.row._ref_expanded = true) : null" >
+                                            <div   class="ap-url-text" :class="{ expanded: scope.row._ref_expanded }" :ref="el => checkOverflow(el, scope.row, 'ref')">{{ scope.row.ap_referrer_url }}</div>
+                                            <a v-if="scope.row._ref_hasOverflow && !scope.row._ref_expanded" class="ap-more-inline ap-refrance-link" @click.stop="scope.row._ref_expanded = true" >...</a>
+                                        </div>
+                                        <span v-else><?php esc_html_e('Direct traffic', 'affiliatepress-affiliate-marketing'); ?></span>
+                                    </template>
                                 </el-table-column>
                                 <el-table-column align="center" prop="ap_commission_id" min-width="120" label="<?php esc_html_e('Converted', 'affiliatepress-affiliate-marketing'); ?>" sort-by="ap_commission_id" sortable>
                                     <template #default="scope">
                                         <span v-if="scope.row.ap_commission_id == 0 || scope.row.ap_commission_id == ''">
-                                            <?php do_action('affiliatepress_common_svg_code','wrong_icon'); ?>                                        
+                                            -                                       
                                         </span>
                                         <span v-else>
                                             <?php do_action('affiliatepress_common_svg_code','right_icon'); ?>                                        
@@ -236,15 +258,24 @@
                                         </el-popover>
                                     </template>
                                 </el-table-column>
-                            <el-table-column min-width="55" prop="ap_visit_id" label="<?php esc_html_e('IP Address', 'affiliatepress-affiliate-marketing'); ?>">
-                                <template #default="scope">
-                                    <span>{{scope.row.ap_visit_ip_address}}</span>
-                                </template>
-                            </el-table-column>
+                            <el-table-column min-width="55" prop="ap_visit_ip_address"  label="<?php esc_html_e('IP Address', 'affiliatepress-affiliate-marketing'); ?>">
+                                    <template #default="scope">
+                                        <div class="ap-visit-ip-wrapper">
+                                            <el-tooltip  v-if="scope.row.ap_visit_country_iso_code" popper-class="ap--popover-tool-tip ap-tab-view-tooltip"  show-after="300"  effect="dark" :content="scope.row.ap_visit_country"  placement="top" >
+                                                <el-image  :src="'<?php echo esc_url_raw(AFFILIATEPRESS_IMAGES_URL); ?>/country-flags/' + scope.row.ap_visit_country_iso_code + '.png'" class="ap-visit-country-flag"
+                                                ></el-image>
+                                            </el-tooltip>
+                                            <span v-else class="ap-visit-country-flag ap-empty-image"></span>
+                                            <span class="ap-visit-ip-address">
+                                                {{ scope.row.ap_visit_ip_address }}
+                                            </span>
+                                        </div>
+                                    </template>
+                                </el-table-column>
                             <el-table-column align="center" prop="ap_commission_id" width="100" label="<?php esc_html_e('Converted', 'affiliatepress-affiliate-marketing'); ?>" sort-by="ap_commission_id" sortable>
                                 <template #default="scope">
                                     <span v-if="scope.row.ap_commission_id == 0 || scope.row.ap_commission_id == ''">
-                                        <?php do_action('affiliatepress_common_svg_code','wrong_icon'); ?>                                        
+                                        -
                                     </span>
                                     <span v-else>
                                         <?php do_action('affiliatepress_common_svg_code','right_icon'); ?>                                        

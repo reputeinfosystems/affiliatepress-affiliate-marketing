@@ -981,7 +981,7 @@
                                     </div>                                                              
                                     <div v-if="visits_items.length != 0 && (current_screen_size == 'tablet' || current_screen_size == 'desktop')" :class="(visits_height)?'ap-panel-visits-table':''" class="ap-visits-table-data ap-horizontal-scroll">
                                         <el-table :class="(affiliate_visit_loader == '1')?'ap-hidden-table':''"  @sort-change="handleVisitSortChange"  :data="visits_items">
-                                            <el-table-column prop="" label="" min-width="30"></el-table-column>
+                                            <el-table-column prop="" label="" min-width="10"></el-table-column>
                                             <el-table-column  min-width="70" prop="sr_no" :label="affiliate_panel_labels.visit_serial_number" sortable sort-by="sr_no">
                                                 <template #default="scope">
                                                     <span :aria-label="scope.row.sr_no">{{scope.row.sr_no}}</span>
@@ -997,31 +997,37 @@
                                                     <span :aria-label="scope.row.ap_affiliates_campaign_name">{{scope.row.ap_affiliates_campaign_name}}</span>
                                                 </template>
                                             </el-table-column>
-                                            <el-table-column min-width="180" prop="ap_visit_ip_address" :label="affiliate_panel_labels.visit_ip_address">
+                                            <el-table-column min-width="120" prop="ap_visit_ip_address" :label="affiliate_panel_labels.visit_ip_address">
                                                 <template #default="scope">
                                                     <span :aria-label="scope.row.ap_visit_ip_address">{{scope.row.ap_visit_ip_address}}</span>
                                                 </template>
                                             </el-table-column>
-                                            <el-table-column min-width="150" align="center" prop="ap_commission_id" :label="affiliate_panel_labels.visit_converted">
+                                            <el-table-column min-width="120" align="center" prop="ap_commission_id" :label="affiliate_panel_labels.visit_converted">
                                                 <template #default="scope">
                                                     <span v-if="scope.row.ap_commission_id == 0 || scope.row.ap_commission_id == ''">
-                                                        <?php do_action('affiliatepress_common_svg_code','wrong_icon'); ?>                                        
+                                                    -
                                                     </span>
                                                     <span v-else>
                                                         <?php do_action('affiliatepress_common_svg_code','right_icon'); ?>                                        
                                                     </span>                                    
                                                 </template>                                     
                                             </el-table-column>
-                                            <el-table-column min-width="250" prop="ap_visit_landing_url" :label="affiliate_panel_labels.visit_landing_url">
+                                            <el-table-column min-width="300" prop="ap_visit_landing_url" :label="affiliate_panel_labels.visit_landing_url">
                                                 <template #default="scope">
-                                                    <span :aria-label="scope.row.ap_visit_landing_url">{{scope.row.ap_visit_landing_url}}</span>
+                                                    <div  class="ap-url-wrapper"  :class="{ clickable: scope.row._isOverflow }" @click="scope.row._isOverflow ? (scope.row._expanded = true) : null">
+                                                        <div class="ap-url-text" :class="{ expanded: scope.row._expanded }" :ref="checklandingOverflow(scope.row)" >  {{ scope.row.ap_visit_landing_url }}</div>
+                                                        <a v-if="scope.row._isOverflow && !scope.row._expanded" class="ap-more-inline ap-refrance-link" @click.stop="scope.row._expanded = true" >...</a>
+                                                    </div>
                                                 </template>
                                             </el-table-column>
                                             <el-table-column min-width="250" prop="ap_referrer_url" :label="affiliate_panel_labels.visit_referrer_url">
                                                 <template #default="scope">
-                                                    <span v-if="scope.row.ap_referrer_url" :aria-label="scope.row.ap_referrer_url">{{ scope.row.ap_referrer_url }}</span>
-                                                    <span v-else  :aria-label="affiliate_panel_labels.visit_direct_trafic" v-html="affiliate_panel_labels.visit_direct_trafic"></span>
-                                                </template>                                 
+                                                    <div   v-if="scope.row.ap_referrer_url"  class="ap-url-wrapper" :class="{ clickable: scope.row._refOverflow }" @click="scope.row._refOverflow ? (scope.row._refExpanded = true) : null">
+                                                        <div class="ap-url-text" :class="{ expanded: scope.row._refExpanded }" :ref="checkrefgOverflow(scope.row)" >{{ scope.row.ap_referrer_url }}</div>
+                                                        <a v-if="scope.row._refOverflow && !scope.row._refExpanded"  class="ap-more-inline ap-refrance-link" @click.stop="scope.row._refExpanded = true">...</a>
+                                                    </div>
+                                                    <span v-if="!scope.row.ap_referrer_url" :aria-label="affiliate_panel_labels.visit_direct_trafic" v-html="affiliate_panel_labels.visit_direct_trafic"></span>
+                                                </template>
                                             </el-table-column>
                                             <el-table-column prop="" label="" min-width="30"></el-table-column>
                                         </el-table>
@@ -1086,7 +1092,7 @@
                                                     <div class="ap-expand-top-row-data ap-mb-5">
                                                         <div class="ap-expan-top-data ap-expand-top-head-left"><span class="ap-com-date"><span class="ap-date-cal-icon ap-mr-8"><?php do_action('affiliatepress_common_affiliate_panel_svg_code','date_calendar_icon'); ?></span><span :aria-label="scope.row.visit_created_date_formated">{{scope.row.visit_created_date_formated}}</span></span></div>
                                                         <div class="ap-expan-top-data ap-expand-top-head-right">
-                                                            <span v-html="(scope.row.ap_commission_id == '0')?'affiliate_panel_labels.visit_converted':'affiliate_panel_labels.visit_unconverted_status'" class="ap-status-col" :class="(scope.row.ap_commission_id == '0' ? 'ap-status-red' : 'ap-status-green')" :aria-label="(scope.row.ap_commission_id == '0') ? 'affiliate_panel_labels.visit_unconverted_status' : 'affiliate_panel_labels.visit_converted'"></span>                                                            
+                                                            <span v-html="scope.row.ap_commission_id == '0' ? affiliate_panel_labels.visit_converted : affiliate_panel_labels.visit_unconverted_status" class="ap-status-col"  :class="scope.row.ap_commission_id == '0' ? 'ap-status-red' : 'ap-status-green'":aria-label="scope.row.ap_commission_id == '0'  ? affiliate_panel_labels.visit_converted  : affiliate_panel_labels.visit_unconverted_status"></span>
                                                         </div>
                                                     </div>
                                                     <div class="ap-expand-top-row-data">

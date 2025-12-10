@@ -125,7 +125,18 @@
                                 </template>
                             </el-table-column>                        
                             <el-table-column class-name="ap-padding-right-col" align="right" header-align="right" prop="unpaid_earning" width="150" label="<?php esc_html_e('Unpaid Earnings', 'affiliatepress-affiliate-marketing'); ?>"></el-table-column>
-                            <el-table-column class-name="ap-padding-left-col-20" prop="total_visit" min-width="130" label="<?php esc_html_e('Total Visit', 'affiliatepress-affiliate-marketing'); ?>"></el-table-column>
+                            <el-table-column class-name="ap-padding-left-col-20"  prop="total_visit"   min-width="130"  label="<?php esc_html_e('Total Visit', 'affiliatepress-affiliate-marketing'); ?>">
+                                <template #default="scope">
+                                    <span>
+                                        <template v-if="scope.row.total_visit > 0">
+                                            <a  class="ap-refrance-link"   @click="affiliatepress_affiliate_to_all_visit_show(scope.row.ap_affiliates_id)"> {{ scope.row.total_visit }}</a>
+                                        </template>
+                                        <template v-else>
+                                            {{ scope.row.total_visit }}
+                                        </template>
+                                    </span>
+                                </template>
+                            </el-table-column>
                             <el-table-column class-name="ap-action-column" prop="converted_user" min-width="150" label="<?php esc_html_e('Converted', 'affiliatepress-affiliate-marketing'); ?>">
                                 <template #default="scope">
                                     <span>{{ scope.row.converted_user }}</span>
@@ -183,7 +194,14 @@
                                         <div class="ap-table-expand-view-inner">
                                             <div class="ap-table-expand-label"><?php esc_html_e('Total Visit', 'affiliatepress-affiliate-marketing'); ?></div>
                                             <div class="ap-table-expand-seprater">:</div>
-                                            <div class="ap-table-expand-value">{{scope.row.total_visit}}</div>
+                                            <div class="ap-table-expand-value">
+                                                <template v-if="scope.row.total_visit > 0">
+                                                    <a  class="ap-refrance-link"  @click="affiliatepress_affiliate_to_all_visit_show(scope.row.ap_affiliates_id)">{{ scope.row.total_visit }}</a>
+                                                </template>
+                                                <template v-else>
+                                                    {{ scope.row.total_visit }}
+                                                </template>
+                                            </div>
                                         </div>
                                         <div class="ap-table-expand-view-inner">
                                             <div class="ap-table-expand-label"><?php esc_html_e('Converted', 'affiliatepress-affiliate-marketing'); ?></div>

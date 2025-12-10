@@ -62,7 +62,7 @@ if( !class_exists('affiliatepress_armember') ){
         function affiliatepress_armember_enqueue_js()
         {
             global $arm_lite_version; 
-            if (version_compare($arm_lite_version, '5.0', '>=') ) {
+            if (!empty($arm_lite_version) && version_compare($arm_lite_version, '5.0', '>=') ) {
                 wp_register_script('affiliatepress_armember', AFFILIATEPRESS_URL . 'js/affiliatepress_armember.js', array('jquery'), AFFILIATEPRESS_VERSION);// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
                 wp_enqueue_script('affiliatepress_armember');
             }
@@ -187,7 +187,7 @@ if( !class_exists('affiliatepress_armember') ){
         function affiliatepress_display_field_add_membership_plan_page_func($affiliatepress_plan_options){
 
             global $arm_lite_version;
-            if (version_compare($arm_lite_version, '5.0', '>=') ) {
+            if (!empty($arm_lite_version) && version_compare($arm_lite_version, '5.0', '>=') ) {
                 $affiliatepress_commission_nonce_armember = wp_create_nonce('affiliatepress_commission_nonce_armember');
                 ?>
                 <div class="arm_solid_divider"></div>
@@ -212,6 +212,7 @@ if( !class_exists('affiliatepress_armember') ){
                                         </td>
                                     </tr>	
                                     <?php
+                                        $affiliatepress_extra_Settings = "";
                                         $affiliatepress_extra_Settings .= apply_filters( 'affiliatepress_armember_add_product_settings', $affiliatepress_extra_Settings ,$affiliatepress_plan_options);
 
                                         echo $affiliatepress_extra_Settings;//phpcs:ignore  
@@ -300,15 +301,18 @@ if( !class_exists('affiliatepress_armember') ){
          */
         function affiliatepress_before_save_field_membership_plan($affiliatepress_plan_options, $affiliatepress_posted_data){
 
-            if (empty($affiliatepress_posted_data['arm_subscription_plan_options']['affiliatepress_commission_nonce_armember'])) {
-                return;
-            }
+            if (!empty($arm_lite_version) && version_compare($arm_lite_version, '5.0', '<') ) {
 
-            if (wp_verify_nonce( $affiliatepress_posted_data['arm_subscription_plan_options']['affiliatepress_commission_nonce_armember'], 'affiliatepress_commission_nonce_armember' )){  // phpcs:ignore
-
-                $affiliatepress_plan_options['affiliatepress_commission_disable_armember'] = isset($affiliatepress_posted_data['arm_subscription_plan_options']['affiliatepress_commission_disable_armember']) ? $affiliatepress_posted_data['arm_subscription_plan_options']['affiliatepress_commission_disable_armember'] : 0;
-
-                $affiliatepress_plan_options = apply_filters( 'affiliatepress_armember_settings_save', $affiliatepress_plan_options ,$affiliatepress_posted_data );
+                if (empty($affiliatepress_posted_data['arm_subscription_plan_options']['affiliatepress_commission_nonce_armember'])) {
+                    return;
+                }
+    
+                if (wp_verify_nonce( $affiliatepress_posted_data['arm_subscription_plan_options']['affiliatepress_commission_nonce_armember'], 'affiliatepress_commission_nonce_armember' )){  // phpcs:ignore
+    
+                    $affiliatepress_plan_options['affiliatepress_commission_disable_armember'] = isset($affiliatepress_posted_data['arm_subscription_plan_options']['affiliatepress_commission_disable_armember']) ? $affiliatepress_posted_data['arm_subscription_plan_options']['affiliatepress_commission_disable_armember'] : 0;
+    
+                    $affiliatepress_plan_options = apply_filters( 'affiliatepress_armember_settings_save', $affiliatepress_plan_options ,$affiliatepress_posted_data );
+                }
             }
 
             return $affiliatepress_plan_options;
@@ -710,6 +714,16 @@ if( !class_exists('affiliatepress_armember') ){
 
                 if($arm_completed_recurring > 1){
                     $affiliatepress_is_recurring =  true;
+                }else{
+                    $affiliatepress_tbl_activity = $this->affiliatepress_tablename_prepare($wpdb->prefix . 'arm_activity'); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'arm_subscriptarm_activityion_plans' contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
+                    $affiliatepress_get_first_payment_date = $wpdb->get_var($wpdb->prepare("SELECT arm_date_recorded FROM {$affiliatepress_tbl_activity} WHERE arm_user_id = %d && arm_item_id = %d ORDER BY arm_date_recorded DESC",$affiliatepress_user_id,$affiliatepress_user_plan));// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arm_subscription_plan is a table name. false alarm 
+
+                    $affiliatepress_tbl_arm_payment_log = $this->affiliatepress_tablename_prepare($wpdb->prefix . 'arm_payment_log'); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'arm_payment_log' contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
+                    $affiliatepress_total_recurring_paymnet = intval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_arm_payment_log, 'COUNT(arm_log_id)', 'WHERE arm_user_id  = %d  && arm_plan_id = %d && arm_created_date >=%s', array( $affiliatepress_user_id,$affiliatepress_user_plan,$affiliatepress_get_first_payment_date), '', '', '', true, false,ARRAY_A));
+
+                    if($affiliatepress_total_recurring_paymnet > 1){
+                        $affiliatepress_is_recurring =  true;
+                    }
                 }
             }
             

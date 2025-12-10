@@ -2025,6 +2025,30 @@ if (! class_exists('affiliatepress_affiliates') ) {
             return wp_json_encode($affiliatepress_affiliate_vue_data_fields);
 
         }
+
+        function affiliatepress_get_affiliate_name_by_id($affiliate_id) {
+
+            $affiliate_name = "";
+            global $affiliatepress_tbl_ap_affiliates;
+
+            if (!$affiliate_id) {
+               return $affiliate_id;
+            }
+
+            $affiliatepress_affiliate_data = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliates, 'ap_affiliates_first_name,ap_affiliates_last_name,ap_affiliates_user_name', 'WHERE ap_affiliates_id  = %d', array( $affiliate_id ), '', '', '', false, true,ARRAY_A);
+
+            $affiliatepress_first_name = isset($affiliatepress_affiliate_data['ap_affiliates_first_name']) ? sanitize_text_field($affiliatepress_affiliate_data['ap_affiliates_first_name']) : '';
+            $affiliatepress_last_name = isset($affiliatepress_affiliate_data['ap_affiliates_last_name']) ? sanitize_text_field($affiliatepress_affiliate_data['ap_affiliates_last_name']) : '';
+            $affiliatepress_user_name = isset($affiliatepress_affiliate_data['ap_affiliates_user_name']) ? sanitize_text_field($affiliatepress_affiliate_data['ap_affiliates_user_name']) : '';
+
+            if(!empty($affiliatepress_first_name) || !empty($affiliatepress_last_name)){
+                $affiliate_name = $affiliatepress_first_name.' '.$affiliatepress_last_name;
+            }else{
+                $affiliate_name = $affiliatepress_user_name;
+            }
+
+            return $affiliate_name;
+        }
         
         /**
          * Function for affiliate module vue method 
@@ -2692,7 +2716,11 @@ if (! class_exists('affiliatepress_affiliates') ) {
                 } else {
                     vm.AffiliateUsersList = [];
                 }	
-            },        
+            },       
+            affiliatepress_affiliate_to_all_visit_show(affiliate_id){
+                const vm = this;
+                window.open("'.admin_url("admin.php?page=affiliatepress_visits&affiliate=").'" + affiliate_id, "_blank");
+            }, 
             ';
 
             $affiliatepress_affiliates_dynamic_vue_methods = apply_filters('affiliatepress_affiliate_add_dynamic_vue_methods', $affiliatepress_affiliates_dynamic_vue_methods);

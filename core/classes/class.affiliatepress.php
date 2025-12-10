@@ -846,7 +846,7 @@ if (! class_exists('AffiliatePress') ) {
         {
             global $affiliatepress_version, $AffiliatePress;
             $affiliatepress_old_version = get_option('affiliatepress_version', true);
-            if (version_compare($affiliatepress_old_version, '1.6', '<') ) {
+            if (version_compare($affiliatepress_old_version, '1.7', '<') ) {
                 $affiliatepress_load_upgrade_file = AFFILIATEPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $affiliatepress_load_upgrade_file;
                 $AffiliatePress->affiliatepress_send_anonymous_data_cron();
@@ -1549,11 +1549,29 @@ if (! class_exists('AffiliatePress') ) {
          * @param  string $affiliatepress_logged_in_ip
          * @return string
         */
-        function affiliatepress_get_country_from_ip($affiliatepress_logged_in_ip=""){            
+
+        function affiliatepress_get_country_from_ip($affiliatepress_logged_in_ip=""){ 
             if( '' == $affiliatepress_logged_in_ip ){
                 return '';
             }
-            $affiliatepress_country = "";                        
+            $affiliatepress_country = array();
+        
+            try {
+                require_once AFFILIATEPRESS_LIBRARY_DIR.'/ip2location/vendor/autoload.php';
+
+                $ip = $affiliatepress_logged_in_ip; 
+                $database = new \IP2Location\Database( AFFILIATEPRESS_LIBRARY_DIR.'/ip2location/vendor/ip2location/ip2location-php/data/IP2LOCATION-LITE-DB1.BIN', \IP2Location\Database::FILE_IO);
+                $info = $database->lookup($ip, \IP2Location\Database::ALL);
+                
+                $affiliatepress_country = array(
+                    'iso_code' => $info['countryCode'] ?? '',
+                    'country_name' => $info['countryName'] ?? ''
+                );
+        
+            } catch (\Exception $e) {
+                error_log('GeoIP lookup error: ' . $e->getMessage());
+            }
+        
             return $affiliatepress_country;
         }
         
@@ -4571,6 +4589,7 @@ if (! class_exists('AffiliatePress') ) {
                     `ap_visit_updated_date` DATETIME NOT NULL,
                     `ap_visit_ip_address` VARCHAR(255) DEFAULT NULL,
 					`ap_visit_country` VARCHAR(255) DEFAULT NULL,
+                    `ap_visit_iso_code` VARCHAR(10) DEFAULT NULL,
                     `ap_visit_browser` VARCHAR(255) DEFAULT NULL,
                     `ap_affiliates_campaign_name` varchar(255) default NULL,
                     `ap_affiliates_sub_id` varchar(255) default NULL,                    

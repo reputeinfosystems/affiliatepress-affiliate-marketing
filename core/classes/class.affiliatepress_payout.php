@@ -629,6 +629,7 @@ if (! class_exists('affiliatepress_payout') ) {
                             $affiliatepress_payment_method = $this->affiliatepress_get_affiliate_payment_method($affiliatepress_payout_payment_detail['ap_affiliates_id']);
 
                             $affiliatepress_ap_payment_status = 1;
+                            $affiliatepress_auto_payout = "false";
                             if($affiliatepress_payment_method != 'manual'){
                                 $affiliatepress_ap_payment_status = 2;
                             }else{

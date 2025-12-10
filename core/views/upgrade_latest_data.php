@@ -42,7 +42,16 @@ if (version_compare($affiliatepress_old_version, '1.5', '<') )
     $AffiliatePress->affiliatepress_update_settings('confirm_password_field', 'field_settings' , maybe_serialize($affiliatepress_confirm_password_settings));
 }
 
-$affiliatepress_new_version = '1.6';
+if (version_compare($affiliatepress_old_version, '1.7', '<') ) 
+{
+    global $affiliatepress_tbl_ap_affiliate_visits;
+    $affiliatepress_affiliates_col_added = $wpdb->get_results( $wpdb->prepare( "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND column_name = 'ap_visit_iso_code'", DB_NAME, $affiliatepress_tbl_ap_affiliate_visits ) );// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates is a table name. false alarm
+	if ( empty( $affiliatepress_affiliates_col_added ) ) {
+		$wpdb->query( "ALTER TABLE `{$affiliatepress_tbl_ap_affiliate_visits}` ADD `ap_visit_iso_code` varchar(10) default NULL AFTER `ap_visit_country`" );// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates is a table name. false alarm
+	}		
+}
+
+$affiliatepress_new_version = '1.7';
 update_option('affiliatepress_new_version_installed', 1);
 update_option('affiliatepress_version', $affiliatepress_new_version);
 update_option('affiliatepress_updated_date_' . $affiliatepress_new_version, current_time('mysql'));

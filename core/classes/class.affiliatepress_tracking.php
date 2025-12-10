@@ -676,7 +676,9 @@ if( !class_exists('affiliatepress_tracking') ){
                     $affiliatepress_browser_version = (isset($affiliatepress_browser_data['version']))?$affiliatepress_browser_data['version']:'';
                     $affiliatepress_browser = $affiliatepress_browser_name.' ('.$affiliatepress_browser_version.')';
                     $affiliatepress_nowDate = current_time('mysql');
-                    $affiliatepress_country = $AffiliatePress->affiliatepress_get_country_from_ip($affiliatepress_ip_address);
+                    $affiliatepress_country_details = $AffiliatePress->affiliatepress_get_country_from_ip($affiliatepress_ip_address);
+                    $affiliatepress_country = isset($affiliatepress_country_details['country_name']) ? sanitize_text_field($affiliatepress_country_details['country_name']) : '';
+                    $affiliatepress_country_iso_code = isset($affiliatepress_country_details['iso_code']) ? sanitize_text_field($affiliatepress_country_details['iso_code']) : '';
                     $affiliatepress_referralUrl = (isset($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_REFERER']))?sanitize_url($_SERVER['HTTP_REFERER']):''; // phpcs:ignore
 
                     $affiliatepress_campaign = isset($_REQUEST['campaign']) ? sanitize_text_field($_REQUEST['campaign']) : '';// phpcs:ignore
@@ -685,7 +687,8 @@ if( !class_exists('affiliatepress_tracking') ){
                         'ap_affiliates_id'      => $affiliatepress_cookie_value,
                         'ap_visit_created_date' => date('Y-m-d H:i:s',current_time('timestamp')),// phpcs:ignore
                         'ap_visit_ip_address'   => $affiliatepress_ip_address,
-                        'ap_visit_country'      => NULL,
+                        'ap_visit_country'      => $affiliatepress_country,
+                        'ap_visit_iso_code'     => $affiliatepress_country_iso_code,
                         'ap_visit_browser'      => $affiliatepress_browser,
                         'ap_visit_landing_url'  => $this->affiliatepress_get_current_url(),
                         'ap_referrer_url'       => $affiliatepress_referralUrl,                        

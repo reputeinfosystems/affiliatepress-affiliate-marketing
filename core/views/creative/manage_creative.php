@@ -30,7 +30,7 @@
                         <el-input class="ap-form-control" v-model="creatives_search.ap_creative_name" size="large" placeholder="<?php esc_html_e('Enter Creative Name', 'affiliatepress-affiliate-marketing'); ?>" @keyup.enter="applyFilter()"/>
                     </div>    
                 </el-col> 
-                <el-col :xs="24" :sm="24" :md="24" :lg="6" :xl="4">
+                <el-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6">
                         <el-button @click="applyFilter()" class="ap-btn--primary" plain type="primary" :disabled="is_apply_disabled">
                             <span class="ap-btn__label"><?php esc_html_e('Apply', 'affiliatepress-affiliate-marketing'); ?></span>
                         </el-button>
