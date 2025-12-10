@@ -277,3 +277,8 @@
         </el-button>
     </div>
 </el-dialog>
+
+<el-dialog modal-class="ap-affiliate-dialog ap-dialog--upgrade-to-premium ap-dialog--black-friday-sale"  v-model="affiliatepress_sale_premium_modal" :close-on-press-escape="close_modal_on_esc" v-cloak @click="affiliatepress_redirect_sale_premium_page">
+    <div class="ap-dialog-body" @click="affiliatepress_redirect_sale_premium_page">
+    </div>
+</el-dialog>

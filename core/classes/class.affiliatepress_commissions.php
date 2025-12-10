@@ -394,7 +394,7 @@ if (! class_exists('affiliatepress_commissions') ) {
                     $affiliatepress_commission_data['ap_commission_id']                 = intval($affiliatepress_commission['ap_commission_id']);
                     $affiliatepress_commission_data['ap_affiliates_id']                 = intval($affiliatepress_commission['ap_affiliates_id']);
                     $affiliatepress_commission_data['affiliate_user_name']              = esc_html($AffiliatePress->affiliatepress_get_affiliate_user_name_by_id('',$affiliatepress_commission['ap_affiliates_id']));
-                    $affiliatepress_commission_data['ap_commission_type']               = stripslashes_deep($affiliatepress_commission['ap_commission_type']);
+                    $affiliatepress_commission_data['ap_commission_type']               = !empty($affiliatepress_commission['ap_commission_type']) ? stripslashes_deep($affiliatepress_commission['ap_commission_type']) : 'sale';
                     $affiliatepress_commission_data['ap_commission_status']             = esc_html($affiliatepress_commission['ap_commission_status']);
                     $affiliatepress_commission_data['ap_commission_reference_id']       = esc_html($affiliatepress_commission['ap_commission_reference_id']);
                     $affiliatepress_commission_data['ap_commission_product_ids']        = esc_html($affiliatepress_commission['ap_commission_product_ids']);
@@ -1113,6 +1113,7 @@ if (! class_exists('affiliatepress_commissions') ) {
                 foreach ( $affiliatepress_commissions_record as $affiliatepress_key=>$affiliatepress_single_commission ) {
 
                     $affiliatepress_commission = $affiliatepress_single_commission;
+                    $affiliatepress_commission['ap_commission_id']    = intval($affiliatepress_single_commission['ap_commission_id']);
                     $affiliatepress_user_id = $affiliatepress_single_commission['ap_affiliates_user_id'];
                     $affiliatepress_affiliate_id = $affiliatepress_single_commission['ap_affiliates_id'];
                     
@@ -1713,7 +1714,7 @@ if (! class_exists('affiliatepress_commissions') ) {
                         vm.order_by = "";
                     }
                 }                
-                this.loadcommissions(false);                 
+                this.loadcommissions(true);                 
             },
             affiliatepress_full_row_clickable(row){
                 const vm = this

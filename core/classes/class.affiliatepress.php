@@ -846,7 +846,7 @@ if (! class_exists('AffiliatePress') ) {
         {
             global $affiliatepress_version, $AffiliatePress;
             $affiliatepress_old_version = get_option('affiliatepress_version', true);
-            if (version_compare($affiliatepress_old_version, '1.5', '<') ) {
+            if (version_compare($affiliatepress_old_version, '1.6', '<') ) {
                 $affiliatepress_load_upgrade_file = AFFILIATEPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $affiliatepress_load_upgrade_file;
                 $AffiliatePress->affiliatepress_send_anonymous_data_cron();
@@ -1555,9 +1555,7 @@ if (! class_exists('AffiliatePress') ) {
             }
             $affiliatepress_country = "";                        
             return $affiliatepress_country;
-        }        
-
-
+        }
         
         /**
          * Function for get user agent browser info
@@ -2506,6 +2504,9 @@ if (! class_exists('AffiliatePress') ) {
                         const affiliatepress_premium_modal = ref(false);
                         affiliatepress_return_data["affiliatepress_premium_modal"] = affiliatepress_premium_modal;
 
+                        const affiliatepress_sale_premium_modal = ref(false);
+                        affiliatepress_return_data["affiliatepress_sale_premium_modal"] = affiliatepress_sale_premium_modal;
+
                         '.$affiliatepress_dynamic_constant_define.'
                         '.$affiliatepress_all_dynamic_constant_define.'
 
@@ -2685,10 +2686,16 @@ if (! class_exists('AffiliatePress') ) {
                             const vm = this;
                             vm.affiliatepress_premium_modal = true;
                         },
+                        open_sale_premium_modal(){
+                            const vm = this;
+                            vm.affiliatepress_sale_premium_modal = true;
+                        },
                         close_need_help_popup(){
                             const vm = this;
                             vm.needHelpDrawer = false;
-
+                        },
+                        affiliatepress_redirect_sale_premium_page(){
+                            window.open("'.$affiliatepress_website_url.'pricing/?utm_source=blackfriday_liteversionpopup&utm_medium=liteversion&utm_campaign=blackfriday", "_blank");
                         },
                         openNeedHelper(page_name = "", module_name = "", module_title = ""){
                             const vm = this;
@@ -3217,9 +3224,52 @@ if (! class_exists('AffiliatePress') ) {
             add_submenu_page($affiliatepress_slugs->affiliatepress, esc_html__('Growth Plugins', 'affiliatepress-affiliate-marketing'), esc_html__('Growth Plugins', 'affiliatepress-affiliate-marketing'), 'affiliatepress_growth_tools', $affiliatepress_slugs->affiliatepress_growth_tools, array( $this, 'route' )); 
             
             if(!$this->affiliatepress_pro_install()){
-                add_submenu_page($affiliatepress_slugs->affiliatepress, esc_html__('Upgrade to Pro', 'affiliatepress-affiliate-marketing'), esc_html__('Upgrade to Pro', 'affiliatepress-affiliate-marketing'), 'affiliatepress', $affiliatepress_slugs->affiliatepress."&upgrade_action=upgrade_to_pro", array( $this, 'route' ), '99');
+
+                $upgrade_menu_text = esc_html__( 'Upgrade to Pro', 'affiliatepress-affiliate-marketing' );
+                $affiliatepress_current_date_for_bf_popup = current_time( 'timestamp', true );
+                $affiliatepress_sale_popup_details = $this->affiliatepress_get_sales_data();
+                $current_year = gmdate('Y', current_time('timestamp', true ) );
+
+                if( !empty( $affiliatepress_sale_popup_details[ $current_year ] ) ){
+                    
+                    $sale_details = $affiliatepress_sale_popup_details[ $current_year ];
+                    
+                    $affiliatepress_bf_popup_start_time = $sale_details['start_time'];
+                    $affiliatepress_bf_popup_end_time = $sale_details['end_time'];
+    
+                    $type = !empty( $sale_details['type'] ) ? $sale_details['type'] : 'black_friday';
+                    
+                    if( $affiliatepress_current_date_for_bf_popup >= $affiliatepress_bf_popup_start_time && $affiliatepress_current_date_for_bf_popup <= $affiliatepress_bf_popup_end_time ){
+                        if( 'black_friday' == $type ){
+                            $upgrade_menu_text = esc_html__( 'Black Friday Sale', 'affiliatepress-affiliate-marketing' );
+                        }
+                    }
+                }
+                add_submenu_page($affiliatepress_slugs->affiliatepress, $upgrade_menu_text, $upgrade_menu_text, 'affiliatepress', $affiliatepress_slugs->affiliatepress."&upgrade_action=upgrade_to_pro", array( $this, 'route' ), '99');
             }
 
+        }
+
+        function affiliatepress_get_sales_data(){
+            
+            global $affiliatepress_website_url;
+
+            $fetch_sale_detais = get_transient( 'affiliatepress_retrieve_sale_details' );
+            
+            if( false == $fetch_sale_detais ){
+
+                $fetch_url = $affiliatepress_website_url.'ap_misc/ap_sale_dates.json';
+                $fetch_dates = wp_remote_get( $fetch_url, array( 'timeout' => 4000, 'accept' => 'application/json' ) );
+                if( !is_wp_error( $fetch_dates ) ){
+                    $details = wp_remote_retrieve_body( $fetch_dates );
+                    $sale_details = json_decode( $details, true );
+                    set_transient( 'affiliatepress_retrieve_sale_details', $sale_details, ( HOUR_IN_SECONDS * 12 ) );
+                }
+            } else {
+                $sale_details = $fetch_sale_detais;
+            }
+
+            return $sale_details;
         }
 
         /**

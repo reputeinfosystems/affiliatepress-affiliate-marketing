@@ -41,6 +41,7 @@ if( !class_exists('affiliatepress_armember') ){
 
                 add_filter( 'affiliatepress_get_affiliate_cookie_armember', array( $this, 'affiliatepress_modify_affiliate_cookie_data' ), 10, 3 );
 
+                add_action('admin_enqueue_scripts', array( $this, 'affiliatepress_armember_enqueue_js' ), 11); 
             }
 
             if($affiliatepress_is_armember_active){
@@ -50,6 +51,20 @@ if( !class_exists('affiliatepress_armember') ){
                 add_filter('affiliatepress_modify_commission_link',array($this,'affiliatepress_get_link_order_func'),10,3); 
                 
                 
+            }
+        }
+
+         /**
+         * Function For armember Js add
+         *
+         * @return void
+         */
+        function affiliatepress_armember_enqueue_js()
+        {
+            global $arm_lite_version; 
+            if (version_compare($arm_lite_version, '5.0', '>=') ) {
+                wp_register_script('affiliatepress_armember', AFFILIATEPRESS_URL . 'js/affiliatepress_armember.js', array('jquery'), AFFILIATEPRESS_VERSION);// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
+                wp_enqueue_script('affiliatepress_armember');
             }
         }
 
@@ -170,11 +185,46 @@ if( !class_exists('affiliatepress_armember') ){
          * @return array
          */
         function affiliatepress_display_field_add_membership_plan_page_func($affiliatepress_plan_options){
-                       
-            $affiliatepress_arm_commission_settings = $this->affiliatepress_set_plan_settings_content($affiliatepress_plan_options, 'armember_action');
 
-            echo $affiliatepress_arm_commission_settings; //phpcs:ignore       
+            global $arm_lite_version;
+            if (version_compare($arm_lite_version, '5.0', '>=') ) {
+                $affiliatepress_commission_nonce_armember = wp_create_nonce('affiliatepress_commission_nonce_armember');
+                ?>
+                <div class="arm_solid_divider"></div>
+                    <div class="arm_plan_price_section">
+                        <div class="arm_setup_section_title arm_margin_top_32 arm_margin_bottom_10"><?php esc_html_e('AffiliatePress Commission Settings', 'affiliatepress-affiliate-marketing'); ?></div>
+                        <div id="arm_plan_price_box_content" class="arm_plan_price_box">
+                            <div class="page_sub_content">
+                                <table class="form-table">
+                                    <tr class="form-field form-required arm_plan_price_type">
+                                        <td class="arm_padding_top_8">
+                                            <div class="arm_upgrade_downgrade_section_switch">
+                                                <div class="armswitch arm_global_setting_switch arm_vertical_align_middle" >
+                                                    <input type="checkbox" id="affiliatepress_commission_disable_armember" value="1" class="armswitch_input" name="arm_subscription_plan_options[affiliatepress_commission_disable_armember]"/>
+                                                    <label for="affiliatepress_commission_disable_armember" class="armswitch_label arm_min_width_40" ></label>
+                                                </div>
+                                                <label for="affiliatepress_commission_disable_armember" class="arm_padding_left_10 arm_font_size_14 arm_field_hint"><?php esc_html_e('Disable Commission For This Plan','affiliatepress-affiliate-marketing'); ?><i class="arm_helptip_icon armfa armfa-question-circle" title="<?php esc_html_e('Turn on AffiliatePress Commission to disable commission calculations for this plan and prevent affiliates from earning on it.', 'affiliatepress-affiliate-marketing'); ?>"></i></label>
+                                                
+                                                <span class ="arm_font_size_14 arm_margin_top_10 " style="float:left;width:50%;position:relative;top:5px;font-weight:400px;color: #6E7E9E;"><?php esc_html_e( 'Enable AffiliatePress Commission to prevent adding commission for this plan.', 'affiliatepress-affiliate-marketing' ); ?></span>
 
+                                                <input name="arm_subscription_plan_options[affiliatepress_commission_nonce_armember]" id="affiliatepress_commission_nonce_armember" type="hidden" value="<?php echo  esc_attr( $affiliatepress_commission_nonce_armember ) ?>" />
+                                            </div>
+                                        </td>
+                                    </tr>	
+                                    <?php
+                                        $affiliatepress_extra_Settings .= apply_filters( 'affiliatepress_armember_add_product_settings', $affiliatepress_extra_Settings ,$affiliatepress_plan_options);
+
+                                        echo $affiliatepress_extra_Settings;//phpcs:ignore  
+                                    ?>
+                                </table>
+                            </div>
+                        </div>
+                    </div> 
+                <?php
+            }else{
+                $affiliatepress_arm_commission_settings = $this->affiliatepress_set_plan_settings_content($affiliatepress_plan_options, 'armember_action');
+                echo $affiliatepress_arm_commission_settings; //phpcs:ignore       
+            }
         }
         
         /**
@@ -346,13 +396,16 @@ if( !class_exists('affiliatepress_armember') ){
          */
         function affiliatepress_add_referral_transaction($affiliatepress_plan_data) {
 
-            global $wpdb,$affiliatepress_tracking, $affiliatepress_affiliates,$AffiliatePress,$affiliatepress_commission_debug_log_id,$wpdb ;
+            global $wpdb,$affiliatepress_tracking, $affiliatepress_affiliates,$AffiliatePress,$affiliatepress_commission_debug_log_id,$wpdb,$arm_subscription_plans ;
 
             $affiliatepress_order_id = isset($affiliatepress_plan_data['arm_log_id']) ? intval( $affiliatepress_plan_data['arm_log_id'] ) : '';
 
             $affiliatepress_plan_id = !empty($affiliatepress_plan_data['arm_plan_id']) ? intval($affiliatepress_plan_data['arm_plan_id']) : '';
 
-            if(!isset($affiliatepress_plan_data['arm_transaction_status']) || $affiliatepress_plan_data['arm_transaction_status'] != "success")
+            $affiliatepress_log_msg = "ARMember add transaction commission Log";
+            do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug . $affiliatepress_log_msg, 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_plan_data, $affiliatepress_commission_debug_log_id);
+
+            if(!isset($affiliatepress_plan_data['arm_transaction_status']) || ( $affiliatepress_plan_data['arm_transaction_status'] != "success" && $affiliatepress_plan_data['arm_payment_gateway'] != 'bank_transfer') )
             {
                 return;
             }
@@ -368,6 +421,9 @@ if( !class_exists('affiliatepress_armember') ){
                 $affiliatepress_log_msg = "commission was not created because the payment is alredy add.";
                 do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' commission was not created ', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_log_msg, $affiliatepress_commission_debug_log_id);
                 return;
+            }else{
+                $affiliatepress_log_msg = "commission created start";
+                do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' commission was not created ', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_log_msg, $affiliatepress_commission_debug_log_id);
             }
 
             $affiliatepress_order_id = isset($affiliatepress_plan_data['arm_log_id']) ? intval( $affiliatepress_plan_data['arm_log_id'] ) : '';
@@ -640,15 +696,17 @@ if( !class_exists('affiliatepress_armember') ){
          */
         function affiliatepress_armember_is_plan_recurring($affiliatepress_user_id, $affiliatepress_user_plan, $affiliatepress_payment_gateway = ''){
 
-            global $wpdb; 
+            global $wpdb,$affiliatepress_commission_debug_log_id; 
 
             $affiliatepress_is_recurring = false;
-            $arm_user_plan_ids = get_user_meta($affiliatepress_user_id,'affiliatepress_user_id',true);
+            $arm_user_plan_ids = get_user_meta($affiliatepress_user_id,'arm_user_plan_ids',true);
 
             if(!empty($arm_user_plan_ids) && in_array($affiliatepress_user_plan,$arm_user_plan_ids)){
                 $arm_user_plan = get_user_meta($affiliatepress_user_id,'arm_user_plan_'.$affiliatepress_user_plan,true);
                 
                 $arm_completed_recurring = isset($arm_user_plan['arm_completed_recurring']) ? $arm_user_plan['arm_completed_recurring'] : '';
+
+                do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Recurring Completed Paymnets', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $arm_completed_recurring, $affiliatepress_commission_debug_log_id);          
 
                 if($arm_completed_recurring > 1){
                     $affiliatepress_is_recurring =  true;
@@ -690,6 +748,8 @@ if( !class_exists('affiliatepress_armember') ){
             global $wpdb, $affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_commission_debug_log_id,$AffiliatePress,$affiliatepress_tracking;
 
             $affiliatepress_all_commission_data = $AffiliatePress->affiliatepress_get_all_commission_by_order_and_source($affiliatepress_order_id, $this->affiliatepress_integration_slug);
+
+            do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : pending commision data order id'.$affiliatepress_order_id, 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_all_commission_data, $affiliatepress_commission_debug_log_id);
             if(!empty($affiliatepress_all_commission_data)){
 
                 foreach($affiliatepress_all_commission_data as $affiliatepress_commission_data){
@@ -708,6 +768,8 @@ if( !class_exists('affiliatepress_armember') ){
                         $affiliatepress_tbl_arm_payment_log = $this->affiliatepress_tablename_prepare($wpdb->prefix . 'arm_payment_log'); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'arm_payment_log' contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
         
                         $affiliatepress_armaff_entry = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_arm_payment_log, 'arm_transaction_status', 'WHERE arm_log_id  = %d', array( $affiliatepress_order_id ), '', '', '', false, true,ARRAY_A);
+
+                        do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Payment Transection data', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_armaff_entry, $affiliatepress_commission_debug_log_id);
         
                         if(!empty($affiliatepress_armaff_entry)){
 
@@ -715,7 +777,7 @@ if( !class_exists('affiliatepress_armember') ){
         
                             $affiliatepress_default_commission_status = $affiliatepress_tracking->affiliatepress_get_default_commission_status();
         
-                            if( $affiliatepress_ap_transaction_status == 'success' ){
+                            if( $affiliatepress_ap_transaction_status == 'success' ||  $affiliatepress_ap_transaction_status == 1){
                                 $affiliatepress_updated_commission_status = 1;
         
                                if($affiliatepress_default_commission_status != "auto"){

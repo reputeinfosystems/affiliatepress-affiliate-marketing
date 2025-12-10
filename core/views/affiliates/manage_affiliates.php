@@ -86,7 +86,7 @@
                                     <span>#{{ scope.row.ap_affiliates_id }}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column prop="full_name" width="400" class-name="ap-affiliate-user-col-large"  label="<?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by="full_name">
+                            <el-table-column prop="full_name" width="400" class-name="ap-affiliate-user-col-large"  label="<?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?>" sortable="true">
                                 <template #default="scope">
                                     <div class="ap-table-column-avatar-with-detail">
                                     <el-image class="ap-table-column-avatar" :src="scope.row.affiliates_avatar"></el-image>
@@ -205,7 +205,7 @@
                                     <span>#{{ scope.row.ap_affiliates_id }}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column prop="full_name" width="250" class-name="ap-affiliate-user-col-large"  label="<?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by="full_name">
+                            <el-table-column prop="full_name" width="250" class-name="ap-affiliate-user-col-large"  label="<?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?>" sortable="true">
                                 <template #default="scope">
                                     <div class="ap-table-column-avatar-with-detail">
                                     <el-image class="ap-table-column-avatar" :src="scope.row.affiliates_avatar"></el-image>

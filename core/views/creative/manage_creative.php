@@ -72,7 +72,7 @@
                                         </div>
                                     </template>                                
                                 </el-table-column>
-                                <el-table-column prop="ap_creative_name" width="400" label="<?php esc_html_e('Name', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by="ap_creative_name"></el-table-column>
+                                <el-table-column prop="ap_creative_name" width="400" label="<?php esc_html_e('Name', 'affiliatepress-affiliate-marketing'); ?>" sortable="true"></el-table-column>
                                 <el-table-column class-name="ap-padding-left-cls ap-grid-status-align-center"  prop="ap_creative_status" align="center" header-align="center" width="190" label="<?php esc_html_e('Status', 'affiliatepress-affiliate-marketing'); ?>">
                                     <template #default="scope">
                                         <div class="ap-table-status-dropdown-wrapper" :class="(scope.row.change_status_loader == 1) ? '__ap-is-loader-active' : ''">
@@ -160,7 +160,7 @@
                                     <span>#{{ scope.row.ap_creative_id }}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column prop="ap_creative_name" min-width="180" label="<?php esc_html_e('Name', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by="ap_creative_name"></el-table-column>
+                            <el-table-column prop="ap_creative_name" min-width="180" label="<?php esc_html_e('Name', 'affiliatepress-affiliate-marketing'); ?>" sortable="true"></el-table-column>
                             <el-table-column class-name="ap-padding-left-cls ap-grid-status-align-center" prop="ap_creative_status" align="center" header-align="center" width="190" label="<?php esc_html_e('Status', 'affiliatepress-affiliate-marketing'); ?>">
                                 <template #default="scope">
                                     <div class="ap-table-status-dropdown-wrapper" :class="(scope.row.change_status_loader == 1 ? '__ap-is-loader-active ' : '') + (current_screen_size != 'desktop' ? 'ap-small-screen-status-dropdown' : '')">

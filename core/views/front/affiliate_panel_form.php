@@ -982,7 +982,7 @@
                                     <div v-if="visits_items.length != 0 && (current_screen_size == 'tablet' || current_screen_size == 'desktop')" :class="(visits_height)?'ap-panel-visits-table':''" class="ap-visits-table-data ap-horizontal-scroll">
                                         <el-table :class="(affiliate_visit_loader == '1')?'ap-hidden-table':''"  @sort-change="handleVisitSortChange"  :data="visits_items">
                                             <el-table-column prop="" label="" min-width="30"></el-table-column>
-                                            <el-table-column  min-width="60" prop="sr_no" :label="affiliate_panel_labels.visit_serial_number">
+                                            <el-table-column  min-width="70" prop="sr_no" :label="affiliate_panel_labels.visit_serial_number" sortable sort-by="sr_no">
                                                 <template #default="scope">
                                                     <span :aria-label="scope.row.sr_no">{{scope.row.sr_no}}</span>
                                                 </template>

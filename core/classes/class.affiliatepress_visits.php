@@ -159,7 +159,7 @@ if (! class_exists('affiliatepress_visits') ) {
                 foreach ( $affiliatepress_visits_record as $affiliatepress_key=>$affiliatepress_single_affiliate ) {
 
                     $affiliatepress_visit = $affiliatepress_single_affiliate;
-
+		    $affiliatepress_visit['ap_visit_id']    = intval($affiliatepress_single_affiliate['ap_visit_id']);
                     $affiliatepress_visit['ap_visit_ip_address'] = esc_html($affiliatepress_single_affiliate['ap_visit_ip_address']);
                     $affiliatepress_visit['ap_affiliates_campaign_name'] = esc_html($affiliatepress_single_affiliate['ap_affiliates_campaign_name']);
                     $affiliatepress_visit['ap_visit_landing_url'] = esc_url($affiliatepress_single_affiliate['ap_visit_landing_url']);
@@ -195,9 +195,6 @@ if (! class_exists('affiliatepress_visits') ) {
             wp_send_json($response);
             exit;            
         }
-
-
-
         
         /**
          * Function for dynamic const add in vue
@@ -366,7 +363,7 @@ if (! class_exists('affiliatepress_visits') ) {
                         vm.order_by = "";
                     }
                 }
-                this.loadVisits(false);                
+                this.loadVisits(true);                
             },
             affiliatepress_full_row_clickable(row){
                 const vm = this

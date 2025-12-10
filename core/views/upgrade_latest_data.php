@@ -42,7 +42,7 @@ if (version_compare($affiliatepress_old_version, '1.5', '<') )
     $AffiliatePress->affiliatepress_update_settings('confirm_password_field', 'field_settings' , maybe_serialize($affiliatepress_confirm_password_settings));
 }
 
-$affiliatepress_new_version = '1.5';
+$affiliatepress_new_version = '1.6';
 update_option('affiliatepress_new_version_installed', 1);
 update_option('affiliatepress_version', $affiliatepress_new_version);
 update_option('affiliatepress_updated_date_' . $affiliatepress_new_version, current_time('mysql'));

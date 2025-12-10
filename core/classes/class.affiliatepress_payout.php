@@ -1524,8 +1524,10 @@ if (! class_exists('affiliatepress_payout') ) {
                 foreach ( $affiliatepress_payouts_record as $affiliatepress_key=>$affiliatepress_single_payout ) {
 
                     $affiliatepress_payout = $affiliatepress_single_payout;
+                    $affiliatepress_payout['ap_payout_id']    = intval($affiliatepress_single_payout['ap_payout_id']);
                     $affiliatepress_payout['ap_payout_upto_date_formated'] = $AffiliatePress->affiliatepress_formated_date_display(esc_html($affiliatepress_single_payout['ap_payout_upto_date']));
-                    $affiliatepress_payout['ap_formated_payout_amount']    = $AffiliatePress->affiliatepress_price_formatter_with_currency_symbol(esc_html($affiliatepress_single_payout['ap_payout_amount']));
+                    $affiliatepress_payout['ap_payout_amount'] = floatval($affiliatepress_single_payout['ap_payout_amount']);       
+                    $affiliatepress_payout['ap_formated_payout_amount'] = $AffiliatePress->affiliatepress_price_formatter_with_currency_symbol($affiliatepress_payout['ap_payout_amount']);
                     $affiliatepress_payout['unpaid_affiliate_count'] = floatval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_payments, 'count(ap_payment_id)', 'WHERE ap_payout_id  = %d AND ap_payment_status <> %d', array( $affiliatepress_single_payout['ap_payout_id'],4), '', '', '', true, false,ARRAY_A));
                     
                     $affiliatepress_payout['paid_affiliate_count'] = floatval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_payments, 'count(ap_payment_id)', 'WHERE ap_payout_id  = %d AND ap_payment_status = %d', array($affiliatepress_single_payout['ap_payout_id'],4), '', '', '', true, false,ARRAY_A));
@@ -2204,7 +2206,7 @@ if (! class_exists('affiliatepress_payout') ) {
                     vm.order_by = "";
                 }
             }    
-            this.loadPayouts();     
+            this.loadPayouts(true);     
         }, 
         handleSelectionChange(val) {
             const items_obj = val;

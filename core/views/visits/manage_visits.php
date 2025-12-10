@@ -76,7 +76,7 @@
                                         <span>{{ scope.row.visit_created_date_formated }}</span>
                                     </template>                                
                                 </el-table-column>
-                                <el-table-column  prop="full_name"  min-width="200" label="<?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by='full_name'>
+                                <el-table-column  prop="full_name"  min-width="200" label="<?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?>" sortable="true">
                                     <template #default="scope">
                                         <el-popover trigger="click" width="350" popper-class="ap-affiliate-user-details-popover" :placement="(is_rtl == 'is_rtl') ? 'left-start' : 'right-start'" :visible="userPopoverVisible">
                                             <div class="ap-affiliate-user-details-container">
@@ -173,7 +173,7 @@
                                                 <span v-if="scope.row.ap_referrer_url">{{ scope.row.ap_referrer_url }}</span>
                                                 <span v-else> <?php esc_html_e('Direct traffic', 'affiliatepress-affiliate-marketing'); ?> </span>
                                             </div>
-                                        </div>                                                                       
+                                        </div>
                                     </div>
                                 </div>
                                 </template>
@@ -188,7 +188,7 @@
                                         <span>{{ scope.row.visit_created_date_formated }}</span>
                                     </template>                                
                             </el-table-column> 
-                            <el-table-column  prop="full_name"  min-width="120" label="<?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by='full_name'>
+                            <el-table-column  prop="full_name"  min-width="120" label="<?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?>" sortable="true">
                                     <template #default="scope">
                                         <el-popover trigger="click" width="350" popper-class="ap-affiliate-user-details-popover" placement="bottom"  :visible="userPopoverVisible" ref="fields_useredit_popover">
                                             <div class="ap-affiliate-user-details-container">

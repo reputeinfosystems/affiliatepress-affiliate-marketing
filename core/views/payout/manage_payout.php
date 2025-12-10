@@ -76,7 +76,7 @@
                                     </template>
                                 </el-table-column>   
 
-                                <el-table-column  align="right" header-align="right" prop="ap_formated_payout_amount" width="250" label="<?php esc_html_e('Payment', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by='paid_earning'></el-table-column>
+                                <el-table-column align="right" header-align="right" prop="ap_formated_payout_amount" width="250" label="<?php esc_html_e('Payment', 'affiliatepress-affiliate-marketing'); ?>" sortable :sort-method="(a, b) => a.ap_payout_amount - b.ap_payout_amount"></el-table-column>
 
                                 <el-table-column width="250" prop="ap_payout_total_affiliate" align="center" header-align="center" label="<?php esc_html_e('Total Affiliates', 'affiliatepress-affiliate-marketing'); ?>"></el-table-column>
 
@@ -171,7 +171,7 @@
                                 </template>
                             </el-table-column>                        
                             <el-table-column width="35" type="selection"></el-table-column>
-                            <el-table-column min-width="60" prop="ap_payout_id" label="<?php esc_html_e('ID', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by="ap_affiliates_id">
+                            <el-table-column min-width="60" prop="ap_payout_id" label="<?php esc_html_e('ID', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by="ap_payout_id">
                                 <template #default="scope">
                                     <span>#{{ scope.row.ap_payout_id }}</span>
                                 </template>
@@ -182,7 +182,7 @@
                                 </template>
                             </el-table-column> 
 
-                            <el-table-column  align="right" header-align="right" prop="ap_formated_payout_amount" min-width="70" label="<?php esc_html_e('Payment', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by='paid_earning'></el-table-column>
+                            <el-table-column  align="right" header-align="right" prop="ap_formated_payout_amount" min-width="70" label="<?php esc_html_e('Payment', 'affiliatepress-affiliate-marketing'); ?>" sortable :sort-method="(a, b) => a.ap_payout_amount - b.ap_payout_amount"></el-table-column>
 
                             <el-table-column class-name="ap-action-column" prop="paid_earning" align="center" header-align="center" min-width="70" label="<?php esc_html_e('Paid/Unpaid', 'affiliatepress-affiliate-marketing'); ?>">
                                     <template #default="scope">

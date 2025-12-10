@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: AffiliatePress - Affiliate Marketing v1.5\n"
+"Project-Id-Version: AffiliatePress - Affiliate Marketing v1.6\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-11-04 12:40:58+0000\n"
+"PO-Revision-Date: 2025-11-19 12:14:08+0000\n"
 "Last-Translator: admin <testrepute@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -32,19 +32,19 @@ msgstr "https://www.affiliatepressplugin.com/"
 msgid "Repute Infosystems"
 msgstr "Repute Infosystems"
 
-#: core/classes/class.affiliatepress_creative.php:1231
+#: core/classes/class.affiliatepress_creative.php:1232
 #: core/classes/class.affiliatepress_global_options.php:367
 #@ affiliatepress-affiliate-marketing
 msgid "Active"
 msgstr "Active"
 
-#: core/classes/class.affiliatepress_creative.php:1235
+#: core/classes/class.affiliatepress_creative.php:1236
 #: core/classes/class.affiliatepress_global_options.php:371
 #@ affiliatepress-affiliate-marketing
 msgid "Inactive"
 msgstr "Inactive"
 
-#: core/classes/class.affiliatepress_affiliates.php:1847
+#: core/classes/class.affiliatepress_affiliates.php:1848
 #: core/classes/class.affiliatepress_global_options.php:407
 #: core/classes/class.affiliatepress_global_options.php:446
 #: core/classes/class.affiliatepress_settings.php:2116
@@ -59,8 +59,8 @@ msgid "Sorry! You do not have enough permission to perform this action"
 msgstr "Sorry! You do not have enough permission to perform this action"
 
 #: core/classes/class.affiliatepress-core.php:40
-#: core/classes/class.affiliatepress.php:489
-#: core/classes/class.affiliatepress.php:5134
+#: core/classes/class.affiliatepress.php:491
+#: core/classes/class.affiliatepress.php:5186
 #: core/classes/class.affiliatepress_addons.php:159
 #: core/classes/class.affiliatepress_affiliate_fields.php:96
 #: core/classes/class.affiliatepress_affiliate_fields.php:190
@@ -77,7 +77,7 @@ msgstr "Sorry! You do not have enough permission to perform this action"
 #: core/classes/class.affiliatepress_affiliates.php:1185
 #: core/classes/class.affiliatepress_affiliates.php:1278
 #: core/classes/class.affiliatepress_affiliates.php:1359
-#: core/classes/class.affiliatepress_affiliates.php:1554
+#: core/classes/class.affiliatepress_affiliates.php:1555
 #: core/classes/class.affiliatepress_commissions.php:109
 #: core/classes/class.affiliatepress_commissions.php:191
 #: core/classes/class.affiliatepress_commissions.php:380
@@ -95,7 +95,7 @@ msgstr "Sorry! You do not have enough permission to perform this action"
 #: core/classes/class.affiliatepress_creative.php:468
 #: core/classes/class.affiliatepress_creative.php:552
 #: core/classes/class.affiliatepress_creative.php:631
-#: core/classes/class.affiliatepress_dashboard.php:105
+#: core/classes/class.affiliatepress_dashboard.php:137
 #: core/classes/class.affiliatepress_growth_tools.php:368
 #: core/classes/class.affiliatepress_growth_tools.php:466
 #: core/classes/class.affiliatepress_growth_tools.php:534
@@ -140,9 +140,9 @@ msgstr "Sorry! You do not have enough permission to perform this action"
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1109
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1184
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1316
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1466
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1963
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2046
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1463
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1960
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2043
 #: core/classes/frontend/class.affiliatepress_affiliate_register.php:90
 #: core/classes/intergration/class.affiliatepress_edd.php:217
 #: core/classes/intergration/class.affiliatepress_memberpress.php:221
@@ -155,57 +155,57 @@ msgid "Sorry, Your request can not be processed due to security reason."
 msgstr "Sorry, Your request can not be processed due to security reason."
 
 #: core/classes/class.affiliatepress.php:2452
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4398
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4395
 #@ affiliatepress-affiliate-marketing
 msgid "Last Week"
 msgstr "Last Week"
 
 #: core/classes/class.affiliatepress.php:2458
 #: core/classes/class.affiliatepress_settings.php:2510
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4404
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4401
 #@ affiliatepress-affiliate-marketing
 msgid "Last Month"
 msgstr "Last Month"
 
 #: core/classes/class.affiliatepress.php:2476
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4422
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4419
 #@ affiliatepress-affiliate-marketing
 msgid "3 Months"
 msgstr "3 Months"
 
 #: core/classes/class.affiliatepress.php:2483
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4429
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4426
 #@ affiliatepress-affiliate-marketing
 msgid "6 Months"
 msgstr "6 Months"
 
 #: core/classes/class.affiliatepress.php:2489
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4435
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4432
 #@ affiliatepress-affiliate-marketing
 msgid "Last Year"
 msgstr "Last Year"
 
-#: core/classes/class.affiliatepress.php:3087
-#: core/classes/class.affiliatepress.php:3201
-#: core/classes/class.affiliatepress_dashboard.php:696
+#: core/classes/class.affiliatepress.php:3096
+#: core/classes/class.affiliatepress.php:3210
+#: core/classes/class.affiliatepress_dashboard.php:728
 #: core/views/dashboard/manage_dashboard.php:103
 #: core/views/dashboard/manage_dashboard.php:177
 #@ affiliatepress-affiliate-marketing
 msgid "Affiliates"
 msgstr "Affiliates"
 
-#: core/classes/class.affiliatepress.php:3088
-#: core/classes/class.affiliatepress.php:3211
+#: core/classes/class.affiliatepress.php:3097
+#: core/classes/class.affiliatepress.php:3220
 #@ affiliatepress-affiliate-marketing
 msgid "Settings"
 msgstr "Settings"
 
-#: core/classes/class.affiliatepress.php:3089
-#: core/classes/class.affiliatepress.php:3199
-#: core/classes/class.affiliatepress.php:3680
-#: core/classes/class.affiliatepress.php:3687
-#: core/classes/class.affiliatepress.php:3719
-#: core/classes/class.affiliatepress_dashboard.php:648
+#: core/classes/class.affiliatepress.php:3098
+#: core/classes/class.affiliatepress.php:3208
+#: core/classes/class.affiliatepress.php:3732
+#: core/classes/class.affiliatepress.php:3739
+#: core/classes/class.affiliatepress.php:3771
+#: core/classes/class.affiliatepress_dashboard.php:680
 #: core/views/dashboard/manage_dashboard.php:77
 #: core/views/dashboard/manage_dashboard.php:169
 #: core/views/settings/messages_setting_tab.php:51
@@ -215,8 +215,8 @@ msgstr "Settings"
 msgid "Visits"
 msgstr "Visits"
 
-#: core/classes/class.affiliatepress.php:3090
-#: core/classes/class.affiliatepress.php:3731
+#: core/classes/class.affiliatepress.php:3099
+#: core/classes/class.affiliatepress.php:3783
 #: core/views/creative/manage_creative.php:65
 #: core/views/creative/manage_creative.php:134
 #: core/views/settings/messages_setting_tab.php:519
@@ -224,16 +224,16 @@ msgstr "Visits"
 msgid "Creative"
 msgstr "Creative"
 
-#: core/classes/class.affiliatepress.php:3091
-#: core/classes/class.affiliatepress.php:3207
+#: core/classes/class.affiliatepress.php:3100
+#: core/classes/class.affiliatepress.php:3216
 #@ affiliatepress-affiliate-marketing
 msgid "Notifications"
 msgstr "Notifications"
 
-#: core/classes/class.affiliatepress.php:3092
-#: core/classes/class.affiliatepress.php:3197
-#: core/classes/class.affiliatepress.php:3678
-#: core/classes/class.affiliatepress.php:3696
+#: core/classes/class.affiliatepress.php:3101
+#: core/classes/class.affiliatepress.php:3206
+#: core/classes/class.affiliatepress.php:3730
+#: core/classes/class.affiliatepress.php:3748
 #: core/views/commissions/manage_commissions.php:316
 #: core/views/dashboard/manage_dashboard.php:339
 #: core/views/settings/messages_setting_tab.php:35
@@ -242,13 +242,13 @@ msgstr "Notifications"
 msgid "Commission"
 msgstr "Commission"
 
-#: core/classes/class.affiliatepress.php:3093
+#: core/classes/class.affiliatepress.php:3102
 #@ affiliatepress-affiliate-marketing
 msgid "Affiliate Fields"
 msgstr "Affiliate Fields"
 
-#: core/classes/class.affiliatepress.php:3190
-#: core/classes/class.affiliatepress.php:3192
+#: core/classes/class.affiliatepress.php:3199
+#: core/classes/class.affiliatepress.php:3201
 #: core/classes/intergration/class.affiliatepress_give_wp.php:157
 #: core/classes/intergration/class.affiliatepress_give_wp.php:203
 #: core/classes/intergration/class.affiliatepress_learnpress.php:179
@@ -260,83 +260,83 @@ msgstr "Affiliate Fields"
 msgid "AffiliatePress"
 msgstr "AffiliatePress"
 
-#: core/classes/class.affiliatepress.php:3195
-#: core/classes/class.affiliatepress.php:3675
-#: core/classes/class.affiliatepress.php:3677
+#: core/classes/class.affiliatepress.php:3204
+#: core/classes/class.affiliatepress.php:3727
+#: core/classes/class.affiliatepress.php:3729
 #: core/views/dashboard/manage_dashboard.php:18
 #: core/views/settings/messages_setting_tab.php:27
 #@ affiliatepress-affiliate-marketing
 msgid "Dashboard"
 msgstr "Dashboard"
 
-#: core/classes/class.affiliatepress.php:3203
-#: core/classes/class.affiliatepress.php:3681
+#: core/classes/class.affiliatepress.php:3212
+#: core/classes/class.affiliatepress.php:3733
 #: core/views/settings/messages_setting_tab.php:59
 #@ affiliatepress-affiliate-marketing
 msgid "Creatives"
 msgstr "Creatives"
 
-#: core/classes/class.affiliatepress.php:3492
+#: core/classes/class.affiliatepress.php:3544
 #@ affiliatepress-affiliate-marketing
 msgid "Affiliate Panel"
 msgstr "Affiliate Panel"
 
-#: core/classes/class.affiliatepress.php:3517
+#: core/classes/class.affiliatepress.php:3569
 #@ affiliatepress-affiliate-marketing
 msgid "Affiliate Signup"
 msgstr "Affiliate Signup"
 
-#: core/classes/class.affiliatepress.php:3897
+#: core/classes/class.affiliatepress.php:3949
 #@ affiliatepress-affiliate-marketing
 msgid "First Name"
 msgstr "First Name"
 
-#: core/classes/class.affiliatepress.php:3898
+#: core/classes/class.affiliatepress.php:3950
 #@ affiliatepress-affiliate-marketing
 msgid "Enter your first name"
 msgstr "Enter your first name"
 
-#: core/classes/class.affiliatepress.php:3899
+#: core/classes/class.affiliatepress.php:3951
 #@ affiliatepress-affiliate-marketing
 msgid "Please enter your first name"
 msgstr "Please enter your first name"
 
-#: core/classes/class.affiliatepress.php:3910
+#: core/classes/class.affiliatepress.php:3962
 #@ affiliatepress-affiliate-marketing
 msgid "Last Name"
 msgstr "Last Name"
 
-#: core/classes/class.affiliatepress.php:3911
+#: core/classes/class.affiliatepress.php:3963
 #@ affiliatepress-affiliate-marketing
 msgid "Enter your last name"
 msgstr "Enter your last name"
 
-#: core/classes/class.affiliatepress.php:3912
+#: core/classes/class.affiliatepress.php:3964
 #@ affiliatepress-affiliate-marketing
 msgid "Please enter your last name"
 msgstr "Please enter your last name"
 
-#: core/classes/class.affiliatepress.php:3936
+#: core/classes/class.affiliatepress.php:3988
 #@ affiliatepress-affiliate-marketing
 msgid "User Email"
 msgstr "User Email"
 
-#: core/classes/class.affiliatepress.php:3937
+#: core/classes/class.affiliatepress.php:3989
 #: core/classes/class.affiliatepress_affiliate_fields.php:736
 #@ affiliatepress-affiliate-marketing
 msgid "Enter your email address"
 msgstr "Enter your email address"
 
-#: core/classes/class.affiliatepress.php:3938
+#: core/classes/class.affiliatepress.php:3990
 #: core/classes/class.affiliatepress_affiliate_fields.php:1020
-#: core/classes/class.affiliatepress_affiliates.php:2844
+#: core/classes/class.affiliatepress_affiliates.php:2845
 #: core/classes/frontend/class.affiliatepress_affiliate_register.php:621
 #@ affiliatepress-affiliate-marketing
 msgid "Please enter valid email address"
 msgstr "Please enter valid email address"
 
-#: core/classes/class.affiliatepress.php:3779
-#: core/classes/class.affiliatepress.php:3949
+#: core/classes/class.affiliatepress.php:3831
+#: core/classes/class.affiliatepress.php:4001
 #: core/views/settings/email_notification_setting_tab.php:133
 #: core/views/settings/email_notification_setting_tab.php:136
 #: core/views/settings/messages_setting_tab.php:932
@@ -344,75 +344,75 @@ msgstr "Please enter valid email address"
 msgid "Password"
 msgstr "Password"
 
-#: core/classes/class.affiliatepress.php:3950
+#: core/classes/class.affiliatepress.php:4002
 #@ affiliatepress-affiliate-marketing
 msgid "Enter your password"
 msgstr "Enter your password"
 
-#: core/classes/class.affiliatepress.php:3951
+#: core/classes/class.affiliatepress.php:4003
 #@ affiliatepress-affiliate-marketing
 msgid "Please enter your password"
 msgstr "Please enter your password"
 
-#: core/classes/class.affiliatepress.php:3963
+#: core/classes/class.affiliatepress.php:4015
 #@ affiliatepress-affiliate-marketing
 msgid "Enter payment email"
 msgstr "Enter payment email"
 
-#: core/classes/class.affiliatepress.php:3964
+#: core/classes/class.affiliatepress.php:4016
 #@ affiliatepress-affiliate-marketing
 msgid "Please enter valid payment email"
 msgstr "Please enter valid payment email"
 
-#: core/classes/class.affiliatepress.php:3975
+#: core/classes/class.affiliatepress.php:4027
 #@ affiliatepress-affiliate-marketing
 msgid "Website"
 msgstr "Website"
 
-#: core/classes/class.affiliatepress.php:3976
+#: core/classes/class.affiliatepress.php:4028
 #@ affiliatepress-affiliate-marketing
 msgid "Enter website link"
 msgstr "Enter website link"
 
-#: core/classes/class.affiliatepress.php:3977
+#: core/classes/class.affiliatepress.php:4029
 #@ affiliatepress-affiliate-marketing
 msgid "Please enter website link"
 msgstr "Please enter website link"
 
-#: core/classes/class.affiliatepress.php:3988
+#: core/classes/class.affiliatepress.php:4040
 #@ affiliatepress-affiliate-marketing
 msgid "How Will You Promote Us?"
 msgstr "How Will You Promote Us?"
 
-#: core/classes/class.affiliatepress.php:3989
+#: core/classes/class.affiliatepress.php:4041
 #@ affiliatepress-affiliate-marketing
 msgid "Enter how you promote us"
 msgstr "Enter how you promote us"
 
-#: core/classes/class.affiliatepress.php:3990
+#: core/classes/class.affiliatepress.php:4042
 #@ affiliatepress-affiliate-marketing
 msgid "Please add promote us detail"
 msgstr "Please add promote us detail"
 
-#: core/classes/class.affiliatepress.php:4003
+#: core/classes/class.affiliatepress.php:4055
 #@ affiliatepress-affiliate-marketing
 msgid "Please tick this box if you want to proceed"
 msgstr "Please tick this box if you want to proceed"
 
-#: core/classes/class.affiliatepress.php:4139
+#: core/classes/class.affiliatepress.php:4191
 #, php-format
 #@ affiliatepress-affiliate-marketing
 msgid "Hey admin, %1$s %2$s affiliate account has been approved. %3$s Thanks."
 msgstr "Hey admin, %1$s %2$s affiliate account has been approved. %3$s Thanks."
 
-#: core/classes/class.affiliatepress.php:4140
+#: core/classes/class.affiliatepress.php:4192
 #, php-format
 #@ affiliatepress-affiliate-marketing
 msgid "Hey %1$s, %2$s Your application for our affiliate account has been approved. %3$s Welcome to the team!. Thank you for choosing us,%4$s%5$s"
 msgstr "Hey %1$s, %2$s Your application for our affiliate account has been approved. %3$s Welcome to the team!. Thank you for choosing us,%4$s%5$s"
 
-#: core/classes/class.affiliatepress.php:4158
-#: core/classes/class.affiliatepress.php:4160
+#: core/classes/class.affiliatepress.php:4210
+#: core/classes/class.affiliatepress.php:4212
 #: core/views/notifications/manage_notifications.php:33
 #: core/views/notifications/manage_notifications.php:36
 #: core/views/wizard/manage_wizard.php:256
@@ -420,15 +420,15 @@ msgstr "Hey %1$s, %2$s Your application for our affiliate account has been appro
 msgid "Commission Registered"
 msgstr "Commission Registered"
 
-#: core/classes/class.affiliatepress.php:4169
-#: core/classes/class.affiliatepress.php:4171
+#: core/classes/class.affiliatepress.php:4221
+#: core/classes/class.affiliatepress.php:4223
 #@ affiliatepress-affiliate-marketing
 msgid "Affiliate Commission Approved"
 msgstr "Affiliate Commission Approved"
 
-#: core/classes/class.affiliatepress.php:488
-#: core/classes/class.affiliatepress.php:5133
-#: core/classes/class.affiliatepress.php:5142
+#: core/classes/class.affiliatepress.php:490
+#: core/classes/class.affiliatepress.php:5185
+#: core/classes/class.affiliatepress.php:5194
 #: core/classes/class.affiliatepress_addons.php:139
 #: core/classes/class.affiliatepress_addons.php:148
 #: core/classes/class.affiliatepress_addons.php:158
@@ -504,29 +504,29 @@ msgstr "Affiliate Commission Approved"
 #: core/classes/class.affiliatepress_affiliates.php:1339
 #: core/classes/class.affiliatepress_affiliates.php:1348
 #: core/classes/class.affiliatepress_affiliates.php:1358
-#: core/classes/class.affiliatepress_affiliates.php:1526
-#: core/classes/class.affiliatepress_affiliates.php:1533
-#: core/classes/class.affiliatepress_affiliates.php:1543
-#: core/classes/class.affiliatepress_affiliates.php:1553
-#: core/classes/class.affiliatepress_affiliates.php:1632
-#: core/classes/class.affiliatepress_affiliates.php:1639
-#: core/classes/class.affiliatepress_affiliates.php:1659
-#: core/classes/class.affiliatepress_affiliates.php:1670
-#: core/classes/class.affiliatepress_affiliates.php:1679
-#: core/classes/class.affiliatepress_affiliates.php:1686
-#: core/classes/class.affiliatepress_affiliates.php:2078
-#: core/classes/class.affiliatepress_affiliates.php:2112
-#: core/classes/class.affiliatepress_affiliates.php:2125
-#: core/classes/class.affiliatepress_affiliates.php:2172
-#: core/classes/class.affiliatepress_affiliates.php:2183
-#: core/classes/class.affiliatepress_affiliates.php:2212
-#: core/classes/class.affiliatepress_affiliates.php:2258
-#: core/classes/class.affiliatepress_affiliates.php:2286
-#: core/classes/class.affiliatepress_affiliates.php:2326
-#: core/classes/class.affiliatepress_affiliates.php:2425
-#: core/classes/class.affiliatepress_affiliates.php:2521
-#: core/classes/class.affiliatepress_affiliates.php:2576
-#: core/classes/class.affiliatepress_affiliates.php:2607
+#: core/classes/class.affiliatepress_affiliates.php:1527
+#: core/classes/class.affiliatepress_affiliates.php:1534
+#: core/classes/class.affiliatepress_affiliates.php:1544
+#: core/classes/class.affiliatepress_affiliates.php:1554
+#: core/classes/class.affiliatepress_affiliates.php:1633
+#: core/classes/class.affiliatepress_affiliates.php:1640
+#: core/classes/class.affiliatepress_affiliates.php:1660
+#: core/classes/class.affiliatepress_affiliates.php:1671
+#: core/classes/class.affiliatepress_affiliates.php:1680
+#: core/classes/class.affiliatepress_affiliates.php:1687
+#: core/classes/class.affiliatepress_affiliates.php:2079
+#: core/classes/class.affiliatepress_affiliates.php:2113
+#: core/classes/class.affiliatepress_affiliates.php:2126
+#: core/classes/class.affiliatepress_affiliates.php:2173
+#: core/classes/class.affiliatepress_affiliates.php:2184
+#: core/classes/class.affiliatepress_affiliates.php:2213
+#: core/classes/class.affiliatepress_affiliates.php:2259
+#: core/classes/class.affiliatepress_affiliates.php:2287
+#: core/classes/class.affiliatepress_affiliates.php:2327
+#: core/classes/class.affiliatepress_affiliates.php:2426
+#: core/classes/class.affiliatepress_affiliates.php:2522
+#: core/classes/class.affiliatepress_affiliates.php:2577
+#: core/classes/class.affiliatepress_affiliates.php:2608
 #: core/classes/class.affiliatepress_commissions.php:83
 #: core/classes/class.affiliatepress_commissions.php:89
 #: core/classes/class.affiliatepress_commissions.php:98
@@ -573,15 +573,15 @@ msgstr "Affiliate Commission Approved"
 #: core/classes/class.affiliatepress_commissions.php:1024
 #: core/classes/class.affiliatepress_commissions.php:1033
 #: core/classes/class.affiliatepress_commissions.php:1043
-#: core/classes/class.affiliatepress_commissions.php:1309
-#: core/classes/class.affiliatepress_commissions.php:1351
-#: core/classes/class.affiliatepress_commissions.php:1437
-#: core/classes/class.affiliatepress_commissions.php:1468
-#: core/classes/class.affiliatepress_commissions.php:1500
-#: core/classes/class.affiliatepress_commissions.php:1529
-#: core/classes/class.affiliatepress_commissions.php:1561
-#: core/classes/class.affiliatepress_commissions.php:1641
-#: core/classes/class.affiliatepress_commissions.php:1785
+#: core/classes/class.affiliatepress_commissions.php:1310
+#: core/classes/class.affiliatepress_commissions.php:1352
+#: core/classes/class.affiliatepress_commissions.php:1438
+#: core/classes/class.affiliatepress_commissions.php:1469
+#: core/classes/class.affiliatepress_commissions.php:1501
+#: core/classes/class.affiliatepress_commissions.php:1530
+#: core/classes/class.affiliatepress_commissions.php:1562
+#: core/classes/class.affiliatepress_commissions.php:1642
+#: core/classes/class.affiliatepress_commissions.php:1786
 #: core/classes/class.affiliatepress_creative.php:66
 #: core/classes/class.affiliatepress_creative.php:72
 #: core/classes/class.affiliatepress_creative.php:81
@@ -612,22 +612,22 @@ msgstr "Affiliate Commission Approved"
 #: core/classes/class.affiliatepress_creative.php:611
 #: core/classes/class.affiliatepress_creative.php:620
 #: core/classes/class.affiliatepress_creative.php:630
-#: core/classes/class.affiliatepress_creative.php:780
-#: core/classes/class.affiliatepress_creative.php:808
-#: core/classes/class.affiliatepress_creative.php:819
-#: core/classes/class.affiliatepress_creative.php:891
-#: core/classes/class.affiliatepress_creative.php:933
-#: core/classes/class.affiliatepress_creative.php:987
-#: core/classes/class.affiliatepress_creative.php:997
-#: core/classes/class.affiliatepress_creative.php:1042
-#: core/classes/class.affiliatepress_creative.php:1115
-#: core/classes/class.affiliatepress_creative.php:1146
-#: core/classes/class.affiliatepress_dashboard.php:94
-#: core/classes/class.affiliatepress_dashboard.php:104
-#: core/classes/class.affiliatepress_dashboard.php:112
-#: core/classes/class.affiliatepress_dashboard.php:119
-#: core/classes/class.affiliatepress_dashboard.php:551
-#: core/classes/class.affiliatepress_dashboard.php:744
+#: core/classes/class.affiliatepress_creative.php:781
+#: core/classes/class.affiliatepress_creative.php:809
+#: core/classes/class.affiliatepress_creative.php:820
+#: core/classes/class.affiliatepress_creative.php:892
+#: core/classes/class.affiliatepress_creative.php:934
+#: core/classes/class.affiliatepress_creative.php:988
+#: core/classes/class.affiliatepress_creative.php:998
+#: core/classes/class.affiliatepress_creative.php:1043
+#: core/classes/class.affiliatepress_creative.php:1116
+#: core/classes/class.affiliatepress_creative.php:1147
+#: core/classes/class.affiliatepress_dashboard.php:126
+#: core/classes/class.affiliatepress_dashboard.php:136
+#: core/classes/class.affiliatepress_dashboard.php:144
+#: core/classes/class.affiliatepress_dashboard.php:151
+#: core/classes/class.affiliatepress_dashboard.php:583
+#: core/classes/class.affiliatepress_dashboard.php:776
 #: core/classes/class.affiliatepress_email_notifications.php:153
 #: core/classes/class.affiliatepress_growth_tools.php:342
 #: core/classes/class.affiliatepress_growth_tools.php:348
@@ -724,16 +724,16 @@ msgstr "Affiliate Commission Approved"
 #: core/classes/class.affiliatepress_payout.php:1437
 #: core/classes/class.affiliatepress_payout.php:1446
 #: core/classes/class.affiliatepress_payout.php:1456
-#: core/classes/class.affiliatepress_payout.php:1769
-#: core/classes/class.affiliatepress_payout.php:1898
-#: core/classes/class.affiliatepress_payout.php:1949
-#: core/classes/class.affiliatepress_payout.php:1997
-#: core/classes/class.affiliatepress_payout.php:2033
-#: core/classes/class.affiliatepress_payout.php:2071
-#: core/classes/class.affiliatepress_payout.php:2096
-#: core/classes/class.affiliatepress_payout.php:2139
-#: core/classes/class.affiliatepress_payout.php:2232
-#: core/classes/class.affiliatepress_payout.php:2261
+#: core/classes/class.affiliatepress_payout.php:1771
+#: core/classes/class.affiliatepress_payout.php:1900
+#: core/classes/class.affiliatepress_payout.php:1951
+#: core/classes/class.affiliatepress_payout.php:1999
+#: core/classes/class.affiliatepress_payout.php:2035
+#: core/classes/class.affiliatepress_payout.php:2073
+#: core/classes/class.affiliatepress_payout.php:2098
+#: core/classes/class.affiliatepress_payout.php:2141
+#: core/classes/class.affiliatepress_payout.php:2234
+#: core/classes/class.affiliatepress_payout.php:2263
 #: core/classes/class.affiliatepress_settings.php:85
 #: core/classes/class.affiliatepress_settings.php:92
 #: core/classes/class.affiliatepress_settings.php:101
@@ -786,8 +786,8 @@ msgstr "Affiliate Commission Approved"
 #: core/classes/class.affiliatepress_visits.php:74
 #: core/classes/class.affiliatepress_visits.php:83
 #: core/classes/class.affiliatepress_visits.php:93
-#: core/classes/class.affiliatepress_visits.php:316
-#: core/classes/class.affiliatepress_visits.php:414
+#: core/classes/class.affiliatepress_visits.php:313
+#: core/classes/class.affiliatepress_visits.php:411
 #: core/classes/class.affiliatepress_wizard.php:233
 #: core/classes/class.affiliatepress_wizard.php:242
 #: core/classes/class.affiliatepress_wizard.php:374
@@ -827,24 +827,24 @@ msgstr "Affiliate Commission Approved"
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1311
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1315
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1323
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1461
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1465
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1473
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1957
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1990
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2040
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2697
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2745
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3195
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3636
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3657
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3668
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1458
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1462
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1470
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1954
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1987
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2037
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2694
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2742
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3192
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3633
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3654
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3665
 #: core/classes/frontend/class.affiliatepress_affiliate_register.php:83
 #: core/classes/frontend/class.affiliatepress_affiliate_register.php:89
 #: core/classes/frontend/class.affiliatepress_affiliate_register.php:97
 #: core/classes/intergration/class.affiliatepress_accept_stripe_payment.php:239
 #: core/classes/intergration/class.affiliatepress_arforms.php:210
-#: core/classes/intergration/class.affiliatepress_armember.php:329
+#: core/classes/intergration/class.affiliatepress_armember.php:379
 #: core/classes/intergration/class.affiliatepress_bookingpress.php:217
 #: core/classes/intergration/class.affiliatepress_download_manager.php:142
 #: core/classes/intergration/class.affiliatepress_easycart.php:311
@@ -891,13 +891,13 @@ msgstr "Error"
 #: core/classes/class.affiliatepress_affiliates.php:997
 #: core/classes/class.affiliatepress_affiliates.php:1029
 #: core/classes/class.affiliatepress_affiliates.php:1079
-#: core/classes/class.affiliatepress_affiliates.php:2079
-#: core/classes/class.affiliatepress_affiliates.php:2259
-#: core/classes/class.affiliatepress_affiliates.php:2287
-#: core/classes/class.affiliatepress_affiliates.php:2327
-#: core/classes/class.affiliatepress_affiliates.php:2426
-#: core/classes/class.affiliatepress_affiliates.php:2522
-#: core/classes/class.affiliatepress_affiliates.php:2608
+#: core/classes/class.affiliatepress_affiliates.php:2080
+#: core/classes/class.affiliatepress_affiliates.php:2260
+#: core/classes/class.affiliatepress_affiliates.php:2288
+#: core/classes/class.affiliatepress_affiliates.php:2328
+#: core/classes/class.affiliatepress_affiliates.php:2427
+#: core/classes/class.affiliatepress_affiliates.php:2523
+#: core/classes/class.affiliatepress_affiliates.php:2609
 #: core/classes/class.affiliatepress_commissions.php:84
 #: core/classes/class.affiliatepress_commissions.php:355
 #: core/classes/class.affiliatepress_commissions.php:601
@@ -905,25 +905,25 @@ msgstr "Error"
 #: core/classes/class.affiliatepress_commissions.php:666
 #: core/classes/class.affiliatepress_commissions.php:678
 #: core/classes/class.affiliatepress_commissions.php:785
-#: core/classes/class.affiliatepress_commissions.php:1310
-#: core/classes/class.affiliatepress_commissions.php:1352
-#: core/classes/class.affiliatepress_commissions.php:1469
-#: core/classes/class.affiliatepress_commissions.php:1501
-#: core/classes/class.affiliatepress_commissions.php:1530
-#: core/classes/class.affiliatepress_commissions.php:1562
-#: core/classes/class.affiliatepress_commissions.php:1642
-#: core/classes/class.affiliatepress_commissions.php:1786
+#: core/classes/class.affiliatepress_commissions.php:1311
+#: core/classes/class.affiliatepress_commissions.php:1353
+#: core/classes/class.affiliatepress_commissions.php:1470
+#: core/classes/class.affiliatepress_commissions.php:1502
+#: core/classes/class.affiliatepress_commissions.php:1531
+#: core/classes/class.affiliatepress_commissions.php:1563
+#: core/classes/class.affiliatepress_commissions.php:1643
+#: core/classes/class.affiliatepress_commissions.php:1787
 #: core/classes/class.affiliatepress_creative.php:67
 #: core/classes/class.affiliatepress_creative.php:126
 #: core/classes/class.affiliatepress_creative.php:212
 #: core/classes/class.affiliatepress_creative.php:443
-#: core/classes/class.affiliatepress_creative.php:892
-#: core/classes/class.affiliatepress_creative.php:934
-#: core/classes/class.affiliatepress_creative.php:998
-#: core/classes/class.affiliatepress_creative.php:1043
-#: core/classes/class.affiliatepress_creative.php:1147
-#: core/classes/class.affiliatepress_dashboard.php:552
-#: core/classes/class.affiliatepress_dashboard.php:745
+#: core/classes/class.affiliatepress_creative.php:893
+#: core/classes/class.affiliatepress_creative.php:935
+#: core/classes/class.affiliatepress_creative.php:999
+#: core/classes/class.affiliatepress_creative.php:1044
+#: core/classes/class.affiliatepress_creative.php:1148
+#: core/classes/class.affiliatepress_dashboard.php:584
+#: core/classes/class.affiliatepress_dashboard.php:777
 #: core/classes/class.affiliatepress_email_notifications.php:248
 #: core/classes/class.affiliatepress_growth_tools.php:343
 #: core/classes/class.affiliatepress_growth_tools.php:440
@@ -943,15 +943,15 @@ msgstr "Error"
 #: core/classes/class.affiliatepress_payout.php:771
 #: core/classes/class.affiliatepress_payout.php:967
 #: core/classes/class.affiliatepress_payout.php:1222
-#: core/classes/class.affiliatepress_payout.php:1770
-#: core/classes/class.affiliatepress_payout.php:1899
-#: core/classes/class.affiliatepress_payout.php:1950
-#: core/classes/class.affiliatepress_payout.php:1998
-#: core/classes/class.affiliatepress_payout.php:2034
-#: core/classes/class.affiliatepress_payout.php:2072
-#: core/classes/class.affiliatepress_payout.php:2097
-#: core/classes/class.affiliatepress_payout.php:2140
-#: core/classes/class.affiliatepress_payout.php:2262
+#: core/classes/class.affiliatepress_payout.php:1772
+#: core/classes/class.affiliatepress_payout.php:1901
+#: core/classes/class.affiliatepress_payout.php:1952
+#: core/classes/class.affiliatepress_payout.php:2000
+#: core/classes/class.affiliatepress_payout.php:2036
+#: core/classes/class.affiliatepress_payout.php:2074
+#: core/classes/class.affiliatepress_payout.php:2099
+#: core/classes/class.affiliatepress_payout.php:2142
+#: core/classes/class.affiliatepress_payout.php:2264
 #: core/classes/class.affiliatepress_settings.php:177
 #: core/classes/class.affiliatepress_settings.php:309
 #: core/classes/class.affiliatepress_settings.php:586
@@ -963,12 +963,12 @@ msgstr "Error"
 #: core/classes/class.affiliatepress_settings.php:3176
 #: core/classes/class.affiliatepress_settings.php:3327
 #: core/classes/class.affiliatepress_settings.php:3375
-#: core/classes/class.affiliatepress_visits.php:317
-#: core/classes/class.affiliatepress_visits.php:415
+#: core/classes/class.affiliatepress_visits.php:314
+#: core/classes/class.affiliatepress_visits.php:412
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:86
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2698
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2746
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3196
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2695
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2743
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3193
 #@ affiliatepress-affiliate-marketing
 msgid "Something went wrong.."
 msgstr "Something went wrong.."
@@ -989,7 +989,7 @@ msgstr "Something went wrong.."
 #: core/classes/class.affiliatepress_affiliates.php:1163
 #: core/classes/class.affiliatepress_affiliates.php:1256
 #: core/classes/class.affiliatepress_affiliates.php:1337
-#: core/classes/class.affiliatepress_affiliates.php:1531
+#: core/classes/class.affiliatepress_affiliates.php:1532
 #: core/classes/class.affiliatepress_commissions.php:87
 #: core/classes/class.affiliatepress_commissions.php:169
 #: core/classes/class.affiliatepress_commissions.php:358
@@ -1007,7 +1007,7 @@ msgstr "Something went wrong.."
 #: core/classes/class.affiliatepress_creative.php:446
 #: core/classes/class.affiliatepress_creative.php:530
 #: core/classes/class.affiliatepress_creative.php:609
-#: core/classes/class.affiliatepress_dashboard.php:117
+#: core/classes/class.affiliatepress_dashboard.php:149
 #: core/classes/class.affiliatepress_growth_tools.php:346
 #: core/classes/class.affiliatepress_growth_tools.php:444
 #: core/classes/class.affiliatepress_growth_tools.php:512
@@ -1044,7 +1044,7 @@ msgstr "Something went wrong.."
 msgid "Sorry. Something went wrong while processing the request"
 msgstr "Sorry. Something went wrong while processing the request"
 
-#: core/classes/class.affiliatepress.php:5151
+#: core/classes/class.affiliatepress.php:5203
 #: core/classes/class.affiliatepress_addons.php:217
 #: core/classes/class.affiliatepress_affiliate_fields.php:142
 #: core/classes/class.affiliatepress_affiliate_fields.php:277
@@ -1057,10 +1057,10 @@ msgstr "Sorry. Something went wrong while processing the request"
 #: core/classes/class.affiliatepress_affiliates.php:1129
 #: core/classes/class.affiliatepress_affiliates.php:1198
 #: core/classes/class.affiliatepress_affiliates.php:1292
-#: core/classes/class.affiliatepress_affiliates.php:1749
-#: core/classes/class.affiliatepress_affiliates.php:1765
-#: core/classes/class.affiliatepress_affiliates.php:2154
-#: core/classes/class.affiliatepress_affiliates.php:2315
+#: core/classes/class.affiliatepress_affiliates.php:1750
+#: core/classes/class.affiliatepress_affiliates.php:1766
+#: core/classes/class.affiliatepress_affiliates.php:2155
+#: core/classes/class.affiliatepress_affiliates.php:2316
 #: core/classes/class.affiliatepress_commissions.php:139
 #: core/classes/class.affiliatepress_commissions.php:228
 #: core/classes/class.affiliatepress_commissions.php:236
@@ -1070,13 +1070,13 @@ msgstr "Sorry. Something went wrong while processing the request"
 #: core/classes/class.affiliatepress_commissions.php:831
 #: core/classes/class.affiliatepress_commissions.php:907
 #: core/classes/class.affiliatepress_commissions.php:976
-#: core/classes/class.affiliatepress_commissions.php:1550
+#: core/classes/class.affiliatepress_commissions.php:1551
 #: core/classes/class.affiliatepress_creative.php:276
 #: core/classes/class.affiliatepress_creative.php:499
 #: core/classes/class.affiliatepress_creative.php:566
-#: core/classes/class.affiliatepress_creative.php:838
-#: core/classes/class.affiliatepress_creative.php:978
-#: core/classes/class.affiliatepress_dashboard.php:540
+#: core/classes/class.affiliatepress_creative.php:839
+#: core/classes/class.affiliatepress_creative.php:979
+#: core/classes/class.affiliatepress_dashboard.php:572
 #: core/classes/class.affiliatepress_email_notifications.php:150
 #: core/classes/class.affiliatepress_growth_tools.php:421
 #: core/classes/class.affiliatepress_growth_tools.php:480
@@ -1092,7 +1092,7 @@ msgstr "Sorry. Something went wrong while processing the request"
 #: core/classes/class.affiliatepress_payout.php:1028
 #: core/classes/class.affiliatepress_payout.php:1324
 #: core/classes/class.affiliatepress_payout.php:1381
-#: core/classes/class.affiliatepress_payout.php:2128
+#: core/classes/class.affiliatepress_payout.php:2130
 #: core/classes/class.affiliatepress_settings.php:116
 #: core/classes/class.affiliatepress_settings.php:217
 #: core/classes/class.affiliatepress_settings.php:224
@@ -1111,9 +1111,9 @@ msgstr "Sorry. Something went wrong while processing the request"
 #: core/classes/class.affiliatepress_wizard.php:393
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:92
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:210
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2011
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2055
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2453
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2008
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2052
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2450
 #: core/classes/frontend/class.affiliatepress_affiliate_register.php:313
 #: core/classes/frontend/class.affiliatepress_creative_shortcode.php:39
 #@ affiliatepress-affiliate-marketing
@@ -1136,23 +1136,23 @@ msgid "Field Settings Data Retrieved Successfully"
 msgstr "Field Settings Data Retrieved Successfully"
 
 #: core/classes/class.affiliatepress_affiliate_fields.php:686
-#: core/classes/class.affiliatepress_affiliates.php:2736
-#: core/classes/class.affiliatepress_commissions.php:1871
-#: core/classes/class.affiliatepress_creative.php:1227
-#: core/classes/class.affiliatepress_dashboard.php:801
-#: core/classes/class.affiliatepress_payout.php:2353
-#: core/classes/class.affiliatepress_visits.php:516
+#: core/classes/class.affiliatepress_affiliates.php:2737
+#: core/classes/class.affiliatepress_commissions.php:1872
+#: core/classes/class.affiliatepress_creative.php:1228
+#: core/classes/class.affiliatepress_dashboard.php:833
+#: core/classes/class.affiliatepress_payout.php:2355
+#: core/classes/class.affiliatepress_visits.php:513
 #@ affiliatepress-affiliate-marketing
 msgid "Bulk Action"
 msgstr "Bulk Action"
 
-#: core/classes/class.affiliatepress.php:3777
+#: core/classes/class.affiliatepress.php:3829
 #: core/classes/class.affiliatepress_affiliate_fields.php:690
-#: core/classes/class.affiliatepress_affiliates.php:2740
-#: core/classes/class.affiliatepress_commissions.php:1875
-#: core/classes/class.affiliatepress_dashboard.php:805
-#: core/classes/class.affiliatepress_payout.php:2357
-#: core/classes/class.affiliatepress_visits.php:520
+#: core/classes/class.affiliatepress_affiliates.php:2741
+#: core/classes/class.affiliatepress_commissions.php:1876
+#: core/classes/class.affiliatepress_dashboard.php:837
+#: core/classes/class.affiliatepress_payout.php:2359
+#: core/classes/class.affiliatepress_visits.php:517
 #: core/views/affiliates/manage_affiliates.php:154
 #: core/views/affiliates/manage_affiliates.php:266
 #: core/views/commissions/manage_commissions.php:182
@@ -1216,7 +1216,7 @@ msgstr "Enter your lastname"
 msgid "Please enter your lastname"
 msgstr "Please enter your lastname"
 
-#: core/classes/class.affiliatepress.php:3788
+#: core/classes/class.affiliatepress.php:3840
 #: core/classes/class.affiliatepress_affiliate_fields.php:735
 #: core/views/commissions/manage_commissions.php:96
 #: core/views/commissions/manage_commissions.php:273
@@ -1270,7 +1270,7 @@ msgstr "Please enter appointment note"
 msgid "Enter your username"
 msgstr "Enter your username"
 
-#: core/classes/class.affiliatepress.php:3923
+#: core/classes/class.affiliatepress.php:3975
 #: core/classes/class.affiliatepress_affiliate_fields.php:773
 #: core/views/commissions/manage_commissions.php:91
 #: core/views/commissions/manage_commissions.php:268
@@ -1288,57 +1288,57 @@ msgid "Please enter your username"
 msgstr "Please enter your username"
 
 #: core/classes/class.affiliatepress_affiliate_fields.php:968
-#: core/classes/class.affiliatepress_affiliates.php:2792
+#: core/classes/class.affiliatepress_affiliates.php:2793
 #: core/classes/frontend/class.affiliatepress_affiliate_register.php:569
 #@ affiliatepress-affiliate-marketing
 msgid "Please add password"
 msgstr "Please add password"
 
 #: core/classes/class.affiliatepress_affiliate_fields.php:975
-#: core/classes/class.affiliatepress_affiliates.php:2799
+#: core/classes/class.affiliatepress_affiliates.php:2800
 #: core/classes/frontend/class.affiliatepress_affiliate_register.php:576
 #@ affiliatepress-affiliate-marketing
 msgid "Please add lastname"
 msgstr "Please add lastname"
 
 #: core/classes/class.affiliatepress_affiliate_fields.php:982
-#: core/classes/class.affiliatepress_affiliates.php:2806
+#: core/classes/class.affiliatepress_affiliates.php:2807
 #: core/classes/frontend/class.affiliatepress_affiliate_register.php:583
 #@ affiliatepress-affiliate-marketing
 msgid "Please add firstname"
 msgstr "Please add firstname"
 
 #: core/classes/class.affiliatepress_affiliate_fields.php:989
-#: core/classes/class.affiliatepress_affiliates.php:2813
+#: core/classes/class.affiliatepress_affiliates.php:2814
 #: core/classes/frontend/class.affiliatepress_affiliate_register.php:590
 #@ affiliatepress-affiliate-marketing
 msgid "Please enter user email"
 msgstr "Please enter user email"
 
 #: core/classes/class.affiliatepress_affiliate_fields.php:994
-#: core/classes/class.affiliatepress_affiliates.php:2818
+#: core/classes/class.affiliatepress_affiliates.php:2819
 #: core/classes/frontend/class.affiliatepress_affiliate_register.php:595
 #@ affiliatepress-affiliate-marketing
 msgid "Please enter valid user email address"
 msgstr "Please enter valid user email address"
 
 #: core/classes/class.affiliatepress_affiliate_fields.php:1001
-#: core/classes/class.affiliatepress_affiliates.php:2825
+#: core/classes/class.affiliatepress_affiliates.php:2826
 #: core/classes/frontend/class.affiliatepress_affiliate_register.php:602
 #@ affiliatepress-affiliate-marketing
 msgid "Please add username"
 msgstr "Please add username"
 
 #: core/classes/class.affiliatepress_affiliate_fields.php:1008
-#: core/classes/class.affiliatepress_affiliates.php:2832
-#: core/classes/class.affiliatepress_commissions.php:1943
+#: core/classes/class.affiliatepress_affiliates.php:2833
+#: core/classes/class.affiliatepress_commissions.php:1944
 #: core/classes/frontend/class.affiliatepress_affiliate_register.php:609
 #@ affiliatepress-affiliate-marketing
 msgid "Please add affiliates user"
 msgstr "Please add affiliates user"
 
 #: core/classes/class.affiliatepress_affiliate_fields.php:1015
-#: core/classes/class.affiliatepress_affiliates.php:2839
+#: core/classes/class.affiliatepress_affiliates.php:2840
 #: core/classes/frontend/class.affiliatepress_affiliate_register.php:616
 #@ affiliatepress-affiliate-marketing
 msgid "Please enter payment email"
@@ -1410,7 +1410,6 @@ msgstr "warning"
 
 #: core/classes/class.affiliatepress_affiliates.php:1252
 #: core/classes/class.affiliatepress_commissions.php:938
-#: core/classes/class.affiliatepress_creative.php:526
 #@ affiliatepress-affiliate-marketing
 msgid "Affiliates status has not been updated successfully"
 msgstr "Affiliates status has not been updated successfully"
@@ -1422,24 +1421,24 @@ msgid "Affiliates status has been updated successfully."
 msgstr "Affiliates status has been updated successfully."
 
 #: core/classes/class.affiliatepress_affiliates.php:1333
-#: core/classes/class.affiliatepress_affiliates.php:1476
-#: core/classes/class.affiliatepress_affiliates.php:1527
+#: core/classes/class.affiliatepress_affiliates.php:1477
+#: core/classes/class.affiliatepress_affiliates.php:1528
 #: core/classes/class.affiliatepress_commissions.php:165
 #: core/classes/class.affiliatepress_commissions.php:437
 #: core/classes/class.affiliatepress_commissions.php:1018
-#: core/classes/class.affiliatepress_commissions.php:1160
+#: core/classes/class.affiliatepress_commissions.php:1161
 #: core/classes/class.affiliatepress_creative.php:303
 #: core/classes/class.affiliatepress_creative.php:605
-#: core/classes/class.affiliatepress_creative.php:696
-#: core/classes/class.affiliatepress_dashboard.php:113
-#: core/classes/class.affiliatepress_dashboard.php:386
+#: core/classes/class.affiliatepress_creative.php:697
+#: core/classes/class.affiliatepress_dashboard.php:145
+#: core/classes/class.affiliatepress_dashboard.php:418
 #: core/classes/class.affiliatepress_notifications.php:55
 #: core/classes/class.affiliatepress_notifications.php:159
 #: core/classes/class.affiliatepress_notifications.php:272
 #: core/classes/class.affiliatepress_payout.php:1051
 #: core/classes/class.affiliatepress_payout.php:1067
 #: core/classes/class.affiliatepress_payout.php:1431
-#: core/classes/class.affiliatepress_payout.php:1550
+#: core/classes/class.affiliatepress_payout.php:1552
 #: core/classes/class.affiliatepress_settings.php:86
 #: core/classes/class.affiliatepress_settings.php:102
 #: core/classes/class.affiliatepress_settings.php:2626
@@ -1459,17 +1458,17 @@ msgstr "Affiliates status has been updated successfully."
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1180
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1285
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1312
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1402
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1571
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1399
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1568
 #@ affiliatepress-affiliate-marketing
 msgid "Something Wrong"
 msgstr "Something Wrong"
 
-#: core/classes/class.affiliatepress_affiliates.php:1475
-#: core/classes/class.affiliatepress_commissions.php:1159
-#: core/classes/class.affiliatepress_creative.php:695
-#: core/classes/class.affiliatepress_dashboard.php:385
-#: core/classes/class.affiliatepress_payout.php:1549
+#: core/classes/class.affiliatepress_affiliates.php:1476
+#: core/classes/class.affiliatepress_commissions.php:1160
+#: core/classes/class.affiliatepress_creative.php:696
+#: core/classes/class.affiliatepress_dashboard.php:417
+#: core/classes/class.affiliatepress_payout.php:1551
 #: core/classes/class.affiliatepress_visits.php:189
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:398
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:686
@@ -1480,110 +1479,110 @@ msgstr "Something Wrong"
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1083
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1156
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1284
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1401
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1570
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1398
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1567
 #@ affiliatepress-affiliate-marketing
 msgid "success"
 msgstr "success"
 
-#: core/classes/class.affiliatepress_affiliates.php:1603
+#: core/classes/class.affiliatepress_affiliates.php:1604
 #@ affiliatepress-affiliate-marketing
 msgid "Firstname is too long..."
 msgstr "Firstname is too long..."
 
-#: core/classes/class.affiliatepress_affiliates.php:1608
+#: core/classes/class.affiliatepress_affiliates.php:1609
 #@ affiliatepress-affiliate-marketing
 msgid "Lastname is too long..."
 msgstr "Lastname is too long..."
 
-#: core/classes/class.affiliatepress_affiliates.php:1613
+#: core/classes/class.affiliatepress_affiliates.php:1614
 #@ affiliatepress-affiliate-marketing
 msgid "Email address is too long..."
 msgstr "Email address is too long..."
 
-#: core/classes/class.affiliatepress_affiliates.php:1618
+#: core/classes/class.affiliatepress_affiliates.php:1619
 #@ affiliatepress-affiliate-marketing
 msgid "Email address is already exists"
 msgstr "Email address is already exists"
 
-#: core/classes/class.affiliatepress_affiliates.php:1623
+#: core/classes/class.affiliatepress_affiliates.php:1624
 #@ affiliatepress-affiliate-marketing
 msgid "Username is already exists"
 msgstr "Username is already exists"
 
-#: core/classes/class.affiliatepress_affiliates.php:1633
+#: core/classes/class.affiliatepress_affiliates.php:1634
 #@ affiliatepress-affiliate-marketing
 msgid "Affiliate WordPress User is required"
 msgstr "Affiliate WordPress User is required"
 
-#: core/classes/class.affiliatepress_affiliates.php:1640
+#: core/classes/class.affiliatepress_affiliates.php:1641
 #@ affiliatepress-affiliate-marketing
 msgid "Payment email is too long..."
 msgstr "Payment email is too long..."
 
-#: core/classes/class.affiliatepress_affiliates.php:1660
-#: core/classes/class.affiliatepress_affiliates.php:1671
+#: core/classes/class.affiliatepress_affiliates.php:1661
+#: core/classes/class.affiliatepress_affiliates.php:1672
 #@ affiliatepress-affiliate-marketing
 msgid "Please Enter valid payment email."
 msgstr "Please Enter valid payment email."
 
-#: core/classes/class.affiliatepress_affiliates.php:1680
+#: core/classes/class.affiliatepress_affiliates.php:1681
 #@ affiliatepress-affiliate-marketing
 msgid "Website is too long..."
 msgstr "Website is too long..."
 
-#: core/classes/class.affiliatepress_affiliates.php:1687
+#: core/classes/class.affiliatepress_affiliates.php:1688
 #@ affiliatepress-affiliate-marketing
 msgid "Promote us is too long..."
 msgstr "Promote us is too long..."
 
-#: core/classes/class.affiliatepress_affiliates.php:1750
+#: core/classes/class.affiliatepress_affiliates.php:1751
 #@ affiliatepress-affiliate-marketing
 msgid "Affiliates has been added successfully."
 msgstr "Affiliates has been added successfully."
 
-#: core/classes/class.affiliatepress_affiliates.php:1766
+#: core/classes/class.affiliatepress_affiliates.php:1767
 #@ affiliatepress-affiliate-marketing
 msgid "Affiliates has been updated successfully."
 msgstr "Affiliates has been updated successfully."
 
-#: core/classes/class.affiliatepress_affiliates.php:2155
-#: core/classes/class.affiliatepress_creative.php:839
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2454
+#: core/classes/class.affiliatepress_affiliates.php:2156
+#: core/classes/class.affiliatepress_creative.php:840
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2451
 #: core/classes/frontend/class.affiliatepress_creative_shortcode.php:40
 #@ affiliatepress-affiliate-marketing
 msgid "Link copied successfully."
 msgstr "Link copied successfully."
 
-#: core/classes/class.affiliatepress_affiliates.php:2173
-#: core/classes/class.affiliatepress_creative.php:809
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3658
+#: core/classes/class.affiliatepress_affiliates.php:2174
+#: core/classes/class.affiliatepress_creative.php:810
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3655
 #@ affiliatepress-affiliate-marketing
 msgid "Please upload jpg/png file only"
 msgstr "Please upload jpg/png file only"
 
-#: core/classes/class.affiliatepress_affiliates.php:2184
+#: core/classes/class.affiliatepress_affiliates.php:2185
 #@ affiliatepress-affiliate-marketing
 msgid "Please upload maximum 500 KB file only"
 msgstr "Please upload maximum 500 KB file only"
 
-#: core/classes/class.affiliatepress_affiliates.php:2213
-#: core/classes/class.affiliatepress_creative.php:781
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3637
+#: core/classes/class.affiliatepress_affiliates.php:2214
+#: core/classes/class.affiliatepress_creative.php:782
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3634
 #@ affiliatepress-affiliate-marketing
 msgid "Multiple files not allowed"
 msgstr "Multiple files not allowed"
 
-#: core/classes/class.affiliatepress_affiliates.php:2316
-#: core/classes/class.affiliatepress_payout.php:2129
+#: core/classes/class.affiliatepress_affiliates.php:2317
+#: core/classes/class.affiliatepress_payout.php:2131
 #@ affiliatepress-affiliate-marketing
 msgid "Affiliate status changed successfully"
 msgstr "Affiliate status changed successfully"
 
-#: core/classes/class.affiliatepress_affiliates.php:2577
-#: core/classes/class.affiliatepress_commissions.php:1438
-#: core/classes/class.affiliatepress_creative.php:1116
-#: core/classes/class.affiliatepress_payout.php:2233
+#: core/classes/class.affiliatepress_affiliates.php:2578
+#: core/classes/class.affiliatepress_commissions.php:1439
+#: core/classes/class.affiliatepress_creative.php:1117
+#: core/classes/class.affiliatepress_payout.php:2235
 #@ affiliatepress-affiliate-marketing
 msgid "Please select any action."
 msgstr "Please select any action."
@@ -1650,17 +1649,17 @@ msgstr "Could not delete commission. This commission not deleted."
 msgid "Commission not deleted."
 msgstr "Commission not deleted."
 
-#: core/classes/class.affiliatepress_commissions.php:1913
+#: core/classes/class.affiliatepress_commissions.php:1914
 #@ affiliatepress-affiliate-marketing
 msgid "Please add date"
 msgstr "Please add date"
 
-#: core/classes/class.affiliatepress_commissions.php:1920
+#: core/classes/class.affiliatepress_commissions.php:1921
 #@ affiliatepress-affiliate-marketing
 msgid "Please add commission amount"
 msgstr "Please add commission amount"
 
-#: core/classes/class.affiliatepress_commissions.php:1927
+#: core/classes/class.affiliatepress_commissions.php:1928
 #@ affiliatepress-affiliate-marketing
 msgid "Please select status"
 msgstr "Please select status"
@@ -1696,38 +1695,38 @@ msgstr "Creative successfully added."
 msgid "Creative status has been updated successfully."
 msgstr "Creative status has been updated successfully."
 
-#: core/classes/class.affiliatepress_creative.php:820
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3669
+#: core/classes/class.affiliatepress_creative.php:821
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3666
 #@ affiliatepress-affiliate-marketing
 msgid "Please upload maximum 1 MB file only"
 msgstr "Please upload maximum 1 MB file only"
 
-#: core/classes/class.affiliatepress_creative.php:979
+#: core/classes/class.affiliatepress_creative.php:980
 #@ affiliatepress-affiliate-marketing
 msgid "Creative status changed successfully"
 msgstr "Creative status changed successfully"
 
-#: core/classes/class.affiliatepress_creative.php:1261
+#: core/classes/class.affiliatepress_creative.php:1262
 #@ affiliatepress-affiliate-marketing
 msgid "Please enter creative name"
 msgstr "Please enter creative name"
 
-#: core/classes/class.affiliatepress_creative.php:1268
+#: core/classes/class.affiliatepress_creative.php:1269
 #@ affiliatepress-affiliate-marketing
 msgid "Please select creative type"
 msgstr "Please select creative type"
 
-#: core/classes/class.affiliatepress_creative.php:1275
+#: core/classes/class.affiliatepress_creative.php:1276
 #@ affiliatepress-affiliate-marketing
 msgid "Please add creative image"
 msgstr "Please add creative image"
 
-#: core/classes/class.affiliatepress_creative.php:1282
+#: core/classes/class.affiliatepress_creative.php:1283
 #@ affiliatepress-affiliate-marketing
 msgid "Please enter creative text"
 msgstr "Please enter creative text"
 
-#: core/classes/class.affiliatepress_creative.php:1289
+#: core/classes/class.affiliatepress_creative.php:1290
 #@ affiliatepress-affiliate-marketing
 msgid "Please select creative status"
 msgstr "Please select creative status"
@@ -1813,7 +1812,7 @@ msgid "The file could not be uploaded due to security reason as it contains mali
 msgstr "The file could not be uploaded due to security reason as it contains malicious code"
 
 #: core/classes/class.affiliatepress_global_options.php:377
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1553
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1550
 #: core/classes/intergration/class.affiliatepress_arforms.php:122
 #: core/classes/intergration/class.affiliatepress_wp_forms.php:155
 #@ affiliatepress-affiliate-marketing
@@ -1821,7 +1820,7 @@ msgid "Sale"
 msgstr "Sale"
 
 #: core/classes/class.affiliatepress_global_options.php:381
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1551
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1548
 #@ affiliatepress-affiliate-marketing
 msgid "Subscription"
 msgstr "Subscription"
@@ -1832,7 +1831,7 @@ msgstr "Subscription"
 msgid "Unpaid"
 msgstr "Unpaid"
 
-#: core/classes/class.affiliatepress_affiliates.php:1851
+#: core/classes/class.affiliatepress_affiliates.php:1852
 #: core/classes/class.affiliatepress_global_options.php:411
 #@ affiliatepress-affiliate-marketing
 msgid "Rejected"
@@ -2119,7 +2118,7 @@ msgstr "Please enter sender email"
 #: core/classes/class.affiliatepress_settings.php:2428
 #: core/classes/class.affiliatepress_settings.php:2444
 #: core/classes/class.affiliatepress_settings.php:2460
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4132
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4129
 #@ affiliatepress-affiliate-marketing
 msgid "Please enter email address"
 msgstr "Please enter email address"
@@ -2183,12 +2182,12 @@ msgstr "Commission was not inserted because the commission amount is zero."
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1117
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1192
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1324
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1474
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1471
 #@ affiliatepress-affiliate-marketing
 msgid "Sorry, Affiliate user temporarily blocked by admin."
 msgstr "Sorry, Affiliate user temporarily blocked by admin."
 
-#: core/classes/class.affiliatepress.php:3669
+#: core/classes/class.affiliatepress.php:3721
 #@ affiliatepress-affiliate-marketing
 msgid "Sorry, your added campaign name and sub id is already added."
 msgstr "Sorry, your added campaign name and sub id is already added."
@@ -2218,61 +2217,61 @@ msgstr "Please enter lastname"
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:177
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:239
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:314
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1462
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:1459
 #: core/classes/frontend/class.affiliatepress_affiliate_register.php:84
 #@ affiliatepress-affiliate-marketing
 msgid "Something wrong..."
 msgstr "Something wrong..."
 
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2012
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2009
 #@ affiliatepress-affiliate-marketing
 msgid "Login Successfully"
 msgstr "Login Successfully"
 
-#: core/classes/class.affiliatepress.php:3666
+#: core/classes/class.affiliatepress.php:3718
 #@ affiliatepress-affiliate-marketing
 msgid "We have sent you a password reset link, Please check your mail."
 msgstr "We have sent you a password reset link, Please check your mail."
 
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2104
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2101
 #@ affiliatepress-affiliate-marketing
 msgid "Someone requested that the password be reset for the following account:"
 msgstr "Someone requested that the password be reset for the following account:"
 
 #. translators: 1. Username
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2107
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2104
 #, php-format
 #@ affiliatepress-affiliate-marketing
 msgid "Username: %s"
 msgstr "Username: %s"
 
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2108
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2105
 #@ affiliatepress-affiliate-marketing
 msgid "If this was a mistake, just ignore this email and nothing will happen."
 msgstr "If this was a mistake, just ignore this email and nothing will happen."
 
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2109
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2106
 #@ affiliatepress-affiliate-marketing
 msgid "To reset your password, visit the following address:"
 msgstr "To reset your password, visit the following address:"
 
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2115
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:2112
 #, php-format
 #@ affiliatepress-affiliate-marketing
 msgid "[%s] Password Reset"
 msgstr "[%s] Password Reset"
 
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3811
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3808
 #@ affiliatepress-affiliate-marketing
 msgid "Days"
 msgstr "Days"
 
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3923
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3920
 #@ affiliatepress-affiliate-marketing
 msgid "Please add page link."
 msgstr "Please add page link."
 
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3930
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3927
 #@ affiliatepress-affiliate-marketing
 msgid "Please add campaign name."
 msgstr "Please add campaign name."
@@ -2282,7 +2281,7 @@ msgstr "Please add campaign name."
 msgid "Please enter username"
 msgstr "Please enter username"
 
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4111
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4108
 #@ affiliatepress-affiliate-marketing
 msgid "Please enter username or email address"
 msgstr "Please enter username or email address"
@@ -2292,25 +2291,25 @@ msgstr "Please enter username or email address"
 msgid "Please enter valid email address."
 msgstr "Please enter valid email address."
 
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4118
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4115
 #: core/classes/frontend/class.affiliatepress_affiliate_register.php:187
 #@ affiliatepress-affiliate-marketing
 msgid "Please enter password"
 msgstr "Please enter password"
 
-#: core/classes/class.affiliatepress.php:3661
+#: core/classes/class.affiliatepress.php:3713
 #@ affiliatepress-affiliate-marketing
 msgid "Username already exists. Please choose a different one."
 msgstr "Username already exists. Please choose a different one."
 
-#: core/classes/class.affiliatepress.php:3662
+#: core/classes/class.affiliatepress.php:3714
 #@ affiliatepress-affiliate-marketing
 msgid "Email already exists. Please use a different email address."
 msgstr "Email already exists. Please use a different email address."
 
 #: core/classes/intergration/class.affiliatepress_accept_stripe_payment.php:175
 #: core/classes/intergration/class.affiliatepress_arforms.php:75
-#: core/classes/intergration/class.affiliatepress_armember.php:152
+#: core/classes/intergration/class.affiliatepress_armember.php:167
 #: core/classes/intergration/class.affiliatepress_bookingpress.php:82
 #: core/classes/intergration/class.affiliatepress_easycart.php:258
 #: core/classes/intergration/class.affiliatepress_edd.php:142
@@ -2330,7 +2329,8 @@ msgid "Select Source Product"
 msgstr "Select Source Product"
 
 #: core/classes/intergration/class.affiliatepress_accept_stripe_payment.php:63
-#: core/classes/intergration/class.affiliatepress_armember.php:203
+#: core/classes/intergration/class.affiliatepress_armember.php:195
+#: core/classes/intergration/class.affiliatepress_armember.php:253
 #: core/classes/intergration/class.affiliatepress_edd.php:162
 #: core/classes/intergration/class.affiliatepress_memberpress.php:174
 #: core/classes/intergration/class.affiliatepress_paid_memberships_subscriptions.php:174
@@ -2339,14 +2339,15 @@ msgstr "Select Source Product"
 msgid "AffiliatePress Commission Settings"
 msgstr "AffiliatePress Commission Settings"
 
-#: core/classes/intergration/class.affiliatepress_armember.php:212
+#: core/classes/intergration/class.affiliatepress_armember.php:206
+#: core/classes/intergration/class.affiliatepress_armember.php:262
 #@ affiliatepress-affiliate-marketing
 msgid "Disable Commission For This Plan"
 msgstr "Disable Commission For This Plan"
 
 #: core/classes/intergration/class.affiliatepress_accept_stripe_payment.php:240
 #: core/classes/intergration/class.affiliatepress_arforms.php:211
-#: core/classes/intergration/class.affiliatepress_armember.php:330
+#: core/classes/intergration/class.affiliatepress_armember.php:380
 #: core/classes/intergration/class.affiliatepress_bookingpress.php:218
 #: core/classes/intergration/class.affiliatepress_download_manager.php:143
 #: core/classes/intergration/class.affiliatepress_easycart.php:312
@@ -2497,8 +2498,8 @@ msgstr "Affiliate Name"
 msgid "Enter Affiliate Name"
 msgstr "Enter Affiliate Name"
 
-#: core/classes/class.affiliatepress.php:3697
 #: core/classes/class.affiliatepress.php:3749
+#: core/classes/class.affiliatepress.php:3801
 #: core/views/affiliates/manage_affiliates.php:107
 #: core/views/affiliates/manage_affiliates.php:226
 #: core/views/affiliates/manage_affiliates.php:233
@@ -2521,8 +2522,8 @@ msgstr "Enter Affiliate Name"
 msgid "Status"
 msgstr "Status"
 
-#: core/classes/class.affiliatepress.php:3692
-#: core/classes/class.affiliatepress.php:3743
+#: core/classes/class.affiliatepress.php:3744
+#: core/classes/class.affiliatepress.php:3795
 #: core/views/affiliates/manage_affiliates.php:38
 #: core/views/commissions/manage_commissions.php:38
 #: core/views/creative/manage_creative.php:170
@@ -2533,7 +2534,7 @@ msgstr "Status"
 msgid "Select Status"
 msgstr "Select Status"
 
-#: core/classes/class.affiliatepress.php:3793
+#: core/classes/class.affiliatepress.php:3845
 #: core/views/affiliates/manage_affiliates.php:50
 #: core/views/commissions/manage_commissions.php:49
 #: core/views/creative/manage_creative.php:38
@@ -2544,7 +2545,7 @@ msgstr "Select Status"
 msgid "Reset"
 msgstr "Reset"
 
-#: core/classes/class.affiliatepress.php:3792
+#: core/classes/class.affiliatepress.php:3844
 #: core/views/affiliates/manage_affiliates.php:47
 #: core/views/commissions/manage_commissions.php:46
 #: core/views/creative/manage_creative.php:35
@@ -2554,7 +2555,7 @@ msgstr "Reset"
 msgid "Apply"
 msgstr "Apply"
 
-#: core/classes/class.affiliatepress.php:3797
+#: core/classes/class.affiliatepress.php:3849
 #: core/views/affiliates/manage_affiliates.php:79
 #: core/views/affiliates/manage_affiliates.php:175
 #: core/views/commissions/manage_commissions.php:66
@@ -2612,7 +2613,7 @@ msgstr "Change status"
 msgid "Total Visit"
 msgstr "Total Visit"
 
-#: core/classes/class.affiliatepress.php:3776
+#: core/classes/class.affiliatepress.php:3828
 #: core/views/affiliates/manage_affiliates.php:508
 #: core/views/affiliates/manage_affiliates.php:536
 #: core/views/affiliates/manage_affiliates.php:607
@@ -2779,9 +2780,9 @@ msgstr "Commission Amount"
 msgid "Type"
 msgstr "Type"
 
-#: core/classes/class.affiliatepress.php:3695
-#: core/classes/class.affiliatepress.php:3722
-#: core/classes/class.affiliatepress.php:3745
+#: core/classes/class.affiliatepress.php:3747
+#: core/classes/class.affiliatepress.php:3774
+#: core/classes/class.affiliatepress.php:3797
 #: core/views/commissions/manage_commissions.php:169
 #: core/views/commissions/manage_commissions.php:321
 #: core/views/commissions/manage_commissions.php:513
@@ -2829,7 +2830,7 @@ msgstr "Edit Commission"
 msgid "Commission Details"
 msgstr "Commission Details"
 
-#: core/classes/class.affiliatepress.php:3748
+#: core/classes/class.affiliatepress.php:3800
 #: core/classes/class.affiliatepress_payout.php:1115
 #: core/views/commissions/manage_commissions.php:449
 #: core/views/payout/manage_payout.php:360
@@ -2839,7 +2840,7 @@ msgstr "Commission Details"
 msgid "Amount"
 msgstr "Amount"
 
-#: core/classes/class.affiliatepress_commissions.php:1966
+#: core/classes/class.affiliatepress_commissions.php:1967
 #@ affiliatepress-affiliate-marketing
 msgid "Enter Amount"
 msgstr "Enter Amount"
@@ -2854,7 +2855,7 @@ msgstr "Order ID"
 msgid "Enter Order ID"
 msgstr "Enter Order ID"
 
-#: core/classes/class.affiliatepress_commissions.php:1965
+#: core/classes/class.affiliatepress_commissions.php:1966
 #@ affiliatepress-affiliate-marketing
 msgid "Enter Order Amount"
 msgstr "Enter Order Amount"
@@ -2890,13 +2891,13 @@ msgstr "Add Commission Note Here"
 msgid "Manage Creatives"
 msgstr "Manage Creatives"
 
-#: core/classes/class.affiliatepress.php:3740
+#: core/classes/class.affiliatepress.php:3792
 #: core/views/settings/messages_setting_tab.php:559
 #@ affiliatepress-affiliate-marketing
 msgid "Creative Name"
 msgstr "Creative Name"
 
-#: core/classes/class.affiliatepress.php:3732
+#: core/classes/class.affiliatepress.php:3784
 #: core/views/creative/manage_creative.php:30
 #: core/views/creative/manage_creative.php:278
 #: core/views/settings/messages_setting_tab.php:527
@@ -2904,8 +2905,8 @@ msgstr "Creative Name"
 msgid "Enter Creative Name"
 msgstr "Enter Creative Name"
 
-#: core/classes/class.affiliatepress.php:3706
-#: core/classes/class.affiliatepress.php:3721
+#: core/classes/class.affiliatepress.php:3758
+#: core/classes/class.affiliatepress.php:3773
 #: core/views/affiliates/manage_affiliates.php:84
 #: core/views/affiliates/manage_affiliates.php:203
 #: core/views/commissions/manage_commissions.php:71
@@ -2934,7 +2935,7 @@ msgstr "ID"
 msgid "Name"
 msgstr "Name"
 
-#: core/classes/class.affiliatepress.php:3739
+#: core/classes/class.affiliatepress.php:3791
 #: core/views/creative/manage_creative.php:92
 #: core/views/creative/manage_creative.php:180
 #: core/views/creative/manage_creative.php:295
@@ -2943,7 +2944,7 @@ msgstr "Name"
 msgid "Text Link"
 msgstr "Text Link"
 
-#: core/classes/class.affiliatepress.php:3738
+#: core/classes/class.affiliatepress.php:3790
 #: core/views/creative/manage_creative.php:93
 #: core/views/creative/manage_creative.php:181
 #: core/views/creative/manage_creative.php:296
@@ -2952,7 +2953,7 @@ msgstr "Text Link"
 msgid "Image"
 msgstr "Image"
 
-#: core/classes/class.affiliatepress.php:3728
+#: core/classes/class.affiliatepress.php:3780
 #: core/views/creative/manage_creative.php:96
 #: core/views/creative/manage_creative.php:146
 #: core/views/creative/manage_creative.php:336
@@ -2989,7 +2990,7 @@ msgstr "Description"
 msgid "Enter description"
 msgstr "Enter description"
 
-#: core/classes/class.affiliatepress.php:3741
+#: core/classes/class.affiliatepress.php:3793
 #: core/views/creative/manage_creative.php:292
 #: core/views/settings/messages_setting_tab.php:567
 #@ affiliatepress-affiliate-marketing
@@ -3031,7 +3032,8 @@ msgstr "Total Commission"
 msgid "Unpaid Commission"
 msgstr "Unpaid Commission"
 
-#: core/classes/class.affiliatepress.php:3688
+#: core/classes/class.affiliatepress.php:3740
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3052
 #: core/views/payout/manage_payout.php:365
 #: core/views/settings/commissions_setting_tab.php:13
 #: core/views/settings/messages_setting_tab.php:130
@@ -3045,8 +3047,8 @@ msgstr "Commissions"
 msgid "Recent Commissions"
 msgstr "Recent Commissions"
 
-#: core/classes/class.affiliatepress.php:3774
-#: core/classes/class.affiliatepress.php:3789
+#: core/classes/class.affiliatepress.php:3826
+#: core/classes/class.affiliatepress.php:3841
 #: core/views/settings/email_notification_setting_tab.php:175
 #: core/views/settings/email_notification_setting_tab.php:224
 #: core/views/settings/messages_setting_tab.php:924
@@ -3060,22 +3062,22 @@ msgstr "Enter Email Address"
 msgid "Enter Your Password"
 msgstr "Enter Your Password"
 
-#: core/classes/class.affiliatepress.php:3781
+#: core/classes/class.affiliatepress.php:3833
 #: core/views/settings/messages_setting_tab.php:948
 #@ affiliatepress-affiliate-marketing
 msgid "Remember Me"
 msgstr "Remember Me"
 
-#: core/classes/class.affiliatepress.php:3782
-#: core/classes/class.affiliatepress.php:3786
+#: core/classes/class.affiliatepress.php:3834
+#: core/classes/class.affiliatepress.php:3838
 #: core/views/settings/messages_setting_tab.php:956
 #@ affiliatepress-affiliate-marketing
 msgid "Forgot Password"
 msgstr "Forgot Password"
 
-#: core/classes/class.affiliatepress.php:3770
-#: core/classes/class.affiliatepress.php:3771
-#: core/classes/class.affiliatepress.php:3783
+#: core/classes/class.affiliatepress.php:3822
+#: core/classes/class.affiliatepress.php:3823
+#: core/classes/class.affiliatepress.php:3835
 #: core/views/settings/messages_setting_tab.php:882
 #: core/views/settings/messages_setting_tab.php:900
 #: core/views/settings/messages_setting_tab.php:964
@@ -3083,36 +3085,36 @@ msgstr "Forgot Password"
 msgid "Sign in"
 msgstr "Sign in"
 
-#: core/classes/class.affiliatepress.php:3773
+#: core/classes/class.affiliatepress.php:3825
 #: core/views/settings/messages_setting_tab.php:916
 #: core/views/settings/messages_setting_tab.php:1014
 #@ affiliatepress-affiliate-marketing
 msgid "Username or Email Address"
 msgstr "Username or Email Address"
 
-#: core/classes/class.affiliatepress.php:3790
+#: core/classes/class.affiliatepress.php:3842
 #: core/views/settings/messages_setting_tab.php:1030
 #@ affiliatepress-affiliate-marketing
 msgid "Submit"
 msgstr "Submit"
 
-#: core/classes/class.affiliatepress.php:3679
+#: core/classes/class.affiliatepress.php:3731
 #@ affiliatepress-affiliate-marketing
 msgid "Affiliates Links"
 msgstr "Affiliates Links"
 
-#: core/classes/class.affiliatepress.php:3205
+#: core/classes/class.affiliatepress.php:3214
 #@ affiliatepress-affiliate-marketing
 msgid "Payouts"
 msgstr "Payouts"
 
-#: core/classes/class.affiliatepress.php:3764
+#: core/classes/class.affiliatepress.php:3816
 #: core/views/settings/messages_setting_tab.php:800
 #@ affiliatepress-affiliate-marketing
 msgid "Logout"
 msgstr "Logout"
 
-#: core/classes/class.affiliatepress.php:3778
+#: core/classes/class.affiliatepress.php:3830
 #: core/views/settings/messages_setting_tab.php:816
 #@ affiliatepress-affiliate-marketing
 msgid "Delete the account will be delete all the records under the account."
@@ -3124,36 +3126,36 @@ msgstr "Delete the account will be delete all the records under the account."
 msgid "Close"
 msgstr "Close"
 
-#: core/classes/class.affiliatepress.php:3691
+#: core/classes/class.affiliatepress.php:3743
 #: core/views/settings/messages_setting_tab.php:164
 #@ affiliatepress-affiliate-marketing
 msgid "Affiliate Commission"
 msgstr "Affiliate Commission"
 
-#: core/classes/class.affiliatepress.php:3684
+#: core/classes/class.affiliatepress.php:3736
 #: core/views/settings/messages_setting_tab.php:98
 #@ affiliatepress-affiliate-marketing
 msgid "Total Earning"
 msgstr "Total Earning"
 
-#: core/classes/class.affiliatepress.php:3685
+#: core/classes/class.affiliatepress.php:3737
 #: core/views/settings/messages_setting_tab.php:106
 #@ affiliatepress-affiliate-marketing
 msgid "Paid Earning"
 msgstr "Paid Earning"
 
-#: core/classes/class.affiliatepress.php:3686
+#: core/classes/class.affiliatepress.php:3738
 #: core/views/settings/messages_setting_tab.php:114
 #@ affiliatepress-affiliate-marketing
 msgid "Unpaid Earning"
 msgstr "Unpaid Earning"
 
-#: core/classes/class.affiliatepress.php:3720
+#: core/classes/class.affiliatepress.php:3772
 #@ affiliatepress-affiliate-marketing
 msgid "Visit Type"
 msgstr "Visit Type"
 
-#: core/classes/class.affiliatepress.php:3725
+#: core/classes/class.affiliatepress.php:3777
 #: core/views/affiliates/manage_affiliates.php:129
 #: core/views/affiliates/manage_affiliates.php:189
 #: core/views/settings/messages_setting_tab.php:461
@@ -3164,7 +3166,7 @@ msgstr "Visit Type"
 msgid "Converted"
 msgstr "Converted"
 
-#: core/classes/class.affiliatepress.php:3724
+#: core/classes/class.affiliatepress.php:3776
 #: core/views/settings/messages_setting_tab.php:453
 #: core/views/visits/manage_visits.php:127
 #: core/views/visits/manage_visits.php:239
@@ -3172,7 +3174,7 @@ msgstr "Converted"
 msgid "IP Address"
 msgstr "IP Address"
 
-#: core/classes/class.affiliatepress.php:3729
+#: core/classes/class.affiliatepress.php:3781
 #: core/views/settings/messages_setting_tab.php:493
 #: core/views/visits/manage_visits.php:129
 #: core/views/visits/manage_visits.php:170
@@ -3180,7 +3182,7 @@ msgstr "IP Address"
 msgid "Referrer URL"
 msgstr "Referrer URL"
 
-#: core/classes/class.affiliatepress.php:3730
+#: core/classes/class.affiliatepress.php:3782
 #: core/views/settings/messages_setting_tab.php:501
 #: core/views/visits/manage_visits.php:132
 #: core/views/visits/manage_visits.php:174
@@ -3188,86 +3190,86 @@ msgstr "Referrer URL"
 msgid "Direct traffic"
 msgstr "Direct traffic"
 
-#: core/classes/class.affiliatepress.php:3698
+#: core/classes/class.affiliatepress.php:3750
 #: core/views/settings/messages_setting_tab.php:43
 #: core/views/settings/messages_setting_tab.php:230
 #@ affiliatepress-affiliate-marketing
 msgid "Affiliate Links"
 msgstr "Affiliate Links"
 
-#: core/classes/class.affiliatepress.php:3699
+#: core/classes/class.affiliatepress.php:3751
 #@ affiliatepress-affiliate-marketing
 msgid "This is your referral URL. Share it with your audience to earn commissions."
 msgstr "This is your referral URL. Share it with your audience to earn commissions."
 
-#: core/classes/class.affiliatepress.php:3704
+#: core/classes/class.affiliatepress.php:3756
 #: core/views/settings/messages_setting_tab.php:270
 #@ affiliatepress-affiliate-marketing
 msgid "Custom Affiliate Links"
 msgstr "Custom Affiliate Links"
 
-#: core/classes/class.affiliatepress.php:3705
+#: core/classes/class.affiliatepress.php:3757
 #: core/views/settings/messages_setting_tab.php:278
 #@ affiliatepress-affiliate-marketing
 msgid "Generate Affiliate Link"
 msgstr "Generate Affiliate Link"
 
-#: core/classes/class.affiliatepress.php:3711
+#: core/classes/class.affiliatepress.php:3763
 #@ affiliatepress-affiliate-marketing
 msgid "Add any URL from this website in the field below to generate a referral link."
 msgstr "Add any URL from this website in the field below to generate a referral link."
 
-#: core/classes/class.affiliatepress.php:3712
+#: core/classes/class.affiliatepress.php:3764
 #: core/views/settings/messages_setting_tab.php:342
 #@ affiliatepress-affiliate-marketing
 msgid "Page URL"
 msgstr "Page URL"
 
-#: core/classes/class.affiliatepress.php:3713
+#: core/classes/class.affiliatepress.php:3765
 #: core/views/settings/messages_setting_tab.php:350
 #@ affiliatepress-affiliate-marketing
 msgid "Enter Page URL"
 msgstr "Enter Page URL"
 
-#: core/classes/class.affiliatepress.php:3707
-#: core/classes/class.affiliatepress.php:3714
+#: core/classes/class.affiliatepress.php:3759
+#: core/classes/class.affiliatepress.php:3766
 #: core/views/settings/messages_setting_tab.php:294
 #: core/views/settings/messages_setting_tab.php:358
 #@ affiliatepress-affiliate-marketing
 msgid "Campaign Name"
 msgstr "Campaign Name"
 
-#: core/classes/class.affiliatepress.php:3715
+#: core/classes/class.affiliatepress.php:3767
 #: core/views/settings/messages_setting_tab.php:366
 #@ affiliatepress-affiliate-marketing
 msgid "Enter Campaign Name"
 msgstr "Enter Campaign Name"
 
-#: core/classes/class.affiliatepress.php:3716
+#: core/classes/class.affiliatepress.php:3768
 #: core/views/settings/messages_setting_tab.php:374
 #@ affiliatepress-affiliate-marketing
 msgid "Sub ID"
 msgstr "Sub ID"
 
-#: core/classes/class.affiliatepress.php:3717
+#: core/classes/class.affiliatepress.php:3769
 #: core/views/settings/messages_setting_tab.php:382
 #@ affiliatepress-affiliate-marketing
 msgid "Enter Sub ID"
 msgstr "Enter Sub ID"
 
-#: core/classes/class.affiliatepress.php:3718
+#: core/classes/class.affiliatepress.php:3770
 #: core/views/settings/messages_setting_tab.php:390
 #@ affiliatepress-affiliate-marketing
 msgid "Generate Link"
 msgstr "Generate Link"
 
-#: core/classes/class.affiliatepress.php:3708
+#: core/classes/class.affiliatepress.php:3760
 #: core/views/settings/messages_setting_tab.php:302
 #@ affiliatepress-affiliate-marketing
 msgid "Affiliate URL"
 msgstr "Affiliate URL"
 
-#: core/classes/class.affiliatepress.php:3709
+#: core/classes/class.affiliatepress.php:3761
 #: core/views/settings/messages_setting_tab.php:318
 #@ affiliatepress-affiliate-marketing
 msgid "Click to Copy"
@@ -3282,7 +3284,7 @@ msgstr "Click to Copy"
 msgid "Loading"
 msgstr "Loading"
 
-#: core/classes/class.affiliatepress.php:3734
+#: core/classes/class.affiliatepress.php:3786
 #: core/views/front/affiliate_creative_shortcode.php:33
 #: core/views/settings/debug_log_setting_tab.php:78
 #: core/views/settings/debug_log_setting_tab.php:93
@@ -3295,7 +3297,7 @@ msgstr "Loading"
 msgid "Download"
 msgstr "Download"
 
-#: core/classes/class.affiliatepress.php:3735
+#: core/classes/class.affiliatepress.php:3787
 #: core/views/front/affiliate_creative_shortcode.php:14
 #: core/views/manage_language.php:133
 #: core/views/payout/manage_payout.php:335
@@ -3306,55 +3308,55 @@ msgstr "Download"
 msgid "Preview"
 msgstr "Preview"
 
-#: core/classes/class.affiliatepress.php:3736
+#: core/classes/class.affiliatepress.php:3788
 #: core/views/front/affiliate_creative_shortcode.php:39
 #: core/views/settings/messages_setting_tab.php:591
 #@ affiliatepress-affiliate-marketing
 msgid "HTML Code"
 msgstr "HTML Code"
 
-#: core/classes/class.affiliatepress.php:3737
+#: core/classes/class.affiliatepress.php:3789
 #: core/views/front/affiliate_creative_shortcode.php:46
 #: core/views/settings/messages_setting_tab.php:599
 #@ affiliatepress-affiliate-marketing
 msgid "Copy Code"
 msgstr "Copy Code"
 
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3807
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3804
 #@ affiliatepress-affiliate-marketing
 msgid "Commission Rates :"
 msgstr "Commission Rates :"
 
-#: core/classes/class.affiliatepress.php:3756
+#: core/classes/class.affiliatepress.php:3808
 #@ affiliatepress-affiliate-marketing
 msgid "Save Changes"
 msgstr "Save Changes"
 
-#: core/classes/class.affiliatepress.php:3757
+#: core/classes/class.affiliatepress.php:3809
 #: core/views/settings/messages_setting_tab.php:744
 #@ affiliatepress-affiliate-marketing
 msgid "Change Password"
 msgstr "Change Password"
 
-#: core/classes/class.affiliatepress.php:3758
+#: core/classes/class.affiliatepress.php:3810
 #: core/views/settings/messages_setting_tab.php:752
 #@ affiliatepress-affiliate-marketing
 msgid "Current Password"
 msgstr "Current Password"
 
-#: core/classes/class.affiliatepress.php:3759
+#: core/classes/class.affiliatepress.php:3811
 #: core/views/settings/messages_setting_tab.php:760
 #@ affiliatepress-affiliate-marketing
 msgid "New Password"
 msgstr "New Password"
 
-#: core/classes/class.affiliatepress.php:3760
+#: core/classes/class.affiliatepress.php:3812
 #: core/views/settings/messages_setting_tab.php:768
 #@ affiliatepress-affiliate-marketing
 msgid "Confirm New Password"
 msgstr "Confirm New Password"
 
-#: core/classes/class.affiliatepress.php:3766
+#: core/classes/class.affiliatepress.php:3818
 #: core/views/settings/messages_setting_tab.php:858
 #@ affiliatepress-affiliate-marketing
 msgid "Enter your details to create your affiliate account"
@@ -3397,7 +3399,7 @@ msgid "Now"
 msgstr "Now"
 
 #: core/classes/class.affiliatepress.php:2437
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4383
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4380
 #: core/views/manage_language.php:20
 #@ affiliatepress-affiliate-marketing
 msgid "Today"
@@ -3906,8 +3908,8 @@ msgstr "Carousel arrow right"
 msgid "Carousel switch to index"
 msgstr "Carousel switch to index"
 
-#: core/classes/class.affiliatepress.php:4125
-#: core/classes/class.affiliatepress.php:4127
+#: core/classes/class.affiliatepress.php:4177
+#: core/classes/class.affiliatepress.php:4179
 #: core/classes/class.affiliatepress_notifications.php:357
 #: core/views/notifications/manage_notifications.php:17
 #: core/views/notifications/manage_notifications.php:20
@@ -3917,16 +3919,16 @@ msgstr "Carousel switch to index"
 msgid "Account Pending"
 msgstr "Account Pending"
 
-#: core/classes/class.affiliatepress.php:4136
-#: core/classes/class.affiliatepress.php:4138
+#: core/classes/class.affiliatepress.php:4188
+#: core/classes/class.affiliatepress.php:4190
 #: core/views/notifications/manage_notifications.php:23
 #: core/views/notifications/manage_notifications.php:26
 #@ affiliatepress-affiliate-marketing
 msgid "Account Approved"
 msgstr "Account Approved"
 
-#: core/classes/class.affiliatepress.php:4147
-#: core/classes/class.affiliatepress.php:4149
+#: core/classes/class.affiliatepress.php:4199
+#: core/classes/class.affiliatepress.php:4201
 #: core/views/notifications/manage_notifications.php:28
 #: core/views/notifications/manage_notifications.php:31
 #@ affiliatepress-affiliate-marketing
@@ -4360,7 +4362,7 @@ msgstr "Manage Visits"
 msgid "Your account is already registered as an affiliate."
 msgstr "Your account is already registered as an affiliate."
 
-#: core/classes/class.affiliatepress.php:3690
+#: core/classes/class.affiliatepress.php:3742
 #: core/views/settings/messages_setting_tab.php:146
 #@ affiliatepress-affiliate-marketing
 msgid "Reports"
@@ -4380,58 +4382,58 @@ msgstr "Affiliate Panel - AffiliatePress"
 msgid "Affiliate Signup - AffiliatePress"
 msgstr "Affiliate Signup - AffiliatePress"
 
-#: core/classes/class.affiliatepress.php:3746
+#: core/classes/class.affiliatepress.php:3798
 #: core/views/settings/messages_setting_tab.php:1118
 #@ affiliatepress-affiliate-marketing
 msgid "Filters"
 msgstr "Filters"
 
-#: core/classes/class.affiliatepress.php:3094
+#: core/classes/class.affiliatepress.php:3103
 #@ affiliatepress-affiliate-marketing
 msgid "Payout"
 msgstr "Payout"
 
-#: core/classes/class.affiliatepress.php:3659
+#: core/classes/class.affiliatepress.php:3711
 #@ affiliatepress-affiliate-marketing
 msgid "Your registration is now complete. You can login to the affiliate area and begin promoting."
 msgstr "Your registration is now complete. You can login to the affiliate area and begin promoting."
 
-#: core/classes/class.affiliatepress.php:3663
+#: core/classes/class.affiliatepress.php:3715
 #@ affiliatepress-affiliate-marketing
 msgid "Affiliate registration is currently disabled by the admin. Please contact support for assistance."
 msgstr "Affiliate registration is currently disabled by the admin. Please contact support for assistance."
 
-#: core/classes/class.affiliatepress.php:3664
+#: core/classes/class.affiliatepress.php:3716
 #@ affiliatepress-affiliate-marketing
 msgid "Login is not allowed. Please contact the admin for assistance."
 msgstr "Login is not allowed. Please contact the admin for assistance."
 
-#: core/classes/class.affiliatepress.php:3667
+#: core/classes/class.affiliatepress.php:3719
 #@ affiliatepress-affiliate-marketing
 msgid "Your account closure request email has been sent successfully. If you have any further questions or need assistance, please feel free to reach out."
 msgstr "Your account closure request email has been sent successfully. If you have any further questions or need assistance, please feel free to reach out."
 
-#: core/classes/class.affiliatepress.php:3670
+#: core/classes/class.affiliatepress.php:3722
 #@ affiliatepress-affiliate-marketing
 msgid "Current password is incorrect."
 msgstr "Current password is incorrect."
 
-#: core/classes/class.affiliatepress.php:3671
+#: core/classes/class.affiliatepress.php:3723
 #@ affiliatepress-affiliate-marketing
 msgid "New password and confirm password do not match."
 msgstr "New password and confirm password do not match."
 
-#: core/classes/class.affiliatepress.php:3672
+#: core/classes/class.affiliatepress.php:3724
 #@ affiliatepress-affiliate-marketing
 msgid "Password successfully updated."
 msgstr "Password successfully updated."
 
-#: core/classes/class.affiliatepress.php:3673
+#: core/classes/class.affiliatepress.php:3725
 #@ affiliatepress-affiliate-marketing
 msgid "Affiliate profile fields successfully updated."
 msgstr "Affiliate profile fields successfully updated."
 
-#: core/classes/class.affiliatepress.php:3674
+#: core/classes/class.affiliatepress.php:3726
 #: core/classes/class.affiliatepress_affiliate_fields.php:808
 #: core/classes/class.affiliatepress_affiliate_fields.php:815
 #: core/classes/class.affiliatepress_affiliate_fields.php:822
@@ -4605,12 +4607,12 @@ msgstr "Invalid file extension. Please select valid file."
 msgid "File read permission not allowed."
 msgstr "File read permission not allowed."
 
-#: core/classes/class.affiliatepress_affiliates.php:2113
+#: core/classes/class.affiliatepress_affiliates.php:2114
 #@ affiliatepress-affiliate-marketing
 msgid "Something wrong file not uploaded."
 msgstr "Something wrong file not uploaded."
 
-#: core/classes/class.affiliatepress_affiliates.php:2126
+#: core/classes/class.affiliatepress_affiliates.php:2127
 #@ affiliatepress-affiliate-marketing
 msgid "Please upload csv file only."
 msgstr "Please upload csv file only."
@@ -4620,18 +4622,18 @@ msgstr "Please upload csv file only."
 msgid "Commission status has been updated successfully."
 msgstr "Commission status has been updated successfully."
 
-#: core/classes/class.affiliatepress_commissions.php:1551
-#: core/classes/class.affiliatepress_dashboard.php:541
+#: core/classes/class.affiliatepress_commissions.php:1552
+#: core/classes/class.affiliatepress_dashboard.php:573
 #@ affiliatepress-affiliate-marketing
 msgid "Commission status changed successfully"
 msgstr "Commission status changed successfully"
 
-#: core/classes/class.affiliatepress_commissions.php:1879
+#: core/classes/class.affiliatepress_commissions.php:1880
 #@ affiliatepress-affiliate-marketing
 msgid "Approve"
 msgstr "Approve"
 
-#: core/classes/class.affiliatepress_commissions.php:1883
+#: core/classes/class.affiliatepress_commissions.php:1884
 #@ affiliatepress-affiliate-marketing
 msgid "Reject"
 msgstr "Reject"
@@ -4652,7 +4654,7 @@ msgstr "Lead"
 
 #: core/classes/class.affiliatepress_global_options.php:425
 #: core/classes/class.affiliatepress_global_options.php:431
-#: core/classes/class.affiliatepress_payout.php:1540
+#: core/classes/class.affiliatepress_payout.php:1542
 #@ affiliatepress-affiliate-marketing
 msgid "Manual"
 msgstr "Manual"
@@ -4705,7 +4707,7 @@ msgstr "Payout Succesfully Created."
 
 #: core/classes/class.affiliatepress_payout.php:804
 #: core/classes/class.affiliatepress_payout.php:999
-#: core/classes/class.affiliatepress_payout.php:2396
+#: core/classes/class.affiliatepress_payout.php:2398
 #@ affiliatepress-affiliate-marketing
 msgid "Please add payout upto date."
 msgstr "Please add payout upto date."
@@ -4730,7 +4732,7 @@ msgstr "Payout has been deleted successfully."
 msgid "Payout not deleted."
 msgstr "Payout not deleted."
 
-#: core/classes/class.affiliatepress_payout.php:1678
+#: core/classes/class.affiliatepress_payout.php:1680
 #@ affiliatepress-affiliate-marketing
 msgid "Please add payment note."
 msgstr "Please add payment note."
@@ -4740,12 +4742,13 @@ msgstr "Please add payment note."
 msgid "Wizard skipped successfully"
 msgstr "Wizard skipped successfully"
 
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3845
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3842
 #@ affiliatepress-affiliate-marketing
 msgid "Sorry! you are not allowed to access the affiliate panel."
 msgstr "Sorry! you are not allowed to access the affiliate panel."
 
-#: core/classes/intergration/class.affiliatepress_armember.php:220
+#: core/classes/intergration/class.affiliatepress_armember.php:208
+#: core/classes/intergration/class.affiliatepress_armember.php:270
 #@ affiliatepress-affiliate-marketing
 msgid "Enable AffiliatePress Commission to prevent adding commission for this plan."
 msgstr "Enable AffiliatePress Commission to prevent adding commission for this plan."
@@ -4858,8 +4861,8 @@ msgstr "Creative Shortcode"
 msgid "Commission Revenue"
 msgstr "Commission Revenue"
 
-#: core/classes/class.affiliatepress.php:3682
-#: core/classes/class.affiliatepress.php:3742
+#: core/classes/class.affiliatepress.php:3734
+#: core/classes/class.affiliatepress.php:3794
 #: core/views/settings/messages_setting_tab.php:67
 #: core/views/settings/messages_setting_tab.php:617
 #@ affiliatepress-affiliate-marketing
@@ -4871,14 +4874,14 @@ msgstr "Payments"
 msgid "Payment Status"
 msgstr "Payment Status"
 
-#: core/classes/class.affiliatepress.php:3744
+#: core/classes/class.affiliatepress.php:3796
 #: core/classes/class.affiliatepress_payout.php:1110
 #: core/views/settings/messages_setting_tab.php:633
 #@ affiliatepress-affiliate-marketing
 msgid "Payment ID"
 msgstr "Payment ID"
 
-#: core/classes/class.affiliatepress.php:3747
+#: core/classes/class.affiliatepress.php:3799
 #: core/classes/class.affiliatepress_payout.php:1116
 #: core/views/payout/manage_payout.php:370
 #: core/views/payout/manage_payout.php:453
@@ -4887,24 +4890,24 @@ msgstr "Payment ID"
 msgid "Payment Method"
 msgstr "Payment Method"
 
-#: core/classes/class.affiliatepress.php:3693
+#: core/classes/class.affiliatepress.php:3745
 #: core/views/settings/messages_setting_tab.php:180
 #@ affiliatepress-affiliate-marketing
 msgid "Commission ID"
 msgstr "Commission ID"
 
-#: core/classes/class.affiliatepress.php:3723
+#: core/classes/class.affiliatepress.php:3775
 #: core/views/settings/messages_setting_tab.php:445
 #@ affiliatepress-affiliate-marketing
 msgid "Campaign"
 msgstr "Campaign"
 
-#: core/classes/class.affiliatepress.php:3701
+#: core/classes/class.affiliatepress.php:3753
 #@ affiliatepress-affiliate-marketing
 msgid "will work in all page."
 msgstr "will work in all page."
 
-#: core/classes/class.affiliatepress.php:3710
+#: core/classes/class.affiliatepress.php:3762
 #: core/views/settings/messages_setting_tab.php:326
 #@ affiliatepress-affiliate-marketing
 msgid "Generate Custom Affiliate Links"
@@ -5266,61 +5269,61 @@ msgstr "Commission type"
 msgid "Select the type of Commission this should be."
 msgstr "Select the type of Commission this should be."
 
-#: core/classes/class.affiliatepress.php:4128
+#: core/classes/class.affiliatepress.php:4180
 #, php-format
 #@ affiliatepress-affiliate-marketing
 msgid "Hey admin,%1$s The user %2$s (%3$s) just signed up for the affiliate program. it is waiting for a confirmation. %4$sThanks."
 msgstr "Hey admin,%1$s The user %2$s (%3$s) just signed up for the affiliate program. it is waiting for a confirmation. %4$sThanks."
 
-#: core/classes/class.affiliatepress.php:4129
+#: core/classes/class.affiliatepress.php:4181
 #, php-format
 #@ affiliatepress-affiliate-marketing
 msgid "Hey %1$s, %2$s Thank you for your application! We wanted to inform you that your account is currently in pending status. Our team is reviewing your details, and we will notify you as soon as your account is approved or if we need any additional information. We appreciate your patience during this process! Thank you for choosing us,%3$s%4$s"
 msgstr "Hey %1$s, %2$s Thank you for your application! We wanted to inform you that your account is currently in pending status. Our team is reviewing your details, and we will notify you as soon as your account is approved or if we need any additional information. We appreciate your patience during this process! Thank you for choosing us,%3$s%4$s"
 
-#: core/classes/class.affiliatepress.php:4150
+#: core/classes/class.affiliatepress.php:4202
 #, php-format
 #@ affiliatepress-affiliate-marketing
 msgid "Hey admin, %1$s %2$s affiliate account was rejected %3$s %4$s"
 msgstr "Hey admin, %1$s %2$s affiliate account was rejected %3$s %4$s"
 
-#: core/classes/class.affiliatepress.php:4151
+#: core/classes/class.affiliatepress.php:4203
 #, php-format
 #@ affiliatepress-affiliate-marketing
 msgid "Hey %1$s, %2$s Unfortunately, your application for an affiliate account was rejected. If you would like to know more about the reasons for this decision or if you believe there has been a mistake, please feel free to reach out to us. We appreciate your understanding and hope to have the opportunity to work with you in the future. %3$s %4$s"
 msgstr "Hey %1$s, %2$s Unfortunately, your application for an affiliate account was rejected. If you would like to know more about the reasons for this decision or if you believe there has been a mistake, please feel free to reach out to us. We appreciate your understanding and hope to have the opportunity to work with you in the future. %3$s %4$s"
 
-#: core/classes/class.affiliatepress.php:4161
+#: core/classes/class.affiliatepress.php:4213
 #, php-format
 #@ affiliatepress-affiliate-marketing
 msgid "Hey admin, %1$s A new commission was generated for your affiliate partner %2$s (%3$s). %4$s Thanks"
 msgstr "Hey admin, %1$s A new commission was generated for your affiliate partner %2$s (%3$s). %4$s Thanks"
 
-#: core/classes/class.affiliatepress.php:4162
+#: core/classes/class.affiliatepress.php:4214
 #, php-format
 #@ affiliatepress-affiliate-marketing
 msgid "Hey %1$s %2$s, %3$s We are excited to let you know that your commission has been successfully registered! %4$s Details: %5$s Commission ID: %6$s %7$s Commission Amount: %8$s %9$s  %10$s"
 msgstr "Hey %1$s %2$s, %3$s We are excited to let you know that your commission has been successfully registered! %4$s Details: %5$s Commission ID: %6$s %7$s Commission Amount: %8$s %9$s  %10$s"
 
-#: core/classes/class.affiliatepress.php:4172
+#: core/classes/class.affiliatepress.php:4224
 #, php-format
 #@ affiliatepress-affiliate-marketing
 msgid "Hey %1$s, %2$s We are pleased to inform you that your commission has been approved!. %3$s Details: %4$s Commission ID: %5$s %6$s Commission Amount: %7$s %8$s Thank you for your efforts and contributions. If you have any questions or need further assistance, feel free to reach out. %9$s %10$s"
 msgstr "Hey %1$s, %2$s We are pleased to inform you that your commission has been approved!. %3$s Details: %4$s Commission ID: %5$s %6$s Commission Amount: %7$s %8$s Thank you for your efforts and contributions. If you have any questions or need further assistance, feel free to reach out. %9$s %10$s"
 
-#: core/classes/class.affiliatepress.php:4173
+#: core/classes/class.affiliatepress.php:4225
 #, php-format
 #@ affiliatepress-affiliate-marketing
 msgid "Hey admin, %1$s %2$s rewarded a new commission of %3$s. %4$s Thanks"
 msgstr "Hey admin, %1$s %2$s rewarded a new commission of %3$s. %4$s Thanks"
 
-#: core/classes/class.affiliatepress.php:4183
+#: core/classes/class.affiliatepress.php:4235
 #, php-format
 #@ affiliatepress-affiliate-marketing
 msgid "Hey %1$s, %2$s We have processed your affiliate earnings and sent out your payment. %3$s Payment amount: %4$s %5$s Payment method: %6$s %7$s Payment ID: %8$s %9$s %10$s"
 msgstr "Hey %1$s, %2$s We have processed your affiliate earnings and sent out your payment. %3$s Payment amount: %4$s %5$s Payment method: %6$s %7$s Payment ID: %8$s %9$s %10$s"
 
-#: core/classes/class.affiliatepress.php:4184
+#: core/classes/class.affiliatepress.php:4236
 #, php-format
 #@ affiliatepress-affiliate-marketing
 msgid "Hey Admin, %1$s %2$s user payment paid. %3$s Payment amount: %4$s %5$s Payment method: %6$s %7$s Payment ID: %8$s %9$s Thanks"
@@ -5373,12 +5376,12 @@ msgstr "Affiliatepress"
 msgid "Enable Option Not to Add Commission for This Membership Level"
 msgstr "Enable Option Not to Add Commission for This Membership Level"
 
-#: core/classes/class.affiliatepress.php:3867
+#: core/classes/class.affiliatepress.php:3919
 #@ affiliatepress-affiliate-marketing
 msgid "Terms & Conditions"
 msgstr "Terms & Conditions"
 
-#: core/classes/class.affiliatepress.php:4002
+#: core/classes/class.affiliatepress.php:4054
 #@ affiliatepress-affiliate-marketing
 msgid "terms & conditions "
 msgstr "terms & conditions"
@@ -5405,12 +5408,12 @@ msgstr "AffiliatePress - Affiliate Marketing"
 msgid "https://www.reputeinfosystems.com/"
 msgstr "https://www.reputeinfosystems.com/"
 
-#: core/classes/class.affiliatepress.php:4002
+#: core/classes/class.affiliatepress.php:4054
 #@ affiliatepress-affiliate-marketing
 msgid "I agree with"
 msgstr "I agree with"
 
-#: core/classes/class.affiliatepress.php:5140
+#: core/classes/class.affiliatepress.php:5192
 #: core/classes/class.affiliatepress_addons.php:146
 #: core/classes/class.affiliatepress_affiliate_fields.php:83
 #: core/classes/class.affiliatepress_affiliate_fields.php:177
@@ -5428,7 +5431,7 @@ msgstr "I agree with"
 #: core/classes/class.affiliatepress_affiliates.php:1172
 #: core/classes/class.affiliatepress_affiliates.php:1265
 #: core/classes/class.affiliatepress_affiliates.php:1346
-#: core/classes/class.affiliatepress_affiliates.php:1541
+#: core/classes/class.affiliatepress_affiliates.php:1542
 #: core/classes/class.affiliatepress_commissions.php:96
 #: core/classes/class.affiliatepress_commissions.php:178
 #: core/classes/class.affiliatepress_commissions.php:367
@@ -5446,7 +5449,7 @@ msgstr "I agree with"
 #: core/classes/class.affiliatepress_creative.php:455
 #: core/classes/class.affiliatepress_creative.php:539
 #: core/classes/class.affiliatepress_creative.php:618
-#: core/classes/class.affiliatepress_dashboard.php:92
+#: core/classes/class.affiliatepress_dashboard.php:124
 #: core/classes/class.affiliatepress_growth_tools.php:355
 #: core/classes/class.affiliatepress_growth_tools.php:453
 #: core/classes/class.affiliatepress_growth_tools.php:521
@@ -5749,7 +5752,7 @@ msgstr "Browse file to upload"
 msgid "General"
 msgstr "General"
 
-#: core/classes/class.affiliatepress.php:3689
+#: core/classes/class.affiliatepress.php:3741
 #: core/views/affiliates/manage_affiliates.php:122
 #: core/views/affiliates/manage_affiliates.php:194
 #: core/views/settings/commissions_setting_tab.php:31
@@ -5795,131 +5798,131 @@ msgstr "Masteriyo LMS in commission is calculated to the total order price, that
 msgid "Enable Affiliate Commission:"
 msgstr "Enable Affiliate Commission:"
 
-#: core/classes/class.affiliatepress.php:699
+#: core/classes/class.affiliatepress.php:701
 #@ affiliatepress-affiliate-marketing
 msgid "Set up is too difficult"
 msgstr "Set up is too difficult"
 
-#: core/classes/class.affiliatepress.php:700
+#: core/classes/class.affiliatepress.php:702
 #@ affiliatepress-affiliate-marketing
 msgid "Lack of documentation"
 msgstr "Lack of documentation"
 
-#: core/classes/class.affiliatepress.php:701
+#: core/classes/class.affiliatepress.php:703
 #@ affiliatepress-affiliate-marketing
 msgid "Not the features I wanted"
 msgstr "Not the features I wanted"
 
-#: core/classes/class.affiliatepress.php:702
+#: core/classes/class.affiliatepress.php:704
 #@ affiliatepress-affiliate-marketing
 msgid "Found a better plugin"
 msgstr "Found a better plugin"
 
-#: core/classes/class.affiliatepress.php:703
+#: core/classes/class.affiliatepress.php:705
 #@ affiliatepress-affiliate-marketing
 msgid "Incompatible with theme or plugin"
 msgstr "Incompatible with theme or plugin"
 
-#: core/classes/class.affiliatepress.php:704
+#: core/classes/class.affiliatepress.php:706
 #@ affiliatepress-affiliate-marketing
 msgid "Other"
 msgstr "Other"
 
-#: core/classes/class.affiliatepress.php:707
+#: core/classes/class.affiliatepress.php:709
 #@ affiliatepress-affiliate-marketing
 msgid "AffiliatePress - Sorry to see you go"
 msgstr "AffiliatePress - Sorry to see you go"
 
-#: core/classes/class.affiliatepress.php:716
+#: core/classes/class.affiliatepress.php:718
 #@ affiliatepress-affiliate-marketing
 msgid "How could we improve ?"
 msgstr "How could we improve ?"
 
-#: core/classes/class.affiliatepress.php:722
+#: core/classes/class.affiliatepress.php:724
 #@ affiliatepress-affiliate-marketing
 msgid "Submitting form"
 msgstr "Submitting form"
 
-#: core/classes/class.affiliatepress.php:725
+#: core/classes/class.affiliatepress.php:727
 #@ affiliatepress-affiliate-marketing
 msgid "If you uncheck this option, then your email address will be sent along with your feedback. This can be used by affiliatepress to get back to you for more information or a solution."
 msgstr "If you uncheck this option, then your email address will be sent along with your feedback. This can be used by affiliatepress to get back to you for more information or a solution."
 
-#: core/classes/class.affiliatepress.php:726
+#: core/classes/class.affiliatepress.php:728
 #@ affiliatepress-affiliate-marketing
 msgid "Send anonymous"
 msgstr "Send anonymous"
 
-#: core/classes/class.affiliatepress.php:728
+#: core/classes/class.affiliatepress.php:730
 #@ affiliatepress-affiliate-marketing
 msgid "Submit and"
 msgstr "Submit and"
 
-#: core/classes/class.affiliatepress.php:728
+#: core/classes/class.affiliatepress.php:730
 #@ affiliatepress-affiliate-marketing
 msgid "Deactivate"
 msgstr "Deactivate"
 
-#: core/classes/class.affiliatepress.php:740
+#: core/classes/class.affiliatepress.php:742
 #@ affiliatepress-affiliate-marketing
 msgid "What was the dificult part?"
 msgstr "What was the dificult part?"
 
-#: core/classes/class.affiliatepress.php:741
+#: core/classes/class.affiliatepress.php:743
 #@ affiliatepress-affiliate-marketing
 msgid "What can we describe more?"
 msgstr "What can we describe more?"
 
-#: core/classes/class.affiliatepress.php:742
+#: core/classes/class.affiliatepress.php:744
 #@ affiliatepress-affiliate-marketing
 msgid "How could we improve?"
 msgstr "How could we improve?"
 
-#: core/classes/class.affiliatepress.php:743
+#: core/classes/class.affiliatepress.php:745
 #@ affiliatepress-affiliate-marketing
 msgid "Can you mention it?"
 msgstr "Can you mention it?"
 
-#: core/classes/class.affiliatepress.php:744
+#: core/classes/class.affiliatepress.php:746
 #@ affiliatepress-affiliate-marketing
 msgid "With what plugin or theme is incompatible?"
 msgstr "With what plugin or theme is incompatible?"
 
-#: core/classes/class.affiliatepress.php:745
+#: core/classes/class.affiliatepress.php:747
 #@ affiliatepress-affiliate-marketing
 msgid "Please specify experience"
 msgstr "Please specify experience"
 
-#: core/classes/class.affiliatepress.php:746
+#: core/classes/class.affiliatepress.php:748
 #@ affiliatepress-affiliate-marketing
 msgid "Please specify"
 msgstr "Please specify"
 
-#: core/classes/class.affiliatepress.php:3095
-#: core/classes/class.affiliatepress.php:3215
+#: core/classes/class.affiliatepress.php:3104
+#: core/classes/class.affiliatepress.php:3224
 #@ affiliatepress-affiliate-marketing
 msgid "Growth Plugins"
 msgstr "Growth Plugins"
 
-#: core/classes/class.affiliatepress.php:3096
-#: core/classes/class.affiliatepress.php:3213
+#: core/classes/class.affiliatepress.php:3105
+#: core/classes/class.affiliatepress.php:3222
 #@ affiliatepress-affiliate-marketing
 msgid "Addons"
 msgstr "Addons"
 
-#: core/classes/class.affiliatepress.php:3218
+#: core/classes/class.affiliatepress.php:3228
 #: core/views/addons/manage_addon_list.php:36
 #@ affiliatepress-affiliate-marketing
 msgid "Upgrade to Pro"
 msgstr "Upgrade to Pro"
 
-#: core/classes/class.affiliatepress.php:4194
+#: core/classes/class.affiliatepress.php:4246
 #, php-format
 #@ affiliatepress-affiliate-marketing
 msgid "Hey %1$s, %2$s Unfortunately, we were unable to process your affiliate payment. %3$s Please check your payment details and try again. %4$s Payment amount: %5$s %6$s Payment method: %7$s %8$s Payment ID: %9$s %10$s %11$s If you have any questions, please contact support."
 msgstr "Hey %1$s, %2$s Unfortunately, we were unable to process your affiliate payment. %3$s Please check your payment details and try again. %4$s Payment amount: %5$s %6$s Payment method: %7$s %8$s Payment ID: %9$s %10$s %11$s If you have any questions, please contact support."
 
-#: core/classes/class.affiliatepress.php:4195
+#: core/classes/class.affiliatepress.php:4247
 #, php-format
 #@ affiliatepress-affiliate-marketing
 msgid "Hey Admin, %1$s %2$s user payment failed. %3$s Payment amount: %4$s %5$s Payment method: %6$s %7$s Payment ID: %8$s %9$s Please review and take necessary action."
@@ -6255,71 +6258,71 @@ msgstr "Try again"
 msgid "An unknown error occurred"
 msgstr "An unknown error occurred"
 
-#: core/classes/class.affiliatepress.php:231
+#: core/classes/class.affiliatepress.php:233
 #@ affiliatepress-affiliate-marketing
 msgid "What Personal Data Is Collected in AffiliatePress"
 msgstr "What Personal Data Is Collected in AffiliatePress"
 
-#: core/classes/class.affiliatepress.php:232
+#: core/classes/class.affiliatepress.php:234
 #@ affiliatepress-affiliate-marketing
 msgid "User's Signup Details such as Username, First Name, Last Name and Custom Fields value( Website, Payment Email etc)"
 msgstr "User's Signup Details such as Username, First Name, Last Name and Custom Fields value( Website, Payment Email etc)"
 
-#: core/classes/class.affiliatepress.php:233
+#: core/classes/class.affiliatepress.php:235
 #@ affiliatepress-affiliate-marketing
 msgid "User's IP Address Information"
 msgstr "User's IP Address Information"
 
-#: core/classes/class.affiliatepress.php:234
+#: core/classes/class.affiliatepress.php:236
 #@ affiliatepress-affiliate-marketing
 msgid "User's Basic Details Sending to opt-ins such as (Email, First Name, Last Name)"
 msgstr "User's Basic Details Sending to opt-ins such as (Email, First Name, Last Name)"
 
-#: core/classes/class.affiliatepress.php:235
+#: core/classes/class.affiliatepress.php:237
 #@ affiliatepress-affiliate-marketing
 msgid "User's Logged in / Logout details"
 msgstr "User's Logged in / Logout details"
 
-#: core/classes/class.affiliatepress.php:236
+#: core/classes/class.affiliatepress.php:238
 #@ affiliatepress-affiliate-marketing
 msgid "Basic transaction information stored (e.g., payment status, amount, transaction id, and method used). AffiliatePress does not store any sensitive financial data, such as credit or debit card numbers."
 msgstr "Basic transaction information stored (e.g., payment status, amount, transaction id, and method used). AffiliatePress does not store any sensitive financial data, such as credit or debit card numbers."
 
 #: core/classes/class.affiliatepress.php:2442
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4388
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4385
 #@ affiliatepress-affiliate-marketing
 msgid "Yesterday"
 msgstr "Yesterday"
 
 #: core/classes/class.affiliatepress.php:2447
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4393
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4390
 #@ affiliatepress-affiliate-marketing
 msgid "This Week"
 msgstr "This Week"
 
 #: core/classes/class.affiliatepress.php:2464
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4410
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4407
 #@ affiliatepress-affiliate-marketing
 msgid "This Month"
 msgstr "This Month"
 
 #: core/classes/class.affiliatepress.php:2470
-#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4416
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:4413
 #@ affiliatepress-affiliate-marketing
 msgid "30 Days"
 msgstr "30 Days"
 
-#: core/classes/class.affiliatepress.php:3209
+#: core/classes/class.affiliatepress.php:3218
 #@ affiliatepress-affiliate-marketing
 msgid "Form Editor"
 msgstr "Form Editor"
 
-#: core/classes/class.affiliatepress.php:3665
+#: core/classes/class.affiliatepress.php:3717
 #@ affiliatepress-affiliate-marketing
 msgid "There is no affiliate user registered with that email address."
 msgstr "There is no affiliate user registered with that email address."
 
-#: core/classes/class.affiliatepress_affiliates.php:1843
+#: core/classes/class.affiliatepress_affiliates.php:1844
 #: core/classes/class.affiliatepress_global_options.php:403
 #@ affiliatepress-affiliate-marketing
 msgid "Approved"
@@ -6383,7 +6386,7 @@ msgstr "Affiliate Email"
 msgid "Affiliate Payment Email"
 msgstr "Affiliate Payment Email"
 
-#: core/classes/class.affiliatepress_tracking.php:744
+#: core/classes/class.affiliatepress_tracking.php:741
 #@ affiliatepress-affiliate-marketing
 msgid "Default Commission Rate"
 msgstr "Default Commission Rate"
@@ -6419,7 +6422,7 @@ msgstr "Affiliate Form Editor"
 msgid "Loader"
 msgstr "Loader"
 
-#: core/classes/class.affiliatepress.php:3694
+#: core/classes/class.affiliatepress.php:3746
 #: core/views/commissions/manage_commissions.php:127
 #: core/views/commissions/manage_commissions.php:240
 #: core/views/dashboard/manage_dashboard.php:211
@@ -6444,8 +6447,8 @@ msgstr "Type to fetch users"
 msgid "Total Revenue"
 msgstr "Total Revenue"
 
-#: core/classes/class.affiliatepress.php:3772
-#: core/classes/class.affiliatepress.php:3787
+#: core/classes/class.affiliatepress.php:3824
+#: core/classes/class.affiliatepress.php:3839
 #: core/views/settings/messages_setting_tab.php:908
 #: core/views/settings/messages_setting_tab.php:1006
 #@ affiliatepress-affiliate-marketing
@@ -6457,25 +6460,25 @@ msgstr "Stay updated on your professional world"
 msgid "Don’t have an account?"
 msgstr "Don’t have an account?"
 
-#: core/classes/class.affiliatepress.php:3785
+#: core/classes/class.affiliatepress.php:3837
 #: core/views/settings/messages_setting_tab.php:980
 #@ affiliatepress-affiliate-marketing
 msgid "Create account "
 msgstr "Create account "
 
-#: core/classes/class.affiliatepress.php:3765
+#: core/classes/class.affiliatepress.php:3817
 #: core/views/settings/messages_setting_tab.php:850
 #@ affiliatepress-affiliate-marketing
 msgid "Create an account"
 msgstr "Create an account"
 
-#: core/classes/class.affiliatepress.php:3767
+#: core/classes/class.affiliatepress.php:3819
 #: core/views/settings/messages_setting_tab.php:866
 #@ affiliatepress-affiliate-marketing
 msgid "Create Account"
 msgstr "Create Account"
 
-#: core/classes/class.affiliatepress.php:3791
+#: core/classes/class.affiliatepress.php:3843
 #@ affiliatepress-affiliate-marketing
 msgid "Sign in "
 msgstr "Sign in "
@@ -6493,71 +6496,71 @@ msgstr "Affiliate Menu"
 msgid "Filter"
 msgstr "Filter"
 
-#: core/classes/class.affiliatepress.php:3798
+#: core/classes/class.affiliatepress.php:3850
 #@ affiliatepress-affiliate-marketing
 msgid "but the journey has just begun. Let every click will write your story."
 msgstr "but the journey has just begun. Let every click will write your story."
 
-#: core/classes/class.affiliatepress.php:3683
+#: core/classes/class.affiliatepress.php:3735
 #: core/views/settings/messages_setting_tab.php:90
 #@ affiliatepress-affiliate-marketing
 msgid "Affiliate Dashboard"
 msgstr "Affiliate Dashboard"
 
-#: core/classes/class.affiliatepress.php:3702
+#: core/classes/class.affiliatepress.php:3754
 #: core/views/settings/messages_setting_tab.php:254
 #@ affiliatepress-affiliate-marketing
 msgid "Cookie Duration"
 msgstr "Cookie Duration"
 
-#: core/classes/class.affiliatepress.php:3733
+#: core/classes/class.affiliatepress.php:3785
 #: core/views/settings/messages_setting_tab.php:421
 #: core/views/settings/messages_setting_tab.php:535
 #@ affiliatepress-affiliate-marketing
 msgid "Select Type"
 msgstr "Select Type"
 
-#: core/classes/class.affiliatepress.php:3750
+#: core/classes/class.affiliatepress.php:3802
 #: core/views/settings/messages_setting_tab.php:688
 #@ affiliatepress-affiliate-marketing
 msgid "Edit Details"
 msgstr "Edit Details"
 
-#: core/classes/class.affiliatepress.php:3751
+#: core/classes/class.affiliatepress.php:3803
 #: core/views/settings/messages_setting_tab.php:696
 #@ affiliatepress-affiliate-marketing
 msgid "Profile Details"
 msgstr "Profile Details"
 
-#: core/classes/class.affiliatepress.php:3752
+#: core/classes/class.affiliatepress.php:3804
 #: core/views/settings/messages_setting_tab.php:704
 #@ affiliatepress-affiliate-marketing
 msgid "Profile Picture"
 msgstr "Profile Picture"
 
-#: core/classes/class.affiliatepress.php:3753
+#: core/classes/class.affiliatepress.php:3805
 #@ affiliatepress-affiliate-marketing
 msgid "Change"
 msgstr "Change"
 
-#: core/classes/class.affiliatepress.php:3754
+#: core/classes/class.affiliatepress.php:3806
 #@ affiliatepress-affiliate-marketing
 msgid "Remove"
 msgstr "Remove"
 
-#: core/classes/class.affiliatepress.php:3761
+#: core/classes/class.affiliatepress.php:3813
 #: core/views/settings/messages_setting_tab.php:776
 #@ affiliatepress-affiliate-marketing
 msgid "Save Password"
 msgstr "Save Password"
 
-#: core/classes/class.affiliatepress.php:3762
+#: core/classes/class.affiliatepress.php:3814
 #: core/views/settings/messages_setting_tab.php:784
 #@ affiliatepress-affiliate-marketing
 msgid "Delete Account"
 msgstr "Delete Account"
 
-#: core/classes/class.affiliatepress.php:3763
+#: core/classes/class.affiliatepress.php:3815
 #: core/views/settings/messages_setting_tab.php:792
 #@ affiliatepress-affiliate-marketing
 msgid "Permanently delete your account and data."
@@ -6657,40 +6660,40 @@ msgstr "Admin Email"
 msgid "Send Email"
 msgstr "Send Email"
 
-#: core/classes/class.affiliatepress.php:3658
+#: core/classes/class.affiliatepress.php:3710
 #@ affiliatepress-affiliate-marketing
 msgid "Username/Password you have entered is invalid."
 msgstr "Username/Password you have entered is invalid."
 
-#: core/classes/class.affiliatepress.php:3660
+#: core/classes/class.affiliatepress.php:3712
 #@ affiliatepress-affiliate-marketing
 msgid "Your application has been submitted. We shall contact you soon."
 msgstr "Your application has been submitted. We shall contact you soon."
 
-#: core/classes/class.affiliatepress.php:3668
+#: core/classes/class.affiliatepress.php:3720
 #: core/classes/frontend/class.affiliatepress_affiliate_panel.php:687
 #@ affiliatepress-affiliate-marketing
 msgid "Affiliate custom link successfully added."
 msgstr "Affiliate custom link successfully added."
 
-#: core/classes/class.affiliatepress.php:3700
+#: core/classes/class.affiliatepress.php:3752
 #: core/views/settings/messages_setting_tab.php:310
 #@ affiliatepress-affiliate-marketing
 msgid "Your Affiliate Link"
 msgstr "Your Affiliate Link"
 
-#: core/classes/class.affiliatepress.php:3703
+#: core/classes/class.affiliatepress.php:3755
 #@ affiliatepress-affiliate-marketing
 msgid "Defines the duration for which the affiliate tracking cookie remains active after a user clicks a referral link."
 msgstr "Defines the duration for which the affiliate tracking cookie remains active after a user clicks a referral link."
 
-#: core/classes/class.affiliatepress.php:3755
+#: core/classes/class.affiliatepress.php:3807
 #: core/views/settings/messages_setting_tab.php:728
 #@ affiliatepress-affiliate-marketing
 msgid "Payment Detail"
 msgstr "Payment Detail"
 
-#: core/classes/class.affiliatepress.php:3768
+#: core/classes/class.affiliatepress.php:3820
 #@ affiliatepress-affiliate-marketing
 msgid ""
 "Do you have an account?\n"
@@ -6699,38 +6702,38 @@ msgstr ""
 "Do you have an account?\n"
 "                "
 
-#: core/classes/class.affiliatepress.php:3780
+#: core/classes/class.affiliatepress.php:3832
 #@ affiliatepress-affiliate-marketing
 msgid "Enter Password"
 msgstr "Enter Password"
 
-#: core/classes/class.affiliatepress.php:3784
+#: core/classes/class.affiliatepress.php:3836
 #@ affiliatepress-affiliate-marketing
 msgid "Don't have an account?"
 msgstr "Don't have an account?"
 
-#: core/classes/class.affiliatepress.php:3794
+#: core/classes/class.affiliatepress.php:3846
 #@ affiliatepress-affiliate-marketing
 msgid "Showing [start] out of [total]"
 msgstr "Showing [start] out of [total]"
 
-#: core/classes/class.affiliatepress.php:3795
+#: core/classes/class.affiliatepress.php:3847
 #@ affiliatepress-affiliate-marketing
 msgid "Start date"
 msgstr "Start date"
 
-#: core/classes/class.affiliatepress.php:3796
+#: core/classes/class.affiliatepress.php:3848
 #@ affiliatepress-affiliate-marketing
 msgid "End date"
 msgstr "End date"
 
-#: core/classes/class.affiliatepress.php:3962
+#: core/classes/class.affiliatepress.php:4014
 #@ affiliatepress-affiliate-marketing
 msgid "Payout Email"
 msgstr "Payout Email"
 
-#: core/classes/class.affiliatepress.php:4180
-#: core/classes/class.affiliatepress.php:4182
+#: core/classes/class.affiliatepress.php:4232
+#: core/classes/class.affiliatepress.php:4234
 #: core/views/notifications/manage_notifications.php:48
 #: core/views/notifications/manage_notifications.php:51
 #: core/views/wizard/manage_wizard.php:289
@@ -6738,8 +6741,8 @@ msgstr "Payout Email"
 msgid "Commission Paid"
 msgstr "Commission Paid"
 
-#: core/classes/class.affiliatepress.php:4191
-#: core/classes/class.affiliatepress.php:4193
+#: core/classes/class.affiliatepress.php:4243
+#: core/classes/class.affiliatepress.php:4245
 #: core/views/notifications/manage_notifications.php:53
 #: core/views/notifications/manage_notifications.php:56
 #@ affiliatepress-affiliate-marketing
@@ -6747,7 +6750,7 @@ msgid "Payout Failed"
 msgstr "Payout Failed"
 
 #: core/classes/class.affiliatepress_global_options.php:421
-#: core/classes/class.affiliatepress_payout.php:1540
+#: core/classes/class.affiliatepress_payout.php:1542
 #@ affiliatepress-affiliate-marketing
 msgid "Automatic"
 msgstr "Automatic"
@@ -7035,17 +7038,17 @@ msgstr "Integration"
 msgid "Select Integration"
 msgstr "Select Integration"
 
-#: core/classes/class.affiliatepress_dashboard.php:618
+#: core/classes/class.affiliatepress_dashboard.php:650
 #@ affiliatepress-affiliate-marketing
 msgid "Revenue"
 msgstr "Revenue"
 
-#: core/classes/class.affiliatepress.php:3924
+#: core/classes/class.affiliatepress.php:3976
 #@ affiliatepress-affiliate-marketing
 msgid "Enter your Username"
 msgstr "Enter your Username"
 
-#: core/classes/class.affiliatepress.php:3925
+#: core/classes/class.affiliatepress.php:3977
 #@ affiliatepress-affiliate-marketing
 msgid "Please enter your Username"
 msgstr "Please enter your Username"
@@ -7090,27 +7093,27 @@ msgstr "AffiliatePress is the reliable WordPress plugin to create and manage aff
 msgid "Upgrade To Premium"
 msgstr "Upgrade To Premium"
 
-#: core/classes/class.affiliatepress.php:4043
+#: core/classes/class.affiliatepress.php:4095
 #@ affiliatepress-affiliate-marketing
 msgid "Creative 1"
 msgstr "Creative 1"
 
-#: core/classes/class.affiliatepress.php:4054
+#: core/classes/class.affiliatepress.php:4106
 #@ affiliatepress-affiliate-marketing
 msgid "Creative 2"
 msgstr "Creative 2"
 
-#: core/classes/class.affiliatepress.php:4065
+#: core/classes/class.affiliatepress.php:4117
 #@ affiliatepress-affiliate-marketing
 msgid "Creative 3"
 msgstr "Creative 3"
 
-#: core/classes/class.affiliatepress.php:5118
+#: core/classes/class.affiliatepress.php:5170
 #@ affiliatepress-affiliate-marketing
 msgid "Premium"
 msgstr "Premium"
 
-#: core/classes/class.affiliatepress.php:5152
+#: core/classes/class.affiliatepress.php:5204
 #@ affiliatepress-affiliate-marketing
 msgid "Notice Set successfully"
 msgstr "Notice Set successfully"
@@ -7127,7 +7130,7 @@ msgstr "User data not found"
 msgid "LearnDash"
 msgstr "LearnDash"
 
-#: core/views/affiliatepress_header.php:36
+#: core/views/affiliatepress_header.php:30
 #@ affiliatepress-affiliate-marketing
 msgid "Get Premium"
 msgstr "Get Premium"
@@ -7243,7 +7246,7 @@ msgstr "DatePicker"
 msgid "File Upload"
 msgstr "File Upload"
 
-#: core/classes/class.affiliatepress.php:3775
+#: core/classes/class.affiliatepress.php:3827
 #: core/views/settings/messages_setting_tab.php:808
 #@ affiliatepress-affiliate-marketing
 msgid "Are you sure you want to delete your account?"
@@ -7301,14 +7304,14 @@ msgstr "Inactive Integrations"
 msgid "Delete Button"
 msgstr "Delete Button"
 
-#: core/classes/class.affiliatepress.php:3726
+#: core/classes/class.affiliatepress.php:3778
 #: core/views/settings/messages_setting_tab.php:477
 #: core/views/upgrade_latest_data.php:27
 #@ affiliatepress-affiliate-marketing
 msgid "All Visits"
 msgstr "All Visits"
 
-#: core/classes/class.affiliatepress.php:3727
+#: core/classes/class.affiliatepress.php:3779
 #: core/views/settings/messages_setting_tab.php:469
 #: core/views/visits/manage_visits.php:37
 #@ affiliatepress-affiliate-marketing
@@ -7351,18 +7354,12 @@ msgstr "Use [affiliatepress_affiliate_registration] shortcode."
 msgid "Conversion Status"
 msgstr "Conversion Status"
 
-#: core/classes/class.affiliatepress.php:711
+#: core/classes/class.affiliatepress.php:713
 #@ affiliatepress-affiliate-marketing
 msgid "Before you deactivate the AffiliatePress Lite plugin, would you quickly give us your reason for doing so?"
 msgstr "Before you deactivate the AffiliatePress Lite plugin, would you quickly give us your reason for doing so?"
 
-#. translators: plugin header field 'Version'
-#: affiliatepress-affiliate-marketing.php:0
-#@ affiliatepress-affiliate-marketing
-msgid "1.5"
-msgstr "1.5"
-
-#: core/classes/class.affiliatepress.php:3555
+#: core/classes/class.affiliatepress.php:3607
 #: core/classes/class.affiliatepress_affiliate_fields.php:216
 #: core/classes/class.affiliatepress_affiliate_fields.php:781
 #: core/views/upgrade_latest_data.php:37
@@ -7370,7 +7367,7 @@ msgstr "1.5"
 msgid "Confirm Password"
 msgstr "Confirm Password"
 
-#: core/classes/class.affiliatepress.php:3556
+#: core/classes/class.affiliatepress.php:3608
 #: core/classes/class.affiliatepress_affiliate_fields.php:217
 #: core/classes/class.affiliatepress_affiliate_fields.php:782
 #: core/views/upgrade_latest_data.php:38
@@ -7378,7 +7375,7 @@ msgstr "Confirm Password"
 msgid "Enter your Confirm password"
 msgstr "Enter your Confirm password"
 
-#: core/classes/class.affiliatepress.php:3557
+#: core/classes/class.affiliatepress.php:3609
 #: core/classes/class.affiliatepress_affiliate_fields.php:218
 #: core/classes/class.affiliatepress_affiliate_fields.php:783
 #: core/views/upgrade_latest_data.php:39
@@ -7386,7 +7383,7 @@ msgstr "Enter your Confirm password"
 msgid "Please enter your confirm password"
 msgstr "Please enter your confirm password"
 
-#: core/classes/class.affiliatepress.php:3558
+#: core/classes/class.affiliatepress.php:3610
 #: core/classes/class.affiliatepress_affiliate_fields.php:219
 #: core/classes/class.affiliatepress_affiliate_fields.php:784
 #: core/views/upgrade_latest_data.php:40
@@ -7394,7 +7391,7 @@ msgstr "Please enter your confirm password"
 msgid "Confirm password do not match"
 msgstr "Confirm password do not match"
 
-#: core/classes/class.affiliatepress.php:3799
+#: core/classes/class.affiliatepress.php:3851
 #: core/views/affiliates/manage_affiliates.php:307
 #: core/views/commissions/manage_commissions.php:386
 #: core/views/creative/manage_creative.php:233
@@ -7430,4 +7427,31 @@ msgstr "Confirm password Error message"
 #@ affiliatepress-affiliate-marketing
 msgid "Validation Error message"
 msgstr "Validation Error message"
+
+#. translators: plugin header field 'Version'
+#: affiliatepress-affiliate-marketing.php:0
+#@ affiliatepress-affiliate-marketing
+msgid "1.6"
+msgstr "1.6"
+
+#: core/classes/class.affiliatepress.php:3244
+#: core/views/affiliatepress_header.php:46
+#@ affiliatepress-affiliate-marketing
+msgid "Black Friday Sale"
+msgstr "Black Friday Sale"
+
+#: core/classes/class.affiliatepress_creative.php:526
+#@ affiliatepress-affiliate-marketing
+msgid "Creative status has not been updated successfully"
+msgstr "Creative status has not been updated successfully"
+
+#: core/classes/frontend/class.affiliatepress_affiliate_panel.php:3038
+#@ affiliatepress-affiliate-marketing
+msgid "Earnings"
+msgstr "Earnings"
+
+#: core/classes/intergration/class.affiliatepress_armember.php:206
+#@ affiliatepress-affiliate-marketing
+msgid "Turn on AffiliatePress Commission to disable commission calculations for this plan and prevent affiliates from earning on it."
+msgstr "Turn on AffiliatePress Commission to disable commission calculations for this plan and prevent affiliates from earning on it."
 

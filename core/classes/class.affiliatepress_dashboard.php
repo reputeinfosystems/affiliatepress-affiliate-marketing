@@ -55,17 +55,49 @@ if (! class_exists('affiliatepress_dashboard') ) {
         */
         function affiliatepress_dashboard_dynamic_on_load_methods_func($affiliatepress_dashboard_dynamic_on_load_methods){
 
+            global $AffiliatePress;
+
             $affiliatepress_model_show = "";
             $affiliatepress_dashboard_dynamic_on_load_methods.='
                 var vm = this;                
             ';
             if(!empty($_GET["upgrade_action"]) && ($_GET["upgrade_action"] == "upgrade_to_pro")){ //phpcs:ignore
-                $affiliatepress_model_show = "true";
-                $affiliatepress_dashboard_dynamic_on_load_methods.='
-                    setTimeout(function(){
-                        vm.affiliatepress_premium_modal = true;                        
-                    },2000);    
-                ';
+                $affiliatepress_current_date_for_bf_popup = current_time('timestamp',true); //GMT/ UTC+00 timeszone
+                $affiliatepress_sale_popup_details = $AffiliatePress->affiliatepress_get_sales_data();
+                $current_year = gmdate('Y', current_time('timestamp', true ) );
+                if( !empty( $affiliatepress_sale_popup_details[ $current_year ] ) ){
+                    $sale_details = $affiliatepress_sale_popup_details[ $current_year ];
+                    
+                    $affiliatepress_bf_popup_start_time = $sale_details['start_time'];
+                    $affiliatepress_bf_popup_end_time = $sale_details['end_time'];
+
+                    if( $affiliatepress_current_date_for_bf_popup >= $affiliatepress_bf_popup_start_time && $affiliatepress_current_date_for_bf_popup <= $affiliatepress_bf_popup_end_time ){
+                        $affiliatepress_model_show = "true";
+                        $affiliatepress_dashboard_dynamic_on_load_methods.='
+                            setTimeout(function(){
+                                vm.affiliatepress_premium_modal = false;   
+                                vm.affiliatepress_sale_premium_modal = true;                     
+                            },2000);    
+                        ';
+                    }else{
+                        $affiliatepress_model_show = "true";
+                        $affiliatepress_dashboard_dynamic_on_load_methods.='
+                            setTimeout(function(){
+                                vm.affiliatepress_premium_modal = true;   
+                                vm.affiliatepress_sale_premium_modal = false;                      
+                            },2000);    
+                        ';
+                    }
+                }else{
+
+                    $affiliatepress_model_show = "true";
+                    $affiliatepress_dashboard_dynamic_on_load_methods.='
+                        setTimeout(function(){
+                            vm.affiliatepress_premium_modal = true;  
+                            vm.affiliatepress_sale_premium_modal = false;                      
+                        },2000);    
+                    ';
+                }
             }
             $affiliatepress_dashboard_dynamic_on_load_methods.='                
                 setTimeout(function(){

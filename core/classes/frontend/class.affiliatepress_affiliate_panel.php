@@ -1378,12 +1378,9 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
 
             $affiliates = array();
             if (! empty($affiliatepress_visits_record) ) {
-                $affiliatepress_counter = 1;
-                $affiliatepress_sr_no   = (($affiliatepress_currentpage - 1) * $affiliatepress_perpage);
                 foreach ( $affiliatepress_visits_record as $affiliatepress_key=>$affiliatepress_single_affiliate ) {
-                    $affiliatepress_sr_no++;
                     $affiliatepress_visit = $affiliatepress_single_affiliate;                    
-                    $affiliatepress_visit['sr_no'] = $affiliatepress_sr_no;
+                    $affiliatepress_visit['sr_no'] = intval($affiliatepress_single_affiliate['ap_visit_id']);
                     $affiliatepress_visit['visit_created_date_formated'] = $AffiliatePress->affiliatepress_formated_date_display($affiliatepress_single_affiliate['ap_visit_created_date']);
                     $affiliates[] = $affiliatepress_visit;
                 }
@@ -2351,7 +2348,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 },
                 handleVisitSortChange({ column, prop, order }){
                     var vm = this;
-                    if(prop == "ap_visit_id"){
+                    if(prop == "sr_no"){
                         vm.visits_order_by = "ap_visit_id"; 
                     }else if(prop == "visit_created_date_formated"){
                         vm.visits_order_by = "ap_visit_created_date"; 
@@ -3038,7 +3035,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                                             labels: vm.revenue_chart_data.labels,
                                             datasets: [
                                                 {
-                                                    label: "Earnings",
+                                                    label: "'.esc_html__('Earnings', 'affiliatepress-affiliate-marketing').'",
                                                     data: vm.revenue_chart_data.earning_values,
                                                     borderColor: "rgba(115, 98, 249, 1)",
                                                     backgroundColor: "rgba(115, 98, 249, 0.2)",
@@ -3052,7 +3049,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                                                     pointBackgroundColor: "rgba(115, 98, 249, 1)"
                                                 },
                                                 {
-                                                    label: "Commissions",
+                                                    label: "'.esc_html__('Commissions', 'affiliatepress-affiliate-marketing').'",
                                                     data: vm.revenue_chart_data.commission_count,
                                                     borderColor: "rgba(255, 99, 132, 1)",
                                                     backgroundColor: "rgba(255, 99, 132, 0.2)",

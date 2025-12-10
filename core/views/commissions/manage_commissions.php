@@ -74,7 +74,7 @@
                                     </template>
                                 </el-table-column>
                                 
-                                <el-table-column  prop="full_name"  width="250" label="<?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by='full_name'>
+                                <el-table-column  prop="full_name"  width="250" label="<?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?>" sortable="true">
                                     <template #default="scope">
                                         <el-popover trigger="click" width="350" popper-class="ap-affiliate-user-details-popover" :placement="(is_rtl == 'is_rtl') ? 'left-start' : 'right-start'" :visible="userPopoverVisible">
                                             <div class="ap-affiliate-user-details-container">
@@ -251,7 +251,7 @@
                                     <span>#{{ scope.row.ap_commission_id }}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column  prop="full_name"  width="180" label="<?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by='full_name'>
+                            <el-table-column  prop="full_name"  width="180" label="<?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?>" sortable="true">
                                     <template #default="scope">
                                         <el-popover trigger="click" width="350" popper-class="ap-affiliate-user-details-popover" :placement="(is_rtl == 'is_rtl') ? 'left-start' : 'right-start'" :visible="userPopoverVisible">
                                             <div class="ap-affiliate-user-details-container">

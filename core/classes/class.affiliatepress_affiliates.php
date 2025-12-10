@@ -1416,6 +1416,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
                 foreach ( $affiliatepress_affiliates_record as $affiliatepress_key=>$affiliatepress_single_affiliate ) {
 
                     $affiliate = $affiliatepress_single_affiliate;
+                    $affiliate['ap_affiliates_id']    = intval($affiliatepress_single_affiliate['ap_affiliates_id']);
                     $affiliatepress_user_id = $affiliatepress_single_affiliate['ap_affiliates_user_id'];
                     $affiliate['avatar_url']  = '';
                     $affiliates_avatar =  $affiliatepress_single_affiliate['ap_affiliates_user_avatar'];
@@ -2548,7 +2549,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
                         vm.order_by = "";
                     }
                 }                 
-                this.loadAffiliate();                 
+                this.loadAffiliate(true);                 
             }, 
             handleSelectionChange(val) {
                 const items_obj = val;

@@ -24,16 +24,41 @@ if(!empty($request_module) && $request_module != 'lite_wizard'){
     </div>
     <?php
         if(!$AffiliatePress->affiliatepress_pro_install()){
+
+            global $AffiliatePress;
+
+            $upgrade_menu_text = esc_html__( 'Get Premium', 'affiliatepress-affiliate-marketing' );
+            $affiliatepress_current_date_for_bf_popup = current_time( 'timestamp', true );
+            $affiliatepress_sale_popup_details = $AffiliatePress->affiliatepress_get_sales_data();
+            $current_year = gmdate('Y', current_time('timestamp', true ) );
+            $affiliate_click_event ='@click="open_premium_modal"';
+                if( !empty( $affiliatepress_sale_popup_details[ $current_year ] ) ){
+                    
+                    $sale_details = $affiliatepress_sale_popup_details[ $current_year ];
+                    
+                    $affiliatepress_bf_popup_start_time = $sale_details['start_time'];
+                    $affiliatepress_bf_popup_end_time = $sale_details['end_time'];
+    
+                    $type = !empty( $sale_details['type'] ) ? $sale_details['type'] : 'black_friday';
+                    
+                    if( $affiliatepress_current_date_for_bf_popup >= $affiliatepress_bf_popup_start_time && $affiliatepress_current_date_for_bf_popup <= $affiliatepress_bf_popup_end_time ){
+                        if( 'black_friday' == $type ){
+                            $upgrade_menu_text = esc_html__( 'Black Friday Sale', 'affiliatepress-affiliate-marketing' );
+                            $affiliate_click_event ='@click="open_sale_premium_modal"';
+                        }
+                    }
+                }
+
             ?>
-            <div class="ap-navbar-nav" id="ap-navbar-nav">
+            <div class="ap-navbar-nav" id="ap-navbar-nav" <?php echo $affiliate_click_event; //phpcs:ignore ?>>
                 <ul>
                     <li class="ap-nav-item ap-nav-item__is-go-premium">					
-                        <a href="javascript:void(0)" class="ap-nav-link" @click="open_premium_modal">
+                        <a href="javascript:void(0)" class="ap-nav-link" >
                             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M18.0396 17.5996H3.95965C3.23189 17.5996 2.63965 18.1918 2.63965 18.9196C2.63965 19.6474 3.23189 20.2396 3.95965 20.2396H18.0396C18.7674 20.2396 19.3596 19.6474 19.3596 18.9196C19.3596 18.1918 18.7674 17.5996 18.0396 17.5996Z" fill="white"/>
                             <path d="M20.24 4.39977C19.2694 4.39977 18.48 5.18914 18.48 6.15977C18.48 6.81186 18.8408 7.37591 19.3697 7.68039C18.3515 10.0916 16.7631 11.5709 15.2785 11.4371C13.6277 11.3025 12.2812 9.35063 11.5385 6.08496C12.4907 5.84382 13.2 4.98582 13.2 3.95977C13.2 2.74624 12.2135 1.75977 11 1.75977C9.78643 1.75977 8.79996 2.74624 8.79996 3.95977C8.79996 4.98586 9.50924 5.84386 10.4614 6.08496C9.71867 9.35063 8.37225 11.3025 6.72139 11.4371C5.243 11.5709 3.64753 10.0916 2.63029 7.68039C3.15915 7.37591 3.51996 6.81182 3.51996 6.15977C3.51996 5.18914 2.73058 4.39977 1.75996 4.39977C0.789379 4.39977 0 5.18914 0 6.15977C0 7.06267 0.686383 7.8001 1.56286 7.90039L3.25776 16.7198H18.7422L20.4371 7.90039C21.3136 7.8001 22 7.06267 22 6.15977C22 5.18914 21.2106 4.39977 20.24 4.39977Z" fill="white"/>
                             </svg>
-                            <?php esc_html_e('Get Premium', 'affiliatepress-affiliate-marketing'); ?>
+                            <?php echo $upgrade_menu_text; //phpcs:ignore ?>
                         </a>
                     </li>
                 </ul>

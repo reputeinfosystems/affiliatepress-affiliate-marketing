@@ -523,7 +523,7 @@ if (! class_exists('affiliatepress_creative') ) {
             $response = array();
             $response['variant'] = 'error';
             $response['title']   = esc_html__( 'Error', 'affiliatepress-affiliate-marketing');
-            $response['msg']     = esc_html__( 'Affiliates status has not been updated successfully', 'affiliatepress-affiliate-marketing');
+            $response['msg']     = esc_html__( 'Creative status has not been updated successfully', 'affiliatepress-affiliate-marketing');
             
             if( preg_match( '/error/', $affiliatepress_ap_check_authorization ) ){
                 $affiliatepress_auth_error = explode( '^|^', $affiliatepress_ap_check_authorization );
@@ -557,7 +557,7 @@ if (! class_exists('affiliatepress_creative') ) {
             $affiliatepress_update_id   = isset($_POST['update_id']) ? intval($_POST['update_id']) : ''; // phpcs:ignore
             $affiliatepress_new_status   = isset($_POST['new_status']) ? intval($_POST['new_status']) : ''; // phpcs:ignore
             $affiliatepress_old_status   = isset($_POST['old_status']) ? intval($_POST['old_status']) : ''; // phpcs:ignore
-            if($affiliatepress_update_id && $affiliatepress_new_status != ''){
+            if($affiliatepress_update_id){
 
                 $this->affiliatepress_update_record($affiliatepress_tbl_ap_creative, array('ap_creative_status'=>$affiliatepress_new_status), array( 'ap_creative_id' => $affiliatepress_update_id ));
 
@@ -672,6 +672,7 @@ if (! class_exists('affiliatepress_creative') ) {
 
                     $affiliatepress_creative = $affiliatepress_single_record;
                     
+                    $affiliatepress_creative['ap_creative_id']    = intval($affiliatepress_single_record['ap_creative_id']);
                     $affiliatepress_creative['ap_creative_name']  = esc_html($affiliatepress_single_record['ap_creative_name']);
                     $affiliatepress_creative['ap_creative_description']  = esc_html($affiliatepress_single_record['ap_creative_description']);
                     $affiliatepress_creative['ap_creative_type']  = esc_html($affiliatepress_single_record['ap_creative_type']);                    
@@ -1088,7 +1089,7 @@ if (! class_exists('affiliatepress_creative') ) {
                         vm.order_by = "";
                     }
                 }                
-                this.loadCreatives(false);                 
+                this.loadCreatives(true);                 
             },
             handleSelectionChange(val) {
                 const items_obj = val;
