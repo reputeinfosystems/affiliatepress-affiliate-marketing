@@ -318,7 +318,7 @@ if( !class_exists('affiliatepress_wp_forms') ){
 
             $affiliatepress_tbl_wpforms_payments = $this->affiliatepress_tablename_prepare( $wpdb->prefix . 'wpforms_payments' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'wpforms_payments' contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
 
-            $affiliatepress_payment = $wpdb->get_row($wpdb->prepare("SELECT id, status FROM {$affiliatepress_tbl_wpforms_payments} WHERE entry_id = %d",$affiliatepress_entry_id),ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_wpforms_payments is a table name. false alarm 
+            $affiliatepress_payment = $wpdb->get_row($wpdb->prepare("SELECT id, status FROM {$affiliatepress_tbl_wpforms_payments} WHERE entry_id = %d",$affiliatepress_entry_id),ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_wpforms_payments is a table name. false alarm 
 
             $affiliatepress_payment_id = $affiliatepress_payment['id'];
             $affiliatepress_payment_status = $affiliatepress_payment['status'];

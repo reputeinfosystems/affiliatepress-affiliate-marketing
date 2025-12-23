@@ -108,7 +108,7 @@ if (! class_exists('affiliatepress_affiliate_fields') ) {
         
             $affiliatepress_tbl_ap_affiliate_form_fields_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_affiliate_form_fields); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $affiliatepress_tbl_ap_affiliates contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
 
-            $affiliatepress_fields    = $wpdb->get_results("SELECT * FROM {$affiliatepress_tbl_ap_affiliate_form_fields_temp} order by ap_field_position ASC", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_form_fields_temp is table name already prepare in "affiliatepress_tablename_prepare". False Positive alarm
+            $affiliatepress_fields    = $wpdb->get_results("SELECT * FROM {$affiliatepress_tbl_ap_affiliate_form_fields_temp} order by ap_field_position ASC", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery ,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_form_fields_temp is table name already prepare in "affiliatepress_tablename_prepare". False Positive alarm
             $affiliatepress_i = 1;
             foreach ( $affiliatepress_fields as $affiliatepress_field ) {
                 $affiliatepress_args = array('ap_field_position' => $affiliatepress_i);
@@ -118,7 +118,7 @@ if (! class_exists('affiliatepress_affiliate_fields') ) {
             if (isset($_POST['old_index']) && isset($_POST['new_index']) ) { // phpcs:ignore 
                 if ($affiliatepress_new_index > $affiliatepress_old_index ) {
                     $affiliatepress_condition = 'BETWEEN ' . $affiliatepress_old_index . ' AND ' . $affiliatepress_new_index;
-                    $affiliatepress_fields    = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$affiliatepress_tbl_ap_affiliate_form_fields_temp} WHERE ap_field_position BETWEEN %d AND %d order by ap_field_position ASC", $affiliatepress_old_index, $affiliatepress_new_index ), ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_form_fields_temp is table name defined globally & already prepare by affiliatepress_tablename_prepare. False Positive alarm
+                    $affiliatepress_fields    = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$affiliatepress_tbl_ap_affiliate_form_fields_temp} WHERE ap_field_position BETWEEN %d AND %d order by ap_field_position ASC", $affiliatepress_old_index, $affiliatepress_new_index ), ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery ,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_form_fields_temp is table name defined globally & already prepare by affiliatepress_tablename_prepare. False Positive alarm
                     foreach ( $affiliatepress_fields as $affiliatepress_field ) {
                         $affiliatepress_position = $affiliatepress_field['ap_field_position'] - 1;
                         $affiliatepress_position = ( $affiliatepress_field['ap_field_position'] == $affiliatepress_old_index ) ? $affiliatepress_new_index : $affiliatepress_position;
@@ -128,7 +128,7 @@ if (! class_exists('affiliatepress_affiliate_fields') ) {
                         $wpdb->update($affiliatepress_tbl_ap_affiliate_form_fields, $affiliatepress_args, array( 'ap_form_field_id' => $affiliatepress_field['ap_form_field_id'] )); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
                     }
                 } else {
-                    $affiliatepress_fields = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$affiliatepress_tbl_ap_affiliate_form_fields_temp} WHERE ap_field_position BETWEEN %d AND %d order by ap_field_position ASC", $affiliatepress_new_index, $affiliatepress_old_index ), ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,  WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_form_fields_temp is table name defined globally & already prepare by affiliatepress_tablename_prepare function. False Positive alarm
+                    $affiliatepress_fields = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$affiliatepress_tbl_ap_affiliate_form_fields_temp} WHERE ap_field_position BETWEEN %d AND %d order by ap_field_position ASC", $affiliatepress_new_index, $affiliatepress_old_index ), ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery ,PluginCheck.Security.DirectDB.UnescapedDBParameter,  WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_form_fields_temp is table name defined globally & already prepare by affiliatepress_tablename_prepare function. False Positive alarm
                     foreach ( $affiliatepress_fields as $affiliatepress_field ) {
                         $affiliatepress_position = $affiliatepress_field['ap_field_position'] + 1;
                         $affiliatepress_position = ( $affiliatepress_field['ap_field_position'] == $affiliatepress_old_index ) ? $affiliatepress_new_index : $affiliatepress_position;
@@ -352,7 +352,7 @@ if (! class_exists('affiliatepress_affiliate_fields') ) {
             
             $affiliatepress_tbl_ap_affiliate_form_fields_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_affiliate_form_fields); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $affiliatepress_tbl_ap_affiliates contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
 
-            $affiliatepress_field_settings_data = $wpdb->get_results("SELECT * FROM {$affiliatepress_tbl_ap_affiliate_form_fields_temp} ORDER BY ap_field_position ASC", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_form_fields is table name defined globally & already prepare by affiliatepress_tablename_prepare function. False Positive alarm            
+            $affiliatepress_field_settings_data = $wpdb->get_results("SELECT * FROM {$affiliatepress_tbl_ap_affiliate_form_fields_temp} ORDER BY ap_field_position ASC", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery ,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_form_fields is table name defined globally & already prepare by affiliatepress_tablename_prepare function. False Positive alarm            
 
             $affiliatepress_pro_active = $AffiliatePress->affiliatepress_pro_install();
 

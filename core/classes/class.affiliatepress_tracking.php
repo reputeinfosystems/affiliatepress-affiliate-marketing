@@ -333,7 +333,7 @@ if( !class_exists('affiliatepress_tracking') ){
 
             if(!empty($affiliatepress_affiliates_id) && !empty($affiliatepress_insert_date) && !empty($affiliatepress_report_insert_data)){
                 
-                $ap_affiliate_report_id = intval($wpdb->get_var($wpdb->prepare("SELECT ap_affiliate_report_id FROM {$affiliatepress_tbl_ap_affiliate_report} WHERE ap_affiliate_report_date = %s AND ap_affiliates_id = %d", $affiliatepress_insert_date, $affiliatepress_affiliates_id))); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_settings_temp is prepare above using affiliatepress_tablename_prepare function. False Positive alarm
+                $ap_affiliate_report_id = intval($wpdb->get_var($wpdb->prepare("SELECT ap_affiliate_report_id FROM {$affiliatepress_tbl_ap_affiliate_report} WHERE ap_affiliate_report_date = %s AND ap_affiliates_id = %d", $affiliatepress_insert_date, $affiliatepress_affiliates_id))); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_settings_temp is prepare above using affiliatepress_tablename_prepare function. False Positive alarm
 
                 if($ap_affiliate_report_id == 0){
                     $affiliatepress_report_insert_data['ap_affiliates_id'] = $affiliatepress_affiliates_id;
@@ -655,10 +655,11 @@ if( !class_exists('affiliatepress_tracking') ){
 
                 $affiliatepress_ref_affiliate = $AffiliatePress->affiliatepress_decode_affiliate_id($affiliatepress_ref_affiliate); /* Function for decode affiliate ID */
 
-                $affiliatepress_ref_affiliate = apply_filters('affiliatepess_affiliate_cookie_set', $affiliatepress_ref_affiliate);
+                $affiliatepress_ref_affiliate = apply_filters('affiliatepess_affiliate_cookie_set', $affiliatepress_ref_affiliate);//phpcs:ignore
 
                 $affiliatepress_allow_second_referal = false;
-                $affiliatepress_allow_second_referal = apply_filters('affiliatepess_allow_second_referal', $affiliatepress_allow_second_referal, $affiliatepress_ref_affiliate);  /* Filter for allow last referal */
+                /* Filter for allow last referal */
+                $affiliatepress_allow_second_referal = apply_filters('affiliatepess_allow_second_referal', $affiliatepress_allow_second_referal, $affiliatepress_ref_affiliate); //phpcs:ignore 
 
                 $affiliatepress_last_referal_allowed = (isset($_COOKIE['affiliatepress_ref_cookie']) && !empty($_COOKIE['affiliatepress_ref_cookie']) && $affiliatepress_allow_second_referal == true)?true:false;
 
@@ -778,7 +779,7 @@ if( !class_exists('affiliatepress_tracking') ){
 
                 $affiliatepress_arm_subscription_plans = $this->affiliatepress_tablename_prepare( $wpdb->prefix . 'arm_subscription_plans' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'arm_subscription_plans' contains table name and it's prepare properly using 'arm_payment_log' function
 
-                $affiliatepress_plan_options = $wpdb->get_var($wpdb->prepare("SELECT arm_subscription_plan_options FROM {$affiliatepress_arm_subscription_plans} WHERE arm_subscription_plan_id= %d",$affiliatepress_prodcut_id));// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_arm_subscription_plans is a table name. false alarm
+                $affiliatepress_plan_options = $wpdb->get_var($wpdb->prepare("SELECT arm_subscription_plan_options FROM {$affiliatepress_arm_subscription_plans} WHERE arm_subscription_plan_id= %d",$affiliatepress_prodcut_id));// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_arm_subscription_plans is a table name. false alarm
 
                 $affiliatepress_plan_options = unserialize($affiliatepress_plan_options);
 

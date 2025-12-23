@@ -352,14 +352,14 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 }
             }
             $affiliatepress_tbl_ap_payments_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_payments); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $affiliatepress_tbl_ap_payments_temp contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
-            $affiliatepress_get_total_payments = intval($wpdb->get_var("SELECT count(payments.ap_payment_id) FROM {$affiliatepress_tbl_ap_payments_temp} as payments  {$affiliatepress_where_clause}")); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_payments is a table name. false alarm
+            $affiliatepress_get_total_payments = intval($wpdb->get_var("SELECT count(payments.ap_payment_id) FROM {$affiliatepress_tbl_ap_payments_temp} as payments  {$affiliatepress_where_clause}")); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_payments is a table name. false alarm
             if(empty($affiliatepress_order)){
                 $affiliatepress_order = 'DESC';
             }
             if(empty($affiliatepress_order_by)){
                 $affiliatepress_order_by = 'payments.ap_payment_id';
             }
-            $affiliatepress_affiliate_payments_record = $wpdb->get_results("SELECT payments.ap_payment_id, payments.ap_payment_created_date, payments.ap_payment_method, payments.ap_payment_amount, payments.ap_payment_currency, payments.ap_payment_status FROM {$affiliatepress_tbl_ap_payments_temp} as payments {$affiliatepress_where_clause}  order by {$affiliatepress_order_by} {$affiliatepress_order} LIMIT {$affiliatepress_offset} , {$affiliatepress_perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_payments_temp is a table name. false alarm                         
+            $affiliatepress_affiliate_payments_record = $wpdb->get_results("SELECT payments.ap_payment_id, payments.ap_payment_created_date, payments.ap_payment_method, payments.ap_payment_amount, payments.ap_payment_currency, payments.ap_payment_status FROM {$affiliatepress_tbl_ap_payments_temp} as payments {$affiliatepress_where_clause}  order by {$affiliatepress_order_by} {$affiliatepress_order} LIMIT {$affiliatepress_offset} , {$affiliatepress_perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_payments_temp is a table name. false alarm                         
 
             $affiliatepress_payments = array();
             if(!empty($affiliatepress_affiliate_payments_record)){
@@ -547,7 +547,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 $affiliatepress_dashboard_total_commission = 0;
                 $affiliatepress_dashboard_total_visits     = 0;
 
-                $affiliatepress_dashboard_report_data = $wpdb->get_row( $wpdb->prepare( "SELECT SUM(ap_affiliate_report_total_commission) as total_commission_count,  sum(ap_affiliate_report_visits) as total_visits_count, SUM(ap_affiliate_report_total_commission_amount) as total_commission_amount, sum(ap_affiliate_report_paid_commission_amount) as paid_commission_amount, sum(ap_affiliate_report_unpaid_commission_amount) as unpaid_commission_amount FROM {$affiliatepress_tbl_ap_affiliate_report} as report Inner Join {$affiliatepress_tbl_ap_affiliates} as affiliate ON report.ap_affiliates_id = affiliate.ap_affiliates_id  WHERE affiliate.ap_affiliates_id = %d AND DATE(ap_affiliate_report_date) >= %s AND DATE(ap_affiliate_report_date) <= %s",$affiliatepress_affiliate_id, $affiliatepress_dashboard_start_date,$affiliatepress_dashboard_end_date), ARRAY_A );  // phpcs:ignore WordPress.DB.DirectDatabaseQuery,  WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_report is table name defined globally & already prepare by affiliatepress_tablename_prepare function. False Positive alarm
+                $affiliatepress_dashboard_report_data = $wpdb->get_row( $wpdb->prepare( "SELECT SUM(ap_affiliate_report_total_commission) as total_commission_count,  sum(ap_affiliate_report_visits) as total_visits_count, SUM(ap_affiliate_report_total_commission_amount) as total_commission_amount, sum(ap_affiliate_report_paid_commission_amount) as paid_commission_amount, sum(ap_affiliate_report_unpaid_commission_amount) as unpaid_commission_amount FROM {$affiliatepress_tbl_ap_affiliate_report} as report Inner Join {$affiliatepress_tbl_ap_affiliates} as affiliate ON report.ap_affiliates_id = affiliate.ap_affiliates_id  WHERE affiliate.ap_affiliates_id = %d AND DATE(ap_affiliate_report_date) >= %s AND DATE(ap_affiliate_report_date) <= %s",$affiliatepress_affiliate_id, $affiliatepress_dashboard_start_date,$affiliatepress_dashboard_end_date), ARRAY_A );  // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter,  WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_report is table name defined globally & already prepare by affiliatepress_tablename_prepare function. False Positive alarm
                 
                 
                 if(!empty($affiliatepress_dashboard_report_data)){
@@ -572,7 +572,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 $affiliatepress_dashboard_total_commission = 0;
                 $affiliatepress_dashboard_total_visits     = 0;
 
-                $affiliatepress_dashboard_report_data = $wpdb->get_row( $wpdb->prepare( "SELECT SUM(ap_affiliate_report_total_commission) as total_commission_count,  sum(ap_affiliate_report_visits) as total_visits_count, SUM(ap_affiliate_report_total_commission_amount) as total_commission_amount, sum(ap_affiliate_report_paid_commission_amount) as paid_commission_amount, sum(ap_affiliate_report_unpaid_commission_amount) as unpaid_commission_amount FROM {$affiliatepress_tbl_ap_affiliate_report} as report Inner Join {$affiliatepress_tbl_ap_affiliates} as affiliate ON report.ap_affiliates_id = affiliate.ap_affiliates_id  WHERE affiliate.ap_affiliates_id = %d ",$affiliatepress_affiliate_id ), ARRAY_A );  // phpcs:ignore WordPress.DB.DirectDatabaseQuery,  WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_report is table name defined globally & already prepare by affiliatepress_tablename_prepare function. False Positive alarm
+                $affiliatepress_dashboard_report_data = $wpdb->get_row( $wpdb->prepare( "SELECT SUM(ap_affiliate_report_total_commission) as total_commission_count,  sum(ap_affiliate_report_visits) as total_visits_count, SUM(ap_affiliate_report_total_commission_amount) as total_commission_amount, sum(ap_affiliate_report_paid_commission_amount) as paid_commission_amount, sum(ap_affiliate_report_unpaid_commission_amount) as unpaid_commission_amount FROM {$affiliatepress_tbl_ap_affiliate_report} as report Inner Join {$affiliatepress_tbl_ap_affiliates} as affiliate ON report.ap_affiliates_id = affiliate.ap_affiliates_id  WHERE affiliate.ap_affiliates_id = %d ",$affiliatepress_affiliate_id ), ARRAY_A );  // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter,  WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_report is table name defined globally & already prepare by affiliatepress_tablename_prepare function. False Positive alarm
                 
                 
                 if(!empty($affiliatepress_dashboard_report_data)){
@@ -596,6 +596,25 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 'earning_values'   => array(),
                 'commission_count' => array(),
             );
+
+            $affiliatepress_default_primary_color          = '#6858e0';
+
+            $affiliatepress_primary_color = $AffiliatePress->affiliatepress_get_settings('primary_color', 'appearance_settings');            
+            if(empty($affiliatepress_primary_color)){
+                $affiliatepress_primary_color = $affiliatepress_default_primary_color;
+            }
+
+            $affiliatepress_primary_opacity_color = $AffiliatePress->affiliatepress_hex_to_rgb_color($affiliatepress_primary_color,0.2);
+
+            $affiliatepress_earnings_graph_label = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('dashboard_chart_earnings', 'message_settings'));
+            $affiliatepress_commissions_graph_label = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('dashboard_chart_commisisons', 'message_settings'));
+            $affiliatepress_revenue_chart_other_data = array(
+                'earnings_graph_color' => $affiliatepress_primary_color,
+                'earnings_graph_bgcolor' => $affiliatepress_primary_opacity_color,
+                'earnings_graph_label' => $affiliatepress_earnings_graph_label,
+                'commissions_graph_label' => $affiliatepress_commissions_graph_label,
+            );
+
             if(empty($affiliatepress_dashboard_start_date) && empty($affiliatepress_dashboard_end_date)){                
                 $affiliatepress_currentDate = new DateTime();
                 $affiliatepress_dashboard_end_date = $affiliatepress_currentDate->format('Y-m-d');
@@ -624,7 +643,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                         $affiliatepress_day_total_commission = 0;
                         $affiliatepress_total_commission   = 0;
 
-                        $affiliatepress_dashboard_report_data = $wpdb->get_row( $wpdb->prepare( "SELECT sum(ap_affiliate_report_total_commission) as total_commission_count, SUM(ap_affiliate_report_total_commission_amount) as total_commission_amount FROM {$affiliatepress_tbl_ap_affiliate_report} as report WHERE report.ap_affiliates_id = %d  AND DATE_FORMAT(DATE(ap_affiliate_report_date),'%Y') = %s", $affiliatepress_affiliate_id, $affiliatepress_key), ARRAY_A );  // phpcs:ignore WordPress.DB.DirectDatabaseQuery,  WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_report is table name defined globally & already prepare by affiliatepress_tablename_prepare function. False Positive alarm
+                        $affiliatepress_dashboard_report_data = $wpdb->get_row( $wpdb->prepare( "SELECT sum(ap_affiliate_report_total_commission) as total_commission_count, SUM(ap_affiliate_report_total_commission_amount) as total_commission_amount FROM {$affiliatepress_tbl_ap_affiliate_report} as report WHERE report.ap_affiliates_id = %d  AND DATE_FORMAT(DATE(ap_affiliate_report_date),'%Y') = %s", $affiliatepress_affiliate_id, $affiliatepress_key), ARRAY_A );  // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.PreparedSQLPlaceholders.UnsupportedPlaceholder,  WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_report is table name defined globally & already prepare by affiliatepress_tablename_prepare function. False Positive alarm
 
                         if(!empty($affiliatepress_dashboard_report_data)){
                             $affiliatepress_day_total_commission = floatval($affiliatepress_dashboard_report_data['total_commission_amount']);
@@ -644,7 +663,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                         $affiliatepress_day_total_commission = 0;
                         $affiliatepress_total_commission   = 0;
 
-                        $affiliatepress_dashboard_report_data = $wpdb->get_row( $wpdb->prepare( "SELECT sum(ap_affiliate_report_total_commission) as total_commission_count, SUM(ap_affiliate_report_total_commission_amount) as total_commission_amount FROM {$affiliatepress_tbl_ap_affiliate_report} as report WHERE report.ap_affiliates_id = %d  AND DATE_FORMAT(DATE(ap_affiliate_report_date),'%m-%Y') = %s ", $affiliatepress_affiliate_id, $affiliatepress_key), ARRAY_A );  // phpcs:ignore WordPress.DB.DirectDatabaseQuery,  WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_report is table name defined globally & already prepare by affiliatepress_tablename_prepare function. False Positive alarm
+                        $affiliatepress_dashboard_report_data = $wpdb->get_row( $wpdb->prepare( "SELECT sum(ap_affiliate_report_total_commission) as total_commission_count, SUM(ap_affiliate_report_total_commission_amount) as total_commission_amount FROM {$affiliatepress_tbl_ap_affiliate_report} as report WHERE report.ap_affiliates_id = %d  AND DATE_FORMAT(DATE(ap_affiliate_report_date),'%m-%Y') = %s ", $affiliatepress_affiliate_id, $affiliatepress_key), ARRAY_A );  // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.PreparedSQLPlaceholders.UnsupportedPlaceholder,  WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_report is table name defined globally & already prepare by affiliatepress_tablename_prepare function. False Positive alarm
 
                         if(!empty($affiliatepress_dashboard_report_data)){
                             $affiliatepress_day_total_commission = floatval($affiliatepress_dashboard_report_data['total_commission_amount']);
@@ -666,7 +685,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                         $affiliatepress_day_total_commission = 0;
                         $affiliatepress_total_commission   = 0;
 
-                        $affiliatepress_dashboard_report_data = $wpdb->get_row( $wpdb->prepare( "SELECT sum(ap_affiliate_report_total_commission) as total_commission_count, SUM(ap_affiliate_report_total_commission_amount) as total_commission_amount FROM {$affiliatepress_tbl_ap_affiliate_report} as report WHERE report.ap_affiliates_id = %d AND  DATE(ap_affiliate_report_date) = %s ", $affiliatepress_affiliate_id, $affiliatepress_key), ARRAY_A );  // phpcs:ignore WordPress.DB.DirectDatabaseQuery,  WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_report is table name defined globally & already prepare by affiliatepress_tablename_prepare function. False Positive alarm
+                        $affiliatepress_dashboard_report_data = $wpdb->get_row( $wpdb->prepare( "SELECT sum(ap_affiliate_report_total_commission) as total_commission_count, SUM(ap_affiliate_report_total_commission_amount) as total_commission_amount FROM {$affiliatepress_tbl_ap_affiliate_report} as report WHERE report.ap_affiliates_id = %d AND  DATE(ap_affiliate_report_date) = %s ", $affiliatepress_affiliate_id, $affiliatepress_key), ARRAY_A );  // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter,  WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_report is table name defined globally & already prepare by affiliatepress_tablename_prepare function. False Positive alarm
 
                         if(!empty($affiliatepress_dashboard_report_data)){
                             $affiliatepress_day_total_commission = floatval($affiliatepress_dashboard_report_data['total_commission_amount']);
@@ -691,6 +710,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             $response['dashboard_total_commission'] = intval($affiliatepress_dashboard_total_commission);
             $response['dashboard_total_visits']     = intval($affiliatepress_dashboard_total_visits); 
             $response['revenue_chart_data']         = $affiliatepress_revenue_chart_data;      
+            $response['revenue_chart_other_data']         = $affiliatepress_revenue_chart_other_data;      
             $response['affiliate_panel_labels']     = $affiliatepress_panel_labels; 
             
             wp_send_json($response);
@@ -1216,7 +1236,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             }
 
             $affiliatepress_tbl_ap_creative_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_creative); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $affiliatepress_tbl_ap_creative contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
-            $affiliatepress_get_total_creatives = intval($wpdb->get_var("SELECT count(ap_creative_id) FROM {$affiliatepress_tbl_ap_creative_temp} {$affiliatepress_where_clause}")); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_creative_temp is a table name. false alarm
+            $affiliatepress_get_total_creatives = intval($wpdb->get_var("SELECT count(ap_creative_id) FROM {$affiliatepress_tbl_ap_creative_temp} {$affiliatepress_where_clause}")); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_creative_temp is a table name. false alarm
             if(empty($affiliatepress_order)){
                 $affiliatepress_order = 'DESC';
             }
@@ -1224,7 +1244,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 $affiliatepress_order_by = 'ap_creative_id';
             }
 
-            $affiliatepress_creatives_record   = $wpdb->get_results("SELECT * FROM {$affiliatepress_tbl_ap_creative_temp} {$affiliatepress_where_clause}  order by {$affiliatepress_order_by} {$affiliatepress_order} LIMIT {$affiliatepress_offset} , {$affiliatepress_perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_creative_temp is a table name. false alarm
+            $affiliatepress_creatives_record   = $wpdb->get_results("SELECT * FROM {$affiliatepress_tbl_ap_creative_temp} {$affiliatepress_where_clause}  order by {$affiliatepress_order_by} {$affiliatepress_order} LIMIT {$affiliatepress_offset} , {$affiliatepress_perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_creative_temp is a table name. false alarm
 
             $affiliatepress_creatives = array();
             if (! empty($affiliatepress_creatives_record) ) {
@@ -1366,7 +1386,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             $affiliatepress_tbl_ap_affiliate_visits_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_affiliate_visits); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $affiliatepress_tbl_ap_affiliate_visits contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function            
             
                         
-            $affiliatepress_get_total_visits = intval($wpdb->get_var("SELECT count(visits.ap_visit_id) FROM {$affiliatepress_tbl_ap_affiliate_visits_temp} as visits {$affiliatepress_where_clause}")); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_visits_temp is a table name. false alarm
+            $affiliatepress_get_total_visits = intval($wpdb->get_var("SELECT count(visits.ap_visit_id) FROM {$affiliatepress_tbl_ap_affiliate_visits_temp} as visits {$affiliatepress_where_clause}")); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_visits_temp is a table name. false alarm
 
             if(empty($affiliatepress_order)){
                 $affiliatepress_order = 'DESC';
@@ -1374,7 +1394,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             if(empty($affiliatepress_order_by)){
                 $affiliatepress_order_by = 'visits.ap_visit_id';
             }
-            $affiliatepress_visits_record    = $wpdb->get_results("SELECT visits.ap_visit_id, visits.ap_commission_id, visits.ap_visit_created_date, visits.ap_visit_ip_address, visits.ap_visit_country, visits.ap_visit_landing_url, visits.ap_referrer_url, visits.ap_affiliates_campaign_name FROM {$affiliatepress_tbl_ap_affiliate_visits_temp} as visits {$affiliatepress_where_clause}  order by {$affiliatepress_order_by} {$affiliatepress_order} LIMIT {$affiliatepress_offset} , {$affiliatepress_perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_visits_temp is a table name. false alarm
+            $affiliatepress_visits_record    = $wpdb->get_results("SELECT visits.ap_visit_id, visits.ap_commission_id, visits.ap_visit_created_date, visits.ap_visit_ip_address, visits.ap_visit_country, visits.ap_visit_landing_url, visits.ap_referrer_url, visits.ap_affiliates_campaign_name FROM {$affiliatepress_tbl_ap_affiliate_visits_temp} as visits {$affiliatepress_where_clause}  order by {$affiliatepress_order_by} {$affiliatepress_order} LIMIT {$affiliatepress_offset} , {$affiliatepress_perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_visits_temp is a table name. false alarm
 
             $affiliates = array();
             if (! empty($affiliatepress_visits_record) ) {
@@ -1502,7 +1522,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
 
             $affiliatepress_tbl_ap_affiliates_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_affiliates); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $affiliatepress_tbl_ap_affiliates contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function 
 
-            $affiliatepress_get_total_commissions = intval($wpdb->get_var("SELECT count(commissions.ap_commission_id) FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} as commissions INNER JOIN {$affiliatepress_tbl_ap_affiliates_temp} as affiliate  ON commissions.ap_affiliates_id = affiliate.ap_affiliates_id {$affiliatepress_where_clause}")); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions_temp is a table name. false alarm
+            $affiliatepress_get_total_commissions = intval($wpdb->get_var("SELECT count(commissions.ap_commission_id) FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} as commissions INNER JOIN {$affiliatepress_tbl_ap_affiliates_temp} as affiliate  ON commissions.ap_affiliates_id = affiliate.ap_affiliates_id {$affiliatepress_where_clause}")); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions_temp is a table name. false alarm
 
             if(empty($affiliatepress_order)){
                 $affiliatepress_order = 'DESC';
@@ -1510,7 +1530,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             if(empty($affiliatepress_order_by)){
                 $affiliatepress_order_by = 'commissions.ap_commission_id';
             }
-            $affiliatepress_commissions_record = $wpdb->get_results("SELECT commissions.ap_commission_id, commissions.ap_commission_created_date, commissions.ap_commission_type, commissions.ap_commission_amount, commissions.ap_commission_status, commissions.ap_commission_source, commissions.ap_commission_reference_detail FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} as commissions INNER JOIN {$affiliatepress_tbl_ap_affiliates_temp} as affiliate  ON commissions.ap_affiliates_id = affiliate.ap_affiliates_id {$affiliatepress_where_clause}  order by {$affiliatepress_order_by} {$affiliatepress_order} LIMIT {$affiliatepress_offset} , {$affiliatepress_perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions_temp is a table name. false alarm                            
+            $affiliatepress_commissions_record = $wpdb->get_results("SELECT commissions.ap_commission_id, commissions.ap_commission_created_date, commissions.ap_commission_type, commissions.ap_commission_amount, commissions.ap_commission_status, commissions.ap_commission_source, commissions.ap_commission_reference_detail FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} as commissions INNER JOIN {$affiliatepress_tbl_ap_affiliates_temp} as affiliate  ON commissions.ap_affiliates_id = affiliate.ap_affiliates_id {$affiliatepress_where_clause}  order by {$affiliatepress_order_by} {$affiliatepress_order} LIMIT {$affiliatepress_offset} , {$affiliatepress_perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions_temp is a table name. false alarm                            
 
             $affiliatepress_commissions = array();
             if (! empty($affiliatepress_commissions_record) ) {
@@ -2110,8 +2130,8 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
 			$affiliatepress_blogname = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
 
 			$affiliatepress_title = sprintf( esc_html__('[%s] Password Reset', 'affiliatepress-affiliate-marketing'), $affiliatepress_blogname );	// phpcs:ignore
-			$affiliatepress_title = apply_filters('retrieve_password_title', $affiliatepress_title);
-			$affiliatepress_message = apply_filters('retrieve_password_message', $affiliatepress_message, $affiliatepress_key, $affiliatepress_user_login, $affiliatepress_user_data);	
+			$affiliatepress_title = apply_filters('retrieve_password_title', $affiliatepress_title);// phpcs:ignore
+			$affiliatepress_message = apply_filters('retrieve_password_message', $affiliatepress_message, $affiliatepress_key, $affiliatepress_user_login, $affiliatepress_user_data);	// phpcs:ignore
 
             do_action('affiliatepress_other_debug_log_entry', 'email_notification_debug_logs', 'Forget Password Action', 'affiliatepress_email_notiifcation', $affiliatepress_message, $affiliatepress_other_debug_log_id);
             wp_mail($affiliatepress_user_email, $affiliatepress_title, $affiliatepress_message);
@@ -3020,6 +3040,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                             vm.dashboard_total_visits       = response.data.dashboard_total_visits;    
                             vm.affiliate_panel_labels       = response.data.affiliate_panel_labels;    
                             vm.revenue_chart_data           = response.data.revenue_chart_data;
+                            vm.revenue_chart_other_data     = response.data.revenue_chart_other_data;
 
                                 setTimeout(function(){
 
@@ -3035,10 +3056,10 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                                             labels: vm.revenue_chart_data.labels,
                                             datasets: [
                                                 {
-                                                    label: "'.esc_html__('Earnings', 'affiliatepress-affiliate-marketing').'",
+                                                    label: response.data.revenue_chart_other_data.earnings_graph_label,
                                                     data: vm.revenue_chart_data.earning_values,
-                                                    borderColor: "rgba(115, 98, 249, 1)",
-                                                    backgroundColor: "rgba(115, 98, 249, 0.2)",
+                                                    borderColor: vm.revenue_chart_other_data.earnings_graph_color,
+                                                    backgroundColor: vm.revenue_chart_other_data.earnings_graph_bgcolor,
                                                     fill: true,
                                                     pointRadius: function(context) {
                                                         return context.raw === 0 ? 0 : 3;
@@ -3046,10 +3067,10 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                                                     pointHoverRadius: function(context) {
                                                         return context.raw === 0 ? 0 : 3;
                                                     },
-                                                    pointBackgroundColor: "rgba(115, 98, 249, 1)"
+                                                    pointBackgroundColor: vm.revenue_chart_other_data.earnings_graph_color,
                                                 },
                                                 {
-                                                    label: "'.esc_html__('Commissions', 'affiliatepress-affiliate-marketing').'",
+                                                    label: response.data.revenue_chart_other_data.commissions_graph_label,
                                                     data: vm.revenue_chart_data.commission_count,
                                                     borderColor: "rgba(255, 99, 132, 1)",
                                                     backgroundColor: "rgba(255, 99, 132, 0.2)",

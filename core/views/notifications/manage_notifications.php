@@ -36,13 +36,13 @@
                                     <p><?php esc_html_e('Commission Registered', 'affiliatepress-affiliate-marketing'); ?></p>
                                 </div>    
                                 <?php 
-                                    $commission_approved_text = addslashes( esc_html__('Commission Approved', 'affiliatepress-affiliate-marketing') );
-                                    $commission_approved_text = apply_filters('affiliatepress_commission_approved_notification_text', $commission_approved_text);
+                                    $affiliatepress_commission_approved_text = addslashes( esc_html__('Commission Approved', 'affiliatepress-affiliate-marketing') );
+                                    $affiliatepress_commission_approved_text = apply_filters('affiliatepress_commission_approved_notification_text', $affiliatepress_commission_approved_text);
                                 ?>  
-                                <div class="ap-en-left_item-body--list__item" data-label="<?php echo esc_html($commission_approved_text); //phpcs:ignore ?>" data-key="commission_approved" @click="affiliatepress_select_email_notification('commission_approved')"  :class="affiliatepress_active_email_notification == 'commission_approved' ? '__ap-is-active' : ''" ref="commission_approved">   
+                                <div class="ap-en-left_item-body--list__item" data-label="<?php echo esc_html($affiliatepress_commission_approved_text); //phpcs:ignore ?>" data-key="commission_approved" @click="affiliatepress_select_email_notification('commission_approved')"  :class="affiliatepress_active_email_notification == 'commission_approved' ? '__ap-is-active' : ''" ref="commission_approved">   
                                     <span class="material-icons-round --ap-item-status is-enabled" v-if="affiliatepress_email_notification_status['affiliate']['commission_approved'] == true || affiliatepress_email_notification_status['admin']['commission_approved'] == true" >circle</span>
                                     <span class="material-icons-round --ap-item-status" v-else>circle</span>                                                                      
-                                    <p><?php echo esc_html($commission_approved_text); ?></p>
+                                    <p><?php echo esc_html($affiliatepress_commission_approved_text); ?></p>
                                 </div>
                                 <?php do_action('affiliatepress_commission_approved_notification_after'); ?>
                                 <div class="ap-en-left_item-body--list__item" data-label="<?php echo addslashes( esc_html__('Commission Paid', 'affiliatepress-affiliate-marketing') ); //phpcs:ignore ?>" data-key="affiliate_payment_paid" @click="affiliatepress_select_email_notification('affiliate_payment_paid')"  :class="affiliatepress_active_email_notification == 'affiliate_payment_paid' ? '__ap-is-active' : ''" ref="affiliate_payment_paid">    

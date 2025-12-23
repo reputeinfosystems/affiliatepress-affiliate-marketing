@@ -648,7 +648,7 @@ if (! class_exists('affiliatepress_creative') ) {
             }
 
             $affiliatepress_tbl_ap_creative_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_creative); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $affiliatepress_tbl_ap_creative contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
-            $affiliatepress_get_total_creatives = intval($wpdb->get_var("SELECT count(ap_creative_id) FROM {$affiliatepress_tbl_ap_creative_temp} {$affiliatepress_where_clause}")); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_creative_temp is a table name. false alarm
+            $affiliatepress_get_total_creatives = intval($wpdb->get_var("SELECT count(ap_creative_id) FROM {$affiliatepress_tbl_ap_creative_temp} {$affiliatepress_where_clause}")); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_creative_temp is a table name. false alarm
 
             $affiliatepress_pagination_count = ceil(intval($affiliatepress_get_total_creatives) / $affiliatepress_perpage);
             
@@ -663,7 +663,7 @@ if (! class_exists('affiliatepress_creative') ) {
                 $affiliatepress_order_by = 'ap_creative_id';
             }
             
-            $affiliatepress_creatives_record   = $wpdb->get_results("SELECT * FROM {$affiliatepress_tbl_ap_creative_temp} {$affiliatepress_where_clause}  order by {$affiliatepress_order_by} {$affiliatepress_order} LIMIT {$affiliatepress_offset} , {$affiliatepress_perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_creative_temp is a table name & already prepare by affiliatepress_tablename_prepare function. false alarm
+            $affiliatepress_creatives_record   = $wpdb->get_results("SELECT * FROM {$affiliatepress_tbl_ap_creative_temp} {$affiliatepress_where_clause}  order by {$affiliatepress_order_by} {$affiliatepress_order} LIMIT {$affiliatepress_offset} , {$affiliatepress_perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_creative_temp is a table name & already prepare by affiliatepress_tablename_prepare function. false alarm
 
             $affiliatepress_creatives = array();
             if (! empty($affiliatepress_creatives_record) ) {

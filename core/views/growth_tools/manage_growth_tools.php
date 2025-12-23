@@ -70,11 +70,11 @@ if(!empty($request_module) && $request_module != 'lite_wizard'){
                                         <span class="ap-btn__label"> Learn More </span>
                                     </el-button>
                                     <?php
-                                        $plugin_file = 'bookingpress-appointment-booking/bookingpress-appointment-booking.php';
-                                        $plugin_path = WP_PLUGIN_DIR . '/' . $plugin_file;
+                                        $affiliatepress_plugin_file = 'bookingpress-appointment-booking/bookingpress-appointment-booking.php';
+                                        $affiliatepress_plugin_path = WP_PLUGIN_DIR . '/' . $affiliatepress_plugin_file;
 
-                                        if ( file_exists( $plugin_path ) ) {
-                                            if ( is_plugin_active( $plugin_file ) ) {
+                                        if ( file_exists( $affiliatepress_plugin_path ) ) {
+                                            if ( is_plugin_active( $affiliatepress_plugin_file ) ) {
                                                 ?>
                                                 <el-button class="el-button ap-btn ap-install-btn bpa-plugin" disabled>
                                                     <span class="ap-btn__label">Activated</span>
@@ -135,11 +135,11 @@ if(!empty($request_module) && $request_module != 'lite_wizard'){
                                         <span class="ap-btn__label"> Learn More </span>
                                     </el-button>
                                     <?php
-                                        $plugin_file = 'armember-membership/armember-membership.php';
-                                        $plugin_path = WP_PLUGIN_DIR . '/' . $plugin_file;
+                                        $affiliatepress_plugin_file = 'armember-membership/armember-membership.php';
+                                        $affiliatepress_plugin_path = WP_PLUGIN_DIR . '/' . $affiliatepress_plugin_file;
 
-                                        if ( file_exists( $plugin_path ) ) {
-                                            if ( is_plugin_active( $plugin_file ) ) {
+                                        if ( file_exists( $affiliatepress_plugin_path ) ) {
+                                            if ( is_plugin_active( $affiliatepress_plugin_file ) ) {
                                                 ?>
                                                 <el-button class="el-button ap-btn ap-install-btn arm-plugin" disabled>
                                                     <span class="ap-btn__label">Activated</span>
@@ -199,11 +199,11 @@ if(!empty($request_module) && $request_module != 'lite_wizard'){
                                         <span class="ap-btn__label"> Learn More </span>
                                     </el-button>
                                     <?php
-                                        $plugin_file = 'arforms-form-builder/arforms-form-builder.php';
-                                        $plugin_path = WP_PLUGIN_DIR . '/' . $plugin_file;
+                                        $affiliatepress_plugin_file = 'arforms-form-builder/arforms-form-builder.php';
+                                        $affiliatepress_plugin_path = WP_PLUGIN_DIR . '/' . $affiliatepress_plugin_file;
 
-                                        if ( file_exists( $plugin_path ) ) {
-                                            if ( is_plugin_active( $plugin_file ) ) {
+                                        if ( file_exists( $affiliatepress_plugin_path ) ) {
+                                            if ( is_plugin_active( $affiliatepress_plugin_file ) ) {
                                                 ?>
                                                 <el-button class="el-button ap-btn ap-install-btn arf-plugin" disabled>
                                                     <span class="ap-btn__label">Activated</span>
@@ -263,11 +263,11 @@ if(!empty($request_module) && $request_module != 'lite_wizard'){
                                         <span class="ap-btn__label"> Learn More </span>
                                     </el-button>
                                     <?php
-                                        $plugin_file = 'arprice-responsive-pricing-table/arprice-responsive-pricing-table.php';
-                                        $plugin_path = WP_PLUGIN_DIR . '/' . $plugin_file;
+                                        $affiliatepress_plugin_file = 'arprice-responsive-pricing-table/arprice-responsive-pricing-table.php';
+                                        $affiliatepress_plugin_path = WP_PLUGIN_DIR . '/' . $affiliatepress_plugin_file;
 
-                                        if ( file_exists( $plugin_path ) ) {
-                                            if ( is_plugin_active( $plugin_file ) ) {
+                                        if ( file_exists( $affiliatepress_plugin_path ) ) {
+                                            if ( is_plugin_active( $affiliatepress_plugin_file ) ) {
                                                 ?>
                                                 <el-button class="el-button ap-btn ap-install-btn arp-plugin" disabled>
                                                     <span class="ap-btn__label">Activated</span>

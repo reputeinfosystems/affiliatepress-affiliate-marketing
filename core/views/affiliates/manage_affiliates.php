@@ -125,7 +125,7 @@
                                 </template>
                             </el-table-column>                        
                             <el-table-column class-name="ap-padding-right-col" align="right" header-align="right" prop="unpaid_earning" width="150" label="<?php esc_html_e('Unpaid Earnings', 'affiliatepress-affiliate-marketing'); ?>"></el-table-column>
-                            <el-table-column class-name="ap-padding-left-col-20"  prop="total_visit"   min-width="130"  label="<?php esc_html_e('Total Visit', 'affiliatepress-affiliate-marketing'); ?>">
+                            <el-table-column class-name="ap-padding-left-col-20"  prop="total_visit"   min-width="130"  label="<?php esc_html_e('Total Visit', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by="total_visit">
                                 <template #default="scope">
                                     <span>
                                         <template v-if="scope.row.total_visit > 0">

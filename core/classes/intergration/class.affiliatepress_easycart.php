@@ -600,7 +600,7 @@ if( !class_exists('affiliatepress_easycart') ){
 
             $affiliatepress_tbl_ap_affiliate_commissions_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_affiliate_commissions); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $affiliatepress_tbl_ap_affiliate_commissions contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
 
-            $affiliatepress_commission_id = intval($wpdb->get_var($wpdb->prepare("SELECT ap_commission_id FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} Where ap_commission_source = %s  AND ap_commission_reference_id = %d AND ap_commission_status = 2",$this->affiliatepress_integration_slug,$affiliatepress_order_id))); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions_temp is a table name. false alarm
+            $affiliatepress_commission_id = intval($wpdb->get_var($wpdb->prepare("SELECT ap_commission_id FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} Where ap_commission_source = %s  AND ap_commission_reference_id = %d AND ap_commission_status = 2",$this->affiliatepress_integration_slug,$affiliatepress_order_id))); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions_temp is a table name. false alarm
 
             $affiliatepress_all_commission_data = $AffiliatePress->affiliatepress_get_all_commission_by_order_and_source($affiliatepress_order_id, $this->affiliatepress_integration_slug,' AND (ap_commission_status = 2 OR ap_commission_status = 3) ');
 

@@ -66,7 +66,7 @@ if( !class_exists('affiliatepress_simple_membership') ){
 
                 $affiliatepress_swpm_membership_tbl = $this->affiliatepress_tablename_prepare( $wpdb->prefix . 'swpm_membership_tbl' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'swpm_membership_tbl' contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
 
-                $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT id FROM {$affiliatepress_swpm_membership_tbl} WHERE alias LIKE %s",'%' . $wpdb->esc_like($affiliatepress_search_product_str) . '%'),ARRAY_A);// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_swpm_membership_tbl is a table name. false alarm   
+                $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT id FROM {$affiliatepress_swpm_membership_tbl} WHERE alias LIKE %s",'%' . $wpdb->esc_like($affiliatepress_search_product_str) . '%'),ARRAY_A);// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_swpm_membership_tbl is a table name. false alarm   
 
                 $affiliatepress_existing_product_data = array();
     
@@ -75,7 +75,7 @@ if( !class_exists('affiliatepress_simple_membership') ){
                 if($affiliatepress_membership_levels){
                     foreach ($affiliatepress_membership_levels as $affiliatepress_membership_level) {
                     
-                        $affiliatepress_membership_level_name = $wpdb->get_var($wpdb->prepare("SELECT alias FROM {$affiliatepress_swpm_membership_tbl} WHERE id = %d",$affiliatepress_membership_level));// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_swpm_membership_tbl is a table name. false alarm   
+                        $affiliatepress_membership_level_name = $wpdb->get_var($wpdb->prepare("SELECT alias FROM {$affiliatepress_swpm_membership_tbl} WHERE id = %d",$affiliatepress_membership_level));// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_swpm_membership_tbl is a table name. false alarm   
 
                         if(!empty($affiliatepress_membership_level_name))
                         {
@@ -458,7 +458,7 @@ if( !class_exists('affiliatepress_simple_membership') ){
 
             $affiliatepress_tbl_swpm_membership_tbl = $this->affiliatepress_tablename_prepare( $wpdb->prefix . 'swpm_membership_tbl' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'swpm_membership_tbl' contains table name and it's prepare properly using 'arm_payment_log' function
 
-            $affiliatepress_membership_level_name = $wpdb->get_var($wpdb->prepare("SELECT alias FROM $affiliatepress_tbl_swpm_membership_tbl WHERE id = %d",$affiliatepress_product_id)); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_swpm_membership_tbl is a table name. false alarm
+            $affiliatepress_membership_level_name = $wpdb->get_var($wpdb->prepare("SELECT alias FROM $affiliatepress_tbl_swpm_membership_tbl WHERE id = %d",$affiliatepress_product_id)); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_swpm_membership_tbl is a table name. false alarm
 
             return $affiliatepress_membership_level_name;
         }

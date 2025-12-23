@@ -401,7 +401,7 @@ if (! class_exists('affiliatepress_payout') ) {
 
             global $wpdb,$affiliatepress_email_notifications,$affiliatepress_tbl_ap_payments, $affiliatepress_tbl_ap_payment_commission;
 
-            $affiliatepress_all_payment_commissions = $wpdb->get_row($wpdb->prepare("SELECT GROUP_CONCAT(ap_commission_id) payment_commission FROM {$affiliatepress_tbl_ap_payment_commission} WHERE ap_payment_id = %d", $affiliatepress_payment_id), ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_payment_commission_temp is table name defined globally.            
+            $affiliatepress_all_payment_commissions = $wpdb->get_row($wpdb->prepare("SELECT GROUP_CONCAT(ap_commission_id) payment_commission FROM {$affiliatepress_tbl_ap_payment_commission} WHERE ap_payment_id = %d", $affiliatepress_payment_id), ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_payment_commission_temp is table name defined globally.            
 
             if(!empty($affiliatepress_all_payment_commissions) && !empty($affiliatepress_all_payment_commissions['payment_commission'])){  
                 do_action('affiliatepress_update_report_data_based_on_payment_status',$affiliatepress_all_payment_commissions['payment_commission'], $affiliatepress_payment_id);
@@ -471,7 +471,7 @@ if (! class_exists('affiliatepress_payout') ) {
 
             $affiliatepress_tbl_ap_payment_commission_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_payment_commission); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $affiliatepress_tbl_ap_payment_commission contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
 
-            $affiliatepress_all_payment_commissions = $wpdb->get_row($wpdb->prepare("SELECT GROUP_CONCAT(ap_commission_id) payment_commission FROM {$affiliatepress_tbl_ap_payment_commission_temp} WHERE ap_payment_id = %d", $affiliatepress_payment_id), ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_payment_commission_temp is table name defined globally.
+            $affiliatepress_all_payment_commissions = $wpdb->get_row($wpdb->prepare("SELECT GROUP_CONCAT(ap_commission_id) payment_commission FROM {$affiliatepress_tbl_ap_payment_commission_temp} WHERE ap_payment_id = %d", $affiliatepress_payment_id), ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_payment_commission_temp is table name defined globally.
 
             if(!empty($affiliatepress_all_payment_commissions) && !empty($affiliatepress_all_payment_commissions['payment_commission'])){          
                 
@@ -481,12 +481,12 @@ if (! class_exists('affiliatepress_payout') ) {
                     $affiliatepress_commission_status = 4;                   
                     $affiliatepress_final_commission_ids = $affiliatepress_all_payment_commissions['payment_commission'];
 
-                    $wpdb->query($wpdb->prepare("UPDATE $affiliatepress_tbl_ap_affiliate_commissions SET ap_commission_status = %d WHERE ap_commission_id IN ($affiliatepress_final_commission_ids)",$affiliatepress_commission_status)); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions_temp is a table name. false alarm    
+                    $wpdb->query($wpdb->prepare("UPDATE $affiliatepress_tbl_ap_affiliate_commissions SET ap_commission_status = %d WHERE ap_commission_id IN ($affiliatepress_final_commission_ids)",$affiliatepress_commission_status)); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions_temp is a table name. false alarm    
 
                 }else{
                     $affiliatepress_commission_status = 1;
                     $affiliatepress_final_commission_ids = $affiliatepress_all_payment_commissions['payment_commission'];
-                    $wpdb->query($wpdb->prepare("UPDATE $affiliatepress_tbl_ap_affiliate_commissions SET ap_commission_status = %d WHERE ap_commission_id IN ($affiliatepress_final_commission_ids)",$affiliatepress_commission_status));// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions_temp is a table name. false alarm   
+                    $wpdb->query($wpdb->prepare("UPDATE $affiliatepress_tbl_ap_affiliate_commissions SET ap_commission_status = %d WHERE ap_commission_id IN ($affiliatepress_final_commission_ids)",$affiliatepress_commission_status));// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions_temp is a table name. false alarm   
 
                 }                
             }
@@ -624,7 +624,7 @@ if (! class_exists('affiliatepress_payout') ) {
                         $affiliatepress_payment_id = intval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_payments, 'ap_payment_id', 'WHERE ap_affiliates_id = %d AND ap_payout_id = %d ', array( $affiliatepress_payout_payment_detail['ap_affiliates_id'], $affiliatepress_payout_id ), '', '', '', true, false,ARRAY_A));
                         if($affiliatepress_payment_id == 0){
                             
-                            $wpdb->query($wpdb->prepare("UPDATE {$affiliatepress_tbl_ap_payments_temp} SET ap_payment_status = 5 WHERE ap_affiliates_id = %d AND ap_payment_status != 4", $affiliatepress_payout_payment_detail['ap_affiliates_id'])); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_payments_temp is a table name. false alarm  
+                            $wpdb->query($wpdb->prepare("UPDATE {$affiliatepress_tbl_ap_payments_temp} SET ap_payment_status = 5 WHERE ap_affiliates_id = %d AND ap_payment_status != 4", $affiliatepress_payout_payment_detail['ap_affiliates_id'])); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_payments_temp is a table name. false alarm  
 
                             $affiliatepress_payment_method = $this->affiliatepress_get_affiliate_payment_method($affiliatepress_payout_payment_detail['ap_affiliates_id']);
 
@@ -884,7 +884,7 @@ if (! class_exists('affiliatepress_payout') ) {
 
             $affiliatepress_where_clause.= $wpdb->prepare( " AND ap_commission_payment_id = %d ", 0);
 
-            $affiliatepress_commissions_record = $wpdb->get_results("SELECT commissions.ap_commission_id,commissions.ap_affiliates_id,commissions.ap_commission_amount,commissions.ap_commission_currency, affiliate.ap_affiliates_user_id, affiliate.ap_affiliates_user_email as user_email, affiliate.ap_affiliates_first_name, affiliate.ap_affiliates_last_name  FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} as commissions INNER JOIN {$affiliatepress_tbl_ap_affiliates_temp} as affiliate  ON (commissions.ap_affiliates_id = affiliate.ap_affiliates_id AND affiliate.ap_affiliates_status = 1)  {$affiliatepress_where_clause}  order by commissions.ap_commission_id ASC", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates_temp is a table name. false alarm
+            $affiliatepress_commissions_record = $wpdb->get_results("SELECT commissions.ap_commission_id,commissions.ap_affiliates_id,commissions.ap_commission_amount,commissions.ap_commission_currency, affiliate.ap_affiliates_user_id, affiliate.ap_affiliates_user_email as user_email, affiliate.ap_affiliates_first_name, affiliate.ap_affiliates_last_name  FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} as commissions INNER JOIN {$affiliatepress_tbl_ap_affiliates_temp} as affiliate  ON (commissions.ap_affiliates_id = affiliate.ap_affiliates_id AND affiliate.ap_affiliates_status = 1)  {$affiliatepress_where_clause}  order by commissions.ap_commission_id ASC", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates_temp is a table name. false alarm
 
             if(empty($affiliatepress_payment_method)){
                 $affiliatepress_payment_method = 'manualy';
@@ -1275,7 +1275,7 @@ if (! class_exists('affiliatepress_payout') ) {
 
                     $affiliatepress_where_clause = $wpdb->prepare( " WHERE payments.ap_payout_id = %d", intval($affiliatepress_payout_id));
 
-                    $affiliatepress_payout_payment_record  = $wpdb->get_results("SELECT payments.ap_payment_id,payments.ap_payment_status,payments.ap_payment_method,payments.ap_payment_amount,affiliate.ap_affiliates_user_email, affiliate.ap_affiliates_user_id as ID, affiliate.ap_affiliates_user_email as user_email, affiliate.ap_affiliates_first_name, affiliate.ap_affiliates_last_name  FROM {$affiliatepress_tbl_ap_payments_temp} as payments LEFT JOIN {$affiliatepress_tbl_ap_affiliates_temp} as affiliate ON payments.ap_affiliates_id = affiliate.ap_affiliates_id  {$affiliatepress_where_clause}", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates_temp is a table name. false alarm
+                    $affiliatepress_payout_payment_record  = $wpdb->get_results("SELECT payments.ap_payment_id,payments.ap_payment_status,payments.ap_payment_method,payments.ap_payment_amount,affiliate.ap_affiliates_user_email, affiliate.ap_affiliates_user_id as ID, affiliate.ap_affiliates_user_email as user_email, affiliate.ap_affiliates_first_name, affiliate.ap_affiliates_last_name  FROM {$affiliatepress_tbl_ap_payments_temp} as payments LEFT JOIN {$affiliatepress_tbl_ap_affiliates_temp} as affiliate ON payments.ap_affiliates_id = affiliate.ap_affiliates_id  {$affiliatepress_where_clause}", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates_temp is a table name. false alarm
 
                     $affiliatepress_options = $affiliatepress_global_options->affiliatepress_global_options();
                     $affiliatepress_all_payment_status_data = $affiliatepress_options['payment_status'];
@@ -1494,7 +1494,7 @@ if (! class_exists('affiliatepress_payout') ) {
            
             $affiliatepress_tbl_ap_payouts_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_payouts); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $affiliatepress_tbl_ap_payouts contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
 
-            $affiliatepress_get_total_payouts = intval($wpdb->get_var("SELECT count(ap_payout_id) FROM {$affiliatepress_tbl_ap_payouts_temp} {$affiliatepress_where_clause}")); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_creative is a table name. false alarm
+            $affiliatepress_get_total_payouts = intval($wpdb->get_var("SELECT count(ap_payout_id) FROM {$affiliatepress_tbl_ap_payouts_temp} {$affiliatepress_where_clause}")); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_creative is a table name. false alarm
 
             $affiliatepress_pagination_count = ceil(intval($affiliatepress_get_total_payouts) / $affiliatepress_perpage);
             
@@ -1518,7 +1518,7 @@ if (! class_exists('affiliatepress_payout') ) {
                 $affiliatepress_order_by = 'ap_payout_amount';
             }
 
-            $affiliatepress_payouts_record   = $wpdb->get_results("SELECT * FROM {$affiliatepress_tbl_ap_payouts_temp} {$affiliatepress_where_clause}  order by {$affiliatepress_order_by} {$affiliatepress_order} LIMIT {$affiliatepress_offset} , {$affiliatepress_perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates is a table name. false alarm
+            $affiliatepress_payouts_record   = $wpdb->get_results("SELECT * FROM {$affiliatepress_tbl_ap_payouts_temp} {$affiliatepress_where_clause}  order by {$affiliatepress_order_by} {$affiliatepress_order} LIMIT {$affiliatepress_offset} , {$affiliatepress_perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates is a table name. false alarm
             $affiliatepress_payouts = array();
             if (! empty($affiliatepress_payouts_record) ) {
                 $affiliatepress_counter = 1;

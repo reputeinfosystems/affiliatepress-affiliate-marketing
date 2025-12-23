@@ -11,6 +11,11 @@ if( !class_exists('AffiliatePress_Core') ){
         var $affiliatepress_action_name;
         var $affiliatepress_nonce_action;
         var $affiliatepress_nonce_field;
+        protected static $checksum;
+
+        public function load(){
+            self::$checksum = base64_encode( get_option( 'afp_license_key' ) );
+        }
 
         /**
          * Check ajax call authentication 

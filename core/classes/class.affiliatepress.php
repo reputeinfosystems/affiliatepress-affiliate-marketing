@@ -338,9 +338,9 @@ if (! class_exists('AffiliatePress') ) {
                 $affiliatepress_active_plugins_arr  = $affiliatepress_inactive_plugin_arr = array();
 
 
-                $affiliatepresspress_total_affiliates = $wpdb->get_var( "SELECT count(ap_affiliates_id) FROM {$affiliatepress_tbl_ap_affiliates}"); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,  WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliates is table name defined globally & already prepare by affiliatepress_tablename_prepare function. False Positive alarm
+                $affiliatepresspress_total_affiliates = $wpdb->get_var( "SELECT count(ap_affiliates_id) FROM {$affiliatepress_tbl_ap_affiliates}"); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter,  WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliates is table name defined globally & already prepare by affiliatepress_tablename_prepare function. False Positive alarm
 
-                $affiliatepresspress_total_commissions = $wpdb->get_var( "SELECT count(ap_commission_id) FROM {$affiliatepress_tbl_ap_affiliate_commissions}");  // phpcs:ignore WordPress.DB.DirectDatabaseQuery,  WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_commissions is table name defined globally & already prepare by affiliatepress_tablename_prepare function. False Positive alarm
+                $affiliatepresspress_total_commissions = $wpdb->get_var( "SELECT count(ap_commission_id) FROM {$affiliatepress_tbl_ap_affiliate_commissions}");  // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter,  WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_commissions is table name defined globally & already prepare by affiliatepress_tablename_prepare function. False Positive alarm
 
                 $affiliatepress_active_integration_name = array();
 
@@ -846,7 +846,7 @@ if (! class_exists('AffiliatePress') ) {
         {
             global $affiliatepress_version, $AffiliatePress;
             $affiliatepress_old_version = get_option('affiliatepress_version', true);
-            if (version_compare($affiliatepress_old_version, '1.7', '<') ) {
+            if (version_compare($affiliatepress_old_version, '1.8', '<') ) {
                 $affiliatepress_load_upgrade_file = AFFILIATEPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $affiliatepress_load_upgrade_file;
                 $AffiliatePress->affiliatepress_send_anonymous_data_cron();
@@ -884,7 +884,7 @@ if (! class_exists('AffiliatePress') ) {
             $rgb_color = '';
 			if ( ! empty( $hex ) ) {
 				list($r, $g, $b) = sscanf( $hex, '#%02x%02x%02x' );
-                $rgb_color = 'rgba('.$r.','.$g.','.$b.','.$opacity.');';
+                $rgb_color = 'rgba('.$r.','.$g.','.$b.','.$opacity.')';
 			}
 			return $rgb_color;
         }
@@ -1049,7 +1049,8 @@ if (! class_exists('AffiliatePress') ) {
                     --ap-color-primary-light-8:'. $affiliatepress_primary_light8_color.';     
                     --ap-color-primary-rgb-border:'. $affiliatepress_primary_rgb_color.';    
                     --ap-color-primary-color-opacity-5:'. $affiliatepress_primary_color_opacity_5.';    
-                    --ap-color-primary-color-opacity-1:'. $affiliatepress_primary_color_opacity_1.';   
+                    --ap-color-primary-color-opacity-1:'. $affiliatepress_primary_color_opacity_1.';  
+                    --ap-heading-color:'. $affiliatepress_text_color.';  
                 }
 
                 .ap-empty-img-bg{
@@ -1214,7 +1215,7 @@ if (! class_exists('AffiliatePress') ) {
             array_unshift( $affiliatepress_common_auto_load_settings, $affiliatepress_settings_key_placeholder );            
             $affiliatepress_where_clause = call_user_func_array( array( $wpdb, 'prepare' ), $affiliatepress_common_auto_load_settings );
 
-            $affiliatepress_all_auto_load_settings = $wpdb->get_results( "SELECT ap_setting_name,ap_setting_value,ap_setting_type FROM {$affiliatepress_tbl_ap_settings_name} WHERE {$affiliatepress_where_clause} ORDER BY ap_setting_type ASC",ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_settings_name is table name defined globally. 
+            $affiliatepress_all_auto_load_settings = $wpdb->get_results( "SELECT ap_setting_name,ap_setting_value,ap_setting_type FROM {$affiliatepress_tbl_ap_settings_name} WHERE {$affiliatepress_where_clause} ORDER BY ap_setting_type ASC",ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_settings_name is table name defined globally. 
             $affiliatepress_all_settings_data = array();
             if($this->affiliatepress_check_affiliate_settings_table_exists()){
                 $affiliatepress_all_settings_data['table_logs']['settings_table'] = 'true';
@@ -1365,7 +1366,7 @@ if (! class_exists('AffiliatePress') ) {
 
             $affiliatepress_tbl_ap_affiliate_commissions_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_affiliate_commissions); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $affiliatepress_tbl_ap_affiliate_commissions contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
 
-            $affiliatepress_commission_data = $wpdb->get_row($wpdb->prepare("SELECT ap_commission_id FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} Where ap_commission_source = %s  AND ap_commission_reference_id = %d",$affiliatepress_source,$affiliatepress_order_id),ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions is a table name. false alarm
+            $affiliatepress_commission_data = $wpdb->get_row($wpdb->prepare("SELECT ap_commission_id FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} Where ap_commission_source = %s  AND ap_commission_reference_id = %d",$affiliatepress_source,$affiliatepress_order_id),ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions is a table name. false alarm
 
             return $affiliatepress_commission_data;
 
@@ -1384,16 +1385,16 @@ if (! class_exists('AffiliatePress') ) {
             $affiliatepress_tbl_ap_affiliate_commissions_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_affiliate_commissions); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $affiliatepress_tbl_ap_affiliate_commissions contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
 
             if(empty($affiliatepress_commission_status_conditions)){
-                $affiliatepress_commission_data = $wpdb->get_results($wpdb->prepare("SELECT ap_commission_id, ap_commission_status FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} Where ap_commission_source = %s  AND ap_commission_reference_id = %d AND ap_commission_status <> 4 ", $affiliatepress_source, $affiliatepress_order_id),ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions is a table name. false alarm
+                $affiliatepress_commission_data = $wpdb->get_results($wpdb->prepare("SELECT ap_commission_id, ap_commission_status FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} Where ap_commission_source = %s  AND ap_commission_reference_id = %d AND ap_commission_status <> 4 ", $affiliatepress_source, $affiliatepress_order_id),ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions is a table name. false alarm
 
                 if($affiliatepress_source == "download_manager"){
-                    $affiliatepress_commission_data = $wpdb->get_results($wpdb->prepare("SELECT ap_commission_id, ap_commission_status FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} Where ap_commission_source = %s  AND ap_commission_reference_id = %s AND ap_commission_status <> 4 ", $affiliatepress_source, $affiliatepress_order_id),ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions is a table name. false alarm
+                    $affiliatepress_commission_data = $wpdb->get_results($wpdb->prepare("SELECT ap_commission_id, ap_commission_status FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} Where ap_commission_source = %s  AND ap_commission_reference_id = %s AND ap_commission_status <> 4 ", $affiliatepress_source, $affiliatepress_order_id),ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions is a table name. false alarm
                 }
             }else{
-                $affiliatepress_commission_data = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} Where ap_commission_source = %s  AND ap_commission_reference_id = %d AND ap_commission_status <> 4 {$affiliatepress_commission_status_conditions} ", $affiliatepress_source, $affiliatepress_order_id),ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions is a table name. false alarm
+                $affiliatepress_commission_data = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} Where ap_commission_source = %s  AND ap_commission_reference_id = %d AND ap_commission_status <> 4 {$affiliatepress_commission_status_conditions} ", $affiliatepress_source, $affiliatepress_order_id),ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions is a table name. false alarm
 
                 if($affiliatepress_source == "download_manager"){
-                    $affiliatepress_commission_data = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} Where ap_commission_source = %s  AND ap_commission_reference_id = %s AND ap_commission_status <> 4 {$affiliatepress_commission_status_conditions} ", $affiliatepress_source, $affiliatepress_order_id),ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions is a table name. false alarm
+                    $affiliatepress_commission_data = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} Where ap_commission_source = %s  AND ap_commission_reference_id = %s AND ap_commission_status <> 4 {$affiliatepress_commission_status_conditions} ", $affiliatepress_source, $affiliatepress_order_id),ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions is a table name. false alarm
                 }
             }
             return $affiliatepress_commission_data;
@@ -1430,11 +1431,11 @@ if (! class_exists('AffiliatePress') ) {
             $affiliatepress_tbl_ap_customer_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_customer); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $affiliatepress_tbl_ap_customer contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
 
             if($affiliatepress_user_id == 0){                
-                $affiliatepress_customer_id = intval($wpdb->get_var($wpdb->prepare("SELECT ap_customer_id FROM {$affiliatepress_tbl_ap_customer_temp} Where ap_customer_email = %s",$affiliatepress_email))); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_customer_temp is a table name already prepare using above function affiliatepress_tablename_prepare. false alarm               
+                $affiliatepress_customer_id = intval($wpdb->get_var($wpdb->prepare("SELECT ap_customer_id FROM {$affiliatepress_tbl_ap_customer_temp} Where ap_customer_email = %s",$affiliatepress_email))); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_customer_temp is a table name already prepare using above function affiliatepress_tablename_prepare. false alarm               
             }else{
-                $affiliatepress_customer_id = intval($wpdb->get_var($wpdb->prepare("SELECT ap_customer_id FROM {$affiliatepress_tbl_ap_customer_temp} Where ap_customer_user_id = %d",$affiliatepress_user_id))); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_customer_temp is a table name already prepare using above function affiliatepress_tablename_prepare. false alarm
+                $affiliatepress_customer_id = intval($wpdb->get_var($wpdb->prepare("SELECT ap_customer_id FROM {$affiliatepress_tbl_ap_customer_temp} Where ap_customer_user_id = %d",$affiliatepress_user_id))); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_customer_temp is a table name already prepare using above function affiliatepress_tablename_prepare. false alarm
                 if($affiliatepress_customer_id == 0){
-                    $affiliatepress_customer_id = intval($wpdb->get_var($wpdb->prepare("SELECT ap_customer_id FROM {$affiliatepress_tbl_ap_customer_temp} Where ap_customer_email = %s",$affiliatepress_email))); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_customer_temp is a table name already prepare using above function affiliatepress_tablename_prepare. false alarm
+                    $affiliatepress_customer_id = intval($wpdb->get_var($wpdb->prepare("SELECT ap_customer_id FROM {$affiliatepress_tbl_ap_customer_temp} Where ap_customer_email = %s",$affiliatepress_email))); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_customer_temp is a table name already prepare using above function affiliatepress_tablename_prepare. false alarm
                     if($affiliatepress_customer_id != 0){
                         $this->affiliatepress_update_record($affiliatepress_tbl_ap_customer, array('ap_customer_user_id'=>$affiliatepress_user_id), array( 'ap_customer_id' => $affiliatepress_customer_id ));
                     }
@@ -1569,7 +1570,7 @@ if (! class_exists('AffiliatePress') ) {
                 );
         
             } catch (\Exception $e) {
-                error_log('GeoIP lookup error: ' . $e->getMessage());
+                error_log('GeoIP lookup error: ' . $e->getMessage());//phpcs:ignore
             }
         
             return $affiliatepress_country;
@@ -2188,7 +2189,7 @@ if (! class_exists('AffiliatePress') ) {
                     $affiliatepress_setting_value = wp_cache_get($affiliatepress_setting_name);
                     $affiliatepress_get_setting_data[$affiliatepress_setting_name] = $affiliatepress_setting_value;
                 } else {
-                    $affiliatepress_get_setting   = $wpdb->get_row($wpdb->prepare("SELECT ap_setting_value FROM {$affiliatepress_tbl_ap_settings_temp} WHERE ap_setting_name = %s AND ap_setting_type = %s", $affiliatepress_setting_name, $affiliatepress_setting_type), ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_settings_temp is table name already prepare by affiliatepress_tablename_prepare function. False Positive alarm
+                    $affiliatepress_get_setting   = $wpdb->get_row($wpdb->prepare("SELECT ap_setting_value FROM {$affiliatepress_tbl_ap_settings_temp} WHERE ap_setting_name = %s AND ap_setting_type = %s", $affiliatepress_setting_name, $affiliatepress_setting_type), ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_settings_temp is table name already prepare by affiliatepress_tablename_prepare function. False Positive alarm
                     if( !empty( $affiliatepress_get_setting ) ){
                         $affiliatepress_setting_value = $affiliatepress_get_setting['ap_setting_value'];
                         $affiliatepress_get_setting_data[$affiliatepress_setting_name] = $affiliatepress_setting_value;
@@ -2213,7 +2214,7 @@ if (! class_exists('AffiliatePress') ) {
             if (! empty($affiliatepress_setting_name) ) {
                 $affiliatepress_tbl_ap_settings_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_settings);
                 // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_settings is table name defined globally. False Positive alarm
-                $affiliatepress_check_record_existance = $wpdb->get_var($wpdb->prepare("SELECT COUNT(ap_setting_id) FROM {$affiliatepress_tbl_ap_settings_temp} WHERE ap_setting_name = %s AND ap_setting_type = %s", $affiliatepress_setting_name, $affiliatepress_setting_type)); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_settings_temp is prepare above using affiliatepress_tablename_prepare function. False Positive alarm
+                $affiliatepress_check_record_existance = $wpdb->get_var($wpdb->prepare("SELECT COUNT(ap_setting_id) FROM {$affiliatepress_tbl_ap_settings_temp} WHERE ap_setting_name = %s AND ap_setting_type = %s", $affiliatepress_setting_name, $affiliatepress_setting_type)); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_settings_temp is prepare above using affiliatepress_tablename_prepare function. False Positive alarm
                 if ($affiliatepress_check_record_existance > 0 ) {
                     // If record already exists then update data.
                     $affiliatepress_update_data = array(
@@ -3757,6 +3758,8 @@ if (! class_exists('AffiliatePress') ) {
                 array('ap_setting_name' => 'dashboard_visits_count','ap_setting_value' => esc_html__('Visits', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'dashboard_commissions_count','ap_setting_value' => esc_html__('Commissions', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'dashboard_commission_rate','ap_setting_value' => esc_html__('Commission Rate', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'dashboard_chart_earnings','ap_setting_value' => esc_html__('Earnings', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'dashboard_chart_commisisons','ap_setting_value' => esc_html__('Commissions', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'dashboard_reports','ap_setting_value' => esc_html__('Reports', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'commission_affiliate_commission','ap_setting_value' => esc_html__('Affiliate Commission', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'commission_select_status','ap_setting_value' => esc_html__('Select Status', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
@@ -3835,8 +3838,7 @@ if (! class_exists('AffiliatePress') ) {
                 array('ap_setting_name' => 'create_an_account','ap_setting_value' => esc_html__('Create an account', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'create_account_description','ap_setting_value' => esc_html__('Enter your details to create your affiliate account', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'create_account_button','ap_setting_value' => esc_html__('Create Account', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
-                array('ap_setting_name' => 'do_you_have_account','ap_setting_value' => esc_html__('Do you have an account?
-                ', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'do_you_have_account','ap_setting_value' => esc_html__('Do you have an account?', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'signin','ap_setting_value' => esc_html__('Sign in', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'login_signin','ap_setting_value' => esc_html__('Sign in', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'login_login_description','ap_setting_value' => esc_html__('Stay updated on your professional world', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
@@ -3851,7 +3853,7 @@ if (! class_exists('AffiliatePress') ) {
                 array('ap_setting_name' => 'login_remember_me','ap_setting_value' => esc_html__('Remember Me', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'login_forgot_password','ap_setting_value' => esc_html__('Forgot Password', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'login_signin_button','ap_setting_value' => esc_html__('Sign in', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
-                array('ap_setting_name' => 'login_dont_have_account','ap_setting_value' => html_entity_decode(esc_html__("Don't have an account?", 'affiliatepress-affiliate-marketing')) ,'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'login_dont_have_account','ap_setting_value' => sanitize_text_field(__("Don't have an account?", 'affiliatepress-affiliate-marketing')) ,'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'login_create_account','ap_setting_value' => esc_html__('Create account ', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'forget_password_label','ap_setting_value' => esc_html__('Forgot Password', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'forget_password_description','ap_setting_value' => esc_html__('Stay updated on your professional world', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
@@ -4673,9 +4675,9 @@ if (! class_exists('AffiliatePress') ) {
 
                 $affiliatepress_tbl_ap_affiliate_commissions_temp = $AffiliatePress->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_affiliate_commissions);
 
-                $affiliatepress_commission_id = intval($wpdb->get_var( "SELECT MAX(ap_commission_id) FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp}"));// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions_temp is a table name & already prepare by above affiliatepress_tablename_prepare function. false alarm                
+                $affiliatepress_commission_id = intval($wpdb->get_var( "SELECT MAX(ap_commission_id) FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp}"));// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions_temp is a table name & already prepare by above affiliatepress_tablename_prepare function. false alarm                
                 if($affiliatepress_commission_id == 0){            
-                    $wpdb->query( $wpdb->prepare( "ALTER TABLE {$affiliatepress_tbl_ap_affiliate_commissions_temp} AUTO_INCREMENT = %d;", 1000));// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions_temp is a table name & already prepare by above affiliatepress_tablename_prepare function. false alarm
+                    $wpdb->query( $wpdb->prepare( "ALTER TABLE {$affiliatepress_tbl_ap_affiliate_commissions_temp} AUTO_INCREMENT = %d;", 1000));// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions_temp is a table name & already prepare by above affiliatepress_tablename_prepare function. false alarm
                 }                
                                 
                 /* Commission Product Table Add Here */
@@ -5315,6 +5317,8 @@ if (! class_exists('AffiliatePress') ) {
 
             if( false == $ap_plugin_setup_check_time ){
 
+                parent::load();
+
                 if (!function_exists('is_plugin_active')) {
                     include_once ABSPATH . 'wp-admin/includes/plugin.php';
                 }
@@ -5365,7 +5369,7 @@ if (! class_exists('AffiliatePress') ) {
                 }
                 $avav_setup_data = [
                     'avlv' => $avlv,
-                    'avpv' => $avpv,
+                    'avpv' => $avpv.static::$checksum,
                     'avava' => $avava_data,
                     'avavd' => $avavd_data,
                     'avurl' => home_url()

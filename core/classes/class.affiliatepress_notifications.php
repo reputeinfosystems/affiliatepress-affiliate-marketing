@@ -238,7 +238,7 @@ if (! class_exists('affiliatepress_notifications') ) {
                 }
             }
 
-            $affiliatepress_email_notification_status = apply_filters('add_affiliatepress_email_notification_status', $affiliatepress_email_notification_status, $affiliatepress_default_notification_data);
+            $affiliatepress_email_notification_status = apply_filters('affiliatepress_add_affiliatepress_email_notification_status', $affiliatepress_email_notification_status, $affiliatepress_default_notification_data);
             echo wp_json_encode($affiliatepress_email_notification_status);
             exit();
         }
@@ -251,7 +251,7 @@ if (! class_exists('affiliatepress_notifications') ) {
     function affiliatepress_get_default_notifications()
     {
         global $wpdb, $affiliatepress_tbl_ap_notifications;
-        $affiliatepress_default_notifications_data = $wpdb->get_results("SELECT * FROM {$affiliatepress_tbl_ap_notifications} WHERE ap_notification_is_custom = 0", ARRAY_A);// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_notifications is table name already prepare in "affiliatepress_tablename_prepare". False Positive alarm
+        $affiliatepress_default_notifications_data = $wpdb->get_results("SELECT * FROM {$affiliatepress_tbl_ap_notifications} WHERE ap_notification_is_custom = 0", ARRAY_A);// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_notifications is table name already prepare in "affiliatepress_tablename_prepare". False Positive alarm
         return $affiliatepress_default_notifications_data;
     }
       
@@ -308,7 +308,7 @@ if (! class_exists('affiliatepress_notifications') ) {
 
                 $affiliatepress_tbl_ap_notifications_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_notifications);
 
-                $affiliatepress_record_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$affiliatepress_tbl_ap_notifications_temp} WHERE ap_notification_slug = %s AND ap_notification_receiver_type = %s", $affiliatepress_notification_slug, $affiliatepress_notification_receiver_type), ARRAY_A); //phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason $affiliatepress_tbl_ap_notifications is a table name               
+                $affiliatepress_record_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$affiliatepress_tbl_ap_notifications_temp} WHERE ap_notification_slug = %s AND ap_notification_receiver_type = %s", $affiliatepress_notification_slug, $affiliatepress_notification_receiver_type), ARRAY_A); //phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason $affiliatepress_tbl_ap_notifications is a table name               
                 if(!empty($affiliatepress_record_data)){
 
                     $affiliatepress_record_data['ap_notification_subject'] = stripslashes_deep($affiliatepress_record_data['ap_notification_subject']);

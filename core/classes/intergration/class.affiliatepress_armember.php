@@ -143,14 +143,14 @@ if( !class_exists('affiliatepress_armember') ){
                 $affiliatepress_existing_products_data = array();
                 $affiliatepress_tbl_arm_subscription_plans = $this->affiliatepress_tablename_prepare($wpdb->prefix . 'arm_subscription_plans'); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'arm_subscription_plans' contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
 
-                $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT arm_subscription_plan_id FROM {$affiliatepress_tbl_arm_subscription_plans} WHERE arm_subscription_plan_name LIKE %s",'%' . $wpdb->esc_like($affiliatepress_search_product_str) . '%'),ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arm_subscription_plans is a table name. false alarm 
+                $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT arm_subscription_plan_id FROM {$affiliatepress_tbl_arm_subscription_plans} WHERE arm_subscription_plan_name LIKE %s",'%' . $wpdb->esc_like($affiliatepress_search_product_str) . '%'),ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arm_subscription_plans is a table name. false alarm 
     
                 $affiliatepress_plan_ids = array_column($affiliatepress_results, 'arm_subscription_plan_id');
 
                 if($affiliatepress_plan_ids){
                     foreach ($affiliatepress_plan_ids as $affiliatepress_plan_id) {
 
-                        $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT arm_subscription_plan_name FROM {$affiliatepress_tbl_arm_subscription_plans} WHERE arm_subscription_plan_id =  %d",$affiliatepress_plan_id),ARRAY_A );// phpcs:ignore  WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arm_subscription_plans is a table name. false alarm 
+                        $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT arm_subscription_plan_name FROM {$affiliatepress_tbl_arm_subscription_plans} WHERE arm_subscription_plan_id =  %d",$affiliatepress_plan_id),ARRAY_A );// phpcs:ignore  WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arm_subscription_plans is a table name. false alarm 
 
                         $affiliatepress_plan_name = !empty($affiliatepress_results) ? $affiliatepress_results[0]['arm_subscription_plan_name'] : '';
 
@@ -716,7 +716,7 @@ if( !class_exists('affiliatepress_armember') ){
                     $affiliatepress_is_recurring =  true;
                 }else{
                     $affiliatepress_tbl_activity = $this->affiliatepress_tablename_prepare($wpdb->prefix . 'arm_activity'); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'arm_subscriptarm_activityion_plans' contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
-                    $affiliatepress_get_first_payment_date = $wpdb->get_var($wpdb->prepare("SELECT arm_date_recorded FROM {$affiliatepress_tbl_activity} WHERE arm_user_id = %d && arm_item_id = %d ORDER BY arm_date_recorded DESC",$affiliatepress_user_id,$affiliatepress_user_plan));// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arm_subscription_plan is a table name. false alarm 
+                    $affiliatepress_get_first_payment_date = $wpdb->get_var($wpdb->prepare("SELECT arm_date_recorded FROM {$affiliatepress_tbl_activity} WHERE arm_user_id = %d && arm_item_id = %d ORDER BY arm_date_recorded DESC",$affiliatepress_user_id,$affiliatepress_user_plan));// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arm_subscription_plan is a table name. false alarm 
 
                     $affiliatepress_tbl_arm_payment_log = $this->affiliatepress_tablename_prepare($wpdb->prefix . 'arm_payment_log'); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'arm_payment_log' contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
                     $affiliatepress_total_recurring_paymnet = intval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_arm_payment_log, 'COUNT(arm_log_id)', 'WHERE arm_user_id  = %d  && arm_plan_id = %d && arm_created_date >=%s', array( $affiliatepress_user_id,$affiliatepress_user_plan,$affiliatepress_get_first_payment_date), '', '', '', true, false,ARRAY_A));
@@ -744,7 +744,7 @@ if( !class_exists('affiliatepress_armember') ){
             $affiliatepress_plan_id  = !empty($affiliatepress_plan_id) ? intval($affiliatepress_plan_id) : '';
 
             $affiliatepress_tbl_arm_subscription_plan = $this->affiliatepress_tablename_prepare($wpdb->prefix . 'arm_subscription_plans'); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'arm_subscription_plans' contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
-            $affiliatepress_arm_subscription_plan = $wpdb->get_var($wpdb->prepare("SELECT arm_subscription_plan_name FROM {$affiliatepress_tbl_arm_subscription_plan} WHERE arm_subscription_plan_id = %d",$affiliatepress_plan_id));// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arm_subscription_plan is a table name. false alarm 
+            $affiliatepress_arm_subscription_plan = $wpdb->get_var($wpdb->prepare("SELECT arm_subscription_plan_name FROM {$affiliatepress_tbl_arm_subscription_plan} WHERE arm_subscription_plan_id = %d",$affiliatepress_plan_id));// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arm_subscription_plan is a table name. false alarm 
 
             return $affiliatepress_arm_subscription_plan;
         }

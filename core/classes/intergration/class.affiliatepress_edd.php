@@ -440,6 +440,7 @@ if( !class_exists('affiliatepress_edd') ){
                         }
                         
                         $affiliatepress_amount = $affiliatepress_cart_item['item_price'];
+                        $affiliatepress_amount = apply_filters('affiliatepress_edd_chnage_product_amount',$affiliatepress_amount,$affiliatepress_cart_item);
 
                         if($affiliatepress_exclude_taxes == 'false'){
                             $affiliatepress_amount = $affiliatepress_cart_item['price'];

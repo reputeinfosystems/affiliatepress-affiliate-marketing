@@ -317,7 +317,7 @@ if (! class_exists('affiliatepress_email_notifications') ) {
                     $affiliatepress_where_clause = " Where 1 = 1 ";
                     $affiliatepress_where_clause.= $wpdb->prepare( " AND affiliate.ap_affiliates_id = %d", intval($affiliatepress_affiliates_id) );
                     
-                    $affiliatepress_affiliates_record    = $wpdb->get_row("SELECT affiliate.*,affiliate.ap_affiliates_user_id as ID, affiliate.ap_affiliates_user_email as user_email, affiliate.ap_affiliates_first_name, affiliate.ap_affiliates_last_name  FROM {$affiliatepress_tbl_ap_affiliates_temp} as affiliate  {$affiliatepress_where_clause} ", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates_temp is a table name. false alarm
+                    $affiliatepress_affiliates_record    = $wpdb->get_row("SELECT affiliate.*,affiliate.ap_affiliates_user_id as ID, affiliate.ap_affiliates_user_email as user_email, affiliate.ap_affiliates_first_name, affiliate.ap_affiliates_last_name  FROM {$affiliatepress_tbl_ap_affiliates_temp} as affiliate  {$affiliatepress_where_clause} ", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates_temp is a table name. false alarm
 
                     if(!empty($affiliatepress_affiliates_record)){
 

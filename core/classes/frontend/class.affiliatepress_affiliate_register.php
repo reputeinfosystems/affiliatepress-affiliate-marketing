@@ -297,7 +297,7 @@ if (! class_exists('affiliatepress_affiliate_register') ) {
                         } else {
                             wp_set_current_user( $user_signon->ID );
                             wp_set_auth_cookie( $user_signon->ID );
-                            do_action( 'wp_login', $user_signon->user_login, $user_signon );
+                            do_action( 'wp_login', $user_signon->user_login, $user_signon ); //phpcs:ignore
                             
                         }                        
                         

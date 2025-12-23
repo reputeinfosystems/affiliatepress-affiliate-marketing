@@ -449,7 +449,7 @@ if( !class_exists('affiliatepress_gravity_forms') ){
 
             $affiliatepress_tbl_gf_form = $this->affiliatepress_tablename_prepare( $affiliatepress_form_table_name ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $affiliatepress_form_table_name contains table name and it's prepare properly using 'arm_payment_log' function
                 
-            $affiliatepress_form_title = $wpdb->get_var( $wpdb->prepare( "SELECT title FROM $affiliatepress_tbl_gf_form WHERE id = %d",$affiliatepress_form_id));// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_gf_form is a table name. false alarm
+            $affiliatepress_form_title = $wpdb->get_var( $wpdb->prepare( "SELECT title FROM $affiliatepress_tbl_gf_form WHERE id = %d",$affiliatepress_form_id));// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_gf_form is a table name. false alarm
 
            return $affiliatepress_form_title;
         }

@@ -729,7 +729,7 @@ if (! class_exists('affiliatepress_commissions') ) {
                     }                    
                 }
 
-                $affiliatepress_affiliates_record    = $wpdb->get_results("SELECT affiliate.ap_affiliates_id,affiliate.ap_affiliates_user_email, affiliate.ap_affiliates_first_name, affiliate.ap_affiliates_last_name   FROM {$affiliatepress_tbl_ap_affiliates_temp} as affiliate {$affiliatepress_where_clause} ", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates_temp is a table name. false alarm  
+                $affiliatepress_affiliates_record    = $wpdb->get_results("SELECT affiliate.ap_affiliates_id,affiliate.ap_affiliates_user_email, affiliate.ap_affiliates_first_name, affiliate.ap_affiliates_last_name   FROM {$affiliatepress_tbl_ap_affiliates_temp} as affiliate {$affiliatepress_where_clause} ", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates_temp is a table name. false alarm  
 
                 if(!empty($affiliatepress_affiliates_record)){
 
@@ -1086,7 +1086,7 @@ if (! class_exists('affiliatepress_commissions') ) {
             $wp_usermeta_table = $this->affiliatepress_tablename_prepare($wpdb->usermeta); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->usermeta contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
             $affiliatepress_tbl_ap_affiliates_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_affiliates); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $affiliatepress_tbl_ap_affiliates contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function            
 
-            $affiliatepress_get_total_commissions = intval($wpdb->get_var("SELECT count(commissions.ap_commission_id) FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} as commissions INNER JOIN {$affiliatepress_tbl_ap_affiliates_temp} as affiliate  ON commissions.ap_affiliates_id = affiliate.ap_affiliates_id {$affiliatepress_where_clause}")); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates is a table name. false alarm
+            $affiliatepress_get_total_commissions = intval($wpdb->get_var("SELECT count(commissions.ap_commission_id) FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} as commissions INNER JOIN {$affiliatepress_tbl_ap_affiliates_temp} as affiliate  ON commissions.ap_affiliates_id = affiliate.ap_affiliates_id {$affiliatepress_where_clause}")); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates is a table name. false alarm
 
             $affiliatepress_pagination_count = ceil(intval($affiliatepress_get_total_commissions) / $affiliatepress_perpage);
 
@@ -1105,7 +1105,7 @@ if (! class_exists('affiliatepress_commissions') ) {
             if($affiliatepress_order_by == "first_name"){
                 $affiliatepress_order_by = 'affiliate.ap_affiliates_first_name';
             }
-            $affiliatepress_commissions_record = $wpdb->get_results("SELECT commissions.*, affiliate.ap_affiliates_user_id, affiliate.ap_affiliates_first_name, affiliate.ap_affiliates_last_name FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} as commissions INNER JOIN {$affiliatepress_tbl_ap_affiliates_temp} as affiliate  ON commissions.ap_affiliates_id = affiliate.ap_affiliates_id {$affiliatepress_where_clause}  order by {$affiliatepress_order_by} {$affiliatepress_order} LIMIT {$affiliatepress_offset} , {$affiliatepress_perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates is a table name. false alarm
+            $affiliatepress_commissions_record = $wpdb->get_results("SELECT commissions.*, affiliate.ap_affiliates_user_id, affiliate.ap_affiliates_first_name, affiliate.ap_affiliates_last_name FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} as commissions INNER JOIN {$affiliatepress_tbl_ap_affiliates_temp} as affiliate  ON commissions.ap_affiliates_id = affiliate.ap_affiliates_id {$affiliatepress_where_clause}  order by {$affiliatepress_order_by} {$affiliatepress_order} LIMIT {$affiliatepress_offset} , {$affiliatepress_perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates is a table name. false alarm
 
             $affiliatepress_commissions = array();
             if (! empty($affiliatepress_commissions_record) ) {

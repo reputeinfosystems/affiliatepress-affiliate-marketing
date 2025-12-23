@@ -51,14 +51,14 @@ if( !class_exists('affiliatepress_arforms') ){
                 $affiliatepress_existing_products_data = array();
                 $affiliatepress_tbl_arf_forms = $this->affiliatepress_tablename_prepare( $wpdb->prefix . 'arf_forms' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'arf_forms' contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
                 
-                $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT id FROM {$affiliatepress_tbl_arf_forms} WHERE name LIKE %s",'%' . $wpdb->esc_like($affiliatepress_search_product_str) . '%'),ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arf_forms is a table name. false alarm 
+                $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT id FROM {$affiliatepress_tbl_arf_forms} WHERE name LIKE %s",'%' . $wpdb->esc_like($affiliatepress_search_product_str) . '%'),ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arf_forms is a table name. false alarm 
     
                 $affiliatepress_plan_ids = array_column($affiliatepress_results, 'id');
 
                 if($affiliatepress_plan_ids){
                     foreach ($affiliatepress_plan_ids as $affiliatepress_plan_id) {
                         
-                        $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT name FROM {$affiliatepress_tbl_arf_forms} WHERE id = %d",$affiliatepress_plan_id),ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arf_forms is a table name. false alarm 
+                        $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT name FROM {$affiliatepress_tbl_arf_forms} WHERE id = %d",$affiliatepress_plan_id),ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arf_forms is a table name. false alarm 
 
                         $affiliatepress_plan_name = !empty($affiliatepress_results) ? $affiliatepress_results[0]['name'] : '';
 
@@ -498,7 +498,7 @@ if( !class_exists('affiliatepress_arforms') ){
             global $wpdb;
             $affiliatepress_tbl_arf_forms = $this->affiliatepress_tablename_prepare( $wpdb->prefix . 'arf_forms' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'arf_forms' contains table name and it's prepare properly using 'arm_payment_log' function
 
-            $affiliatepress_form_name = $wpdb->get_var( $wpdb->prepare("SELECT name FROM $affiliatepress_tbl_arf_forms WHERE id = %d", $affiliatepress_form_id) );// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arf_forms is a table name. false alarm
+            $affiliatepress_form_name = $wpdb->get_var( $wpdb->prepare("SELECT name FROM $affiliatepress_tbl_arf_forms WHERE id = %d", $affiliatepress_form_id) );// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arf_forms is a table name. false alarm
 			
             $affiliatepress_form_name = !empty($affiliatepress_form_name) ? sanitize_text_field($affiliatepress_form_name):'';
             return $affiliatepress_form_name;
@@ -516,7 +516,7 @@ if( !class_exists('affiliatepress_arforms') ){
 
             $affiliatepress_tbl_arf_forms = $this->affiliatepress_tablename_prepare( $wpdb->prefix . 'arf_forms' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'arf_forms' contains table name and it's prepare properly using 'arm_payment_log' function
 
-            $affiliatepress_form_options = $wpdb->get_var( $wpdb->prepare("SELECT options FROM $affiliatepress_tbl_arf_forms WHERE id = %d", $affiliatepress_form_id) );	// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arf_forms is a table name. false alarm
+            $affiliatepress_form_options = $wpdb->get_var( $wpdb->prepare("SELECT options FROM $affiliatepress_tbl_arf_forms WHERE id = %d", $affiliatepress_form_id) );	// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arf_forms is a table name. false alarm
 
             $affiliatepress_form_options = unserialize($affiliatepress_form_options);
 			

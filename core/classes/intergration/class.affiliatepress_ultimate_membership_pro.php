@@ -112,14 +112,14 @@ if( !class_exists('affiliatepress_ultimate_membership_pro') ){
                 $affiliatepress_existing_products_data = array();
                 $affiliatepress_tbl_ihc_memberships_pro = $this->affiliatepress_tablename_prepare( $wpdb->prefix . 'ihc_memberships' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'ihc_memberships' contains table name and it's prepare properly using 'arm_payment_log' function
                 
-                $affiliatepress_results = $wpdb->get_results( $wpdb->prepare( "SELECT id FROM $affiliatepress_tbl_ihc_memberships_pro WHERE label LIKE %s",'%' . $wpdb->esc_like($affiliatepress_search_product_str) . '%'),ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ihc_memberships_pro is a table name. false alarm
+                $affiliatepress_results = $wpdb->get_results( $wpdb->prepare( "SELECT id FROM $affiliatepress_tbl_ihc_memberships_pro WHERE label LIKE %s",'%' . $wpdb->esc_like($affiliatepress_search_product_str) . '%'),ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ihc_memberships_pro is a table name. false alarm
     
                 $affiliatepress_plan_ids = array_column($affiliatepress_results, 'id');
 
                 if($affiliatepress_plan_ids){
                     foreach ($affiliatepress_plan_ids as $affiliatepress_plan_id) {
                         
-                        $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT label FROM $affiliatepress_tbl_ihc_memberships_pro WHERE id = %d",$affiliatepress_plan_id),ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ihc_memberships_pro is a table name. false alarm
+                        $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT label FROM $affiliatepress_tbl_ihc_memberships_pro WHERE id = %d",$affiliatepress_plan_id),ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ihc_memberships_pro is a table name. false alarm
 
                         $affiliatepress_plan_name = !empty($affiliatepress_results) ? $affiliatepress_results[0]['label'] : '';
 

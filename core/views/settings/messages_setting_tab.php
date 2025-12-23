@@ -149,6 +149,22 @@
                                         </el-form-item>
                                     </div>
                                 </el-col>
+                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-settings-col ap-gs__cb-item-left" >
+                                    <div class="ap-combine-field">
+                                        <label><span class="ap-form-label"><?php esc_html_e('Chart Earnings', 'affiliatepress-affiliate-marketing'); ?></span></label>    
+                                        <el-form-item prop="dashboard_reports">
+                                            <el-input class="ap-form-control" type="text" v-model="messages_setting_form.dashboard_chart_earnings" size="large"  />                                         
+                                        </el-form-item>
+                                    </div>
+                                </el-col>
+                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-settings-col ap-gs__cb-item-left" >
+                                    <div class="ap-combine-field">
+                                        <label><span class="ap-form-label"><?php esc_html_e('Chart Commissions', 'affiliatepress-affiliate-marketing'); ?></span></label>    
+                                        <el-form-item prop="dashboard_reports">
+                                            <el-input class="ap-form-control" type="text" v-model="messages_setting_form.dashboard_chart_commisisons" size="large"  />                                         
+                                        </el-form-item>
+                                    </div>
+                                </el-col>
                             </el-row>
                         </div>
                     </div>    

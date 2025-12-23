@@ -70,14 +70,14 @@ if( !class_exists('affiliatepress_restrict_content') ){
                 $affiliatepress_existing_products_data = array();
                 $affiliatepress_tbl_restrict_content_pro = $this->affiliatepress_tablename_prepare( $wpdb->prefix . 'restrict_content_pro' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'restrict_content_pro' contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
                 
-                $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT id FROM {$affiliatepress_tbl_restrict_content_pro} WHERE name LIKE %s",'%' . $wpdb->esc_like($affiliatepress_search_product_str) . '%'),ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_restrict_content_pro is a table name. false alarm 
+                $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT id FROM {$affiliatepress_tbl_restrict_content_pro} WHERE name LIKE %s",'%' . $wpdb->esc_like($affiliatepress_search_product_str) . '%'),ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_restrict_content_pro is a table name. false alarm 
     
                 $affiliatepress_plan_ids = array_column($affiliatepress_results, 'id');
 
                 if($affiliatepress_plan_ids){
                     foreach ($affiliatepress_plan_ids as $affiliatepress_plan_id) {
                         
-                        $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT name FROM {$affiliatepress_tbl_restrict_content_pro} WHERE id = %d",$affiliatepress_plan_id),ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_restrict_content_pro is a table name. false alarm 
+                        $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT name FROM {$affiliatepress_tbl_restrict_content_pro} WHERE id = %d",$affiliatepress_plan_id),ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_restrict_content_pro is a table name. false alarm 
 
                         $affiliatepress_plan_name = !empty($affiliatepress_results) ? $affiliatepress_results[0]['name'] : '';
 

@@ -631,8 +631,8 @@ if (! class_exists('affiliatepress_settings') ) {
 
                 $affiliatepress_tbl_ap_commission_debug_logs_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_commission_debug_logs);
 
-                $affiliatepress_total_payment_debug_logs   = $wpdb->get_var( "SELECT count(ap_commission_log_id) FROM {$affiliatepress_tbl_ap_commission_debug_logs_temp} ORDER BY ap_commission_log_id DESC"); //phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_commission_debug_logs is a table name. false alarm
-                $affiliatepress_payment_debug_logs         = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$affiliatepress_tbl_ap_commission_debug_logs_temp} Where 1 = 1 ORDER BY ap_commission_log_id DESC LIMIT %d, %d", $affiliatepress_offset , $affiliatepress_perpage ), ARRAY_A); //phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_commission_debug_logs is a table name. false alarm                          
+                $affiliatepress_total_payment_debug_logs   = $wpdb->get_var( "SELECT count(ap_commission_log_id) FROM {$affiliatepress_tbl_ap_commission_debug_logs_temp} ORDER BY ap_commission_log_id DESC"); //phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_commission_debug_logs is a table name. false alarm
+                $affiliatepress_payment_debug_logs         = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$affiliatepress_tbl_ap_commission_debug_logs_temp} Where 1 = 1 ORDER BY ap_commission_log_id DESC LIMIT %d, %d", $affiliatepress_offset , $affiliatepress_perpage ), ARRAY_A); //phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_commission_debug_logs is a table name. false alarm                          
 
                 $affiliatepress_payment_debug_log_data = array();                
                 if (! empty($affiliatepress_payment_debug_logs) ) {
@@ -660,8 +660,8 @@ if (! class_exists('affiliatepress_settings') ) {
 
                 $affiliatepress_tbl_ap_payout_debug_logs_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_payout_debug_logs);
 
-                $affiliatepress_total_payment_debug_logs   = $wpdb->get_var("SELECT count(ap_payout_log_id) FROM {$affiliatepress_tbl_ap_payout_debug_logs_temp} ORDER BY ap_payout_log_id DESC"); //phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_payout_debug_logs_temp is already prepare & it's table name. false alarm
-                $affiliatepress_payment_debug_logs         = $wpdb->get_results( $wpdb->prepare("SELECT * FROM {$affiliatepress_tbl_ap_payout_debug_logs_temp} Where 1 = 1 ORDER BY ap_payout_log_id DESC LIMIT %d, %d", $affiliatepress_offset, $affiliatepress_perpage ), ARRAY_A); //phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_payout_debug_logs_temp is already prepare & it's table name. false alarm
+                $affiliatepress_total_payment_debug_logs   = $wpdb->get_var("SELECT count(ap_payout_log_id) FROM {$affiliatepress_tbl_ap_payout_debug_logs_temp} ORDER BY ap_payout_log_id DESC"); //phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_payout_debug_logs_temp is already prepare & it's table name. false alarm
+                $affiliatepress_payment_debug_logs         = $wpdb->get_results( $wpdb->prepare("SELECT * FROM {$affiliatepress_tbl_ap_payout_debug_logs_temp} Where 1 = 1 ORDER BY ap_payout_log_id DESC LIMIT %d, %d", $affiliatepress_offset, $affiliatepress_perpage ), ARRAY_A); //phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_payout_debug_logs_temp is already prepare & it's table name. false alarm
             
                 $affiliatepress_payment_debug_log_data = array();                
                 if (! empty($affiliatepress_payment_debug_logs) ) {
@@ -689,9 +689,9 @@ if (! class_exists('affiliatepress_settings') ) {
 
                 $affiliatepress_tbl_ap_integrations_debug_logs_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_integrations_debug_logs);
 
-                $affiliatepress_total_payment_debug_logs   = $wpdb->get_var($wpdb->prepare("SELECT COUNT(ap_integrations_log_id) FROM {$affiliatepress_tbl_ap_integrations_debug_logs_temp} WHERE ap_integrations_log_type = %s ORDER BY ap_integrations_log_id DESC",$affiliatepress_debug_log_selector)); //phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_integrations_debug_logs_temp is already prepare & it's table name. false alarm
+                $affiliatepress_total_payment_debug_logs   = $wpdb->get_var($wpdb->prepare("SELECT COUNT(ap_integrations_log_id) FROM {$affiliatepress_tbl_ap_integrations_debug_logs_temp} WHERE ap_integrations_log_type = %s ORDER BY ap_integrations_log_id DESC",$affiliatepress_debug_log_selector)); //phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_integrations_debug_logs_temp is already prepare & it's table name. false alarm
                 
-                $affiliatepress_payment_debug_logs = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$affiliatepress_tbl_ap_integrations_debug_logs_temp} WHERE ap_integrations_log_type = %s ORDER BY ap_integrations_log_id DESC LIMIT %d, %d",$affiliatepress_debug_log_selector,$affiliatepress_offset,$affiliatepress_perpage),ARRAY_A); //phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_integrations_debug_logs_temp is already prepare & it's table name. false alarm
+                $affiliatepress_payment_debug_logs = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$affiliatepress_tbl_ap_integrations_debug_logs_temp} WHERE ap_integrations_log_type = %s ORDER BY ap_integrations_log_id DESC LIMIT %d, %d",$affiliatepress_debug_log_selector,$affiliatepress_offset,$affiliatepress_perpage),ARRAY_A); //phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_integrations_debug_logs_temp is already prepare & it's table name. false alarm
         
                 $affiliatepress_payment_debug_log_data = array();                
                 if (! empty($affiliatepress_payment_debug_logs) ) {
@@ -719,9 +719,9 @@ if (! class_exists('affiliatepress_settings') ) {
                     
                     $affiliatepress_tbl_ap_other_debug_logs_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_other_debug_logs); 
 
-                    $affiliatepress_total_payment_debug_logs   = $wpdb->get_var( $wpdb->prepare( "SELECT count(ap_other_log_id) FROM {$affiliatepress_tbl_ap_other_debug_logs_temp} WHERE ap_other_log_type = %s ORDER BY ap_other_log_id DESC", $affiliatepress_debug_log_selector )); //phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason $affiliatepress_tbl_ap_other_debug_logs is table name & already prepare using affiliatepress_tablename_prepare function. false alarm
+                    $affiliatepress_total_payment_debug_logs   = $wpdb->get_var( $wpdb->prepare( "SELECT count(ap_other_log_id) FROM {$affiliatepress_tbl_ap_other_debug_logs_temp} WHERE ap_other_log_type = %s ORDER BY ap_other_log_id DESC", $affiliatepress_debug_log_selector )); //phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason $affiliatepress_tbl_ap_other_debug_logs is table name & already prepare using affiliatepress_tablename_prepare function. false alarm
 
-                    $affiliatepress_payment_debug_logs         = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$affiliatepress_tbl_ap_other_debug_logs_temp} WHERE ap_other_log_type = %s ORDER BY ap_other_log_id DESC LIMIT %d, %d", $affiliatepress_debug_log_selector, $affiliatepress_offset , $affiliatepress_perpage ), ARRAY_A); //phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason $affiliatepress_tbl_ap_other_debug_logs is table name & already prepare by affiliatepress_tablename_prepare function. false alarm
+                    $affiliatepress_payment_debug_logs         = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$affiliatepress_tbl_ap_other_debug_logs_temp} WHERE ap_other_log_type = %s ORDER BY ap_other_log_id DESC LIMIT %d, %d", $affiliatepress_debug_log_selector, $affiliatepress_offset , $affiliatepress_perpage ), ARRAY_A); //phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason $affiliatepress_tbl_ap_other_debug_logs is table name & already prepare by affiliatepress_tablename_prepare function. false alarm
                                         
                     $affiliatepress_payment_debug_log_data = array();
                     if (! empty($affiliatepress_payment_debug_logs) ) {
@@ -1129,6 +1129,20 @@ if (! class_exists('affiliatepress_settings') ) {
                             'trigger'  => 'blur',
                         ),
                     ),      
+                    'dashboard_chart_earnings'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ),
+                    'dashboard_chart_commisisons'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ),
                     'dashboard_reports'  => array(
                         array(
                             'required' => true,
@@ -1907,6 +1921,8 @@ if (! class_exists('affiliatepress_settings') ) {
                     'dashboard_commissions_count'     => '',
                     'dashboard_commission_rate'       => '',
                     'dashboard_reports'               => '',
+                    'dashboard_chart_earnings'        => '',
+                    'dashboard_chart_commisisons'     => '',
 
                     //Commission panel
                     'commission_affiliate_commission'   => '',
@@ -2599,7 +2615,7 @@ if (! class_exists('affiliatepress_settings') ) {
 
                 $affiliatepress_tbl_ap_settings_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_settings); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $affiliatepress_tbl_ap_settings contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
 
-                $affiliatepress_fetch_settings_details = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$affiliatepress_tbl_ap_settings_temp} WHERE ap_setting_type = %s", $affiliatepress_setting_type  ), ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_settings is table name defined globally. False Positive alarm
+                $affiliatepress_fetch_settings_details = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$affiliatepress_tbl_ap_settings_temp} WHERE ap_setting_type = %s", $affiliatepress_setting_type  ), ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_settings is table name defined globally. False Positive alarm
                 
                 $affiliatepress_fetch_settings_details = apply_filters('affiliatepress_modify_get_settings_data_variable', $affiliatepress_fetch_settings_details,$affiliatepress_setting_type); // phpcs:ignore WordPress.Security.NonceVerification
 
