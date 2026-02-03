@@ -846,7 +846,7 @@ if (! class_exists('AffiliatePress') ) {
         {
             global $affiliatepress_version, $AffiliatePress;
             $affiliatepress_old_version = get_option('affiliatepress_version', true);
-            if (version_compare($affiliatepress_old_version, '1.8', '<') ) {
+            if (version_compare($affiliatepress_old_version, '1.9', '<') ) {
                 $affiliatepress_load_upgrade_file = AFFILIATEPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $affiliatepress_load_upgrade_file;
                 $AffiliatePress->affiliatepress_send_anonymous_data_cron();
@@ -1561,7 +1561,14 @@ if (! class_exists('AffiliatePress') ) {
                 require_once AFFILIATEPRESS_LIBRARY_DIR.'/ip2location/vendor/autoload.php';
 
                 $ip = $affiliatepress_logged_in_ip; 
-                $database = new \IP2Location\Database( AFFILIATEPRESS_LIBRARY_DIR.'/ip2location/vendor/ip2location/ip2location-php/data/IP2LOCATION-LITE-DB1.BIN', \IP2Location\Database::FILE_IO);
+                
+                if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+                    $db_path = AFFILIATEPRESS_LIBRARY_DIR . '/ip2location/vendor/ip2location/ip2location-php/data/IP2LOCATION-LITE-DB1.IPV6.BIN';
+                } else {
+                    $db_path = AFFILIATEPRESS_LIBRARY_DIR . '/ip2location/vendor/ip2location/ip2location-php/data/IP2LOCATION-LITE-DB1.BIN';
+                }
+                $database = new \IP2Location\Database($db_path, \IP2Location\Database::FILE_IO);    
+
                 $info = $database->lookup($ip, \IP2Location\Database::ALL);
                 
                 $affiliatepress_country = array(
@@ -3643,7 +3650,7 @@ if (! class_exists('AffiliatePress') ) {
                 array('ap_setting_name' => 'flat_rate_commission_basis','ap_setting_value' => 'pre_product','ap_setting_type' => 'commissions_settings','auto_load'=>1,'type'=>'text'),
                 // array('ap_setting_name' => 'exclude_shipping','ap_setting_value' => 'true','ap_setting_type' => 'commissions_settings'),
                 // array('ap_setting_name' => 'exclude_taxes','ap_setting_value' => 'true','ap_setting_type' => 'commissions_settings'),
-                array('ap_setting_name' => 'earn_commissions_own_orders','ap_setting_value' => 'true','ap_setting_type' => 'commissions_settings','auto_load'=>1,'type'=>'text'),
+                array('ap_setting_name' => 'earn_commissions_own_orders','ap_setting_value' => 'false','ap_setting_type' => 'commissions_settings','auto_load'=>1,'type'=>'text'),
                 // array('ap_setting_name' => 'reject_commission_on_refund','ap_setting_value' => 'true','ap_setting_type' => 'commissions_settings'),
                 array('ap_setting_name' => 'allow_zero_amount_commission','ap_setting_value' => 'true','ap_setting_type' => 'commissions_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'refund_grace_period','ap_setting_value' => '10','ap_setting_type' => 'commissions_settings','auto_load'=>0,'type'=>'integer'),

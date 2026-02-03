@@ -58,7 +58,7 @@ if (version_compare($affiliatepress_old_version, '1.8', '<') )
     $AffiliatePress->affiliatepress_update_settings('dashboard_chart_commisisons','message_settings',esc_html__('Commissions', 'affiliatepress-affiliate-marketing'));
 }
 
-$affiliatepress_new_version = '1.8';
+$affiliatepress_new_version = '1.9';
 update_option('affiliatepress_new_version_installed', 1);
 update_option('affiliatepress_version', $affiliatepress_new_version);
 update_option('affiliatepress_updated_date_' . $affiliatepress_new_version, current_time('mysql'));

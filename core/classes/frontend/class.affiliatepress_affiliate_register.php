@@ -733,7 +733,7 @@ if (! class_exists('affiliatepress_affiliate_register') ) {
             wp_register_script('affiliatepress_front_js', AFFILIATEPRESS_URL . 'js/affiliatepress_vue.min.js', array(), AFFILIATEPRESS_VERSION,false);
             wp_register_script('affiliatepress_axios_js', AFFILIATEPRESS_URL . 'js/affiliatepress_axios.min.js', array(), AFFILIATEPRESS_VERSION,false);
             wp_register_script('affiliatepress_wordpress_vue_qs_js', AFFILIATEPRESS_URL . 'js/affiliatepress_wordpress_vue_qs_helper.js', array(), AFFILIATEPRESS_VERSION,false); 
-            wp_register_script('affiliatepress_element_js', AFFILIATEPRESS_URL . 'js/affiliatepress_element.min.js', array(), AFFILIATEPRESS_VERSION,false);            
+            wp_register_script('affiliatepress_element_js', AFFILIATEPRESS_URL . 'js/affiliatepress_element.min.js', array(), AFFILIATEPRESS_VERSION,true);            
 
             if($affiliatepress_force_enqueue == 1){
 
@@ -764,7 +764,6 @@ if (! class_exists('affiliatepress_affiliate_register') ) {
             $affiliatepress_uniq_id = uniqid();
             $this->affiliatepress_affiliatepress_set_front_css(1);
             $this->affiliatepress_set_front_js(1);
-            
 
             $affiliatepress_front_booking_dynamic_helper_vars = '';
             $affiliatepress_front_booking_dynamic_helper_vars = apply_filters('affiliatepress_affiliate_registration_dynamic_helper_vars', $affiliatepress_front_booking_dynamic_helper_vars);

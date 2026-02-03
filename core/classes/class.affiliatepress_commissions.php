@@ -1382,9 +1382,13 @@ if (! class_exists('affiliatepress_commissions') ) {
             get_affiliate_source_product(query) {
                 const vm = this;	
                 if (query !== "") {
-                    vm.affiliatepress_user_loading = true;                    
-                    var customer_action = { action:"affiliatepress_get_source_products",search_product_str:query,ap_commission_source:vm.commissions.ap_commission_source,_wpnonce:"'.esc_html(wp_create_nonce('ap_wp_nonce')).'" }                    
-                    axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify( customer_action ) )
+                    vm.affiliatepress_user_loading = true;        
+                    if (vm.affiliateUsersAbortController) {
+                        vm.affiliateUsersAbortController.abort();
+                    }   
+                    vm.affiliateUsersAbortController = new AbortController();
+                    var customer_action = { action:"affiliatepress_get_source_products",search_product_str:query,ap_commission_source:vm.commissions.ap_commission_source,_wpnonce:"'.esc_html(wp_create_nonce('ap_wp_nonce')).'" } 
+                    axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify( customer_action ), {signal: vm.affiliateUsersAbortController.signal} )
                     .then(function(response){
                         vm.affiliatepress_user_loading = false;
                         if(typeof response.data.products != "undefined"){
@@ -1393,6 +1397,9 @@ if (! class_exists('affiliatepress_commissions') ) {
                             vm.SourceProductsList = [];
                         }
                     }).catch(function(error){
+                        if (error.name === "CanceledError") {
+                            return;
+                        }
                         console.log(error);
                     });
                 } else {
@@ -1418,13 +1425,20 @@ if (! class_exists('affiliatepress_commissions') ) {
             get_affiliate_users(query) {
                 const vm = this;	
                 if (query !== "") {
-                    vm.affiliatepress_user_loading = true;                    
+                    vm.affiliatepress_user_loading = true;    
+                    if (vm.affiliateUsersAbortController) {
+                        vm.affiliateUsersAbortController.abort();
+                    }   
+                    vm.affiliateUsersAbortController = new AbortController();
                     var customer_action = { action:"affiliatepress_get_affiliate_users",search_user_str:query,ap_affiliates_user_id:vm.ap_affiliates_user_id,_wpnonce:"'.esc_html(wp_create_nonce('ap_wp_nonce')).'" }                    
-                    axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify( customer_action ) )
+                    axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify( customer_action ),{signal: vm.affiliateUsersAbortController.signal} )
                     .then(function(response){
                         vm.affiliatepress_user_loading = false;
                         vm.AffiliateUsersList = response.data.users
                     }).catch(function(error){
+                        if (error.name === "CanceledError") {
+                            return;
+                        }
                         console.log(error)
                     });
                 } else {
@@ -1976,7 +1990,7 @@ if (! class_exists('affiliatepress_commissions') ) {
                 ),
                 'affiliatepress_wordpress_user_delete'=>'',
                 'show_user_details' => '1',
-
+                'affiliateUsersAbortController' => null,
             );
         }
 

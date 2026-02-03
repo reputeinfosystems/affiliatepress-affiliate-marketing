@@ -26,7 +26,7 @@
                     <el-row type="flex" :gutter="16">
                         <el-col :xs="24" :sm="24" :md="24" :lg="14" :xl="14">
                             <div class="ap-combine-field">
-                                <el-select ref="selectAffUserRef" size="large" class="ap-form-control ap-remove-fields-close" v-model="affiliates_search.ap_affiliates_user" @keyup.enter="applyFilter()" filterable placeholder="<?php esc_html_e( 'Enter Affiliate Name', 'affiliatepress-affiliate-marketing'); ?>" @change="affiliatepress_get_existing_affiliate_details($event)" remote reserve-keyword	 :remote-method="get_affiliate_users" :loading="affiliatepress_user_loading" clearable >                                                               
+                                <el-select ref="selectAffUserRef" size="large" class="ap-form-control ap-remove-fields-close" v-model="affiliates_search.ap_affiliates_user"  filterable placeholder="<?php esc_html_e( 'Enter Affiliate Name', 'affiliatepress-affiliate-marketing'); ?>" @change="affiliatepress_get_existing_affiliate_details($event)" remote reserve-keyword :remote-method="get_affiliate_users" :loading="affiliatepress_user_loading" clearable >                                                               
                                     <el-option-group v-for="wp_user_list_cat in AffiliateUsersList" :key="wp_user_list_cat.category" :label="wp_user_list_cat.category">
                                         <el-option v-for="item in wp_user_list_cat.wp_user_data" :key="item.value" :label="item.label" :value="item.value" ></el-option>                                    
                                     </el-option-group>

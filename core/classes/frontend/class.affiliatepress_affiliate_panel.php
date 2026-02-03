@@ -1902,6 +1902,9 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                     $affiliatepress_affiliate_user_allowed_to_acceess = $affiliatepress_affiliates_id;
                 }                    
             }
+            else {
+                $affiliatepress_allow_affiliate_user = $affiliatepress_affiliate_user_allowed_to_acceess;
+            }
             return $affiliatepress_allow_affiliate_user;
         }
         
@@ -3791,7 +3794,6 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                     $affiliatepress_dynamic_data_fields['allow_user_access'] = 'true'; 
                 }
             }
-
             $affiliatepress_affiliate_allow_register = false;
 
             $affiliatepress_dynamic_data_fields['signup_url']    = '';
@@ -4243,7 +4245,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             wp_register_script('affiliatepress_front_js', AFFILIATEPRESS_URL . 'js/affiliatepress_vue.min.js', array(), AFFILIATEPRESS_VERSION,false);
             wp_register_script('affiliatepress_axios_js', AFFILIATEPRESS_URL . 'js/affiliatepress_axios.min.js', array(), AFFILIATEPRESS_VERSION,false);
             wp_register_script('affiliatepress_wordpress_vue_qs_js', AFFILIATEPRESS_URL . 'js/affiliatepress_wordpress_vue_qs_helper.js', array(), AFFILIATEPRESS_VERSION,false);
-            wp_register_script('affiliatepress_element_js', AFFILIATEPRESS_URL . 'js/affiliatepress_element.min.js', array(), AFFILIATEPRESS_VERSION,false);
+            wp_register_script('affiliatepress_element_js', AFFILIATEPRESS_URL . 'js/affiliatepress_element.min.js', array(), AFFILIATEPRESS_VERSION,true);
             wp_register_script('affiliatepress_charts_js', AFFILIATEPRESS_URL . 'js/affiliatepress_chart.umd.min.js', array(), AFFILIATEPRESS_VERSION,false); 
 
             if($affiliatepress_force_enqueue == 1){

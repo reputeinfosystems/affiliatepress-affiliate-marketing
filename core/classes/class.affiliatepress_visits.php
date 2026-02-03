@@ -242,6 +242,7 @@ if (! class_exists('affiliatepress_visits') ) {
             $affiliatepress_visits_vue_data_fields['all_status'] = array();
             $affiliatepress_visits_vue_data_fields['AffiliateUsersList'] = array();
             $affiliatepress_visits_vue_data_fields['affiliates']['affiliate_user_name'] = '';
+            $affiliatepress_visits_vue_data_fields['affiliateUsersAbortController'] = null;            
 
             $affiliatepress_affiliate_vue_data_fields = apply_filters('affiliatepress_backend_modify_visits_data_fields', $affiliatepress_visits_vue_data_fields);
 
@@ -481,13 +482,20 @@ if (! class_exists('affiliatepress_visits') ) {
             get_affiliate_users(query) {
                 const vm = this;	
                 if (query !== "") {
-                    vm.affiliatepress_user_loading = true;                    
+                    vm.affiliatepress_user_loading = true;   
+                    if (vm.affiliateUsersAbortController) {
+                        vm.affiliateUsersAbortController.abort();
+                    }   
+                    vm.affiliateUsersAbortController = new AbortController();                  
                     var customer_action = { action:"affiliatepress_get_affiliate_users",search_user_str:query,ap_affiliates_user_id:vm.ap_affiliates_user_id,_wpnonce:"'.esc_html(wp_create_nonce('ap_wp_nonce')).'" }                    
-                    axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify( customer_action ) )
+                    axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify( customer_action ), {signal: vm.affiliateUsersAbortController.signal} )
                     .then(function(response){
                         vm.affiliatepress_user_loading = false;
                         vm.AffiliateUsersList = response.data.users
                     }).catch(function(error){
+                        if (error.name === "CanceledError") {
+                            return;
+                        }
                         console.log(error)
                     });
                 } else {
@@ -568,6 +576,7 @@ if (! class_exists('affiliatepress_visits') ) {
                 'pagination_count'           => 1,
                 'currentPage'                => 1,
                 'savebtnloading'             => false,
+                'affiliatepress_user_loading'=> false,
                 'modal_loader'               => 1,
                 'is_display_loader'          => '0',
                 'is_disabled'                => false,

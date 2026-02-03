@@ -36,7 +36,7 @@ if (! defined('AFFILIATEPRESS_FS_METHOD') ) {
 }
 
 global $affiliatepress_version, $affiliatepress_website_url;
-$affiliatepress_version = "1.8";
+$affiliatepress_version = "1.9";
 
 $affiliatepress_website_url = "https://www.affiliatepressplugin.com/";
 
