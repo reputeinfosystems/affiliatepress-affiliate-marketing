@@ -70,7 +70,7 @@
                                 </el-col>
                                 <el-col :xs="24" :sm="6" :md="12" :lg="12" :xl="12" class="ap-gs-tabs--pb__heading--right">
                                     <div class="ap-hw-right-btn-group">
-                                    <el-button type="primary" class="ap-btn--primary ap-btn--big" :class="(is_display_save_loader == '1') ? 'ap-btn--is-loader' : ''" @click="affiliatepress_save_email_notification_data" :disabled="is_disabled" >                    
+                                    <el-button type="primary" class="ap-btn--primary ap-btn--big" :class="(is_display_save_loader == '1') ? 'ap-btn--is-loader' : ''" @click="affiliatepress_save_email_notification_data" :disabled="(is_disabled || ap_notifications_content_loaded == '1')" >                    
                                             <span class="ap-btn__label"><?php esc_html_e('Save', 'affiliatepress-affiliate-marketing'); ?></span>
                                             <div class="ap-btn--loader__circles">                    
                                                 <div></div>
@@ -104,7 +104,10 @@
                             </div>
                         </el-col>
                     </el-row>
-                    <div>
+                    <div class="ap-back-loader-container" v-if="ap_notifications_content_loaded == '1'">
+                        <div class="ap-back-loader"></div>
+                    </div>
+                    <div :class="ap_notifications_content_loaded == '0' ? '__ap_notifications_content_loaded_form_display' : '__ap_notifications_content_loaded_form'" >
                         <el-form class="ap-en-body-card__content--form ap-en-body-card__content--form-padding" id="email_notification_form" ref="email_notification_form" @submit.native.prevent>
                             <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row">
                                 <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">

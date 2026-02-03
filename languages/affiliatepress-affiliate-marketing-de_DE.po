@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: AffiliatePress - Affiliate Marketing v1.9\n"
+"Project-Id-Version: AffiliatePress - Affiliate Marketing v2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-01-05 04:19:02+0000\n"
+"PO-Revision-Date: 2026-01-20 04:17:50+0000\n"
 "Last-Translator: admin <testrepute@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -682,8 +682,8 @@ msgstr "Partnerprovision genehmigt"
 #: core/classes/class.affiliatepress_notifications.php:279
 #: core/classes/class.affiliatepress_notifications.php:288
 #: core/classes/class.affiliatepress_notifications.php:298
-#: core/classes/class.affiliatepress_notifications.php:427
-#: core/classes/class.affiliatepress_notifications.php:465
+#: core/classes/class.affiliatepress_notifications.php:429
+#: core/classes/class.affiliatepress_notifications.php:468
 #: core/classes/class.affiliatepress_payout.php:189
 #: core/classes/class.affiliatepress_payout.php:195
 #: core/classes/class.affiliatepress_payout.php:204
@@ -934,8 +934,8 @@ msgstr "Fehler"
 #: core/classes/class.affiliatepress_growth_tools.php:841
 #: core/classes/class.affiliatepress_growth_tools.php:938
 #: core/classes/class.affiliatepress_notifications.php:89
-#: core/classes/class.affiliatepress_notifications.php:428
-#: core/classes/class.affiliatepress_notifications.php:466
+#: core/classes/class.affiliatepress_notifications.php:430
+#: core/classes/class.affiliatepress_notifications.php:469
 #: core/classes/class.affiliatepress_payout.php:190
 #: core/classes/class.affiliatepress_payout.php:433
 #: core/classes/class.affiliatepress_payout.php:524
@@ -1248,7 +1248,7 @@ msgstr "Bitte geben Sie Ihre Telefonnummer ein"
 
 #: core/classes/class.affiliatepress_affiliate_fields.php:760
 #: core/views/commissions/manage_commissions.php:533
-#: core/views/notifications/manage_notifications.php:164
+#: core/views/notifications/manage_notifications.php:167
 #: core/views/settings/integrations_setting_tab.php:296
 #: core/views/settings/integrations_setting_tab.php:730
 #@ affiliatepress-affiliate-marketing
@@ -3911,7 +3911,7 @@ msgstr "Karussellwechsel zum Index"
 
 #: core/classes/class.affiliatepress.php:4204
 #: core/classes/class.affiliatepress.php:4206
-#: core/classes/class.affiliatepress_notifications.php:357
+#: core/classes/class.affiliatepress_notifications.php:358
 #: core/views/notifications/manage_notifications.php:17
 #: core/views/notifications/manage_notifications.php:20
 #: core/views/wizard/manage_wizard.php:246
@@ -3952,43 +3952,43 @@ msgstr "An Affiliate-Benutzer"
 msgid "To Administrator"
 msgstr "An Administrator"
 
-#: core/views/notifications/manage_notifications.php:113
-#: core/views/notifications/manage_notifications.php:117
+#: core/views/notifications/manage_notifications.php:116
+#: core/views/notifications/manage_notifications.php:120
 #@ affiliatepress-affiliate-marketing
 msgid "Send Notification"
 msgstr "Benachrichtigung senden"
 
-#: core/views/notifications/manage_notifications.php:125
+#: core/views/notifications/manage_notifications.php:128
 #@ affiliatepress-affiliate-marketing
 msgid "Email Subject"
 msgstr "E-Mail-Betreff"
 
-#: core/views/notifications/manage_notifications.php:127
+#: core/views/notifications/manage_notifications.php:130
 #@ affiliatepress-affiliate-marketing
 msgid "Enter Subject"
 msgstr "Betreff eingeben"
 
-#: core/views/notifications/manage_notifications.php:145
+#: core/views/notifications/manage_notifications.php:148
 #@ affiliatepress-affiliate-marketing
 msgid "Email Message"
 msgstr "E-Mail-Nachricht"
 
-#: core/views/notifications/manage_notifications.php:158
+#: core/views/notifications/manage_notifications.php:161
 #@ affiliatepress-affiliate-marketing
 msgid "Allowed HTML tags <div>, <label>, <span>, <p>, <ul>, <li>, <tr>, <td>, <a>, <br>, <b>, <h1>, <h2>, <hr>"
 msgstr "Erlaubte HTML-Tags <div>, <label>, <span>, <p>, <ul>, <li>, <tr>, <td>, <a>, <br>, <b>, <h1>, <h2>, <hr>"
 
-#: core/views/notifications/manage_notifications.php:164
+#: core/views/notifications/manage_notifications.php:167
 #@ affiliatepress-affiliate-marketing
 msgid "Please add <br /> in the email message to add a new line"
 msgstr "Bitte fügen Sie <br /> in die E-Mail-Nachricht ein, um eine neue Zeile einzufügen"
 
-#: core/views/notifications/manage_notifications.php:164
+#: core/views/notifications/manage_notifications.php:167
 #@ affiliatepress-affiliate-marketing
 msgid "Enter key will not be considered as new line"
 msgstr "Die Eingabetaste wird nicht als neue Zeile betrachtet"
 
-#: core/views/notifications/manage_notifications.php:178
+#: core/views/notifications/manage_notifications.php:181
 #@ affiliatepress-affiliate-marketing
 msgid "Email Placeholders"
 msgstr "E-Mail-Platzhalter"
@@ -6784,18 +6784,18 @@ msgstr "Avatar"
 msgid "Commission Count"
 msgstr "Anzahl der Provisionen"
 
-#: core/views/notifications/manage_notifications.php:182
+#: core/views/notifications/manage_notifications.php:185
 #@ affiliatepress-affiliate-marketing
 msgid "Affiliate Releted"
 msgstr "Partner freigegeben"
 
-#: core/views/notifications/manage_notifications.php:188
+#: core/views/notifications/manage_notifications.php:191
 #@ affiliatepress-affiliate-marketing
 msgid "Commission Releted"
 msgstr "Provision freigegeben"
 
-#: core/views/notifications/manage_notifications.php:194
-#: core/views/notifications/manage_notifications.php:200
+#: core/views/notifications/manage_notifications.php:197
+#: core/views/notifications/manage_notifications.php:203
 #@ affiliatepress-affiliate-marketing
 msgid "Payment Releted"
 msgstr "Zahlungsbezogen"
@@ -7462,6 +7462,6 @@ msgstr "Kartenkommissionen"
 #. translators: plugin header field 'Version'
 #: affiliatepress-affiliate-marketing.php:0
 #@ affiliatepress-affiliate-marketing
-msgid "1.9"
-msgstr "1.9"
+msgid "2.0"
+msgstr "2.0"
 

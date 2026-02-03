@@ -345,6 +345,7 @@ if (! class_exists('affiliatepress_notifications') ) {
             $affiliatepress_notifications_vue_data_fields['all_status'] = array();
             $affiliatepress_notifications_vue_data_fields['affiliates']['affiliate_user_name'] = '';
 
+            $affiliatepress_notifications_vue_data_fields = apply_filters('affiliatepress_backend_modify_notifications_data_fields', $affiliatepress_notifications_vue_data_fields);
             
             $affiliatepress_notifications_vue_data_fields =  wp_json_encode($affiliatepress_notifications_vue_data_fields);
 
@@ -385,6 +386,7 @@ if (! class_exists('affiliatepress_notifications') ) {
             }, 
             affiliatepress_change_tab(eventData){
                 const vm = this;
+                vm.activeTabName = eventData.props.name;
                 vm.affiliatepress_get_notification_data(vm.affiliatepress_active_email_notification, eventData.props.name);
             },  
             affiliatepress_save_email_notification_data(){
@@ -436,7 +438,8 @@ if (! class_exists('affiliatepress_notifications') ) {
                 const vm = this;
                 if(ap_notification_receiver_type == ""){
                     ap_notification_receiver_type = vm.activeTabName;
-                }                
+                }  
+                vm.ap_notifications_content_loaded = "1";
                 var affiliatepress_get_notification_post_data = [];
                 affiliatepress_get_notification_post_data.ap_notification_slug = email_notification_key;
                 affiliatepress_get_notification_post_data.ap_notification_receiver_type = ap_notification_receiver_type;
@@ -450,7 +453,7 @@ if (! class_exists('affiliatepress_notifications') ) {
                         vm.ap_first_page_loaded = "0";  
                         vm.affiliatepress_email_notification_subject = affiliatepress_return_notification_data.ap_notification_subject;
                         var affiliatepress_email_notification_msg = affiliatepress_return_notification_data.ap_notification_message;  
-                                             
+                        vm.ap_notifications_content_loaded = "0";                         
                         setTimeout(function(){
                             document.getElementById("affiliatepress_email_notification_subject_message").value = affiliatepress_email_notification_msg;
                             if( null != tinyMCE.activeEditor ){
@@ -554,6 +557,7 @@ if (! class_exists('affiliatepress_notifications') ) {
                 'is_disabled'                                     => false,
                 'is_display_save_loader'                          => '0',
                 'is_affiliate_pro_active'                         => $AffiliatePress->affiliatepress_pro_install(), 
+                'ap_notifications_content_loaded'                 => '0',
             );
 
         }

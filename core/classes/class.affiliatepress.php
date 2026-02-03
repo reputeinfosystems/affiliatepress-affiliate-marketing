@@ -846,7 +846,7 @@ if (! class_exists('AffiliatePress') ) {
         {
             global $affiliatepress_version, $AffiliatePress;
             $affiliatepress_old_version = get_option('affiliatepress_version', true);
-            if (version_compare($affiliatepress_old_version, '1.9', '<') ) {
+            if (version_compare($affiliatepress_old_version, '2.0', '<') ) {
                 $affiliatepress_load_upgrade_file = AFFILIATEPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $affiliatepress_load_upgrade_file;
                 $AffiliatePress->affiliatepress_send_anonymous_data_cron();
@@ -3229,19 +3229,19 @@ if (! class_exists('AffiliatePress') ) {
 
             add_submenu_page($affiliatepress_slugs->affiliatepress, esc_html__('Dashboard', 'affiliatepress-affiliate-marketing'), esc_html__('Dashboard', 'affiliatepress-affiliate-marketing'), 'affiliatepress', $affiliatepress_slugs->affiliatepress);
 
-            add_submenu_page($affiliatepress_slugs->affiliatepress, esc_html__('Commission', 'affiliatepress-affiliate-marketing'), esc_html__('Commission', 'affiliatepress-affiliate-marketing'), 'affiliatepress', $affiliatepress_slugs->affiliatepress_commissions, array( $this, 'route' ));
+            add_submenu_page($affiliatepress_slugs->affiliatepress, esc_html__('Commission', 'affiliatepress-affiliate-marketing'), esc_html__('Commission', 'affiliatepress-affiliate-marketing'), 'affiliatepress_commissions', $affiliatepress_slugs->affiliatepress_commissions, array( $this, 'route' ));
 
-            add_submenu_page($affiliatepress_slugs->affiliatepress, esc_html__('Visits', 'affiliatepress-affiliate-marketing'), esc_html__('Visits', 'affiliatepress-affiliate-marketing'), 'affiliatepress', $affiliatepress_slugs->affiliatepress_visits, array( $this, 'route' ));            
+            add_submenu_page($affiliatepress_slugs->affiliatepress, esc_html__('Visits', 'affiliatepress-affiliate-marketing'), esc_html__('Visits', 'affiliatepress-affiliate-marketing'), 'affiliatepress_visits', $affiliatepress_slugs->affiliatepress_visits, array( $this, 'route' ));            
 
-            add_submenu_page($affiliatepress_slugs->affiliatepress, esc_html__('Affiliates', 'affiliatepress-affiliate-marketing'), esc_html__('Affiliates', 'affiliatepress-affiliate-marketing'), 'affiliatepress', $affiliatepress_slugs->affiliatepress_affiliates, array( $this, 'route' ));            
+            add_submenu_page($affiliatepress_slugs->affiliatepress, esc_html__('Affiliates', 'affiliatepress-affiliate-marketing'), esc_html__('Affiliates', 'affiliatepress-affiliate-marketing'), 'affiliatepress_affiliates', $affiliatepress_slugs->affiliatepress_affiliates, array( $this, 'route' ));            
 
-            add_submenu_page($affiliatepress_slugs->affiliatepress, esc_html__('Creatives', 'affiliatepress-affiliate-marketing'), esc_html__('Creatives', 'affiliatepress-affiliate-marketing'), 'affiliatepress', $affiliatepress_slugs->affiliatepress_creative, array( $this, 'route' ));
+            add_submenu_page($affiliatepress_slugs->affiliatepress, esc_html__('Creatives', 'affiliatepress-affiliate-marketing'), esc_html__('Creatives', 'affiliatepress-affiliate-marketing'), 'affiliatepress_creative', $affiliatepress_slugs->affiliatepress_creative, array( $this, 'route' ));
 
-            add_submenu_page($affiliatepress_slugs->affiliatepress, esc_html__('Payouts', 'affiliatepress-affiliate-marketing'), esc_html__('Payouts', 'affiliatepress-affiliate-marketing'), 'affiliatepress', $affiliatepress_slugs->affiliatepress_payout, array( $this, 'route' ));
+            add_submenu_page($affiliatepress_slugs->affiliatepress, esc_html__('Payouts', 'affiliatepress-affiliate-marketing'), esc_html__('Payouts', 'affiliatepress-affiliate-marketing'), 'affiliatepress_payout', $affiliatepress_slugs->affiliatepress_payout, array( $this, 'route' ));
             
-            add_submenu_page($affiliatepress_slugs->affiliatepress, esc_html__('Notifications', 'affiliatepress-affiliate-marketing'), esc_html__('Notifications', 'affiliatepress-affiliate-marketing'), 'affiliatepress', $affiliatepress_slugs->affiliatepress_notifications, array( $this, 'route' ));
+            add_submenu_page($affiliatepress_slugs->affiliatepress, esc_html__('Notifications', 'affiliatepress-affiliate-marketing'), esc_html__('Notifications', 'affiliatepress-affiliate-marketing'), 'affiliatepress_notifications', $affiliatepress_slugs->affiliatepress_notifications, array( $this, 'route' ));
 
-            add_submenu_page($affiliatepress_slugs->affiliatepress, esc_html__('Form Editor', 'affiliatepress-affiliate-marketing'), esc_html__('Form Editor', 'affiliatepress-affiliate-marketing'), 'affiliatepress', $affiliatepress_slugs->affiliatepress_affiliate_fields, array( $this, 'route' ));
+            add_submenu_page($affiliatepress_slugs->affiliatepress, esc_html__('Form Editor', 'affiliatepress-affiliate-marketing'), esc_html__('Form Editor', 'affiliatepress-affiliate-marketing'), 'affiliatepress_affiliate_fields', $affiliatepress_slugs->affiliatepress_affiliate_fields, array( $this, 'route' ));
 
             add_submenu_page($affiliatepress_slugs->affiliatepress, esc_html__('Settings', 'affiliatepress-affiliate-marketing'), esc_html__('Settings', 'affiliatepress-affiliate-marketing'), 'affiliatepress_settings', $affiliatepress_slugs->affiliatepress_settings, array( $this, 'route' ));   
             
@@ -3281,6 +3281,7 @@ if (! class_exists('AffiliatePress') ) {
             global $affiliatepress_website_url;
 
             $fetch_sale_detais = get_transient( 'affiliatepress_retrieve_sale_details' );
+            $sale_details = array();
             
             if( false == $fetch_sale_detais ){
 
