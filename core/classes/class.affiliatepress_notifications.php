@@ -454,12 +454,12 @@ if (! class_exists('affiliatepress_notifications') ) {
                         vm.affiliatepress_email_notification_subject = affiliatepress_return_notification_data.ap_notification_subject;
                         var affiliatepress_email_notification_msg = affiliatepress_return_notification_data.ap_notification_message;  
                         vm.ap_notifications_content_loaded = "0";                         
-                        setTimeout(function(){
+                        vm.$nextTick(() => {
                             document.getElementById("affiliatepress_email_notification_subject_message").value = affiliatepress_email_notification_msg;
                             if( null != tinyMCE.activeEditor ){
                                 tinyMCE.activeEditor.setContent(affiliatepress_email_notification_msg);
                             }
-                        },400);
+                        });
                     }
                 }.bind(this))
                 .catch( function (error) {                    

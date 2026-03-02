@@ -1,3 +1,6 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) { exit; }
+?>
 <el-main v-cloak class="ap-front-creative-container <?php echo esc_html((is_rtl())?'ap-front-creative-container-rtl':''); ?>" id="affiliatepress_creative_form_<?php echo esc_html( $affiliatepress_uniq_id ); ?>">
     <div id="ap-none-field">
         <?php wp_nonce_field('ap_wp_nonce'); ?>

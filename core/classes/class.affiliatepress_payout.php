@@ -648,6 +648,8 @@ if (! class_exists('affiliatepress_payout') ) {
                                 'ap_payment_currency'           => $affiliatepress_default_currency,
                                 'ap_payment_method'             => $affiliatepress_payment_method,
                                 'ap_payment_status'             => $affiliatepress_ap_payment_status,
+                                'ap_payment_visit'              => $affiliatepress_payout_payment_detail['ap_payout_visit_count'],
+                                'ap_payment_created_date'       => date('Y-m-d H:i:s', current_time('timestamp'))//phpcs:ignore
                             );
                             $affiliatepress_payment_id = $this->affiliatepress_insert_record($affiliatepress_tbl_ap_payments, $affiliatepress_args);
                             if($affiliatepress_payment_id && !empty($affiliatepress_payout_payment_detail)){
@@ -660,7 +662,8 @@ if (! class_exists('affiliatepress_payout') ) {
                                         'ap_payout_id'                  => $affiliatepress_payout_id,
                                         'ap_affiliates_id'              => $affiliatepress_payout_payment_detail['ap_affiliates_id'],
                                         'ap_commission_id'              => $affiliatepress_payment_commission['ap_commission_id'],                
-                                        'ap_commission_amount'          => $affiliatepress_payment_commission['ap_commission_amount']
+                                        'ap_commission_amount'          => $affiliatepress_payment_commission['ap_commission_amount'],
+                                        'ap_payment_commission_created_date'  => date('Y-m-d H:i:s', current_time('timestamp'))//phpcs:ignore
                                     );
                                     $this->affiliatepress_insert_record($affiliatepress_tbl_ap_payment_commission, $affiliatepress_args);      
                                     
@@ -827,6 +830,7 @@ if (! class_exists('affiliatepress_payout') ) {
                         'ap_payment_method'             => $affiliatepress_payment_method,
                         'ap_payment_min_amount'         => $affiliatepress_minimum_payment_amount,          
                         'ap_payout_process'             => 0,
+                        'ap_payout_created_date'        => date('Y-m-d H:i:s', current_time('timestamp'))//phpcs:ignore
                     );                    
 
                     $affiliatepress_payout_id = $this->affiliatepress_insert_record($affiliatepress_tbl_ap_payouts, $affiliatepress_args);
@@ -884,7 +888,7 @@ if (! class_exists('affiliatepress_payout') ) {
 
             $affiliatepress_where_clause.= $wpdb->prepare( " AND ap_commission_payment_id = %d ", 0);
 
-            $affiliatepress_commissions_record = $wpdb->get_results("SELECT commissions.ap_commission_id,commissions.ap_affiliates_id,commissions.ap_commission_amount,commissions.ap_commission_currency, affiliate.ap_affiliates_user_id, affiliate.ap_affiliates_user_email as user_email, affiliate.ap_affiliates_first_name, affiliate.ap_affiliates_last_name  FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} as commissions INNER JOIN {$affiliatepress_tbl_ap_affiliates_temp} as affiliate  ON (commissions.ap_affiliates_id = affiliate.ap_affiliates_id AND affiliate.ap_affiliates_status = 1)  {$affiliatepress_where_clause}  order by commissions.ap_commission_id ASC", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates_temp is a table name. false alarm
+            $affiliatepress_commissions_record = $wpdb->get_results("SELECT commissions.ap_commission_id,commissions.ap_affiliates_id,commissions.ap_commission_amount,commissions.ap_commission_currency,commissions.ap_commission_created_date, affiliate.ap_affiliates_user_id, affiliate.ap_affiliates_user_email as user_email, affiliate.ap_affiliates_first_name, affiliate.ap_affiliates_last_name, affiliate.ap_affiliates_user_name, affiliate.ap_affiliates_payment_email  FROM {$affiliatepress_tbl_ap_affiliate_commissions_temp} as commissions INNER JOIN {$affiliatepress_tbl_ap_affiliates_temp} as affiliate  ON (commissions.ap_affiliates_id = affiliate.ap_affiliates_id AND affiliate.ap_affiliates_status = 1)  {$affiliatepress_where_clause}  order by commissions.ap_commission_id ASC", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates_temp is a table name. false alarm
 
             if(empty($affiliatepress_payment_method)){
                 $affiliatepress_payment_method = 'manualy';
@@ -893,6 +897,7 @@ if (! class_exists('affiliatepress_payout') ) {
 
             $affiliatepress_payout_affiliates = array();            
             if(!empty($affiliatepress_commissions_record)){
+                
                 foreach($affiliatepress_commissions_record as $affiliatepress_commission_rec){
                     
                     $affiliatepress_total_added_affiliate_in_payout = count($affiliatepress_payout_affiliates);
@@ -908,9 +913,12 @@ if (! class_exists('affiliatepress_payout') ) {
                         $ap_affiliates_first_name = esc_html($affiliatepress_commission_rec['ap_affiliates_first_name']);
                         $ap_affiliates_last_name  = esc_html($affiliatepress_commission_rec['ap_affiliates_last_name']);
                         $affiliatepress_full_name = $ap_affiliates_first_name.' '.$ap_affiliates_last_name;
+                        $affiliatepress_affiliates_user_name  = esc_html($affiliatepress_commission_rec['ap_affiliates_user_name']);
+                        $affiliatepress_affiliates_payment_email  = esc_html($affiliatepress_commission_rec['ap_affiliates_payment_email']);
 
+                        $affiliatepress_visit_count = $this->affiliatepress_preview_payout_visit_count($affiliatepress_commission_rec['ap_affiliates_id'],$affiliatepress_payout_upto_date,$affiliatepress_commissions_record);
 
-                        $affiliatepress_payout_affiliates[$affiliatepress_commission_rec['ap_affiliates_id']] = array('payment_method'=>$affiliatepress_payment_method,'ap_affiliates_id'=>$affiliatepress_commission_rec['ap_affiliates_id'],'affiiate_name'=>$affiliatepress_full_name,'total_amount'=>$affiliatepress_commission_rec['ap_commission_amount'],'commission_record'=>array());
+                        $affiliatepress_payout_affiliates[$affiliatepress_commission_rec['ap_affiliates_id']] = array('payment_method'=>$affiliatepress_payment_method,'ap_affiliates_id'=>$affiliatepress_commission_rec['ap_affiliates_id'],'ap_payout_visit_count'=>$affiliatepress_visit_count,'affiiate_name'=>$affiliatepress_full_name,'affiiate_user_name'=>$affiliatepress_affiliates_user_name,'affiiate_payment_email'=>$affiliatepress_affiliates_payment_email,'total_amount'=>$affiliatepress_commission_rec['ap_commission_amount'],'commission_record'=>array());
                         $affiliatepress_payout_affiliates[$affiliatepress_commission_rec['ap_affiliates_id']]['commission_record'][] = array('ap_commission_id'=>$affiliatepress_commission_rec['ap_commission_id'],'ap_commission_amount'=>$affiliatepress_commission_rec['ap_commission_amount']);
                     }
                 }
@@ -920,9 +928,6 @@ if (! class_exists('affiliatepress_payout') ) {
             $affiliatepress_all_payout_affiliate = array();
             $affiliatepress_minimum_payment_amount = floatval($AffiliatePress->affiliatepress_get_settings('minimum_payment_amount', 'commissions_settings'));
             $affiliatepress_final_payout_affiliate = array();
-
-
-
             if(!empty($affiliatepress_payout_affiliates)){
                 $affiliatepress_i = 0;
                 foreach($affiliatepress_payout_affiliates as $affiliatepress_key=>$affiliatepress_value){                   
@@ -932,6 +937,17 @@ if (! class_exists('affiliatepress_payout') ) {
                         $affiliatepress_total_payment_amount = $affiliatepress_total_payment_amount + $affiliatepress_payout_affiliates[$affiliatepress_key]['total_amount'];
                         $affiliatepress_total_affiliate = $affiliatepress_total_affiliate + 1;
                         $affiliatepress_final_payout_affiliate[$affiliatepress_i]['total_commission'] = count($affiliatepress_payout_affiliates[$affiliatepress_key]['commission_record']);
+
+                        $affiliatepress_total_visit = $affiliatepress_final_payout_affiliate[$affiliatepress_i]['ap_payout_visit_count'];
+                        $affiliatepress_total_commisison = $affiliatepress_final_payout_affiliate[$affiliatepress_i]['total_commission'];
+
+                        if($affiliatepress_total_visit > 0){
+                            $affiliatepress_conversion_rate = round(($affiliatepress_total_commisison / $affiliatepress_total_visit) * 100, 2);
+                        }else{
+                            $affiliatepress_conversion_rate = 0;
+                        }
+
+                        $affiliatepress_final_payout_affiliate[$affiliatepress_i]['ap_payout_visit_conversion_rate'] = $affiliatepress_conversion_rate;
                         $affiliatepress_total_amount_formted = $AffiliatePress->affiliatepress_price_formatter_with_currency_symbol($affiliatepress_payout_affiliates[$affiliatepress_key]['total_amount']);
                         $affiliatepress_final_payout_affiliate[$affiliatepress_i]['total_amount_formted'] = $affiliatepress_total_amount_formted;
                         $affiliatepress_all_payout_affiliate[] = $affiliatepress_key;
@@ -950,6 +966,49 @@ if (! class_exists('affiliatepress_payout') ) {
                 'commission_compare_date' => $affiliatepress_commission_compare_date
             );
 
+        }
+
+        function affiliatepress_preview_payout_visit_count($affiliatepress_affiliate_id,$affiliatepress_payout_upto_date,$affiliatepress_affiliate_all_commisison){
+
+            global $affiliatepress_payout_debug_log_id,$affiliatepress_tbl_ap_payouts,$wpdb,$affiliatepress_tbl_ap_affiliate_visits,$affiliatepress_tbl_ap_payments;
+
+            $affiliatepress_visit_count = 0;
+
+            if(!empty($affiliatepress_affiliate_id) && $affiliatepress_affiliate_id != 0)
+            {
+                $affiliatepress_old_commission_date = min(array_column($affiliatepress_affiliate_all_commisison,'ap_commission_created_date' ));
+                $affiliatepress_old_commission_date = date('Y-m-d 00:00:00',strtotime($affiliatepress_old_commission_date));//phpcs:ignore
+
+                $affiliatepress_payout_upto_date = date('Y-m-d 23:59:59',strtotime($affiliatepress_payout_upto_date));//phpcs:ignore
+
+                $affiliatepress_last_payout_record = $wpdb->get_row($wpdb->prepare("SELECT payout.* FROM {$affiliatepress_tbl_ap_payouts} AS payout INNER JOIN {$affiliatepress_tbl_ap_payments} AS payment   ON payout.ap_payout_id = payment.ap_payout_id WHERE payment.ap_affiliates_id = %d AND payment.ap_payment_status = %d ORDER BY payout.ap_payout_created_date DESC LIMIT 1", $affiliatepress_affiliate_id, 4),ARRAY_A);// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates is a table name. false alarm
+
+                do_action('affiliatepress_payout_debug_log_entry', 'payout_tracking_debug_logs', 'Payout visit count - last payout record data', 'affiliatepress_auto_payout_tracking', wp_json_encode($affiliatepress_last_payout_record), $affiliatepress_payout_debug_log_id);
+
+                $affiliatepress_last_payout_upto_date = isset($affiliatepress_last_payout_record['ap_payout_upto_date']) ? date('Y-m-d 23:59:59',strtotime($affiliatepress_last_payout_record['ap_payout_upto_date'])) : '';//phpcs:ignore
+                $affiliatepress_visit_count_last_date = $affiliatepress_last_payout_upto_date;
+                $affiliatepress_current_payout_date = date('Y-m-d 23:59:59',strtotime($affiliatepress_payout_upto_date));//phpcs:ignore
+
+                do_action('affiliatepress_payout_debug_log_entry', 'payout_tracking_debug_logs', 'Payout visit count - Date', 'affiliatepress_auto_payout_tracking', 'last payout date = '.$affiliatepress_visit_count_last_date .' and current payout date ='.$affiliatepress_current_payout_date, $affiliatepress_payout_debug_log_id);
+
+                if(empty($affiliatepress_visit_count_last_date)){
+                    $affiliatepress_visit_where_clause = 'WHERE ap_affiliates_id = %d AND ap_visit_created_date <= %s';
+                    $affiliatepress_visit_where_clause_array = array($affiliatepress_affiliate_id,$affiliatepress_current_payout_date);
+                }else{
+
+                    $affiliatepress_visit_count_last_date = min($affiliatepress_old_commission_date, $affiliatepress_last_payout_upto_date );
+
+                    $affiliatepress_visit_where_clause  = 'WHERE ap_affiliates_id = %d AND ap_visit_created_date BETWEEN %s AND %s';
+                    $affiliatepress_visit_where_clause_array = array($affiliatepress_affiliate_id,$affiliatepress_visit_count_last_date,$affiliatepress_current_payout_date);
+                }
+
+                $affiliatepress_visit_count = intval( $this->affiliatepress_select_record(true,'',$affiliatepress_tbl_ap_affiliate_visits,'COUNT(*)',$affiliatepress_visit_where_clause,$affiliatepress_visit_where_clause_array, '','','',true,false,ARRAY_A));
+            }
+
+            do_action('affiliatepress_payout_debug_log_entry','payout_tracking_debug_logs','Payout visit count - RESULT','affiliatepress_auto_payout_tracking', 'Visit count = ' . $affiliatepress_visit_count,$affiliatepress_payout_debug_log_id);
+
+            return $affiliatepress_visit_count;
+            
         }
 
         /**
@@ -1006,8 +1065,8 @@ if (! class_exists('affiliatepress_payout') ) {
                     $affiliatepress_payment_method = 'manual';
                 }
                 $affiliatepress_selected_affiliate = array();
-                $affiliatepress_payout_data = $this->affiliatepress_generate_payout_data($affiliatepress_payout_upto, $affiliatepress_selected_affiliate, $affiliatepress_payment_method);      
-              
+                $affiliatepress_payout_data = $this->affiliatepress_generate_payout_data($affiliatepress_payout_upto, $affiliatepress_selected_affiliate, $affiliatepress_payment_method); 
+
                 $affiliatepress_payout_data = apply_filters('affiliatepress_modify_payout_data',$affiliatepress_payout_data);
               
                 foreach ($affiliatepress_payout_data['payout_affiliates'] as $key => $affiliate) {
@@ -1213,7 +1272,7 @@ if (! class_exists('affiliatepress_payout') ) {
         */
         function affiliatepress_edit_payout_func(){
 
-            global $wpdb, $affiliatepress_tbl_ap_payouts, $AffiliatePress, $affiliatepress_tbl_ap_payments,$affiliatepress_tbl_ap_affiliates,$affiliatepress_tbl_ap_payment_commission,$affiliatepress_global_options;
+            global $wpdb, $affiliatepress_tbl_ap_payouts, $AffiliatePress, $affiliatepress_tbl_ap_payments,$affiliatepress_tbl_ap_affiliates,$affiliatepress_tbl_ap_payment_commission,$affiliatepress_global_options,$affiliatepress_tbl_ap_affiliate_visits;
             
             $affiliatepress_ap_check_authorization = $this->affiliatepress_ap_check_authentication( 'edit_payout', true, 'ap_wp_nonce' );
             $response = array();
@@ -1275,7 +1334,7 @@ if (! class_exists('affiliatepress_payout') ) {
 
                     $affiliatepress_where_clause = $wpdb->prepare( " WHERE payments.ap_payout_id = %d", intval($affiliatepress_payout_id));
 
-                    $affiliatepress_payout_payment_record  = $wpdb->get_results("SELECT payments.ap_payment_id,payments.ap_payment_status,payments.ap_payment_method,payments.ap_payment_amount,affiliate.ap_affiliates_user_email, affiliate.ap_affiliates_user_id as ID, affiliate.ap_affiliates_user_email as user_email, affiliate.ap_affiliates_first_name, affiliate.ap_affiliates_last_name  FROM {$affiliatepress_tbl_ap_payments_temp} as payments LEFT JOIN {$affiliatepress_tbl_ap_affiliates_temp} as affiliate ON payments.ap_affiliates_id = affiliate.ap_affiliates_id  {$affiliatepress_where_clause}", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates_temp is a table name. false alarm
+                    $affiliatepress_payout_payment_record  = $wpdb->get_results("SELECT payments.ap_payment_id,payments.ap_payment_status,payments.ap_payment_method,payments.ap_payment_visit,payments.ap_payment_amount,payments.ap_payment_note,affiliate.ap_affiliates_user_email, affiliate.ap_affiliates_id, affiliate.ap_affiliates_user_id as ID, affiliate.ap_affiliates_user_email as user_email, affiliate.ap_affiliates_first_name, affiliate.ap_affiliates_last_name, affiliate.ap_affiliates_user_name, affiliate.ap_affiliates_payment_email FROM {$affiliatepress_tbl_ap_payments_temp} as payments LEFT JOIN {$affiliatepress_tbl_ap_affiliates_temp} as affiliate ON payments.ap_affiliates_id = affiliate.ap_affiliates_id  {$affiliatepress_where_clause}", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates_temp is a table name. false alarm
 
                     $affiliatepress_options = $affiliatepress_global_options->affiliatepress_global_options();
                     $affiliatepress_all_payment_status_data = $affiliatepress_options['payment_status'];
@@ -1288,14 +1347,16 @@ if (! class_exists('affiliatepress_payout') ) {
                         }
                     }
 
-
-
                     $affiliatepress_payout_payments = array();
+                    $affiliatepress_common_payment_method = '';
+                    $affiliatepress_all_payout_same_payment_method = true;
                     if(!empty($affiliatepress_payout_payment_record)){
                         foreach($affiliatepress_payout_payment_record as $affiliatepress_payout_payment){
 
                             $affiliatepress_payout_payment_single = $affiliatepress_payout_payment;
 
+                            $affiliatepress_payment_id = intval($affiliatepress_payout_payment['ap_payment_id']);
+                            $affiliatepress_affiliate_id = intval($affiliatepress_payout_payment['ap_affiliates_id']);
                             $affiliatepress_user_first_name =  esc_html($affiliatepress_payout_payment['ap_affiliates_first_name']);
                             $affiliatepress_user_last_name  =  esc_html($affiliatepress_payout_payment['ap_affiliates_last_name']);
 
@@ -1311,10 +1372,37 @@ if (! class_exists('affiliatepress_payout') ) {
                             $affiliatepress_payout_payment_single['ap_payment_method_key'] =esc_html($affiliatepress_payout_payment['ap_payment_method']);
                             $affiliatepress_payout_payment_single['ap_payment_method'] = ucfirst(esc_html($affiliatepress_payout_payment['ap_payment_method']));
                             $affiliatepress_payout_payment_single['ap_payment_amount_formated'] = $AffiliatePress->affiliatepress_price_formatter_with_currency_symbol($affiliatepress_payout_payment_single['ap_payment_amount']);
-                            $affiliatepress_payout_payment_single['payment_status_name'] = (isset($affiliatepress_all_payment_status[$affiliatepress_payout_payment['ap_payment_status']]))?$affiliatepress_all_payment_status[$affiliatepress_payout_payment['ap_payment_status']]:'';                            
+                            $affiliatepress_payout_payment_single['payment_status_name'] = (isset($affiliatepress_all_payment_status[$affiliatepress_payout_payment['ap_payment_status']]))?$affiliatepress_all_payment_status[$affiliatepress_payout_payment['ap_payment_status']]:'';       
+                            
+                            $affiliatepress_payout_payment_single['ap_affiliates_id'] = intval($affiliatepress_affiliate_id);
+                            $affiliatepress_payout_payment_single['ap_affiliates_user_name'] = esc_html($affiliatepress_payout_payment['ap_affiliates_user_name']);
+                            $affiliatepress_payout_payment_single['ap_affiliates_payment_email'] = esc_html($affiliatepress_payout_payment['ap_affiliates_payment_email']);
+                            $affiliatepress_payout_payment_single['ap_affiliate_visit_count'] = intval($affiliatepress_payout_payment['ap_payment_visit']);
+                            $affiliatepress_payout_payment_single['ap_payment_note'] = esc_html($affiliatepress_payout_payment['ap_payment_note']);
+                            $affiliatepress_payout_payment_single['ap_affiliate_commission_count'] = intval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_payment_commission, 'count(ap_payment_commission_id)', 'WHERE ap_payment_id  = %d', array($affiliatepress_payment_id), '', '', '', true, false,ARRAY_A));
+                            if($affiliatepress_payout_payment_single['ap_affiliate_visit_count'] > 0){
+                                $affiliatepress_conversion_rate = round(($affiliatepress_payout_payment_single['ap_affiliate_commission_count'] /  $affiliatepress_payout_payment_single['ap_affiliate_visit_count']) * 100, 2);
+                            }else{
+                                $affiliatepress_conversion_rate = 0;
+                            }
+                            
+                            $affiliatepress_payout_payment_single['ap_payout_visit_conversion_rate'] = floatval($affiliatepress_conversion_rate);
+                            if ($affiliatepress_common_payment_method === '') {
+                                $affiliatepress_common_payment_method = $affiliatepress_payout_payment_single['ap_payment_method_key'];
+                            } else {
+                                if ($affiliatepress_common_payment_method !== $affiliatepress_payout_payment_single['ap_payment_method_key']) {
+                                    $affiliatepress_all_payout_same_payment_method = false;
+                                }
+                            }
+                            
                             $affiliatepress_payout_payments[] = $affiliatepress_payout_payment_single;
-
                         }
+                    }
+
+                    if ($affiliatepress_all_payout_same_payment_method) {
+                        $affiliatepress_payout_data['affiliatepress_common_payment_method'] = ucfirst(esc_html($affiliatepress_common_payment_method));
+                    }else{
+                        $affiliatepress_payout_data['affiliatepress_common_payment_method'] = '';
                     }
 
                     $affiliatepress_payout_final_data = array('edit_payout_data' => $affiliatepress_payout_data, 'edit_payout_payments' => $affiliatepress_payout_payments);
@@ -2279,6 +2367,10 @@ if (! class_exists('affiliatepress_payout') ) {
                 return;
             }
             vm.$refs.multipleTable.toggleRowExpansion(row);
+        },
+        affiliatepress_payout_full_row_clickable(row){
+            const vm = this
+            vm.$refs.payout_payment_table.toggleRowExpansion(row);
         },   
         export_payout(payout_id){
             const vm = this;
@@ -2310,7 +2402,14 @@ if (! class_exists('affiliatepress_payout') ) {
             var current_page = vm.changeCurrentPage(selectedPage);                                        
             vm.currentPage = current_page;    
             vm.loadPayouts();
-        },                       
+        },    
+        disabled_after_grace_period_date(date) {
+            const vm = this;
+            const today_date = new Date()
+            const graceLimit = new Date()
+            graceLimit.setDate(today_date.getDate() - vm.refund_grace_period)
+            return date > graceLimit
+        },
         ';
         return $affiliatepress_payout_dynamic_vue_methods;
         }
@@ -2334,7 +2433,7 @@ if (! class_exists('affiliatepress_payout') ) {
         */
         function affiliatepress_payout_vue_data_fields(){
 
-            global $affiliatepress_payout_vue_data_fields,$affiliatepress_global_options;            
+            global $affiliatepress_payout_vue_data_fields,$affiliatepress_global_options,$AffiliatePress;            
             $affiliatepress_pagination          = wp_json_encode(array( 10, 20, 50, 100, 200, 300, 400, 500 ));
             $affiliatepress_pagination_arr      = json_decode($affiliatepress_pagination, true);
             $affiliatepress_pagination_selected = $this->affiliatepress_per_page_record;
@@ -2403,7 +2502,7 @@ if (! class_exists('affiliatepress_payout') ) {
                 ),                
                 'pagination_length_val'      => '10',
                 'pagination_val'             => $affiliatepress_pagination_value,
-
+                'refund_grace_period'        => intval($AffiliatePress->affiliatepress_get_settings('refund_grace_period', 'commissions_settings')),
             );
         }
 

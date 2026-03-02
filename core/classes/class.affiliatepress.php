@@ -158,7 +158,7 @@ if (! class_exists('AffiliatePress') ) {
 
             add_filter( 'admin_body_class',array($this,'affiliatepress_add_admin_page_css') );
 
-            add_action( 'init', array( $this, 'affiliatepress_validate_plugin_setup' ) );
+            add_action( 'shutdown', array( $this, 'affiliatepress_validate_plugin_setup' ) );
 
         }
 
@@ -846,7 +846,7 @@ if (! class_exists('AffiliatePress') ) {
         {
             global $affiliatepress_version, $AffiliatePress;
             $affiliatepress_old_version = get_option('affiliatepress_version', true);
-            if (version_compare($affiliatepress_old_version, '2.0', '<') ) {
+            if (version_compare($affiliatepress_old_version, '2.1', '<') ) {
                 $affiliatepress_load_upgrade_file = AFFILIATEPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $affiliatepress_load_upgrade_file;
                 $AffiliatePress->affiliatepress_send_anonymous_data_cron();
@@ -4514,6 +4514,7 @@ if (! class_exists('AffiliatePress') ) {
                     `ap_payment_transaction_id` varchar(255) default NULL,
                     `ap_payment_note` TEXT default NULL,
                     `ap_payment_status` INT(11) default 1,
+                   `ap_payment_visit` INT(11) default 0,
                     `ap_payment_created_date` timestamp DEFAULT CURRENT_TIMESTAMP, 
                     `ap_payment_updated_date` DATETIME default NULL,                   
                     PRIMARY KEY (`ap_payment_id`)
@@ -5321,9 +5322,13 @@ if (! class_exists('AffiliatePress') ) {
 
             global $affiliatepress_website_url;
 
-            $ap_plugin_setup_check_time = get_transient( 'affiliatepress_validate_plugin_setup_timings' );
+            $ap_plugin_setup_check_time = get_option( 'affiliatepress_validate_plugin_setup_timings' );
 
-            if( false == $ap_plugin_setup_check_time ){
+            if( empty( $ap_plugin_setup_check_time ) || current_time( 'timestamp' ) > $ap_plugin_setup_check_time ){
+
+                $validate_setup_timings = 2 * DAY_IN_SECONDS;
+
+                update_option( 'affiliatepress_validate_plugin_setup_timings', ( current_time('timestamp') + $validate_setup_timings ) );
 
                 parent::load();
 
@@ -5355,20 +5360,22 @@ if (! class_exists('AffiliatePress') ) {
                     $avav_data = base64_decode( $avav_resp['body'] );
                     if( !empty( $avav_data ) ){
                         $avav_response = json_decode( $avav_data, true );
-                        $avav_filtered = array_values( $avav_response );
-                        $avallav = array_merge( ...$avav_filtered );
-                        
-                        if( !empty( $avallav ) ){
-                            foreach( $avallav as $avav_details ){
-                                $avav_installer = $avav_details['addon_installer'];
+                        if( !empty( $avav_response ) && is_array( $avav_response ) )
+                        {
+                            $avav_filtered = array_values( $avav_response );
+                            $avallav = array_merge( ...$avav_filtered );
+                            if( !empty( $avallav ) ) {
+                                foreach( $avallav as $avav_details ){
+                                    $avav_installer = $avav_details['addon_installer'];
 
-                                if( file_exists( WP_PLUGIN_DIR . '/' . $avav_installer ) ){
-                                    $avavpdata = get_plugin_data( WP_PLUGIN_DIR . '/' . $avav_installer );
-                                    $avavactv = is_plugin_active( $avav_installer );
-                                    if( $avavactv ){
-                                        $avava_data[ $avav_details['addon_name'] ] = $avavpdata['Version'];
-                                    } else {
-                                        $avavd_data[ $avav_details['addon_name'] ] = $avavpdata['Version'];
+                                    if( file_exists( WP_PLUGIN_DIR . '/' . $avav_installer ) ){
+                                        $avavpdata = get_plugin_data( WP_PLUGIN_DIR . '/' . $avav_installer );
+                                        $avavactv = is_plugin_active( $avav_installer );
+                                        if( $avavactv ){
+                                            $avava_data[ $avav_details['addon_name'] ] = $avavpdata['Version'];
+                                        } else {
+                                            $avavd_data[ $avav_details['addon_name'] ] = $avavpdata['Version'];
+                                        }
                                     }
                                 }
                             }
@@ -5397,10 +5404,6 @@ if (! class_exists('AffiliatePress') ) {
                         ]
                     ]
                 );
-
-                $validate_setup_timings = 2 * DAY_IN_SECONDS;
-
-                set_transient( 'affiliatepress_validate_plugin_setup_timings', 'status_updated', $validate_setup_timings  );
 
             }
 

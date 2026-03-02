@@ -190,25 +190,23 @@ if( !class_exists('affiliatepress_armember') ){
             if (!empty($arm_lite_version) && version_compare($arm_lite_version, '5.0', '>=') ) {
                 $affiliatepress_commission_nonce_armember = wp_create_nonce('affiliatepress_commission_nonce_armember');
                 ?>
-                <div class="arm_solid_divider"></div>
-                    <div class="arm_plan_price_section">
-                        <div class="arm_setup_section_title arm_margin_top_32 arm_margin_bottom_10"><?php esc_html_e('AffiliatePress Commission Settings', 'affiliatepress-affiliate-marketing'); ?></div>
+                <div class="arm_spacing_div"></div>
+                    <div class="arm_plan_price_section arm_form_main_content">
+                        <div class="arm_form_header_label"><?php esc_html_e('AffiliatePress Commission Settings', 'affiliatepress-affiliate-marketing'); ?></div>
                         <div id="arm_plan_price_box_content" class="arm_plan_price_box">
                             <div class="page_sub_content">
                                 <table class="form-table">
                                     <tr class="form-field form-required arm_plan_price_type">
-                                        <td class="arm_padding_top_8">
+                                        <td class="arm_padding_top_0">
                                             <div class="arm_upgrade_downgrade_section_switch">
-                                                <div class="armswitch arm_global_setting_switch arm_vertical_align_middle" >
-                                                    <input type="checkbox" id="affiliatepress_commission_disable_armember" value="1" class="armswitch_input" name="arm_subscription_plan_options[affiliatepress_commission_disable_armember]"/>
-                                                    <label for="affiliatepress_commission_disable_armember" class="armswitch_label arm_min_width_40" ></label>
-                                                </div>
-                                                <label for="affiliatepress_commission_disable_armember" class="arm_padding_left_10 arm_font_size_14 arm_field_hint"><?php esc_html_e('Disable Commission For This Plan','affiliatepress-affiliate-marketing'); ?><i class="arm_helptip_icon armfa armfa-question-circle" title="<?php esc_html_e('Turn on AffiliatePress Commission to disable commission calculations for this plan and prevent affiliates from earning on it.', 'affiliatepress-affiliate-marketing'); ?>"></i></label>
-                                                
-                                                <span class ="arm_font_size_14 arm_margin_top_10 " style="float:left;width:50%;position:relative;top:5px;font-weight:400px;color: #6E7E9E;"><?php esc_html_e( 'Enable AffiliatePress Commission to prevent adding commission for this plan.', 'affiliatepress-affiliate-marketing' ); ?></span>
-
-                                                <input name="arm_subscription_plan_options[affiliatepress_commission_nonce_armember]" id="affiliatepress_commission_nonce_armember" type="hidden" value="<?php echo  esc_attr( $affiliatepress_commission_nonce_armember ) ?>" />
-                                            </div>
+												<div class="armswitch arm_global_setting_switch arm_vertical_align_middle" >
+													<input type="checkbox" id="affiliatepress_commission_disable_armember" value="1" class="armswitch_input" name="arm_subscription_plan_options[affiliatepress_commission_disable_armember]"/>
+													<label for="affiliatepress_commission_disable_armember" class="armswitch_label arm_min_width_40" ></label>
+												</div>
+												<label for="affiliatepress_commission_disable_armember" class="arm_padding_left_10 arm_font_size_14 arm_field_hint"><?php esc_html_e('Disable Commission For This Plan', 'affiliatepress-affiliate-marketing'); ?><i class="arm_helptip_icon armfa armfa-question-circle" title="<?php esc_html_e('Turn on AffiliatePress Commission to disable commission calculations for this plan and prevent affiliates from earning on it.', 'affiliatepress-affiliate-marketing'); ?>"></i></label>
+												
+												<span class ="arm_font_size_14 arm_margin_top_10 " style="float:left;width:50%;position:relative;top:5px;font-weight:400px;color: #6E7E9E;"><?php esc_html_e( 'Enable AffiliatePress Commission to prevent adding commission for this plan.', 'affiliatepress-affiliate-marketing'); ?></span>
+											</div>
                                         </td>
                                     </tr>	
                                     <?php
@@ -227,7 +225,7 @@ if( !class_exists('affiliatepress_armember') ){
                 echo $affiliatepress_arm_commission_settings; //phpcs:ignore       
             }
         }
-        
+
         /**
          * Function For Armember Disable Settings add
          *

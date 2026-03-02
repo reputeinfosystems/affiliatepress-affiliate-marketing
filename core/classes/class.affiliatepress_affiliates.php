@@ -1127,7 +1127,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
                             if ($return ) {                                
                                 $response['variant'] = 'success';
                                 $response['title']   = esc_html__('Success', 'affiliatepress-affiliate-marketing');
-                                $response['msg']     = esc_html__('Affiliate has been deleted successfully.', 'affiliatepress-affiliate-marketing');
+                                $response['msg']     = esc_html__('Affiliates have been deleted successfully.', 'affiliatepress-affiliate-marketing');
                             } else {
                                 $response['variant'] = 'warning';
                                 $response['title']   = esc_html__('Warning', 'affiliatepress-affiliate-marketing');
@@ -1410,6 +1410,10 @@ if (! class_exists('affiliatepress_affiliates') ) {
 
             if($affiliatepress_order_by == "total_visit"){
                 $affiliatepress_order_by = 'total_visit';
+            }
+
+            if($affiliatepress_order_by == "converted_user"){
+                $affiliatepress_order_by = 'converted_user';
             }
 
             $affiliatepress_sql = "  SELECT affiliate.*, COALESCE(SUM(report.ap_affiliate_report_visits), 0) AS total_visit,  COALESCE(SUM(report.ap_affiliate_report_total_commission), 0) AS converted_user, COALESCE(SUM(report.ap_affiliate_report_paid_commission_amount), 0) AS affiliatepress_paid_earning,  COALESCE(SUM(report.ap_affiliate_report_unpaid_commission_amount), 0) AS affiliatepress_unpaid_earning FROM {$affiliatepress_tbl_ap_affiliates_temp} AS affiliate  LEFT JOIN {$affiliatepress_tbl_ap_affiliate_report} AS report ON report.ap_affiliates_id = affiliate.ap_affiliates_id  {$affiliatepress_where_clause} GROUP BY affiliate.ap_affiliates_id ORDER BY {$affiliatepress_order_by} {$affiliatepress_order} LIMIT {$affiliatepress_offset}, {$affiliatepress_perpage}";
@@ -2573,6 +2577,8 @@ if (! class_exists('affiliatepress_affiliates') ) {
                     vm.order_by = "ap_affiliates_id"; 
                 }else if(prop == "total_visit"){
                     vm.order_by = "total_visit"; 
+                }else if(prop == "converted_user"){
+                    vm.order_by = "converted_user"; 
                 }
                 if(vm.order_by){
                     if(order == "descending"){

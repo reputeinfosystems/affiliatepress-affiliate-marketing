@@ -248,7 +248,7 @@ if( !class_exists('affiliatepress_tracking') ){
             }
 
             $affiliatepress_report_insert_type = "visits";
-            $affiliatepress_start_date = (isset($affiliatepress_args['ap_visit_created_date']))?intval($affiliatepress_args['ap_visit_created_date']):'';
+            $affiliatepress_start_date = (isset($affiliatepress_args['ap_visit_created_date'])) ? $affiliatepress_args['ap_visit_created_date']:'';
             if(!empty($affiliatepress_start_date)){
                 $affiliatepress_start_date = date('Y-m-d',strtotime($affiliatepress_start_date));//phpcs:ignore
             }

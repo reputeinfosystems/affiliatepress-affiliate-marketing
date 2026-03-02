@@ -675,43 +675,51 @@ if (! class_exists('affiliatepress_email_notifications') ) {
                     $affiliatepress_notification_subject = (isset($affiliatepress_get_template_data['ap_notification_subject']))?$affiliatepress_get_template_data['ap_notification_subject']:'';
                     $affiliatepress_notification_message = (isset($affiliatepress_get_template_data['ap_notification_message']))?$affiliatepress_get_template_data['ap_notification_message']:'';
 
-                    $affiliatepress_notification_dynamic_variable = apply_filters( 'affiliatepress_notification_dynamic_variable',$affiliatepress_notification_dynamic_variable, $affiliatepress_notification_slug,$affiliatepress_notification_type,$affiliatepress_notification_data_id,$affiliatepress_get_template_data);
+                    $affiliatepress_send_email = true;
+                    $affiliatepress_send_email = apply_filters('affiliatepress_validate_affiliate_email_notification', $affiliatepress_send_email, $affiliatepress_get_template_data);
 
-                    $receiver_email = (isset($affiliatepress_notification_dynamic_variable['affiliate_email']))?$affiliatepress_notification_dynamic_variable['affiliate_email']:'';
-                    $receiver_name = (isset($affiliatepress_notification_dynamic_variable['affiliate_first_name']))?$affiliatepress_notification_dynamic_variable['affiliate_first_name'].' '.$affiliatepress_notification_dynamic_variable['affiliate_last_name']:'';
-                    
-                    $receiver_data_arr = array(
-                        'receiver_name' => $receiver_name, 
-                        'receiver_email'=> $receiver_email
-                    );
+                    if ($affiliatepress_send_email) {
 
-                    $this->affiliatepress_email_sender_name  = $affiliatepress_admin_sender_name;
-                    $this->affiliatepress_email_sender_email = $affiliatepress_admin_sender_email;
-                    $reply_to_data_arr = array(
-                        'affiliatepress_email_reply_to_name' => $this->affiliatepress_email_sender_name,
-                        'affiliatepress_email_reply_to_email'=> $affiliatepress_admin_emails
-                    );                    
-                    
+                        $affiliatepress_notification_dynamic_variable = apply_filters( 'affiliatepress_notification_dynamic_variable',$affiliatepress_notification_dynamic_variable, $affiliatepress_notification_slug,$affiliatepress_notification_type,$affiliatepress_notification_data_id,$affiliatepress_get_template_data);
 
-                    $affiliatepress_email_subject = apply_filters( 'affiliatepress_notification_dynamic_variable_replace', $affiliatepress_notification_subject,$affiliatepress_notification_dynamic_variable);
+                        $receiver_email = (isset($affiliatepress_notification_dynamic_variable['affiliate_email']))?$affiliatepress_notification_dynamic_variable['affiliate_email']:'';
+                        $receiver_name = (isset($affiliatepress_notification_dynamic_variable['affiliate_first_name']))?$affiliatepress_notification_dynamic_variable['affiliate_first_name'].' '.$affiliatepress_notification_dynamic_variable['affiliate_last_name']:'';
+                        
+                        $receiver_data_arr = array(
+                            'receiver_name' => $receiver_name, 
+                            'receiver_email'=> $receiver_email
+                        );
 
-                    do_action('affiliatepress_other_debug_log_entry', 'email_notification_debug_logs', 'Affiliate Notification Message - '.$affiliatepress_notification_slug, 'affiliatepress_email_notiifcation', $affiliatepress_notification_message, $affiliatepress_other_debug_log_id);
+                        $this->affiliatepress_email_sender_name  = $affiliatepress_admin_sender_name;
+                        $this->affiliatepress_email_sender_email = $affiliatepress_admin_sender_email;
+                        $reply_to_data_arr = array(
+                            'affiliatepress_email_reply_to_name' => $this->affiliatepress_email_sender_name,
+                            'affiliatepress_email_reply_to_email'=> $affiliatepress_admin_emails
+                        );                    
+                        
 
-                    $affiliatepress_email_content = apply_filters( 'affiliatepress_notification_dynamic_variable_replace', $affiliatepress_notification_message,$affiliatepress_notification_dynamic_variable);
+                        $affiliatepress_email_subject = apply_filters( 'affiliatepress_notification_dynamic_variable_replace', $affiliatepress_notification_subject,$affiliatepress_notification_dynamic_variable);
 
-                    do_action('affiliatepress_other_debug_log_entry', 'email_notification_debug_logs', 'Affiliate Dynamic Variable - '.$affiliatepress_notification_slug, 'affiliatepress_email_notiifcation', $affiliatepress_notification_dynamic_variable, $affiliatepress_other_debug_log_id);
+                        do_action('affiliatepress_other_debug_log_entry', 'email_notification_debug_logs', 'Affiliate Notification Message - '.$affiliatepress_notification_slug, 'affiliatepress_email_notiifcation', $affiliatepress_notification_message, $affiliatepress_other_debug_log_id);
 
-                    do_action('affiliatepress_other_debug_log_entry', 'email_notification_debug_logs', 'Affiliate Notification Message - '.$affiliatepress_notification_slug, 'affiliatepress_email_notiifcation', $affiliatepress_email_content, $affiliatepress_other_debug_log_id);                        
+                        $affiliatepress_email_content = apply_filters( 'affiliatepress_notification_dynamic_variable_replace', $affiliatepress_notification_message,$affiliatepress_notification_dynamic_variable);
 
-                    $affiliatepress_send_email_data = $this->affiliatepress_send_email($affiliatepress_email_subject,$affiliatepress_email_content,$receiver_data_arr,$reply_to_data_arr,array(), false,$affiliatepress_notification_dynamic_variable,$affiliatepress_get_template_data);
+                        do_action('affiliatepress_other_debug_log_entry', 'email_notification_debug_logs', 'Affiliate Dynamic Variable - '.$affiliatepress_notification_slug, 'affiliatepress_email_notiifcation', $affiliatepress_notification_dynamic_variable, $affiliatepress_other_debug_log_id);
 
-                    if($affiliatepress_send_email_data['is_mail_sent'] == 1){
-                        $return_data['affiliate_send_email'] = 1;
+                        do_action('affiliatepress_other_debug_log_entry', 'email_notification_debug_logs', 'Affiliate Notification Message - '.$affiliatepress_notification_slug, 'affiliatepress_email_notiifcation', $affiliatepress_email_content, $affiliatepress_other_debug_log_id);                        
 
-                        do_action('affiliatepress_other_debug_log_entry', 'email_notification_debug_logs', 'Affiliate Email Successfully send - '.$affiliatepress_notification_slug, 'affiliatepress_email_notiifcation', 'Email successfully send for '.$receiver_email, $affiliatepress_other_debug_log_id);
+                        $affiliatepress_send_email_data = $this->affiliatepress_send_email($affiliatepress_email_subject,$affiliatepress_email_content,$receiver_data_arr,$reply_to_data_arr,array(), false,$affiliatepress_notification_dynamic_variable,$affiliatepress_get_template_data);
+
+                        if($affiliatepress_send_email_data['is_mail_sent'] == 1){
+                            $return_data['affiliate_send_email'] = 1;
+
+                            do_action('affiliatepress_other_debug_log_entry', 'email_notification_debug_logs', 'Affiliate Email Successfully send - '.$affiliatepress_notification_slug, 'affiliatepress_email_notiifcation', 'Email successfully send for '.$receiver_email, $affiliatepress_other_debug_log_id);
+                        }
+
+                        $affiliatepress_attachments = array();
+                    }else{
+                        do_action('affiliatepress_other_debug_log_entry','email_notification_debug_logs','Affiliate Email Blocked - '.$affiliatepress_notification_slug, 'affiliatepress_email_notification','Email Blocked its reason to not send affiliate mail',$affiliatepress_other_debug_log_id );
                     }
-
-                    $affiliatepress_attachments = array();
 
                 }
                 /* Get Affiliate Template Data Over */

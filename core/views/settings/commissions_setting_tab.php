@@ -1,5 +1,6 @@
 <?php 
-global $AffiliatePress;
+    if ( ! defined( 'ABSPATH' ) ) { exit; }
+    global $AffiliatePress;
 ?>
 <el-tab-pane class="ap-tabs--v_ls__tab-item--pane-body" name ="commissions_settings"  data-tab_name="commissions_settings">
     <template #label>

@@ -119,6 +119,9 @@ if (! class_exists('affiliatepress_commissions') ) {
                 }
                 $affiliatepress_bulk_action = sanitize_text_field($_POST['bulk_action']); // phpcs:ignore 
                 $affiliatepress_new_status  = ($affiliatepress_bulk_action == 'approve')?1:(($affiliatepress_bulk_action == 'reject')?3:'');
+                if($affiliatepress_bulk_action == "pending"){
+                    $affiliatepress_new_status = 2;
+                }
                 if(is_array($affiliatepress_commission_ids) && !empty($affiliatepress_new_status)){
                     $affiliatepress_commission_ids = ! empty($affiliatepress_commission_ids) ? array_map(array( $AffiliatePress, 'affiliatepress_array_sanatize_integer_field' ), $affiliatepress_commission_ids) : array(); // phpcs:ignore                    
                     if (!empty($affiliatepress_commission_ids)) {
@@ -288,7 +291,7 @@ if (! class_exists('affiliatepress_commissions') ) {
 
                 $affiliatepress_affiliates_id = (isset($affiliatepress_visists_data['ap_affiliates_id']))?intval($affiliatepress_visists_data['ap_affiliates_id']):0;
                 $affiliatepress_visit_id = (isset($affiliatepress_visists_data['ap_visit_id']))?intval($affiliatepress_visists_data['ap_visit_id']):0;
-                $affiliatepress_visit_created_date = (isset($affiliatepress_visists_data['ap_visit_created_date']))?intval($affiliatepress_visists_data['ap_visit_created_date']):"";
+                $affiliatepress_visit_created_date = (isset($affiliatepress_visists_data['ap_visit_created_date'])) ? $affiliatepress_visists_data['ap_visit_created_date'] :"";
 
                 if(!empty($affiliatepress_visit_created_date)){
 
@@ -427,7 +430,7 @@ if (! class_exists('affiliatepress_commissions') ) {
          * @return json
         */
         function affiliatepress_add_commission_func(){
-            global $wpdb, $affiliatepress_tbl_ap_affiliate_commissions,$AffiliatePress;
+            global $wpdb, $affiliatepress_tbl_ap_affiliate_commissions,$AffiliatePress,$affiliatepress_tracking,$affiliatepress_tbl_ap_affiliate_visits;
             
             $affiliatepress_ap_check_authorization = $this->affiliatepress_ap_check_authentication( 'add_commission', true, 'ap_wp_nonce' ); /* varify Nonce here */
             $response = array();
@@ -543,7 +546,27 @@ if (! class_exists('affiliatepress_commissions') ) {
                     'ap_commission_note'             => $affiliatepress_commission_note,
                     'ap_commission_created_date'     => $affiliatepress_commission_created_date
                 );                
-                if($affiliatepress_commission_id == 0){                    
+                if($affiliatepress_commission_id == 0){ 
+
+                    $affiliatepress_visit_args = array(
+                        'ap_affiliates_id'      => $affiliatepress_affiliates_id,
+                        'ap_visit_created_date' => $affiliatepress_commission_created_date,
+                        'ap_visit_ip_address'   => '',
+                        'ap_visit_country'      => '',
+                        'ap_visit_iso_code'     => '',
+                        'ap_visit_browser'      => '',
+                        'ap_visit_landing_url'  => '',
+                        'ap_referrer_url'       => '',   
+                        'ap_affiliates_campaign_name' =>'',           
+                        'ap_affiliates_sub_id' => '',          
+                    );
+
+                    $affiliatepress_visit_id = $this->affiliatepress_insert_record($affiliatepress_tbl_ap_affiliate_visits, $affiliatepress_visit_args);
+
+                    do_action('affiliatepress_after_visit_insert', $affiliatepress_visit_id, $affiliatepress_visit_args);
+                    
+                    $affiliatepress_args['ap_visit_id'] = $affiliatepress_visit_id;
+
                     $affiliatepress_commission_id = $this->affiliatepress_insert_record($affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_args);
                     $response['variant'] = 'success';
                     $response['title']   = esc_html__('Sucess', 'affiliatepress-affiliate-marketing');
@@ -720,7 +743,7 @@ if (! class_exists('affiliatepress_commissions') ) {
                 }
 
 
-                $affiliatepress_where_clause .= $wpdb->prepare( " AND ( affiliate.ap_affiliates_first_name LIKE %s OR affiliate.ap_affiliates_last_name LIKE %s)", '%'.$affiliatepress_search_user_str.'%', '%'.$affiliatepress_search_name_last.'%');
+                $affiliatepress_where_clause .= $wpdb->prepare( " AND ( affiliate.ap_affiliates_first_name LIKE %s OR affiliate.ap_affiliates_last_name LIKE %s OR affiliate.ap_affiliates_user_name LIKE %s)", '%'.$affiliatepress_search_user_str.'%', '%'.$affiliatepress_search_name_last.'%', '%'.$affiliatepress_search_user_str.'%');
 
                 if(isset($_POST['not_get_affiliate'])){// phpcs:ignore
                     $affiliatepress_not_get_affiliate = intval($_POST['not_get_affiliate']);// phpcs:ignore
@@ -729,7 +752,7 @@ if (! class_exists('affiliatepress_commissions') ) {
                     }                    
                 }
 
-                $affiliatepress_affiliates_record    = $wpdb->get_results("SELECT affiliate.ap_affiliates_id,affiliate.ap_affiliates_user_email, affiliate.ap_affiliates_first_name, affiliate.ap_affiliates_last_name   FROM {$affiliatepress_tbl_ap_affiliates_temp} as affiliate {$affiliatepress_where_clause} ", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates_temp is a table name. false alarm  
+                $affiliatepress_affiliates_record    = $wpdb->get_results("SELECT affiliate.ap_affiliates_id,affiliate.ap_affiliates_user_email, affiliate.ap_affiliates_first_name, affiliate.ap_affiliates_last_name , affiliate.ap_affiliates_user_name   FROM {$affiliatepress_tbl_ap_affiliates_temp} as affiliate {$affiliatepress_where_clause} ", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates_temp is a table name. false alarm  
 
                 if(!empty($affiliatepress_affiliates_record)){
 
@@ -746,12 +769,14 @@ if (! class_exists('affiliatepress_commissions') ) {
                         $ap_affiliates_last_name  = $affiliatepress_single_affiliate['ap_affiliates_last_name'];
                         $affiliatepress_full_name = $ap_affiliates_first_name.' '.$ap_affiliates_last_name;
 
+                        $affiliatepress_affiliates_username  = $affiliatepress_single_affiliate['ap_affiliates_user_name'];
+
                         if(empty($affiliatepress_full_name)){
                             $affiliatepress_full_name = $affiliatepress_single_affiliate['ap_affiliates_user_email'];
                         }
                         $affiliatepress_user                  = array();
                         $affiliatepress_user['value']         = esc_html($affiliatepress_single_affiliate['ap_affiliates_id']);
-                        $affiliatepress_user['label']         = esc_html($affiliatepress_full_name);
+                        $affiliatepress_user['label']         = esc_html($affiliatepress_full_name).' / '.$affiliatepress_affiliates_username;
                         $affiliatepress_existing_users_data[] = $affiliatepress_user;
                     }
 
@@ -829,7 +854,7 @@ if (! class_exists('affiliatepress_commissions') ) {
                             if ($return ) {
                                 $response['variant'] = 'success';
                                 $response['title']   = esc_html__('Success', 'affiliatepress-affiliate-marketing');
-                                $response['msg']     = esc_html__('Commission has been deleted successfully.', 'affiliatepress-affiliate-marketing');
+                                $response['msg']     = esc_html__('Commissions had been deleted successfully.', 'affiliatepress-affiliate-marketing');
                             } else {
                                 $response['variant'] = 'warning';
                                 $response['title']   = esc_html__('Warning', 'affiliatepress-affiliate-marketing');
@@ -1487,7 +1512,7 @@ if (! class_exists('affiliatepress_commissions') ) {
                                 duration:'.intval($affiliatepress_notification_duration).',
                             });
                         });
-                    }else if(this.multipleSelection.length > 0 && (this.bulk_action == "approve" || this.bulk_action == "reject")){
+                    }else if(this.multipleSelection.length > 0 && (this.bulk_action == "approve" || this.bulk_action == "reject" || this.bulk_action == "pending")){
                         var bulk_action_postdata = {
                             action:"affiliatepress_commission_bulk_status_change",
                             ids: vm.multipleSelectionVal,
@@ -1896,7 +1921,11 @@ if (! class_exists('affiliatepress_commissions') ) {
                     array(
                         'value' => 'reject',
                         'label' => esc_html__('Reject', 'affiliatepress-affiliate-marketing'),
-                    ),                                        
+                    ),
+                    array(
+                        'value' => 'pending',
+                        'label' => esc_html__('Pending', 'affiliatepress-affiliate-marketing'),
+                    ),    
                 ),
                 'loading'                       => false,
                 'commissions_search'            => array(

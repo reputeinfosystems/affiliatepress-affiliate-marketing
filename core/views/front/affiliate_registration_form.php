@@ -1,4 +1,5 @@
 <?php 
+    if ( ! defined( 'ABSPATH' ) ) { exit; }
     global $affiliatepress_get_setting_data;
 ?>
 <div v-cloak class="ap-front-reg-container <?php echo esc_html((is_rtl())?'ap-front-reg-container-rtl':''); ?>" id="affiliatepress_reg_form_<?php echo esc_html( $affiliatepress_uniq_id ); ?>" style="min-height:700px;">

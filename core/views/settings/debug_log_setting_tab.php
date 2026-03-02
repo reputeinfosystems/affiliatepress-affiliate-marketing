@@ -1,3 +1,6 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) { exit; }
+?>
 <el-tab-pane class="ap-tabs--v_ls__tab-item--pane-body ap-tabl-debug_log_settings" name ="debug_log_settings"  data-tab_name="debug_log_settings">
     <template #label>
         <span>

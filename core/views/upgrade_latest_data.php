@@ -58,7 +58,15 @@ if (version_compare($affiliatepress_old_version, '1.8', '<') )
     $AffiliatePress->affiliatepress_update_settings('dashboard_chart_commisisons','message_settings',esc_html__('Commissions', 'affiliatepress-affiliate-marketing'));
 }
 
-$affiliatepress_new_version = '2.0';
+if (version_compare($affiliatepress_old_version, '2.1', '<') ) {
+    global $affiliatepress_tbl_ap_payments;
+    $affiliatepress_payment_col_added = $wpdb->get_results( $wpdb->prepare( "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND column_name = 'ap_payment_visit'", DB_NAME, $affiliatepress_tbl_ap_payments ) );// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_payments is a table name. false alarm
+	if ( empty( $affiliatepress_payment_col_added ) ) {
+		$wpdb->query( "ALTER TABLE `{$affiliatepress_tbl_ap_payments}` ADD `ap_payment_visit` INT(11) default 0 AFTER `ap_payment_status`" );// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_payments is a table name. false alarm
+	}		
+}
+
+$affiliatepress_new_version = '2.1';
 update_option('affiliatepress_new_version_installed', 1);
 update_option('affiliatepress_version', $affiliatepress_new_version);
 update_option('affiliatepress_updated_date_' . $affiliatepress_new_version, current_time('mysql'));

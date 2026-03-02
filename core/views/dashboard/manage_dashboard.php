@@ -13,6 +13,22 @@
         </div>   
 
         <div class="ap-default-card ap-dashboard-count">
+            <el-row :gutter="12" type="flex" class="ap-head-wrap1 ap-dashboard-heading-row" v-if="affiliatepress_any_interation_active !=true">
+                <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="ap-head-left">
+                    <div class="ap-not-any-ntegration">
+                       <div>
+                            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 6H16.8486C16.3511 6 16 5.49751 16 5C16 3.34315 14.6569 2 13 2C11.3431 2 10 3.34315 10 5C10 5.49751 9.6488 6 9.1513 6H7C6.44771 6 6 6.44772 6 7V9.1513C6 9.6488 5.49751 10 5 10C3.34315 10 2 11.3431 2 13C2 14.6569 3.34315 16 5 16C5.49751 16 6 16.3511 6 16.8486V19C6 19.5523 6.44771 20 7 20H19C19.5523 20 20 19.5523 20 19V16.8486C20 16.3511 19.4975 16 19 16C17.3431 16 16 14.6569 16 13C16 11.3431 17.3431 10 19 10C19.4975 10 20 9.6488 20 9.1513V7C20 6.44772 19.5523 6 19 6Z" stroke="#6858E0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                       </div>
+                        <div>
+                            <?php
+                            echo sprintf( __('No integrations are currently enabled. Please visit %1$s to configure one.','affiliatepress-affiliate-marketing'),'<span class="ap-bold-font" @click="affiliatepress_redirect_integration_settings">' .'<span class="ap-content-decoration">' . esc_html__( 'Settings', 'affiliatepress-affiliate-marketing' ) .'</span> → ' .'<span class="ap-content-decoration">' . esc_html__( 'Integrations', 'affiliatepress-affiliate-marketing' ) .'</span>' . '</span>');//phpcs:ignore
+                            ?>
+                        </div>
+                    </div>
+                </el-col>           
+            </el-row>
             <el-row :gutter="12" type="flex" class="ap-head-wrap1 ap-dashboard-heading-row">
                 <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="ap-head-left">
                     <h1 class="ap-page-heading"><?php esc_html_e('Dashboard', 'affiliatepress-affiliate-marketing'); ?></h1>

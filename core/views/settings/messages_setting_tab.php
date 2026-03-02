@@ -1,3 +1,6 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) { exit; }
+?>
 <el-tab-pane class="ap-tabs--v_ls__tab-item--pane-body" name ="message_settings"  data-tab_name="message_settings">
     <template #label>
         <span>

@@ -1402,6 +1402,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                     $affiliatepress_visit = $affiliatepress_single_affiliate;                    
                     $affiliatepress_visit['sr_no'] = intval($affiliatepress_single_affiliate['ap_visit_id']);
                     $affiliatepress_visit['visit_created_date_formated'] = $AffiliatePress->affiliatepress_formated_date_display($affiliatepress_single_affiliate['ap_visit_created_date']);
+                    $affiliatepress_visit['ap_commission_id'] = apply_filters('affiliatepress_visit_commisison_update', $affiliatepress_single_affiliate['ap_commission_id']);
                     $affiliates[] = $affiliatepress_visit;
                 }
             }
@@ -1518,6 +1519,9 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                     $affiliatepress_where_clause.= $wpdb->prepare( " AND (commissions.ap_commission_status = %d) ", $affiliatepress_commission_status);
                 }
             }
+
+            $affiliatepress_where_clause = apply_filters( 'affiliatepress_modify_commission_data', $affiliatepress_where_clause);
+
             $affiliatepress_tbl_ap_affiliate_commissions_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_affiliate_commissions); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $affiliatepress_tbl_ap_affiliate_commissions contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function 
 
             $affiliatepress_tbl_ap_affiliates_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_affiliates); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $affiliatepress_tbl_ap_affiliates contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function 

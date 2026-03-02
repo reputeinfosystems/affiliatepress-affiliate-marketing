@@ -1,3 +1,6 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) { exit; }
+?>
 <el-tab-pane class="ap-tabs--v_ls__tab-item--pane-body" name ="affiliate_settings"  data-tab_name="affiliate_settings">
     <template #label>
         <span>

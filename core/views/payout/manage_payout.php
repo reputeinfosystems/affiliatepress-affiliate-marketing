@@ -327,7 +327,7 @@
                                         <template #label>
                                             <span class="ap-form-label"><?php esc_html_e('Unpaid Commissions Up to', 'affiliatepress-affiliate-marketing'); ?></span>
                                         </template>                                            
-                                        <el-date-picker v-model="payout.payout_upto" class="ap-form-date-picker-control" size="large" value-format="YYYY-MM-DD" :format="ap_common_date_format" placeholder="<?php esc_html_e('Select Date', 'affiliatepress-affiliate-marketing'); ?>"></el-date-picker>
+                                        <el-date-picker v-model="payout.payout_upto" class="ap-form-date-picker-control" size="large" value-format="YYYY-MM-DD" :format="ap_common_date_format" placeholder="<?php esc_html_e('Select Date', 'affiliatepress-affiliate-marketing'); ?>" :disabled-date="disabled_after_grace_period_date"></el-date-picker>
                                     </el-form-item>
                                 </div>
                                 <div class="ap-single-field__form">                                                                                                 
@@ -350,28 +350,55 @@
                                     <el-checkbox v-model="auto_approved_payouts" class="ap-form-label ap-custom-checkbox--is-label ap-csf-custom-checkbox" label="<?php esc_html_e('Set Payout as Paid', 'affiliatepress-affiliate-marketing'); ?>"><?php esc_html_e('Set Payout as Paid', 'affiliatepress-affiliate-marketing'); ?></el-checkbox>
                                 </div>  
                                 <div class="ap-payout-table-data">
-                                    <el-table @selection-change="handleSelectionPreview" ref="payout_preview_table" class="ap-manage-payout-items" :data="preview_affiliates">     
+                                    <el-table @selection-change="handleSelectionPreview" ref="payout_preview_table" class="ap-manage-payout-items" :data="preview_affiliates">  
+                                        <el-table-column type="expand" width="40">
+                                            <template slot-scope="scope" #default="scope">
+                                            <div class="ap-table-expand-view-wapper ap-desktop-expand">
+                                                <div class="ap-table-expand-view">
+                                                    <div class="ap-table-expand-view-inner">
+                                                        <div class="ap-table-expand-label"><?php esc_html_e('Username', 'affiliatepress-affiliate-marketing'); ?></div>
+                                                        <div class="ap-table-expand-seprater"></div>
+                                                        <div class="ap-table-expand-value"><div>{{ scope.row.affiiate_user_name }}</div></div>
+                                                    </div>    
+                                                    <div class="ap-table-expand-view-inner">
+                                                        <div class="ap-table-expand-label"><?php esc_html_e('Pay ID', 'affiliatepress-affiliate-marketing'); ?></div>
+                                                        <div class="ap-table-expand-seprater"></div>
+                                                        <div class="ap-table-expand-value">
+                                                            <span v-if="scope.row.affiiate_payment_email != ''">{{ scope.row.affiiate_payment_email }}</span>
+                                                            <span v-else>-</span>
+                                                        </div>
+                                                    </div>   
+                                                    <div class="ap-table-expand-view-inner">
+                                                        <div class="ap-table-expand-label"><?php esc_html_e('Commissions', 'affiliatepress-affiliate-marketing'); ?></div>
+                                                        <div class="ap-table-expand-seprater"></div>
+                                                        <div class="ap-table-expand-value">{{ scope.row.total_commission }}</div>
+                                                    </div>   
+                                                    <div class="ap-table-expand-view-inner">
+                                                        <div class="ap-table-expand-label"><?php esc_html_e('Visitors', 'affiliatepress-affiliate-marketing'); ?></div>
+                                                        <div class="ap-table-expand-seprater"></div>
+                                                        <div class="ap-table-expand-value" v-if ="scope.row.ap_payout_visit_count == 0">-</div>
+                                                        <div class="ap-table-expand-value" v-else>{{ scope.row.ap_payout_visit_count }}  (<?php esc_html_e('Conversion Rate', 'affiliatepress-affiliate-marketing'); ?>: {{ scope.row.ap_payout_visit_conversion_rate }}%)</div>
+                                                    </div>   
+                                                </div>
+                                            </div>
+                                            </template>
+                                        </el-table-column>      
                                         <el-table-column type="selection" :selectable="selected_paymnet_affiliate_row"></el-table-column>
-                                        <el-table-column min-width="60" label="<?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?>">
+                                        <el-table-column min-width="50" label="<?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?>">
                                             <template #default="scope">
                                                 <span>{{ scope.row.affiiate_name }}</span>
                                             </template>
-                                        </el-table-column> 
-                                        <el-table-column min-width="60" label="<?php esc_html_e('Amount', 'affiliatepress-affiliate-marketing'); ?>">
+                                        </el-table-column>
+                                        <el-table-column min-width="30" align="right" header-align="right" label="<?php esc_html_e('Amount', 'affiliatepress-affiliate-marketing'); ?>">
                                             <template #default="scope">
                                                 <span>{{ scope.row.total_amount_formted }}</span>
                                             </template>
                                         </el-table-column> 
-                                        <el-table-column min-width="60" label="<?php esc_html_e('Commissions', 'affiliatepress-affiliate-marketing'); ?>">
-                                            <template #default="scope">
-                                                <span>{{ scope.row.total_commission }}</span>
-                                            </template>
-                                        </el-table-column> 
-                                        <el-table-column min-width="60" label="<?php esc_html_e('Payment Method', 'affiliatepress-affiliate-marketing'); ?>">
+                                        <el-table-column min-width="60" align="center" header-align="center" label="<?php esc_html_e('Payment Method', 'affiliatepress-affiliate-marketing'); ?>">
                                             <template #default="scope">
                                                 <span>{{ scope.row.payment_method_label }}</span>
                                             </template>
-                                        </el-table-column>                                                                                                                
+                                        </el-table-column> 
                                     </el-table>    
                                 </div>
                             </div>
@@ -407,11 +434,7 @@
                             <div class="ap-dlt__form_title"><?php esc_html_e('Payout Details', 'affiliatepress-affiliate-marketing'); ?></div>
                             <div class="ap-dlt__form_payout_info">
                                 <div class="ap-flex-between ap-payout-box">
-                                    <div class="ap-payout-detail-title"><?php esc_html_e('Payout ID :', 'affiliatepress-affiliate-marketing'); ?></div>
-                                    <div class="ap-payout-detail-value">#{{edit_payout_data.ap_payout_id}}</div>
-                                </div>
-                                <div class="ap-flex-between ap-payout-box">
-                                    <div class="ap-payout-detail-title"><?php esc_html_e('Unpaid Commissions Up to :', 'affiliatepress-affiliate-marketing'); ?></div>
+                                    <div class="ap-payout-detail-title"><?php esc_html_e('Commissions Up to :', 'affiliatepress-affiliate-marketing'); ?></div>
                                     <div class="ap-payout-detail-value">{{edit_payout_data.ap_payout_upto_date_formated}}</div>
                                 </div> 
                                 <div class="ap-flex-between ap-payout-box">
@@ -421,6 +444,10 @@
                                 <div class="ap-flex-between ap-payout-box">
                                     <div class="ap-payout-detail-title"><?php esc_html_e('Payout Amount :', 'affiliatepress-affiliate-marketing'); ?></div>
                                     <div class="ap-payout-detail-value">{{edit_payout_data.ap_formated_payout_amount}}</div>
+                                </div> 
+                                <div class="ap-flex-between ap-payout-box" v-if="edit_payout_data.affiliatepress_common_payment_method != ''">
+                                    <div class="ap-payout-detail-title"><?php esc_html_e('Payout Method :',  'affiliatepress-affiliate-marketing');// phpcs:ignore ?></div>
+                                    <div class="ap-payout-detail-value">{{edit_payout_data.affiliatepress_common_payment_method}}</div>
                                 </div> 
                                 <div class="ap-flex-between ap-payout-box">
                                     <div class="ap-payout-detail-title"><?php esc_html_e('Total Affiliates :', 'affiliatepress-affiliate-marketing'); ?></div>
@@ -434,28 +461,59 @@
                         </div>
                         <div v-if="edit_payout_payments != '' && edit_payout_payments.length != 0" class="ap-payout-table-data ap-payment-table-data">
                             <div class="ap-dlt__form_title"><?php esc_html_e('Payout Payments', 'affiliatepress-affiliate-marketing'); ?></div>
-                            <el-table ref="payout_payment_table" class="ap-manage-payout-items" :data="edit_payout_payments">                                 
+                            <el-table ref="payout_payment_table" class="ap-manage-payout-items" :data="edit_payout_payments" @row-click="affiliatepress_payout_full_row_clickable">   
+                                <el-table-column type="expand" width="60">
+                                    <template slot-scope="scope" #default="scope">
+                                    <div class="ap-table-expand-view-wapper ap-desktop-expand">
+                                        <div class="ap-table-expand-view">
+                                            <div class="ap-table-expand-view-inner">
+                                                <div class="ap-table-expand-label"><?php esc_html_e('Username', 'affiliatepress-affiliate-marketing'); ?></div>
+                                                <div class="ap-table-expand-seprater"></div>
+                                                <div class="ap-table-expand-value"><div>{{ scope.row.ap_affiliates_user_name }}</div></div>
+                                            </div>    
+                                            <div class="ap-table-expand-view-inner">
+                                                <div class="ap-table-expand-label"><?php esc_html_e('Pay ID', 'affiliatepress-affiliate-marketing'); ?></div>
+                                                <div class="ap-table-expand-seprater"></div>
+                                                <div class="ap-table-expand-value">
+                                                    <span v-if="scope.row.ap_affiliates_payment_email != ''">{{ scope.row.ap_affiliates_payment_email }}</span>
+                                                    <span v-else>-</span>
+                                                </div>
+                                            </div>   
+                                            <div class="ap-table-expand-view-inner">
+                                                <div class="ap-table-expand-label"><?php esc_html_e('Commissions', 'affiliatepress-affiliate-marketing'); ?></div>
+                                                <div class="ap-table-expand-seprater"></div>
+                                                <div class="ap-table-expand-value">{{ scope.row.ap_affiliate_commission_count }}</div>
+                                            </div>   
+                                            <div class="ap-table-expand-view-inner">
+                                                <div class="ap-table-expand-label"><?php esc_html_e('Visitors', 'affiliatepress-affiliate-marketing'); ?></div>
+                                                <div class="ap-table-expand-seprater"></div>
+                                                <div class="ap-table-expand-value" v-if="scope.row.ap_affiliate_visit_count == 0">-</div>
+                                                <div class="ap-table-expand-value" v-else>{{ scope.row.ap_affiliate_visit_count }} (<?php esc_html_e('Conversion Rate', 'affiliatepress-affiliate-marketing'); ?>: {{ scope.row.ap_payout_visit_conversion_rate }}%)</div>
+                                            </div>   
+                                            <div class="ap-table-expand-view-inner">
+                                                <div class="ap-table-expand-label"><?php esc_html_e('Payment Method', 'affiliatepress-affiliate-marketing'); ?></div>
+                                                <div class="ap-table-expand-seprater"></div>
+                                                <div class="ap-table-expand-value">{{ scope.row.ap_payment_method }}</div>
+                                            </div>  
+                                        </div>
+                                    </div>
+                                    </template>
+                                </el-table-column>                                                
                                 <el-table-column  label="<?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?>">
                                     <template #default="scope">
                                         <span>{{ scope.row.affiliate_name }}</span>
                                     </template>
                                 </el-table-column> 
-                                <el-table-column  label="<?php esc_html_e('Amount', 'affiliatepress-affiliate-marketing'); ?>">
+                                <el-table-column align="right" header-align="right"  label="<?php esc_html_e('Amount', 'affiliatepress-affiliate-marketing'); ?>">
                                     <template #default="scope">
                                         <span>{{ scope.row.ap_payment_amount_formated }}</span>
                                     </template>
-                                </el-table-column> 
-                                <el-table-column  label="<?php esc_html_e('Status', 'affiliatepress-affiliate-marketing'); ?>">
+                                </el-table-column>
+                                <el-table-column align="center" header-align="center" class-name="ap-action-column" label="<?php esc_html_e('Status', 'affiliatepress-affiliate-marketing'); ?>">
                                     <template #default="scope">
-                                        <span class="ap-status-display" :class="[(scope.row.ap_payment_status == '1'?'ap-status-orange-color':''),(scope.row.ap_payment_status == '4'?'ap-status-green':''),((scope.row.ap_payment_status == '5' || scope.row.ap_payment_status == '2')?'ap-status-orange-color':''),(scope.row.ap_payment_status == '3'?'ap-status-reject-color':'')]">{{ scope.row.payment_status_name }}</span>                                                                                                             
-                                    </template>
-                                </el-table-column> 
-                                <el-table-column class-name="ap-action-column" label="<?php esc_html_e('Payment Method', 'affiliatepress-affiliate-marketing'); ?>">
-                                    <template #default="scope">
-                                        <span>{{ scope.row.ap_payment_method }}</span>
+                                        <span class="ap-status-display" :class="[(scope.row.ap_payment_status == '1'?'ap-status-orange-color':''),(scope.row.ap_payment_status == '4'?'ap-status-green':''),((scope.row.ap_payment_status == '5' || scope.row.ap_payment_status == '2')?'ap-status-orange-color':''),(scope.row.ap_payment_status == '3'?'ap-status-reject-color':'')]">{{ scope.row.payment_status_name }}</span>
                                         <div :class="(scope.row.payment_status_change_loader == '1')?'ap-table-actions-wrap-disp':''" class="ap-table-actions-wrap">
                                             <div v-if="scope.row.ap_payment_status != '5'" class="ap-table-actions ap-payment-table-actions">
-
                                                 <div v-if="scope.row.payment_status_change_loader == '1'" class="ap-btn--is-loader">                                        
                                                     <div class="ap-only--loader__circles">
                                                         <div></div>
@@ -483,12 +541,11 @@
                                                             <?php do_action('affiliatepress_common_svg_code','payout_note_icon'); ?>                                                   
                                                         </span>
                                                     </el-button>
-                                                </el-tooltip>                                                                                         
-                                                
+                                                </el-tooltip>
                                             </div>
                                         </div>                                     
                                     </template>
-                                </el-table-column>                                                                                                                
+                                </el-table-column>
                             </el-table>    
                         </div>                    
                     </div>                

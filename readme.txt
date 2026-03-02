@@ -3,9 +3,9 @@ Contributors: reputeinfosystems
 Tags: Affiliate, Affiliates, Affiliate marketing, Affiliate program, Affiliate management
 Donate link: https://www.affiliatepressplugin.com/
 Requires at least: 5.3.0
-Tested up to: 6.8.3
+Tested up to: 6.9
 Requires PHP: 7.0
-Stable tag: 1.4
+Stable tag: 2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -128,6 +128,42 @@ Please follow the steps for installation:
 1. AffiliatePress – WordPress Affiliate Plugin
 
 == Changelog ==
+
+= 2.1 =
+* Added a Facility to allow selecting a payout date before the "Refund Grace Period" when generating payouts manually.
+* Added a Facility to search affiliates by Affiliate Name or Username.
+* Added a Facility to sort "Converted" column in Admin Panel "Manage Affiliates" page.
+* Improved Payout Detail Section: Displayed Pay ID (Payment Email Address), Affiliate Username, Affiliate Commission Count, and Affiliate Visit Count.
+* Updated ARMember Integration Support with ARMember Version 7.1.
+* Other minor bug fixes.
+
+= 2.0 =
+* Minor bug fixes.
+
+= 1.9 =
+* Improved: Admin Panel Affiliate User Search Auto Complete.
+* Other minor bug fixes.
+
+= 1.8 = 
+* Added a Facility to Sort Total Visitors on the Affiliates page.
+* Added a Facility to Manage the Chart Labels of the Affiliate Panel.
+* Other minor bug fixes.
+
+= 1.7 = 
+* Added a Facility to display the country on the Admin Panel visits page.
+* Updated Support for the ARMember – Membership Plugin.
+* Updated Support for the WP Simple Pay (Stripe).
+* Other minor bug fixes.
+
+= 1.6 = 
+* Fixed: Grid sorting for admin pages.
+* Other minor bug fixes.
+
+= 1.5 = 
+* Added New Facility: Confirm Password field for Affiliate Signup.
+* Added New Facility: Admin Panel – view records per page.
+* Other Minor bug fixes.
+
 = 1.4 = 
 * Minor bug fixes.
 

@@ -538,6 +538,19 @@ if (! class_exists('affiliatepress_dashboard') ) {
             $affiliatepress_dashboard_vue_data_fields['all_commissions_status'] = $affiliatepress_all_commissions_status;
             $affiliatepress_dashboard_vue_data_fields['commissions'] = $affiliatepress_all_commissions; 
 
+            $affiliatepress_any_interation_active = false;
+
+            $affiliatepress_integrations = array('enable_woocommerce','enable_armember','enable_easy_digital_downloads', 'enable_bookingpress', 'enable_memberpress','enable_surecart', 'enable_restrict_content','enable_wp_easycart','enable_lifter_lms', 'enable_arforms', 'enable_give_wp', 'enable_simple_membership', 'enable_paid_memberships_pro','enable_paid_memberships_subscriptions','enable_ultimate_membership_pro','enable_ninjaforms','enable_wp_forms', 'enable_gravity_forms','enable_wp_simple_pay','enable_masteriyo_lms','enable_getpaid','enable_learnpress', 'enable_accept_stripe_payments','enable_download_manager','enable_learndash' );
+
+            foreach ($affiliatepress_integrations as $affiliatepress_integration) {
+                if ($AffiliatePress->affiliatepress_get_settings($affiliatepress_integration, 'integrations_settings') === 'true') {
+                    $affiliatepress_any_interation_active = true;
+                    break;
+                }
+            }
+
+            $affiliatepress_dashboard_vue_data_fields['affiliatepress_any_interation_active'] = $affiliatepress_any_interation_active;
+
             $affiliatepress_dashboard_vue_data_fields = apply_filters('affiliatepress_backend_modify_dashboard_data', $affiliatepress_dashboard_vue_data_fields); 
             
             return wp_json_encode($affiliatepress_dashboard_vue_data_fields);
@@ -788,6 +801,13 @@ if (! class_exists('affiliatepress_dashboard') ) {
                     }
                     vm.$refs.multipleTable.toggleRowExpansion(row);
                 },   
+                affiliatepress_redirect_integration_settings(){
+                    const vm = this;      
+                    var redirect_url = "?page=affiliatepress_settings&setting_page=integrations_settings";          	
+                    if(redirect_url != "") {						
+                        window.location.href = redirect_url;
+                    }		
+                },
                 '.$affiliatepress_dashboard_dynamic_add_vue_methods.'  
             ';
             return $affiliatepress_dashboard_dynamic_vue_methods;

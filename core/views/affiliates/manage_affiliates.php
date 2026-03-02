@@ -137,7 +137,7 @@
                                     </span>
                                 </template>
                             </el-table-column>
-                            <el-table-column class-name="ap-action-column" prop="converted_user" min-width="150" label="<?php esc_html_e('Converted', 'affiliatepress-affiliate-marketing'); ?>">
+                            <el-table-column class-name="ap-action-column" prop="converted_user" min-width="150" label="<?php esc_html_e('Converted', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by="converted_user">
                                 <template #default="scope">
                                     <span>{{ scope.row.converted_user }}</span>
                                     <div class="ap-table-actions-wrap">
