@@ -204,6 +204,13 @@ if( !class_exists('affiliatepress_lifter_lms') ){
                 'affiliate_id' => $affiliatepress_affiliate_id
             );
 
+            $affiliatepress_customer_commisison_add = true;
+            $affiliatepress_customer_commisison_add = apply_filters('affiliatepress_validate_customer_for_commission', $affiliatepress_customer_commisison_add, $affiliatepress_customer_args,$this->affiliatepress_integration_slug);
+
+            if(!$affiliatepress_customer_commisison_add){
+                return;
+            }
+
             $affiliatepress_customer_id = $AffiliatePress->affiliatepress_add_commission_customer( $affiliatepress_customer_args );
 
             $affiliatepress_customer_id = !empty($affiliatepress_customer_id) ? intval($affiliatepress_customer_id) : 0;

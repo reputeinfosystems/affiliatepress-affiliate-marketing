@@ -101,6 +101,26 @@
                                         </el-form-item>    
                                     </div>
                                 </el-col>
+                            </el-row>
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row" :gutter="32">
+                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-gs__cb-item-left">
+                                    <div class="ap-combine-field">
+                                        <label>
+                                            <span class="ap-form-label">
+                                                <?php esc_html_e('Payment Minimum Number of orders', 'affiliatepress-affiliate-marketing'); ?> 
+                                                <el-tooltip popper-class="ap--setting-popover-tool-tip" raw-content content="<div><?php esc_html_e('Set the minimum number of completed orders an affiliate must generate before they become eligible for payout. Affiliates will only receive payments once this threshold is reached.', 'affiliatepress-affiliate-marketing'); ?></div>" show-after="300" effect="light"  placement="bottom-start">
+                                                <span class="ap-setting-info-icon">
+                                                    <?php do_action('affiliatepress_common_svg_code','info_icon'); ?>                                        
+                                                </span>
+                                                </el-tooltip>    
+                                                <div v-if="is_pro_active != '1'" @click="open_premium_modal" class="ap-premium-text"><?php echo $AffiliatePress->affiliatepress_get_premium_content(); //phpcs:ignore ?></div>
+                                            </span>
+                                        </label>
+                                        <el-form-item prop="minimum_payment_order">
+                                            <el-input-number :disabled="minimum_payment_order_disable" v-model.number="commissions_setting_form.minimum_payment_order"class="ap-form-control--number" size="large" :min="1" :step="1" :precision="0" />
+                                        </el-form-item>   
+                                    </div>
+                                </el-col>
                                 <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-gs__cb-item-left">
                                     <div class="ap-combine-field">
                                         <label>
@@ -133,23 +153,42 @@
                                         </el-form-item>
                                     </div>
                                 </el-col>
-                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-gs__cb-item-left" v-if="commissions_setting_form.commission_billing_cycle != 'yearly' && commissions_setting_form.commission_billing_cycle != 'disabled'">
+                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-gs__cb-item-left" v-if="commissions_setting_form.commission_billing_cycle != 'disabled'">
                                     <div class="ap-combine-field">
-                                        <label><span class="ap-form-label">
-                                                <?php esc_html_e('Day of Billing Cycle For Automatic-Payout', 'affiliatepress-affiliate-marketing'); ?>
-                                                <el-tooltip popper-class="ap--setting-popover-tool-tip" raw-content content="<div><?php esc_html_e('Payment Cycle will created as per selected day for monthly cycle. For Example, if you have set a day as 8th Day then payment cycle will be considered to start from 8th day of the last month for auto payout.', 'affiliatepress-affiliate-marketing'); ?></div>" show-after="300" effect="light"  placement="bottom-end">
+                                        <label>
+                                            <span class="ap-form-label" v-if="commissions_setting_form.commission_billing_cycle == 'yearly'">
+                                                <?php esc_html_e('Month of Billing Cycle For Automatic-Payout', 'affiliatepress-affiliate-marketing'); ?>
+                                                <el-tooltip popper-class="ap--setting-popover-tool-tip" raw-content content="<div><?php esc_html_e('Payment cycle will be created as per the selected month for the yearly cycle. For example, if you set the month as March, the payment cycle will be considered to start from the last day of February for auto payout.', 'affiliatepress-affiliate-marketing'); ?></div>" show-after="300" effect="light"  placement="bottom-end">
                                                 <span class="ap-setting-info-icon">
                                                     <?php do_action('affiliatepress_common_svg_code','info_icon'); ?>                                        
                                                 </span>
                                                 </el-tooltip>                                         
                                             </span>
+                                            <span class="ap-form-label" v-else>
+                                                <?php esc_html_e('Day of Billing Cycle For Automatic-Payout', 'affiliatepress-affiliate-marketing'); ?>
+                                                <el-tooltip v-if="commissions_setting_form.commission_billing_cycle == 'monthly'" popper-class="ap--setting-popover-tool-tip" raw-content content="<div><?php esc_html_e('Payment Cycle will created as per selected day for monthly cycle. For Example, if you have set a day as 8th Day then payment cycle will be considered to start from 8th day of the last month for auto payout.', 'affiliatepress-affiliate-marketing'); ?></div>" show-after="300" effect="light"  placement="bottom-end">
+                                                <span class="ap-setting-info-icon">
+                                                    <?php do_action('affiliatepress_common_svg_code','info_icon'); ?>                                        
+                                                </span>
+                                                </el-tooltip>    
+                                                <el-tooltip v-else popper-class="ap--setting-popover-tool-tip" raw-content content="<div><?php esc_html_e('Payment cycle will be created as per the selected weekday for the weekly cycle. For example, if you set the day as Monday, the payment cycle will be considered to start from the previous Monday for auto payout.', 'affiliatepress-affiliate-marketing'); ?></div>" show-after="300" effect="light"  placement="bottom-end">
+                                                <span class="ap-setting-info-icon">
+                                                    <?php do_action('affiliatepress_common_svg_code','info_icon'); ?>                                        
+                                                </span>
+                                                </el-tooltip>                                        
+                                            </span>
                                         </label>    
                                         <el-form-item v-if="commissions_setting_form.commission_billing_cycle == 'monthly'" prop="day_of_billing_cycle">
                                             <el-input-number v-model="commissions_setting_form.day_of_billing_cycle" class="ap-form-control--number" :min="1" :max="31" size="large" />
                                         </el-form-item>
-                                        <el-form-item v-else prop="day_of_billing_cycle">                                   
-                                            <el-select  v-if="commissions_setting_form.commission_billing_cycle == 'weekly'" class="ap-form-control" v-model="commissions_setting_form.day_of_billing_cycle" placeholder="Select" size="large">
+                                        <el-form-item v-else-if="commissions_setting_form.commission_billing_cycle == 'weekly'" prop="day_of_billing_cycle">                                   
+                                            <el-select  class="ap-form-control" v-model="commissions_setting_form.day_of_billing_cycle" placeholder="Select" size="large">
                                                 <el-option v-for="item in weekly_cycle_days" :key="item.value" :label="item.text" :value="item.value"/>
+                                            </el-select>                                                                            
+                                        </el-form-item>   
+                                        <el-form-item v-else-if="commissions_setting_form.commission_billing_cycle == 'yearly'" prop="day_of_billing_cycle">                                   
+                                            <el-select class="ap-form-control" v-model="commissions_setting_form.day_of_billing_cycle" placeholder="Select" size="large">
+                                                <el-option v-for="item in yearly_cycle_months" :key="item.value" :label="item.text" :value="item.value"/>
                                             </el-select>                                                                            
                                         </el-form-item>   
                                     </div>

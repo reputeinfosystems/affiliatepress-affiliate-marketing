@@ -515,14 +515,6 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
                                         </el-form-item>
                                     </div>
                                 </el-col>
-                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-settings-col ap-gs__cb-item-left" >
-                                    <div class="ap-combine-field">
-                                        <label><span class="ap-form-label"><?php esc_html_e('Direct traffic', 'affiliatepress-affiliate-marketing'); ?></span></label>    
-                                        <el-form-item prop="visit_direct_trafic">
-                                            <el-input class="ap-form-control" type="text" v-model="messages_setting_form.visit_direct_trafic" size="large"  />                                         
-                                        </el-form-item>
-                                    </div>
-                                </el-col>
                             </el-row>
                         </div>
                     </div>    
@@ -684,6 +676,14 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
                                         <label><span class="ap-form-label"><?php esc_html_e('Status', 'affiliatepress-affiliate-marketing'); ?></span></label>    
                                         <el-form-item prop="paymnet_status">
                                             <el-input class="ap-form-control" type="text" v-model="messages_setting_form.paymnet_status" size="large"  />                                         
+                                        </el-form-item>
+                                    </div>
+                                </el-col>
+                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-settings-col ap-gs__cb-item-left" >
+                                    <div class="ap-combine-field">
+                                        <label><span class="ap-form-label"><?php esc_html_e('Minimum Amount', 'affiliatepress-affiliate-marketing'); ?></span></label>    
+                                        <el-form-item prop="payment_minimum_amount_label">
+                                            <el-input class="ap-form-control" type="text" v-model="messages_setting_form.payment_minimum_amount_label" size="large"  />                                         
                                         </el-form-item>
                                     </div>
                                 </el-col>

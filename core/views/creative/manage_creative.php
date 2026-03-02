@@ -305,7 +305,7 @@
                                     <el-upload class="ap-simple-upload-form-control ap-combine-field-upload" ref="avatarRef" multiple="false" limit="1" action="<?php echo wp_nonce_url(admin_url('admin-ajax.php') . '?action=affiliatepress_upload_creative_image', 'affiliatepress_upload_creative_image'); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped --Reason - esc_html is already used by wp_nonce_url function and it's false positive ?>" 
                                     :file-list="creatives.image_list"
                                     :on-success="affiliatepress_upload_creative_image_func"
-                                    :on-exceed="affiliatepress_image_upload_limit"
+                                    :on-exceed="affiliatepress_replace_image"
                                     :on-remove="affiliatepress_remove_affiliate_avatar"
                                     :before-upload="checkUploadedFile">
                                         <label class="ap-simple--file-upload">

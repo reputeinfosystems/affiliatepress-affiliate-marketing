@@ -1026,7 +1026,7 @@
                                                         <div class="ap-url-text" :class="{ expanded: scope.row._refExpanded }" :ref="checkrefgOverflow(scope.row)" >{{ scope.row.ap_referrer_url }}</div>
                                                         <a v-if="scope.row._refOverflow && !scope.row._refExpanded"  class="ap-more-inline ap-refrance-link" @click.stop="scope.row._refExpanded = true">...</a>
                                                     </div>
-                                                    <span v-if="!scope.row.ap_referrer_url" :aria-label="affiliate_panel_labels.visit_direct_trafic" v-html="affiliate_panel_labels.visit_direct_trafic"></span>
+                                                    <span v-if="!scope.row.ap_referrer_url">-</span>
                                                 </template>
                                             </el-table-column>
                                             <el-table-column prop="" label="" min-width="30"></el-table-column>
@@ -1079,7 +1079,7 @@
                                                         <div class="ap-expand-sub-row ap-mb-5">
                                                             <div class="ap-expand-value">
                                                                 <span v-if="scope.row.ap_referrer_url" class="ap-expand-row-title ap-data-single-line" :aria-label="scope.row.ap_referrer_url">{{scope.row.ap_referrer_url}} </span>                                                                                     
-                                                                <span class="ap-expand-row-title ap-data-single-line" v-else :aria-label="affiliate_panel_labels.visit_direct_trafic">{{affiliate_panel_labels.visit_direct_trafic}}</span>
+                                                                <span class="ap-expand-row-title ap-data-single-line" v-else >-</span>
                                                             </div>                                                        
                                                         </div>                               
                                                     </div>   

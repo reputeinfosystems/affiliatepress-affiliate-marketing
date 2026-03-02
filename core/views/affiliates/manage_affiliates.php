@@ -137,9 +137,10 @@
                                     </span>
                                 </template>
                             </el-table-column>
-                            <el-table-column class-name="ap-action-column" prop="converted_user" min-width="150" label="<?php esc_html_e('Converted', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by="converted_user">
+                            <el-table-column prop="converted_user" width="150" label="<?php esc_html_e('Converted', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by="converted_user"></el-table-column>
+                            <el-table-column class-name="ap-action-column" prop="ap_affiliates_created_at" min-width="150" label="<?php esc_html_e('Date', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by="ap_affiliates_created_at">
                                 <template #default="scope">
-                                    <span>{{ scope.row.converted_user }}</span>
+                                    <span>{{ scope.row.affiliate_created_date_formated }}</span>
                                     <div class="ap-table-actions-wrap">
                                         <div class="ap-table-actions">
                                             <el-tooltip popper-class="ap--popover-tool-tip" show-after="300" effect="dark" content="<?php esc_html_e('Edit', 'affiliatepress-affiliate-marketing'); ?>" placement="top">
@@ -212,7 +213,12 @@
                                             <div class="ap-table-expand-label"><?php esc_html_e('Commission Rate', 'affiliatepress-affiliate-marketing'); ?></div>
                                             <div class="ap-table-expand-seprater">:</div>
                                             <div class="ap-table-expand-value">{{ scope.row.current_commission_rate }}</div>
-                                        </div>                                       
+                                        </div>
+                                        <div class="ap-table-expand-view-inner">
+                                            <div class="ap-table-expand-label"><?php esc_html_e('Date', 'affiliatepress-affiliate-marketing'); ?></div>
+                                            <div class="ap-table-expand-seprater">:</div>
+                                            <div class="ap-table-expand-value">{{ scope.row.affiliate_created_date_formated }}</div>
+                                        </div>                                     
                                     </div>
                                 </div>
                                 </template>
@@ -509,6 +515,14 @@
                             <?php  
                                 do_action('affiliatepress_backend_affiliate_extra_fields');
                             ?>
+                            <div class="ap-single-field__form">
+                                <el-form-item class="ap-combine-field" prop="ap_affiliates_note">
+                                    <template #label>
+                                        <span class="ap-form-label"><?php esc_html_e('Note', 'affiliatepress-affiliate-marketing'); ?></span>
+                                    </template>                
+                                    <el-input class="ap-form-control" maxlength="600" type="textarea" :rows="4" v-model="affiliates.ap_affiliates_note" size="large" placeholder="<?php esc_html_e('Add Affiliate Note Here', 'affiliatepress-affiliate-marketing'); ?>" />
+                                </el-form-item>                     
+                            </div>     
                             <div v-if="affiliates.ap_affiliates_id == ''" class="ap-single-field__form ap-single-switch ap-top-padding-top-10">
                                 <el-form-item prop="ap_send_email" class="ap-combine-field">
                                     <template #label>

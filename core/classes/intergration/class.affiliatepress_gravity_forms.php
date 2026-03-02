@@ -219,6 +219,14 @@ if( !class_exists('affiliatepress_gravity_forms') ){
                     'last_name'	   => $affiliatepress_last_name,
                     'affiliate_id' => $affiliatepress_affiliate_id
                 );
+
+                $affiliatepress_customer_commisison_add = true;
+                $affiliatepress_customer_commisison_add = apply_filters('affiliatepress_validate_customer_for_commission', $affiliatepress_customer_commisison_add, $affiliatepress_customer_args,$this->affiliatepress_integration_slug);
+    
+                if(!$affiliatepress_customer_commisison_add){
+                    return;
+                }
+                
                 $affiliatepress_customer_id = $AffiliatePress->affiliatepress_add_commission_customer($affiliatepress_customer_args);
                 if ( $affiliatepress_customer_id ) {
                     $affiliatepress_msg = sprintf( 'Customer #%s has been successfully processed.', $affiliatepress_customer_id );    

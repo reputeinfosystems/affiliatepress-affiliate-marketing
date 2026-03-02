@@ -774,17 +774,15 @@ if (! class_exists('affiliatepress_creative') ) {
                     vm.creatives.ap_creative_image_url = response.upload_file_name;
                 }
             },
-            affiliatepress_image_upload_limit(files, fileList){
+            affiliatepress_replace_image(files, fileList) {
                 const vm = this;
-                    if(vm.creatives.avatar_url != ""){
-                    vm.$notify({
-                        title: "'.esc_html__('Error', 'affiliatepress-affiliate-marketing').'",
-                        message: "'.esc_html__('Multiple files not allowed', 'affiliatepress-affiliate-marketing').'",
-                        type: "error",
-                        customClass: "error_notification",
-                        duration:'.intval($affiliatepress_notification_duration).',
-                    });
-                }
+                vm.$refs.avatarRef.clearFiles();
+                vm.creatives.avatar_url = "";
+                vm.creatives.avatar_name = "";
+                vm.creatives.ap_creative_image_url = "";
+                const file = files[0];
+                vm.$refs.avatarRef.handleStart(file);
+                vm.$refs.avatarRef.submit();
             },
             affiliatepress_remove_affiliate_avatar() {
                 const vm = this

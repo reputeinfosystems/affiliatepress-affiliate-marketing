@@ -66,7 +66,25 @@ if (version_compare($affiliatepress_old_version, '2.1', '<') ) {
 	}		
 }
 
-$affiliatepress_new_version = '2.1';
+if ( version_compare( $affiliatepress_old_version, '2.2', '<' ) ) {
+    global $AffiliatePress,$affiliatepress_commissions,$affiliatepress_tbl_ap_payouts,$affiliatepress_tbl_ap_affiliates;
+    $AffiliatePress->affiliatepress_update_settings('easy_digital_downloads_disable_commission_on_upgrade','integrations_settings',"true");
+    $AffiliatePress->affiliatepress_update_settings('minimum_payment_order','commissions_settings',1);
+
+    $affiliatepress_affiliates_col_added = $wpdb->get_results( $wpdb->prepare( "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND column_name = 'ap_payment_min_order'", DB_NAME, $affiliatepress_tbl_ap_payouts ) );// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates is a table name. false alarm
+	if ( empty( $affiliatepress_affiliates_col_added ) ) {
+		$wpdb->query( "ALTER TABLE `{$affiliatepress_tbl_ap_payouts}` ADD `ap_payment_min_order` varchar(255) default NULL AFTER `ap_payment_min_amount`" );// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates is a table name. false alarm
+	}		
+
+    $affiliatepress_affiliates_col_added = $wpdb->get_results( $wpdb->prepare( "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND column_name = 'ap_affiliates_note'", DB_NAME, $affiliatepress_tbl_ap_affiliates ) );// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates is a table name. false alarm
+	if ( empty( $affiliatepress_affiliates_col_added ) ) {
+		$wpdb->query( "ALTER TABLE `{$affiliatepress_tbl_ap_affiliates}` ADD `ap_affiliates_note` TEXT DEFAULT NULL AFTER `ap_affiliates_promote_us`" );// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates is a table name. false alarm
+	}	
+
+    $affiliatepress_commissions->affiliatepress_commission_customer_update();
+}
+
+$affiliatepress_new_version = '2.2';
 update_option('affiliatepress_new_version_installed', 1);
 update_option('affiliatepress_version', $affiliatepress_new_version);
 update_option('affiliatepress_updated_date_' . $affiliatepress_new_version, current_time('mysql'));

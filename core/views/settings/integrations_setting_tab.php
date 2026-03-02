@@ -173,6 +173,21 @@
                                                     </el-form-item>
                                                 </el-col>
                                             </el-row>
+                                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row-inner">
+                                                <el-col :xs="20" :sm="20" :md="20" :lg="20" :xl="20" class="ap-gs__cb-item-left">
+                                                    <h4><?php esc_html_e('Disable Commission on Upgrade Order', 'affiliatepress-affiliate-marketing'); ?><span class="ap-premium-integration" v-if="integration_upgrade_commission_disable == true"><?php echo $AffiliatePress->affiliatepress_get_premium_content(); //phpcs:ignore ?></span></h4>
+                                                </el-col>
+                                                <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-if="integration_upgrade_commission_disable == false">		
+                                                    <el-form-item prop="easy_digital_downloads_disable_commission_on_upgrade">
+                                                        <el-switch  v-model="integrations_setting_form.easy_digital_downloads_disable_commission_on_upgrade"/>                                         
+                                                    </el-form-item>
+                                                </el-col>
+                                                <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-else>
+                                                    <el-form-item prop="affiliate_integration_refund_disabled_switch">
+                                                        <el-switch v-model="affiliate_integration_refund_disabled_switch" :disabled="integration_upgrade_commission_disable"/>
+                                                    </el-form-item>
+                                                </el-col>
+                                            </el-row>
                                             <?php do_action('affiliatepress_add_easy_digital_downloads_integrations_settings'); ?>
                                         </el-col>
                                     </el-row>

@@ -240,7 +240,8 @@ if( !class_exists('AffiliatePress_Core') ){
                     'search_affiliate_user',
                     'search_source_product',
                     'add_commission',
-                    'edit_commission',                
+                    'edit_commission',        
+                    'show_commisison_details'        
                 ),
                 'affiliatepress_visits' => array(
                     'retrieve_visits',

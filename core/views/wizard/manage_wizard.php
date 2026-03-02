@@ -184,7 +184,7 @@
 									<label><span class="ap-form-label"><?php esc_html_e('Integration', 'affiliatepress-affiliate-marketing'); ?>           </span></label>   
 									<el-form-item prop="minimum_payment_amount">                                     
 										<el-select v-model="wizard_steps_data.integrations" placeholder="<?php esc_html_e('Select Integration', 'affiliatepress-affiliate-marketing'); ?>"class="ap-form-control"size="large">
-											<el-option v-for="item in all_integration_list" :key="item.plugin_value" :label="item.plugin_name" :value="item.plugin_value"/>
+											<el-option v-for="item in all_integration_list" :key="item.plugin_value" :label="item.plugin_name" :value="item.plugin_value"  :disabled="item.plugin_status == 0"/>
 										</el-select>
 									</el-form-item>
 								</div>

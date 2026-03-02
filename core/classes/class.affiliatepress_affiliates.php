@@ -873,6 +873,8 @@ if (! class_exists('affiliatepress_affiliates') ) {
                     $affiliatepress_affiliates_data['ap_affiliates_user_avatar']   = (!empty($affiliatepress_affiliates_user_avatar))?esc_url($affiliatepress_affiliates_user_avatar):'';
                     $affiliatepress_affiliates_data['ap_affiliates_promote_us']    = stripslashes_deep($affiliates['ap_affiliates_promote_us']);
                     $affiliatepress_affiliates_data['affiliate_user_name']         = $AffiliatePress->affiliatepress_get_affiliate_user_name_by_id($affiliates['ap_affiliates_user_id']);
+                    $affiliatepress_note = html_entity_decode( $affiliatepress_affiliates_data['ap_affiliates_note'], ENT_QUOTES, 'UTF-8' );
+                    $affiliatepress_affiliates_data['ap_affiliates_note']          = $affiliatepress_note;
 
                     if(empty($affiliatepress_affiliates_data['affiliate_user_name'])){
                         $affiliatepress_affiliates_data['ap_affiliates_user_id'] = "";
@@ -1416,6 +1418,10 @@ if (! class_exists('affiliatepress_affiliates') ) {
                 $affiliatepress_order_by = 'converted_user';
             }
 
+            if($affiliatepress_order_by == "ap_affiliates_created_at"){
+                $affiliatepress_order_by = 'ap_affiliates_created_at';
+            }
+
             $affiliatepress_sql = "  SELECT affiliate.*, COALESCE(SUM(report.ap_affiliate_report_visits), 0) AS total_visit,  COALESCE(SUM(report.ap_affiliate_report_total_commission), 0) AS converted_user, COALESCE(SUM(report.ap_affiliate_report_paid_commission_amount), 0) AS affiliatepress_paid_earning,  COALESCE(SUM(report.ap_affiliate_report_unpaid_commission_amount), 0) AS affiliatepress_unpaid_earning FROM {$affiliatepress_tbl_ap_affiliates_temp} AS affiliate  LEFT JOIN {$affiliatepress_tbl_ap_affiliate_report} AS report ON report.ap_affiliates_id = affiliate.ap_affiliates_id  {$affiliatepress_where_clause} GROUP BY affiliate.ap_affiliates_id ORDER BY {$affiliatepress_order_by} {$affiliatepress_order} LIMIT {$affiliatepress_offset}, {$affiliatepress_perpage}";
             $affiliatepress_affiliates_record = $wpdb->get_results($affiliatepress_sql, ARRAY_A);// phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_form_fields_temp is table name already prepare in "affiliatepress_tablename_prepare". False Positive alarm
 
@@ -1460,6 +1466,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
 
                     $affiliatepress_affiliate_link = apply_filters('affiliatepress_modify_affiliate_link' , $affiliatepress_affiliate_link , $affiliatepress_single_affiliate['ap_affiliates_id']);
                     $affiliatepress_default_commission_rate = $this->affiliatepress_get_current_affiliate_rate($affiliatepress_affiliate_id);
+                    $affiliatepress_affiliate_create_date = $AffiliatePress->affiliatepress_formated_date_display($affiliatepress_single_affiliate['ap_affiliates_created_at']);
 
                     $affiliate['affiliates_link']    = $affiliatepress_affiliate_link;
                     $affiliate['affiliates_avatar']  = esc_url($affiliates_avatar);
@@ -1471,6 +1478,10 @@ if (! class_exists('affiliatepress_affiliates') ) {
                     $affiliate['total_visit']           = $affiliatepress_total_visits;
                     $affiliate['converted_user']        = $affiliatepress_total_commission;
                     $affiliate['current_commission_rate']        = $affiliatepress_default_commission_rate;
+                    $affiliate['affiliate_created_date_formated']        = $affiliatepress_affiliate_create_date;
+
+                    $affiliate['row_class']  = '';
+                    $affiliate = apply_filters('affiliatepress_modify_affiliate_manage_row', $affiliate, $affiliatepress_single_affiliate); 
 
                     $affiliates[] = $affiliate;
                 }
@@ -1484,8 +1495,6 @@ if (! class_exists('affiliatepress_affiliates') ) {
             $response['items'] = $affiliates;
             $response['total'] = $affiliatepress_get_total_affiliates;
             $response['pagination_count'] = $affiliatepress_pagination_count;
-                        
-
             wp_send_json($response);
             exit;            
         }
@@ -1567,6 +1576,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
             $affiliatepress_update_id   = isset($_POST['ap_affiliates_id']) ? intval($_POST['ap_affiliates_id']) : ''; // phpcs:ignore
             $affiliatepress_affiliates_user_id  = (isset($_POST['ap_affiliates_user_id']) && $_POST['ap_affiliates_user_id'] != 'add_new') ? intval($_POST['ap_affiliates_user_id']) : sanitize_text_field($_POST['ap_affiliates_user_id']); // phpcs:ignore 
             $affiliatepress_affiliates_status   = isset($_POST['ap_affiliates_status']) ? intval($_POST['ap_affiliates_status']) : 2; // phpcs:ignore 
+            $affiliatepress_affiliates_note = isset($_POST['ap_affiliates_note'])? sanitize_textarea_field( wp_unslash($_POST['ap_affiliates_note']) ): '';
             if(empty($affiliatepress_update_id) && $affiliatepress_update_id == 0){
                 $affiliatepress_affiliates_payment_email = ! empty($_POST['ap_affiliates_payment_email_add']) ? trim(sanitize_text_field($_POST['ap_affiliates_payment_email_add'])) : ''; // phpcs:ignore
             }else{
@@ -1723,6 +1733,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
                 'ap_affiliates_website'         => $affiliatepress_affiliates_website,
                 'ap_affiliates_promote_us'      => $affiliatepress_affiliates_promote_us,                
                 'ap_affiliates_status'          => $affiliatepress_affiliates_status,
+                'ap_affiliates_note'            => $affiliatepress_affiliates_note,
             );           
             if($affiliatepress_affiliates_user_id != 'add_new' && $affiliatepress_affiliates_user_id) {
                 $affiliatepress_user_info = get_userdata($affiliatepress_affiliates_user_id);
@@ -2278,6 +2289,9 @@ if (! class_exists('affiliatepress_affiliates') ) {
                     if(response.data.affiliates.ap_affiliates_promote_us != undefined){
                         vm.affiliates.ap_affiliates_promote_us = response.data.affiliates.ap_affiliates_promote_us;
                     } 
+                    if(response.data.affiliates.ap_affiliates_note != undefined){
+                        vm.affiliates.ap_affiliates_note = response.data.affiliates.ap_affiliates_note;
+                    } 
                     if(response.data.affiliates.affiliate_user_name != undefined){
                         vm.affiliates.affiliate_user_name = response.data.affiliates.affiliate_user_name;
                     }                                                                                                                                           
@@ -2579,6 +2593,8 @@ if (! class_exists('affiliatepress_affiliates') ) {
                     vm.order_by = "total_visit"; 
                 }else if(prop == "converted_user"){
                     vm.order_by = "converted_user"; 
+                }else if(prop == "ap_affiliates_created_at"){
+                    vm.order_by = "ap_affiliates_created_at"; 
                 }
                 if(vm.order_by){
                     if(order == "descending"){
@@ -2838,6 +2854,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
                     "ap_affiliates_status"         => "1",
                     "ap_affiliates_promote_us"     => "",
                     "ap_send_email"                => false,
+                    "ap_affiliates_note"            => "",
                 ),                
                 'rules'                      => array(
                     'password'  => array(

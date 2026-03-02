@@ -603,10 +603,10 @@ if( !class_exists('affiliatepress_tracking') ){
          * @return void
         */
         function affiliatepress_set_init_data(){
-            global $AffiliatePress;
+            global $AffiliatePress,$affiliatepress_max_tracking_cookie_days;
             $affiliatepress_tracking_cookie_days  = intval($AffiliatePress->affiliatepress_get_settings('tracking_cookie_days', 'affiliate_settings'));
             if($affiliatepress_tracking_cookie_days == 0){
-                $affiliatepress_tracking_cookie_days = 365;
+                $affiliatepress_tracking_cookie_days = $affiliatepress_max_tracking_cookie_days;
             }
             $this->affiliatepress_expiration_time = time()+(60 * (60 * (24 * $affiliatepress_tracking_cookie_days)));
             $this->referral_var    = $AffiliatePress->affiliatepress_get_settings('affiliate_url_parameter', 'affiliate_settings');
@@ -728,6 +728,24 @@ if( !class_exists('affiliatepress_tracking') ){
 	    }
 
             return $affiliatepress_commission_status;
+        }
+
+        /**
+         * Common function for get minimum payout order
+         *
+         * @return integer
+        */
+        function affiliatepress_get_payout_minimum_payment_order(){
+            global $AffiliatePress;
+
+            if(!$AffiliatePress->affiliatepress_pro_install()){
+                $affiliatepress_minimum_payment_order = 1;
+            }
+            else {
+                $affiliatepress_minimum_payment_order = $AffiliatePress->affiliatepress_get_settings('minimum_payment_order', 'commissions_settings');
+            }
+
+            return $affiliatepress_minimum_payment_order;
         }
 
          /**

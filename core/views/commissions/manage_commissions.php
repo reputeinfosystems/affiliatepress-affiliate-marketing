@@ -171,6 +171,13 @@
                                         <span>{{scope.row.commission_created_date_formated}}</span>
                                         <div class="ap-table-actions-wrap">
                                             <div class="ap-table-actions">
+                                                <el-tooltip popper-class="ap--popover-tool-tip" show-after="300" effect="dark" content="<?php esc_html_e('View Details', 'affiliatepress-affiliate-marketing'); ?>" placement="top">        
+                                                        <el-button @click="commission_extra_details(scope.row.ap_commission_id,scope.$index,scope.row)" class="ap-btn--icon-without-box">
+                                                            <span class="ap-small-btn-icon ap-edit-icon">
+                                                                <?php do_action('affiliatepress_common_svg_code','details_action'); ?>                                                        
+                                                            </span>
+                                                        </el-button>
+                                                </el-tooltip>
                                                 <el-tooltip popper-class="ap--popover-tool-tip" show-after="300" effect="dark" content="<?php esc_html_e('Edit', 'affiliatepress-affiliate-marketing'); ?>" placement="top">        
                                                         <el-button @click="editCommission(scope.row.ap_commission_id,scope.$index,scope.row)" class="ap-btn--icon-without-box">
                                                             <span class="ap-small-btn-icon ap-edit-icon">
@@ -294,7 +301,7 @@
                                         </el-popover>
                                     </template>
                             </el-table-column>
-                            <el-table-column class-name="ap-padding-left-cls ap-grid-status-align-center" prop="status" align="center" header-align="center"  width="100" label="<?php esc_html_e('Status', 'affiliatepress-affiliate-marketing'); ?>">
+                            <el-table-column class-name="ap-padding-left-cls ap-grid-status-align-center" prop="status" align="center" header-align="center"  width="90" label="<?php esc_html_e('Status', 'affiliatepress-affiliate-marketing'); ?>">
                                     <template #default="scope">                                    
                                         <div class="ap-table-status-dropdown-wrapper" :class="(scope.row.change_status_loader == 1 ? '__ap-is-loader-active ' : '') + (current_screen_size != 'desktop' ? 'ap-small-screen-status-dropdown' : '')" >
                                             <div class="ap-status-loader-wrapper" v-if="scope.row.change_status_loader == 1" :class="(scope.row.ap_commission_status == '1' ? 'ap-status--unpaid' : '') || (scope.row.ap_commission_status == '4' ? 'ap-status--active' : '') || (scope.row.ap_commission_status == '2' ? 'ap-status--pending' : '') || (scope.row.ap_commission_status == '3' ? 'ap-status--rejected' : '')">
@@ -313,16 +320,23 @@
                                         </div>                                    
                                     </template> 
                             </el-table-column>
-                            <el-table-column class-name="ap-action-column"  align="right" header-align="right" prop="ap_commission_amount" width="90" label="<?php esc_html_e('Commission', 'affiliatepress-affiliate-marketing'); ?>">
+                            <el-table-column class-name="ap-action-column"  align="right" header-align="right" prop="ap_commission_amount" width="110" label="<?php esc_html_e('Commission', 'affiliatepress-affiliate-marketing'); ?>">
                                 <template #default="scope">
                                 <span>{{scope.row.ap_formated_commission_amount}}</span>
                                 </template>                            
                             </el-table-column> 
-                            <el-table-column class-name="ap-action-column"  prop="ap_commission_created_date"  min-width="90" width="90" label="<?php esc_html_e('Date', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by='ap_commission_created_date'>
+                            <el-table-column class-name="ap-action-column"  prop="ap_commission_created_date"  min-width="90"label="<?php esc_html_e('Date', 'affiliatepress-affiliate-marketing'); ?>" sortable sort-by='ap_commission_created_date'>
                                     <template #default="scope">
                                         <span>{{scope.row.commission_created_date_formated}}</span>
                                         <div class="ap-table-actions-wrap">
                                             <div class="ap-table-actions">
+                                                <el-tooltip popper-class="ap--popover-tool-tip" show-after="300" effect="dark" content="<?php esc_html_e('View Details', 'affiliatepress-affiliate-marketing'); ?>" placement="top">
+                                                    <el-button @click="commission_extra_details(scope.row.ap_commission_id,scope.$index,scope.row)" class="ap-btn--icon-without-box">
+                                                        <span class="ap-small-btn-icon ap-edit-icon">
+                                                            <?php do_action('affiliatepress_common_svg_code','details_action'); ?>                                                        
+                                                        </span>
+                                                    </el-button>
+                                                </el-tooltip>
                                                 <el-tooltip popper-class="ap--popover-tool-tip" show-after="300" effect="dark" content="<?php esc_html_e('Edit', 'affiliatepress-affiliate-marketing'); ?>" placement="top">
                                                     <el-button @click="editCommission(scope.row.ap_commission_id,scope.$index,scope.row)" class="ap-btn--icon-without-box">
                                                         <span class="ap-small-btn-icon ap-edit-icon">
@@ -414,11 +428,80 @@
 
         <el-drawer modal-class="ap-add__drawer-main" :direction="drawer_direction" :withHeader="false" @close="resetModal('commission_form_data')" v-model="open_modal">    
             <div class="ap-add__drawer">
-                <div class="ap-dlt__header">
+                <div class="ap-dlt__header" v-if="commission_details_show">
+                    <div class="ap-dlt__heading"><?php esc_html_e('View Details ', 'affiliatepress-affiliate-marketing'); ?></div>
+                </div>
+                <div class="ap-dlt__header" v-else>
                     <div class="ap-dlt__heading" v-if="commissions.ap_commission_id == ''"><?php esc_html_e('Add Commission', 'affiliatepress-affiliate-marketing'); ?></div>
                     <div class="ap-dlt__heading" v-else><?php esc_html_e('Edit Commission', 'affiliatepress-affiliate-marketing'); ?></div>
                 </div>
-                <div id="ap-drawer-body" class="ap-dlt__body">
+                <div v-if="commission_details_show" id="ap-drawer-body" class="ap-dlt__body ap-from-drawer-details">
+                    <div class="ap-back-loader-container" id="ap-page-loading-loader" v-if="is_display_commisison_details_loader == 1">
+                        <div class="ap-back-loader"></div>
+                    </div>   
+                    <div class="ap-dlt__form_body"  v-if="is_display_commisison_details_loader == 0">
+                        <div class="ap-dlt__form_title"><?php esc_html_e('Commission Details', 'affiliatepress-affiliate-marketing'); ?></div>
+                        <div class="ap-dlt__form_drawer_info">
+                            <div class="ap-flex-between ap-drawer-info-box">
+                                <div class="ap-drawer-detail-title"><?php esc_html_e('ID', 'affiliatepress-affiliate-marketing'); ?></div>
+                                <div class="ap-drawer-detail-value">#{{commission_details.ap_commission_id}}</div>
+                            </div>   
+                            <div class="ap-flex-between ap-drawer-info-box">
+                                <div class="ap-drawer-detail-title"><?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?></div>
+                                <div class="ap-drawer-detail-value">{{commission_details.ap_affiliate_name}}</div>
+                            </div>                                                                                                            
+                            <div class="ap-flex-between ap-drawer-info-box">
+                                <div class="ap-drawer-detail-title"><?php esc_html_e('Date', 'affiliatepress-affiliate-marketing'); ?></div>
+                                <div class="ap-drawer-detail-value">{{commission_details.ap_commission_date}}</div>
+                            </div> 
+                            <div class="ap-flex-between ap-drawer-info-box">
+                                <div class="ap-drawer-detail-title"><?php esc_html_e('Source', 'affiliatepress-affiliate-marketing'); ?></div>
+                                <div class="ap-drawer-detail-value">{{commission_details.ap_commission_source}}</div>
+                            </div> 
+                            <div class="ap-flex-between ap-drawer-info-box">
+                                <div class="ap-drawer-detail-title"><?php esc_html_e('Commission Amount', 'affiliatepress-affiliate-marketing'); ?></div>
+                                <div class="ap-drawer-detail-value">{{commission_details.ap_commission_amount}}</div>
+                            </div> 
+                        </div>
+                        <div class="ap-drawer-new-section" v-if="commission_details.ap_visit_id"></div>    
+                        <div class="ap-dlt__form_title" v-if="commission_details.ap_visit_id"><?php esc_html_e('Visit Details', 'affiliatepress-affiliate-marketing'); ?></div>
+                        <div class="ap-dlt__form_drawer_info" v-if="commission_details.ap_visit_id">
+                            <div class="ap-flex-between ap-drawer-info-box">
+                                <div class="ap-drawer-detail-title"><?php esc_html_e('Visit ID', 'affiliatepress-affiliate-marketing'); ?></div>
+                                <div class="ap-drawer-detail-value">#{{commission_details.ap_visit_id}}</div>
+                            </div> 
+                            <div class="ap-flex-between ap-drawer-info-box">
+                                <div class="ap-drawer-detail-title"><?php esc_html_e('Country', 'affiliatepress-affiliate-marketing'); ?></div>
+                                <div class="ap-drawer-detail-value ap-country-wrap">
+                                    {{ commission_details.ap_visit_country }}
+                                    <el-image 
+                                        v-if="commission_details.ap_visit_country_img_url"
+                                        :src="commission_details.ap_visit_country_img_url"
+                                        class="ap-visit-country-flag">
+                                    </el-image>
+                                </div>
+                            </div> 
+                            <div class="ap-flex-between ap-drawer-info-box">
+                                <div class="ap-drawer-detail-title"><?php esc_html_e('IP Address', 'affiliatepress-affiliate-marketing'); ?></div>
+                                <div class="ap-drawer-detail-value">{{commission_details.ap_visit_ip_address}}</div>
+                            </div> 
+                            <div class="ap-flex-between ap-drawer-info-box">
+                                <div class="ap-drawer-detail-title"><?php esc_html_e('Landing URL', 'affiliatepress-affiliate-marketing'); ?></div>
+                                <div class="ap-drawer-detail-value">{{commission_details.ap_visit_landing_url}}</div>
+                            </div> 
+                            <div class="ap-flex-between ap-drawer-info-box">
+                                <div class="ap-drawer-detail-title"><?php esc_html_e('Browser', 'affiliatepress-affiliate-marketing'); ?></div>
+                                <div class="ap-drawer-detail-value">{{commission_details.ap_visit_browser}}</div>
+                            </div> 
+                            <div class="ap-flex-between ap-drawer-info-box">
+                                <div class="ap-drawer-detail-title"><?php esc_html_e('Referrer URL', 'affiliatepress-affiliate-marketing'); ?></div>
+                                <div class="ap-drawer-detail-value" v-if="commission_details.ap_referrer_url == ''">-</div>
+                                <div class="ap-drawer-detail-value" v-else>{{commission_details.ap_referrer_url}}</div>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+                <div v-else id="ap-drawer-body" class="ap-dlt__body">
                     <div class="ap-dlt__form_body">
                         <div class="ap-dlt__form_title"><?php esc_html_e('Commission Details', 'affiliatepress-affiliate-marketing'); ?></div>
                         <el-form ref="commission_form_data" :rules="rules" require-asterisk-position="right" :model="commissions" label-position="top">
@@ -541,10 +624,13 @@
                 </div>
                 <div class="ap-dlt__footer">
                     <div class="ap-dlt__footer-btn">
-                        <el-button @click="closeModal('commission_form_data')" class="ap-btn--second ap-margin-right--sec-btn">
+                        <el-button v-if="commission_details_show"  @click="closedetailsModal('commission_form_data')" class="ap-btn--second ap-margin-right--sec-btn">
+                            <span class="ap-btn__label"><?php esc_html_e('Close', 'affiliatepress-affiliate-marketing'); ?></span>
+                        </el-button>
+                        <el-button v-if="commission_details_show == false" @click="closeModal('commission_form_data')" class="ap-btn--second ap-margin-right--sec-btn">
                             <span class="ap-btn__label"><?php esc_html_e('Cancel', 'affiliatepress-affiliate-marketing'); ?></span>
                         </el-button>
-                        <el-button :class="(savebtnloading) ? 'ap-btn--is-loader' : ''" @click="saveCommission('commission_form_data')" :disabled="is_disabled" class="ap-btn--primary ap-btn--big"  type="primary">
+                        <el-button v-if="commission_details_show == false" :class="(savebtnloading) ? 'ap-btn--is-loader' : ''" @click="saveCommission('commission_form_data')" :disabled="is_disabled" class="ap-btn--primary ap-btn--big"  type="primary">
                             <span class="ap-btn__label"><?php esc_html_e('Save', 'affiliatepress-affiliate-marketing'); ?></span>
                             <div class="ap-btn--loader__circles">
                                 <div></div>

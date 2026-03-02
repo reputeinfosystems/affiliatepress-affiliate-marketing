@@ -491,6 +491,13 @@ if( !class_exists('affiliatepress_armember') ){
                 'affiliate_id' => $affiliatepress_affiliate_id
             );
 
+            $affiliatepress_customer_commisison_add = true;
+            $affiliatepress_customer_commisison_add = apply_filters('affiliatepress_validate_customer_for_commission', $affiliatepress_customer_commisison_add, $affiliatepress_customer_args,$this->affiliatepress_integration_slug);
+
+            if(!$affiliatepress_customer_commisison_add){
+                return;
+            }
+
             $affiliatepress_customer_id = $AffiliatePress->affiliatepress_add_commission_customer( $affiliatepress_customer_args );
             $affiliatepress_customer_id = !empty($affiliatepress_customer_id) ? intval($affiliatepress_customer_id) : 0;
 
@@ -781,7 +788,7 @@ if( !class_exists('affiliatepress_armember') ){
         
                         $affiliatepress_armaff_entry = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_arm_payment_log, 'arm_transaction_status', 'WHERE arm_log_id  = %d', array( $affiliatepress_order_id ), '', '', '', false, true,ARRAY_A);
 
-                        do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Payment Transection data', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_armaff_entry, $affiliatepress_commission_debug_log_id);
+                        do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Payment Transaction data', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_armaff_entry, $affiliatepress_commission_debug_log_id);
         
                         if(!empty($affiliatepress_armaff_entry)){
 

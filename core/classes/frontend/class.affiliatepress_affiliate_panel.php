@@ -1872,6 +1872,14 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 <path d="M15 22H15.01M18 17H18.01M13 16H13.01M21 22H21.01M27 18C27 22.9706 22.9706 27 18 27C13.0294 27 9 22.9706 9 18C9 13.0294 13.0294 9 18 9C18 11.7614 19.7909 14 22 14C22 16.2091 24.2386 18 27 18Z" stroke="#FFC757" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             <?php 
+            }else if($affiliatepress_type == 'tooltip_info'){
+                ?>
+                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path class="ap-svg-content-color-fill" d="M8.25 0C3.69023 0 0 3.68981 0 8.25C0 12.8097 3.68981 16.5 8.25 16.5C12.8098 16.5 16.5 12.8102 16.5 8.25C16.5 3.6903 12.8102 0 8.25 0ZM8.25 15.3488C4.3357 15.3488 1.15117 12.1643 1.15117 8.25C1.15117 4.33567 4.3357 1.15117 8.25 1.15117C12.1643 1.15117 15.3488 4.33567 15.3488 8.25C15.3488 12.1643 12.1643 15.3488 8.25 15.3488Z" fill="#576582"/>
+                        <path class="ap-svg-content-color-fill" d="M8.25025 6.87695C7.76156 6.87695 7.41406 7.08333 7.41406 7.38739V11.5248C7.41406 11.7855 7.76156 12.0461 8.25025 12.0461C8.71721 12.0461 9.09726 11.7855 9.09726 11.5248V7.38732C9.09726 7.0833 8.71721 6.87695 8.25025 6.87695Z" fill="#576582"/>
+                        <path class="ap-svg-content-color-fill" d="M8.24983 4.3252C7.75028 4.3252 7.35938 4.68355 7.35938 5.09622C7.35938 5.50891 7.75032 5.87813 8.24983 5.87813C8.73851 5.87813 9.12948 5.50891 9.12948 5.09622C9.12948 4.68355 8.73848 4.3252 8.24983 4.3252Z" fill="#576582"/>
+                    </svg>
+                <?php 
             }
         }
 
@@ -3774,7 +3782,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
         */
         function affiliatepress_affiliate_panel_dynamic_data_fields_func($affiliatepress_dynamic_data_fields){
             
-            global $AffiliatePress,$wpdb,$affiliatepress_tbl_ap_affiliate_form_fields,$affiliatepress_global_options,$affiliatepress_tbl_ap_affiliate_form_fields,$affiliatepress_tbl_ap_affiliates,$affiliatepress_tbl_ap_affiliates_group, $affiliatepress_payout,$affiliatepress_affiliates;
+            global $AffiliatePress,$wpdb,$affiliatepress_tbl_ap_affiliate_form_fields,$affiliatepress_global_options,$affiliatepress_tbl_ap_affiliate_form_fields,$affiliatepress_tbl_ap_affiliates,$affiliatepress_tbl_ap_affiliates_group, $affiliatepress_payout,$affiliatepress_affiliates,$affiliatepress_max_tracking_cookie_days;
 
             $affiliatepress_options = $affiliatepress_global_options->affiliatepress_global_options();
 
@@ -3824,6 +3832,10 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             $affiliatepress_current_currency_symbol = $AffiliatePress->affiliatepress_get_current_currency_symbol();
             $affiliatepress_dynamic_data_fields['currency_symbol'] = $affiliatepress_current_currency_symbol;
 
+            $affiliatepress_minimum_payment_amount = floatval($AffiliatePress->affiliatepress_get_settings('minimum_payment_amount', 'commissions_settings'));
+            $affiliatepress_minimum_payment_amount = $AffiliatePress->affiliatepress_price_formatter_with_currency_symbol($affiliatepress_minimum_payment_amount);
+            $affiliatepress_dynamic_data_fields['minimum_payment_amount_data'] = $affiliatepress_minimum_payment_amount;
+
             $affiliatepress_endOfLastMonth = date('Y-m-d'); //phpcs:ignore
             $affiliatepress_startOfLastMonth = date('Y-m-d', strtotime($affiliatepress_endOfLastMonth.' -30 days')); //phpcs:ignore      
 
@@ -3842,6 +3854,9 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
 
             
             $affiliatepress_tracking_cookie_days = $AffiliatePress->affiliatepress_get_settings('tracking_cookie_days', 'affiliate_settings');
+            if($affiliatepress_tracking_cookie_days == 0){
+                $affiliatepress_tracking_cookie_days = $affiliatepress_max_tracking_cookie_days;
+            }
             $affiliatepress_affiliate_id = $this->affiliatepress_check_affiliate_user_allow_to_access_func();
             $affiliatepress_affiliate_user_self_closed_account = $AffiliatePress->affiliatepress_get_settings('affiliate_user_self_closed_account', 'affiliate_settings');
             $affiliatepress_dynamic_data_fields['affiliate_user_self_closed_account'] = $affiliatepress_affiliate_user_self_closed_account;

@@ -180,7 +180,7 @@ if (! class_exists('affiliatepress_wizard') ) {
                 'flat_rate_commission_basis'    => 'pre_product',
                 'payment_default_currency'      => 'USD',
                 'minimum_payment_amount'        => 10,
-                'integrations'                  => 'woocommerce',
+                'integrations'                  => $affiliatepress_global_options->affiliatepress_priority_wise_integration_get(),
                 'refund_grace_period'           => 0,
                 'affiliate_notification' =>array(
                     'admin_account_pending'                 => true ,
@@ -223,7 +223,7 @@ if (! class_exists('affiliatepress_wizard') ) {
         */
         function affiliatepress_save_lite_wizard_settings_func(){
 
-            global $AffiliatePress , $affiliatepress_tbl_ap_notifications;
+            global $AffiliatePress , $affiliatepress_tbl_ap_notifications,$affiliatepress_global_options;
 
             $response              = array();
             $affiliatepress_wpnonce               = isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '';// phpcs:ignore
@@ -287,11 +287,21 @@ if (! class_exists('affiliatepress_wizard') ) {
                 $affiliatepress_minimum_payment_amount = !empty($affiliatepress_wizard_data['minimum_payment_amount']) ? $affiliatepress_wizard_data['minimum_payment_amount'] : 10;
                 $AffiliatePress->affiliatepress_update_settings('minimum_payment_amount', 'commissions_settings' , $affiliatepress_minimum_payment_amount);
                 
-                $affiliatepress_integrations = !empty( $affiliatepress_wizard_data['integrations']) ? 'enable_'.$affiliatepress_wizard_data['integrations'] : '';
-                
-                if(!empty($affiliatepress_integrations))
+                $affiliatepress_selected_integrations = !empty( $affiliatepress_wizard_data['integrations']) ? $affiliatepress_wizard_data['integrations'] : '';
+
+                if(!empty($affiliatepress_selected_integrations))
                 {
-                    $AffiliatePress->affiliatepress_update_settings($affiliatepress_integrations, 'integrations_settings' , 'true');
+                    $affiliatepress_all_plugin_integration = $affiliatepress_global_options->affiliatepress_all_plugin_integration();
+
+                    $affiliatepress_enable_integartion = '';
+                    foreach ($affiliatepress_all_plugin_integration as $affiliatepress_integration) {
+                        if($affiliatepress_selected_integrations == $affiliatepress_integration['plugin_value']){
+                            $affiliatepress_enable_integartion = isset($affiliatepress_integration['plugin_integration_setting_name']) ? sanitize_text_field($affiliatepress_integration['plugin_integration_setting_name']) : '';
+                            break;
+                        }
+                    }
+
+                    $AffiliatePress->affiliatepress_update_settings($affiliatepress_enable_integartion, 'integrations_settings' , 'true');
                 }
 
                 $refund_grace_period = !empty($affiliatepress_wizard_data['refund_grace_period']) ? $affiliatepress_wizard_data['refund_grace_period'] : 0;

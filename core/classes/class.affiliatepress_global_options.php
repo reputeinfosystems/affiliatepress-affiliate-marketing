@@ -488,6 +488,56 @@ if (! class_exists('affiliatepress_global_options') ) {
                         'text'  => esc_html__('Sunday', 'affiliatepress-affiliate-marketing'),
                     )                   
                 ),
+               'yearly_cycle_months' => array(
+                    array(
+                        'value' => '1',
+                        'text'  => esc_html__('January', 'affiliatepress-affiliate-marketing'),
+                    ),
+                    array(
+                        'value' => '2',
+                        'text'  => esc_html__('February', 'affiliatepress-affiliate-marketing'),
+                    ),
+                    array(
+                        'value' => '3',
+                        'text'  => esc_html__('March', 'affiliatepress-affiliate-marketing'),
+                    ),
+                    array(
+                        'value' => '4',
+                        'text'  => esc_html__('April', 'affiliatepress-affiliate-marketing'),
+                    ),
+                    array(
+                        'value' => '5',
+                        'text'  => esc_html__('May', 'affiliatepress-affiliate-marketing'),
+                    ),
+                    array(
+                        'value' => '6',
+                        'text'  => esc_html__('June', 'affiliatepress-affiliate-marketing'),
+                    ),
+                    array(
+                        'value' => '7',
+                        'text'  => esc_html__('July', 'affiliatepress-affiliate-marketing'),
+                    ),
+                    array(
+                        'value' => '8',
+                        'text'  => esc_html__('August', 'affiliatepress-affiliate-marketing'),
+                    ),
+                    array(
+                        'value' => '9',
+                        'text'  => esc_html__('September', 'affiliatepress-affiliate-marketing'),
+                    ),
+                    array(
+                        'value' => '10',
+                        'text'  => esc_html__('October', 'affiliatepress-affiliate-marketing'),
+                    ),
+                    array(
+                        'value' => '11',
+                        'text'  => esc_html__('November', 'affiliatepress-affiliate-marketing'),
+                    ),
+                    array(
+                        'value' => '12',
+                        'text'  => esc_html__('December', 'affiliatepress-affiliate-marketing'),
+                    ),
+                ),
                 'url_types' => array(
                     array(
                         'value' => 'affiliate_default_url',
@@ -554,6 +604,33 @@ if (! class_exists('affiliatepress_global_options') ) {
                         'value' => '250',
                     ),
                 ),
+                'integration_priority'=> array(
+                    'woocommerce',
+                    'armember',
+                    'easy_digital_downloads',
+                    'bookingpress',
+                    'arforms',
+                    'memberpress',
+                    'ultimate_membership_pro',
+                    'restrict_content',
+                    'simple_membership',
+                    'paid_memberships_pro',
+                    'paid_memberships_subscriptions',
+                    'lifter_lms',
+                    'masteriyo_lms',
+                    'learnpress',
+                    'learndash',
+                    'wp_forms',
+                    'ninjaforms',
+                    'gravity_forms',
+                    'surecart',
+                    'wp_easycart',
+                    'give_wp',
+                    'wp_simple_pay',
+                    'accept_stripe_payments',
+                    'getpaid',
+                    'download_manager'
+                ),
             );            
             $affiliatepress_global_data = apply_filters('affiliatepress_add_global_option_data', $affiliatepress_global_data);
             return $affiliatepress_global_data;
@@ -565,159 +642,215 @@ if (! class_exists('affiliatepress_global_options') ) {
          * @return void
         */
         function affiliatepress_all_plugin_integration(){
+
+            if (!function_exists('is_plugin_active')) {
+                include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+            }
+
             $affiliatepress_all_plugin_integration = array();
 
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'    => esc_html__('WooCommerce', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'   => 'woocommerce',
-                'plugin_status'  => 1,
+                'plugin_status'  => (is_plugin_active('woocommerce/woocommerce.php')) ? 1 : 0,
+                'plugin_installer' => 'woocommerce/woocommerce.php',
+                'plugin_integration_setting_name' => 'enable_woocommerce',
             );
 
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'   => esc_html__('ARMember', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'   => 'armember',
-                'plugin_status' => 1,
+                'plugin_status' => (is_plugin_active('armember-membership/armember-membership.php') || is_plugin_active('armember/armember.php')) ? 1 : 0,
+                'plugin_installer' => 'armember-membership/armember-membership.php',
+                'plugin_pro_installer' => 'armember/armember.php',
+                'plugin_integration_setting_name' => 'enable_armember',
             );
             
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'   => esc_html__('Easy Digital Downloads', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'   => 'easy_digital_downloads',
-                'plugin_status' => 1,
+                'plugin_status' => (is_plugin_active('easy-digital-downloads/easy-digital-downloads.php') || is_plugin_active('easy-digital-downloads-pro/easy-digital-downloads.php')) ? 1 : 0,
+                'plugin_installer' => 'easy-digital-downloads/easy-digital-downloads.php',
+                'plugin_pro_installer' => 'easy-digital-downloads-pro/easy-digital-downloads.php',
+                'plugin_integration_setting_name' => 'enable_easy_digital_downloads',
             ); 
 
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'   => esc_html__('MemberPress', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'   => 'memberpress',
-                'plugin_status' => 1,
+                'plugin_status' => (is_plugin_active('memberpress/memberpress.php') ) ? 1 : 0,
+                'plugin_installer' => 'memberpress/memberpress.php',
+                'plugin_integration_setting_name' => 'enable_memberpress',
             );
             
 
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'   => esc_html__('Restrict Content pro', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'   => 'restrict_content',
-                'plugin_status' => 1,
+                'plugin_status' => (is_plugin_active('restrict-content/restrictcontent.php') || is_plugin_active('restrict-content-pro/restrict-content-pro.php')) ? 1 : 0,
+                'plugin_installer' => 'restrict-content/restrictcontent.php',
+                'plugin_pro_installer' => 'restrict-content-pro/restrict-content-pro.php',
+                'plugin_integration_setting_name' => 'enable_restrict_content',
             );
 
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'   => esc_html__('SureCart', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'   => 'surecart',
-                'plugin_status' => 1,
+                'plugin_status' => (is_plugin_active('surecart/surecart.php')) ? 1 : 0,
+                'plugin_installer' => 'surecart/surecart.php',
+                'plugin_integration_setting_name' => 'enable_surecart',
             );
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'   => esc_html__('WP EasyCart', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'   => 'wp_easycart',
-                'plugin_status' => 1,
+                'plugin_status' => (is_plugin_active('wp-easycart/wpeasycart.php')) ? 1 : 0,
+                'plugin_installer' => 'wp-easycart/wpeasycart.php',
+                'plugin_integration_setting_name' => 'enable_wp_easycart',
             );
 
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'   => esc_html__('LifterLMS', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'   => 'lifter_lms',
-                'plugin_status' => 1,
+                'plugin_status' => (is_plugin_active('lifterlms/lifterlms.php')) ? 1 : 0,
+                'plugin_installer' => 'lifterlms/lifterlms.php',
+                'plugin_integration_setting_name' => 'enable_lifter_lms',
             );
-
-  
 
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'   => esc_html__('GiveWP', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'   => 'give_wp',
-                'plugin_status' => 1,
+                'plugin_status' => (is_plugin_active('give/give.php')) ? 1 : 0,
+                'plugin_installer' => 'give/give.php',
+                'plugin_integration_setting_name' => 'enable_give_wp',
             );          
             
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'    => esc_html__('Ninja Forms', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'   => 'ninjaforms',
-                'plugin_status'  => 1,
+                'plugin_status'  => (is_plugin_active('ninja-forms/ninja-forms.php')) ? 1 : 0,
+                'plugin_installer' => 'ninja-forms/ninja-forms.php',
+                'plugin_integration_setting_name' => 'enable_ninjaforms',
             ); 
 
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'   => esc_html__('WPForms', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'   => 'wp_forms',
-                'plugin_status' => 1,
+                'plugin_status' => (is_plugin_active('wpforms/wpforms.php')) ? 1 : 0,
+                'plugin_installer' => 'wpforms/wpforms.php',
+                'plugin_integration_setting_name' => 'enable_wp_forms',
             );
 
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'   => esc_html__('Simple Membership', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'   => 'simple_membership',
-                'plugin_status' => 1,
+                'plugin_status' => (is_plugin_active('simple-membership/simple-wp-membership.php')) ? 1 : 0,
+                'plugin_installer' => 'simple-membership/simple-wp-membership.php',
+                'plugin_integration_setting_name' => 'enable_simple_membership',
             );
-
 
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'   => esc_html__('Paid Memberships Pro', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'   => 'paid_memberships_pro',
-                'plugin_status' => 1,
+                'plugin_status' => (is_plugin_active('paid-memberships-pro/paid-memberships-pro.php')) ? 1 : 0,
+                'plugin_installer' => 'paid-memberships-pro/paid-memberships-pro.php',
+                'plugin_integration_setting_name' => 'enable_paid_memberships_pro',
             );    
             
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'   => esc_html__('Paid Member Subscriptions', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'  => 'paid_memberships_subscriptions',
-                'plugin_status' => 1,
+                'plugin_status' => (is_plugin_active('paid-member-subscriptions/index.php')) ? 1 : 0,
+                'plugin_installer' => 'paid-member-subscriptions/index.php',
+                'plugin_integration_setting_name' => 'enable_paid_memberships_subscriptions',
             );
             
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'   => esc_html__('Gravity Forms', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'  => 'gravity_forms',
-                'plugin_status' => 1,
+                'plugin_status' => (is_plugin_active('gravityforms/gravityforms.php')) ? 1 : 0,
+                'plugin_installer' => 'gravityforms/gravityforms.php',
+                'plugin_integration_setting_name' => 'enable_gravity_forms',
             );
             
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'   => esc_html__('WP Simple Pay', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'  => 'wp_simple_pay',
-                'plugin_status' => 1,
+                'plugin_status' => (is_plugin_active('stripe/stripe-checkout.php')) ? 1 : 0,
+                'plugin_installer' => 'stripe/stripe-checkout.php',
+                'plugin_integration_setting_name' => 'enable_wp_simple_pay',
             );            
             
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'   => esc_html__('Masteriyo LMS', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'  => 'masteriyo_lms',
-                'plugin_status' => 1,
+                'plugin_status' => (is_plugin_active('learning-management-system/lms.php') || is_plugin_active('learning-management-system-pro/lms.php')) ? 1 : 0,
+                'plugin_installer' => 'learning-management-system/lms.php',
+                'plugin_pro_installer' => 'learning-management-system-pro/lms.php',
+                'plugin_integration_setting_name' => 'enable_masteriyo_lms',
             );    
             
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'   => esc_html__('LearnPress', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'  => 'learnpress',
-                'plugin_status' => 1,
+                'plugin_status' => (is_plugin_active('learnpress/learnpress.php')) ? 1 : 0,
+                'plugin_installer' => 'learnpress/learnpress.php',
+                'plugin_integration_setting_name' => 'enable_learnpress',
             );    
 
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'   => esc_html__('Accept Stripe Payments', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'  => 'accept_stripe_payments',
-                'plugin_status' => 1,
+                'plugin_status' => (is_plugin_active('stripe-payments/accept-stripe-payments.php')) ? 1 : 0,
+                'plugin_installer' => 'stripe-payments/accept-stripe-payments.php',
+                'plugin_integration_setting_name' => 'enable_accept_stripe_payments',
             );   	    
 
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'   => esc_html__('GetPaid', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'  => 'getpaid',
-                'plugin_status' => 1,
+                'plugin_status' => (is_plugin_active('invoicing/invoicing.php')) ? 1 : 0,
+                'plugin_installer' => 'invoicing/invoicing.php',
+                'plugin_integration_setting_name' => 'enable_getpaid',
             );
             
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'   => esc_html__('Ultimate Membership Pro', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'  => 'ultimate_membership_pro',
-                'plugin_status' => 1,
+                'plugin_status' => (is_plugin_active('indeed-membership-pro/indeed-membership-pro.php')) ? 1 : 0,
+                'plugin_installer' => 'indeed-membership-pro/indeed-membership-pro.php',
+                'plugin_integration_setting_name' => 'enable_ultimate_membership_pro',
             );
 
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'    => esc_html__('ARForms', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'   => 'arforms',
-                'plugin_status'  => 1,
+                'plugin_status'  => (is_plugin_active('arforms/arforms.php')) ? 1 : 0,
+                'plugin_installer' => 'arforms/arforms.php',
+                'plugin_integration_setting_name' => 'enable_arforms',
             );
 
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'    => esc_html__('Download Manager', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'   => 'download_manager',
-                'plugin_status'  => 1,
+                'plugin_status'  => (is_plugin_active('wpdm-premium-packages/wpdm-premium-packages.php')) ? 1 : 0,
+                'plugin_installer' => 'wpdm-premium-packages/wpdm-premium-packages.php',
+                'plugin_integration_setting_name' => 'enable_download_manager',
             );
 
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'    => esc_html__('BookingPress', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'   => 'bookingpress',
-                'plugin_status'  => 1,
+                'plugin_status'  => (is_plugin_active('bookingpress-appointment-booking-pro/bookingpress-appointment-booking-pro.php')) ? 1 : 0,
+                'plugin_installer' => 'bookingpress-appointment-booking-pro/bookingpress-appointment-booking-pro.php',
+                'plugin_integration_setting_name' => 'enable_bookingpress',
             );
 
             $affiliatepress_all_plugin_integration[] = array(
                 'plugin_name'   => esc_html__('LearnDash', 'affiliatepress-affiliate-marketing'),
                 'plugin_value'  => 'learndash',
-                'plugin_status' => 1,
+                'plugin_status' => (is_plugin_active('sfwd-lms/sfwd_lms.php')) ? 1 : 0,
+                'plugin_installer' => 'sfwd-lms/sfwd_lms.php',
+                'plugin_integration_setting_name' => 'enable_learndash',
             );    
 
             $affiliatepress_all_plugin_integration = apply_filters( 'affiliatepress_add_other_integration', $affiliatepress_all_plugin_integration);
@@ -725,6 +858,44 @@ if (! class_exists('affiliatepress_global_options') ) {
             return $affiliatepress_all_plugin_integration;
         }
 
+        function affiliatepress_priority_wise_integration_get() {
+
+            $affiliatepress_options = $this->affiliatepress_global_options();
+            $affiliatepress_priority_array = isset($affiliatepress_options['integration_priority'])  ? $affiliatepress_options['integration_priority'] : array();
+            $affiliatepress_all_integrations = $this->affiliatepress_all_plugin_integration();
+
+            $affiliatepress_integration_map = array();
+            foreach ($affiliatepress_all_integrations as $affiliatepress_integration) {
+                $affiliatepress_integration_map[$affiliatepress_integration['plugin_value']] = $affiliatepress_integration;
+            }
+        
+            if (!function_exists('is_plugin_active')) {
+                include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+            }
+            foreach ($affiliatepress_priority_array as $affiliatepress_priority_value) {
+        
+                if (isset($affiliatepress_integration_map[$affiliatepress_priority_value])) {
+        
+                    $affiliatepress_integration = $affiliatepress_integration_map[$affiliatepress_priority_value];
+                    $affiliatepress_is_active = false;
+        
+                    if (!empty($affiliatepress_integration['plugin_installer']) && is_plugin_active($affiliatepress_integration['plugin_installer'])) {
+                        $affiliatepress_is_active = true;
+                    }
+        
+                    if (!empty($affiliatepress_integration['plugin_pro_installer']) &&  is_plugin_active($affiliatepress_integration['plugin_pro_installer'])) {
+                        $affiliatepress_is_active = true;
+                    }
+        
+                    if ($affiliatepress_is_active) {
+                        return $affiliatepress_priority_value; 
+                    }
+                }
+            }
+        
+            return ''; 
+        }
+        
         function affiliatepress_global_attributes(){
             return array(
                 'class' => array(),

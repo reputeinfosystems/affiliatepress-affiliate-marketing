@@ -350,7 +350,47 @@ if( !class_exists('affiliatepress_wp_forms') ){
                 }                
             }
 
-            /** customer not created because in this not user id details get */
+            $affiliatepress_email      = "";
+            $affiliatepress_first_name = "";
+            $affiliatepress_last_name  = "";
+
+            foreach ( $affiliatepress_fields as $affiliatepress_field ) {
+
+                if ( 'email' === $affiliatepress_field['type'] ) {
+                    $affiliatepress_email = isset( $affiliatepress_field['value'] )? sanitize_email( $affiliatepress_field['value'] ) : '';
+                }
+
+                if ( 'name' === $affiliatepress_field['type'] ) {
+                    $affiliatepress_first_name = isset( $affiliatepress_field['first'] )? sanitize_text_field( $affiliatepress_field['first'] ): '';
+                    $affiliatepress_last_name = isset( $affiliatepress_field['last'] ) ? sanitize_text_field( $affiliatepress_field['last'] ): '';
+                }
+            }
+
+            $affiliatepress_customer_args = array(
+                'email'   	   => $affiliatepress_email,
+                'user_id' 	   => '',
+                'first_name'   => $affiliatepress_first_name,
+                'last_name'	   => $affiliatepress_last_name,
+                'affiliate_id' => $affiliatepress_affiliate_id
+            );
+
+            $affiliatepress_customer_commisison_add = true;
+            $affiliatepress_customer_commisison_add = apply_filters('affiliatepress_validate_customer_for_commission', $affiliatepress_customer_commisison_add, $affiliatepress_customer_args,$this->affiliatepress_integration_slug);
+
+            if(!$affiliatepress_customer_commisison_add){
+                return;
+            }
+
+            $affiliatepress_customer_id = $AffiliatePress->affiliatepress_add_commission_customer( $affiliatepress_customer_args );
+            $affiliatepress_customer_id = !empty($affiliatepress_customer_id) ? intval($affiliatepress_customer_id) : 0;
+
+            if ( $affiliatepress_customer_id ) {
+                $affiliatepress_debug_log_msg = sprintf( 'Customer #%s has been successfully processed.', $affiliatepress_customer_id );    
+                do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Customer Created', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_debug_log_msg, $affiliatepress_commission_debug_log_id);                     
+            } else {
+                $affiliatepress_debug_log_msg = 'Customer could not be processed due to an unexpected error.';
+                do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', 'Customer Not Created', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_debug_log_msg, $affiliatepress_commission_debug_log_id);
+            }
 
             $affiliatepress_commission_amount = 0;
             $affiliatepress_allow_products_commission = array();
@@ -376,7 +416,7 @@ if( !class_exists('affiliatepress_wp_forms') ){
                     'affiliate_id' => $affiliatepress_affiliate_id,
                     'product_id'   => $affiliatepress_form_id,
                     'order_id'     => $affiliatepress_payment_id,
-                    'customer_id'  => '',
+                    'customer_id'  => $affiliatepress_customer_id,
                     'commission_basis' => 'per_order',
                 );
                 $affiliatepress_commission_rules    = $affiliatepress_tracking->affiliatepress_calculate_commission_amount(  $affiliatepress_amount, '', $affiliatepress_args );
@@ -428,7 +468,7 @@ if( !class_exists('affiliatepress_wp_forms') ){
                     'type' 		       => $affiliatepress_commission_type,
                     'affiliate_id'     => $affiliatepress_affiliate_id,
                     'product_id'       => $affiliatepress_form_id,
-                    'customer_id'      => '',
+                    'customer_id'      => $affiliatepress_customer_id,
                     'commission_basis' => 'per_product',
                     'order_id'         => $affiliatepress_payment_id,
                 );
@@ -494,7 +534,7 @@ if( !class_exists('affiliatepress_wp_forms') ){
                 'ap_commission_order_amount'     => $affiliatepress_order_referal_amount,
                 'ap_commission_currency'         => $AffiliatePress->affiliatepress_get_default_currency_code(),
                 'ap_commission_ip_address'       => $affiliatepress_ip_address,
-                'ap_customer_id'                 => '',
+                'ap_customer_id'                 => $affiliatepress_customer_id,
                 'ap_commission_created_date'     => date('Y-m-d H:i:s', current_time('timestamp')) // phpcs:ignore
             );
 

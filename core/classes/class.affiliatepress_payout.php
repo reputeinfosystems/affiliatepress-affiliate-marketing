@@ -75,6 +75,8 @@ if (! class_exists('affiliatepress_payout') ) {
 
             add_action('wp_ajax_affiliatepress_generate_export_payout', array($this, 'affiliatepress_generate_export_payout_func'),10);
 
+            add_filter('affiliatepress_payout_payment_method', array($this,'affiliatepress_payout_method_add_func'),10,1);
+
         }
           
         
@@ -144,8 +146,110 @@ if (! class_exists('affiliatepress_payout') ) {
  
                     }
 
-                }else if($affiliatepress_commission_billing_cycle == 'yearly'){                    
-                    $affiliatepress_possible_date = date('Y-m-d', strtotime('last day of December this year', strtotime($affiliatepress_givenDate))); // phpcs:ignore     
+                }
+                else if ($affiliatepress_commission_billing_cycle == 'yearly') {
+
+                    $affiliatepress_selected_month = intval($affiliatepress_day_of_billing_cycle);
+                
+                    if ($affiliatepress_selected_month == 1) {
+                        $affiliatepress_selected_month = 12;
+                    } else {
+                        $affiliatepress_selected_month -= 1;
+                    }
+                    $today = new DateTime();
+                    $today->setTime(0, 0, 0);
+                    $affiliatepress_date = new DateTime();
+                    $affiliatepress_date->setDate(date('Y'), $affiliatepress_selected_month, 1); //phpcs:ignore
+                    $affiliatepress_date->modify('last day of this month');
+                    $affiliatepress_date->setTime(0, 0, 0);
+                    if ($affiliatepress_date < $today) {
+                        $affiliatepress_date->modify('+1 year');
+                    }
+                    $affiliatepress_possible_date = $affiliatepress_date->format('Y-m-d');
+                }
+            }
+
+            return $affiliatepress_possible_date;
+        }
+
+         /**
+         * Function for get auto payout date
+         *
+         * @return date
+        */
+        function affiliatepress_get_auto_payout_date(){
+            global $AffiliatePress;
+            $affiliatepress_commission_billing_cycle = $AffiliatePress->affiliatepress_get_settings('commission_billing_cycle', 'commissions_settings');
+            $affiliatepress_commission_cooling_period_days = $AffiliatePress->affiliatepress_get_settings('commission_cooling_period_days', 'commissions_settings');
+            $affiliatepress_day_of_billing_cycle = $AffiliatePress->affiliatepress_get_settings('day_of_billing_cycle', 'commissions_settings');
+            $affiliatepress_givenDate = date('Y-m-d',current_time('timestamp') );// phpcs:ignore
+            if($affiliatepress_commission_billing_cycle == 'weekly'){
+                $affiliatepress_daysname = "Monday";
+                switch($affiliatepress_day_of_billing_cycle){
+                    case 1:
+                        $affiliatepress_daysname= 'Monday';
+                        break;
+                    case 2:
+                        $affiliatepress_daysname= 'Tuesday';
+                        break;
+                    case 3:
+                        $affiliatepress_daysname= 'Wednesday';
+                        break;
+                    case 4:
+                        $affiliatepress_daysname= 'Thursday';
+                        break;
+                    case 5:
+                        $affiliatepress_daysname= 'Friday';
+                        break;
+                    case 6:
+                        $affiliatepress_daysname= 'Saturday';
+                        break;
+                    default:
+                        $affiliatepress_daysname= 'Sunday';                
+                }                
+                $affiliatepress_possible_date = date('Y-m-d', strtotime(''.$affiliatepress_daysname.' this week  - 7 days', strtotime($affiliatepress_givenDate)));   // phpcs:ignore            
+            }else{
+                if($affiliatepress_commission_billing_cycle == 'monthly'){
+
+                    $affiliatepress_date = new DateTime('last day of previous month');
+                    $affiliatepress_last_day_of_previous_month = $affiliatepress_date->format('Y-m-d');
+                    $affiliatepress_date = new DateTime('first day of previous month');
+
+                    $affiliatepress_day_of_billing_cycle = $affiliatepress_day_of_billing_cycle - 1;
+                    if($affiliatepress_day_of_billing_cycle > 0){
+                        $affiliatepress_date->modify('+'.$affiliatepress_day_of_billing_cycle.' days');  
+                    }                    
+                    $affiliatepress_possible_date = $affiliatepress_date->format('Y-m-d');                    
+                    if($affiliatepress_possible_date > $affiliatepress_last_day_of_previous_month){
+                        $affiliatepress_possible_date = $affiliatepress_last_day_of_previous_month;
+                    }
+
+                }
+                else if($affiliatepress_commission_billing_cycle == 'yearly'){
+
+                    $affiliatepress_selected_month = intval($affiliatepress_day_of_billing_cycle);
+
+                    if ($affiliatepress_selected_month == 1) {
+                        $affiliatepress_selected_month = 12;
+                        $year = date('Y') - 1;//phpcs:ignore
+                    } else {
+                        $affiliatepress_selected_month -= 1;
+                        $year = date('Y');//phpcs:ignore
+                    }
+                
+                    $affiliatepress_date = new DateTime();
+                    $affiliatepress_date->setDate($year, $affiliatepress_selected_month, 1);
+                    $affiliatepress_date->modify('last day of this month');
+                    $affiliatepress_date->setTime(0, 0, 0);
+                
+                    $today = new DateTime();
+                    $today->setTime(0, 0, 0);
+                    
+                    if ($affiliatepress_date >= $today) {
+                        $affiliatepress_date->modify('-1 year');
+                    }
+                
+                    $affiliatepress_possible_date = $affiliatepress_date->format('Y-m-d');
                 }
             }
 
@@ -270,7 +374,7 @@ if (! class_exists('affiliatepress_payout') ) {
         */
         function affiliatepress_generate_auto_payout(){
 
-            global $wpdb,$AffiliatePress,$affiliatepress_tbl_ap_payouts,$affiliatepress_payout_debug_log_id;
+            global $wpdb,$AffiliatePress,$affiliatepress_tbl_ap_payouts,$affiliatepress_payout_debug_log_id,$affiliatepress_tracking;
             
             $affiliatepress_commission_billing_cycle = $AffiliatePress->affiliatepress_get_settings('commission_billing_cycle', 'commissions_settings');
 
@@ -304,7 +408,8 @@ if (! class_exists('affiliatepress_payout') ) {
                 if(isset($affiliatepress_payout_data['payout_affiliates']) && !empty($affiliatepress_payout_data['payout_affiliates'])){                      
                     
                     $affiliatepress_total_affiliate = (isset($affiliatepress_payout_data['total_affiliate']))?intval($affiliatepress_payout_data['total_affiliate']):0;                    
-                    $affiliatepress_minimum_payment_amount = $AffiliatePress->affiliatepress_get_settings('minimum_payment_amount', 'commissions_settings');                    
+                    $affiliatepress_minimum_payment_amount = $AffiliatePress->affiliatepress_get_settings('minimum_payment_amount', 'commissions_settings'); 
+                    $affiliatepress_minimum_payment_order = $affiliatepress_tracking->affiliatepress_get_payout_minimum_payment_order();                   
                     $affiliatepress_args = array(                
                         'ap_payout_created_by'          => 0,
                         'ap_payout_upto_date'           => $affiliatepress_auto_payout_date,
@@ -313,7 +418,9 @@ if (! class_exists('affiliatepress_payout') ) {
                         'ap_payment_method'             => '',
                         'ap_payment_min_amount'         => $affiliatepress_minimum_payment_amount,             
                         'ap_payout_process'             => 0,
+                        'ap_payment_min_order'          => $affiliatepress_minimum_payment_order,
                     );
+
                     $affiliatepress_payout_id = $this->affiliatepress_insert_record($affiliatepress_tbl_ap_payouts, $affiliatepress_args);
                     
                     do_action('affiliatepress_payout_debug_log_entry', 'payout_tracking_debug_logs', 'AUTO Payout ID #'.$affiliatepress_payout_id.' Data : ', 'affiliatepress_auto_payout_tracking', wp_json_encode(array('total_affiliate' => $affiliatepress_total_affiliate,'minimum_payment_amount'=>$affiliatepress_minimum_payment_amount,'auto_payout_date'=>$affiliatepress_auto_payout_date)), $affiliatepress_payout_id);
@@ -328,66 +435,6 @@ if (! class_exists('affiliatepress_payout') ) {
 
             }
 
-        }
-
-        /**
-         * Function for get auto payout date
-         *
-         * @return date
-        */
-        function affiliatepress_get_auto_payout_date(){
-            global $AffiliatePress;
-            $affiliatepress_commission_billing_cycle = $AffiliatePress->affiliatepress_get_settings('commission_billing_cycle', 'commissions_settings');
-            $affiliatepress_commission_cooling_period_days = $AffiliatePress->affiliatepress_get_settings('commission_cooling_period_days', 'commissions_settings');
-            $affiliatepress_day_of_billing_cycle = $AffiliatePress->affiliatepress_get_settings('day_of_billing_cycle', 'commissions_settings');
-            $affiliatepress_givenDate = date('Y-m-d',current_time('timestamp') );// phpcs:ignore
-            if($affiliatepress_commission_billing_cycle == 'weekly'){
-                $affiliatepress_daysname = "Monday";
-                switch($affiliatepress_day_of_billing_cycle){
-                    case 1:
-                        $affiliatepress_daysname= 'Monday';
-                        break;
-                    case 2:
-                        $affiliatepress_daysname= 'Tuesday';
-                        break;
-                    case 3:
-                        $affiliatepress_daysname= 'Wednesday';
-                        break;
-                    case 4:
-                        $affiliatepress_daysname= 'Thursday';
-                        break;
-                    case 5:
-                        $affiliatepress_daysname= 'Friday';
-                        break;
-                    case 6:
-                        $affiliatepress_daysname= 'Saturday';
-                        break;
-                    default:
-                        $affiliatepress_daysname= 'Sunday';                
-                }                
-                $affiliatepress_possible_date = date('Y-m-d', strtotime(''.$affiliatepress_daysname.' this week  - 7 days', strtotime($affiliatepress_givenDate)));   // phpcs:ignore            
-            }else{
-                if($affiliatepress_commission_billing_cycle == 'monthly'){
-
-                    $affiliatepress_date = new DateTime('last day of previous month');
-                    $affiliatepress_last_day_of_previous_month = $affiliatepress_date->format('Y-m-d');
-                    $affiliatepress_date = new DateTime('first day of previous month');
-
-                    $affiliatepress_day_of_billing_cycle = $affiliatepress_day_of_billing_cycle - 1;
-                    if($affiliatepress_day_of_billing_cycle > 0){
-                        $affiliatepress_date->modify('+'.$affiliatepress_day_of_billing_cycle.' days');  
-                    }                    
-                    $affiliatepress_possible_date = $affiliatepress_date->format('Y-m-d');                    
-                    if($affiliatepress_possible_date > $affiliatepress_last_day_of_previous_month){
-                        $affiliatepress_possible_date = $affiliatepress_last_day_of_previous_month;
-                    }
-
-                }else if($affiliatepress_commission_billing_cycle == 'yearly'){
-                    $affiliatepress_possible_date = date('Y-m-d', strtotime('last day of December last year', strtotime($affiliatepress_givenDate)));  // phpcs:ignore                       
-                }
-            }
-
-            return $affiliatepress_possible_date;
         }
 
         /**
@@ -765,7 +812,7 @@ if (! class_exists('affiliatepress_payout') ) {
          * @return void
         */
         function affiliatepress_generate_payout_request_func(){
-            global $wpdb,$AffiliatePress,$affiliatepress_tbl_ap_payouts,$affiliatepress_payout_debug_log_id;
+            global $wpdb,$AffiliatePress,$affiliatepress_tbl_ap_payouts,$affiliatepress_payout_debug_log_id,$affiliatepress_tracking;
             $response = array();
             $affiliatepress_ap_check_authorization = $this->affiliatepress_ap_check_authentication( 'generate_payout', true, 'ap_wp_nonce' );            
             $response = array();
@@ -821,6 +868,7 @@ if (! class_exists('affiliatepress_payout') ) {
 
                     $affiliatepress_preview_total_affiliate = (isset($_POST['preview_total_affiliate']))?intval($_POST['preview_total_affiliate']):0;// phpcs:ignore 
                     $affiliatepress_minimum_payment_amount = $AffiliatePress->affiliatepress_get_settings('minimum_payment_amount', 'commissions_settings');
+                    $affiliatepress_minimum_payment_order = $affiliatepress_tracking->affiliatepress_get_payout_minimum_payment_order();
                     $affiliatepress_allow_affiliates = implode(",",$affiliatepress_allow_affiliates);
                     $affiliatepress_args = array(                
                         'ap_payout_created_by'          => get_current_user_ID(),
@@ -830,8 +878,9 @@ if (! class_exists('affiliatepress_payout') ) {
                         'ap_payment_method'             => $affiliatepress_payment_method,
                         'ap_payment_min_amount'         => $affiliatepress_minimum_payment_amount,          
                         'ap_payout_process'             => 0,
-                        'ap_payout_created_date'        => date('Y-m-d H:i:s', current_time('timestamp'))//phpcs:ignore
-                    );                    
+                        'ap_payout_created_date'        => date('Y-m-d H:i:s', current_time('timestamp')),//phpcs:ignore
+                        'ap_payment_min_order'          => $affiliatepress_minimum_payment_order,
+                    );  
 
                     $affiliatepress_payout_id = $this->affiliatepress_insert_record($affiliatepress_tbl_ap_payouts, $affiliatepress_args);
                     if($affiliatepress_payout_id){
@@ -860,7 +909,7 @@ if (! class_exists('affiliatepress_payout') ) {
         */
         function affiliatepress_generate_payout_data($affiliatepress_payout_upto_date = '',$affiliatepress_include_affiliate = array(), $affiliatepress_payment_method = 'manual'){
 
-            global $wpdb,$affiliatepress_tbl_ap_affiliate_commissions,$affiliatepress_tbl_ap_affiliates,$AffiliatePress;
+            global $wpdb,$affiliatepress_tbl_ap_affiliate_commissions,$affiliatepress_tbl_ap_affiliates,$AffiliatePress,$affiliatepress_tracking;
 
             $this->affiliatepress_payout_affiliate_limit = 500;
             
@@ -927,11 +976,14 @@ if (! class_exists('affiliatepress_payout') ) {
             $affiliatepress_total_affiliate = 0;
             $affiliatepress_all_payout_affiliate = array();
             $affiliatepress_minimum_payment_amount = floatval($AffiliatePress->affiliatepress_get_settings('minimum_payment_amount', 'commissions_settings'));
+            $affiliatepress_minimum_payment_order = $affiliatepress_tracking->affiliatepress_get_payout_minimum_payment_order();
             $affiliatepress_final_payout_affiliate = array();
             if(!empty($affiliatepress_payout_affiliates)){
                 $affiliatepress_i = 0;
-                foreach($affiliatepress_payout_affiliates as $affiliatepress_key=>$affiliatepress_value){                   
-                    if($affiliatepress_payout_affiliates[$affiliatepress_key]['total_amount'] >= $affiliatepress_minimum_payment_amount){
+                foreach($affiliatepress_payout_affiliates as $affiliatepress_key=>$affiliatepress_value){ 
+                    $affiliatepress_total_commission_count = count($affiliatepress_payout_affiliates[$affiliatepress_key]['commission_record']);  
+                    if($affiliatepress_payout_affiliates[$affiliatepress_key]['total_amount'] >= $affiliatepress_minimum_payment_amount &&
+                    $affiliatepress_total_commission_count >= $affiliatepress_minimum_payment_order){
                         $affiliatepress_final_payout_affiliate[$affiliatepress_i] = $affiliatepress_value;
                         $affiliatepress_payout_affiliates[$affiliatepress_key]['total_amount'] = round($affiliatepress_payout_affiliates[$affiliatepress_key]['total_amount'],2);
                         $affiliatepress_total_payment_amount = $affiliatepress_total_payment_amount + $affiliatepress_payout_affiliates[$affiliatepress_key]['total_amount'];
@@ -1139,9 +1191,7 @@ if (! class_exists('affiliatepress_payout') ) {
             $affiliatepress_exports_data = $this->affiliatepress_get_affiliate_export_data($affiliatepress_export_payout_id);
             $affiliatepress_export_file_name = 'payout';
 
-            $affiliatepress_payment_method = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_payouts, 'ap_payment_method', 'WHERE ap_payout_id = %d', array( $affiliatepress_export_payout_id ), '', '', '', true, true,ARRAY_A);
-
-            $affiliatepress_columns = $this->affiliatepress_get_export_payouts_columns($affiliatepress_payment_method);
+            $affiliatepress_columns = $this->affiliatepress_get_export_payouts_columns();
 
             $affiliatepress_filename = 'affiliatepress-export-'.$affiliatepress_export_file_name.'-'.date('Y-m-d') . '.csv'; //phpcs:ignore
 
@@ -1159,25 +1209,40 @@ if (! class_exists('affiliatepress_payout') ) {
             exit;
         }
 
+        function affiliatepress_payout_method_add_func($affiliatepress_payment_method){
+
+            global $AffiliatePress;
+            $affiliatepress_payment_method['manual'] = esc_html__( 'Manual', 'affiliatepress-affiliate-marketing' );// phpcs:ignore;
+
+           return $affiliatepress_payment_method;
+       }
+
         /**
          * Function For generate payout data for column
          *
          * @return array
          */
-        function affiliatepress_get_export_payouts_columns($affiliatepress_payment_method){
+        function affiliatepress_get_export_payouts_columns(){
+
+            $affiliatepress_payout_paymnet_method = array();
+            $affiliatepress_payout_paymnet_method = apply_filters('affiliatepress_payout_payment_method',$affiliatepress_payout_paymnet_method);
             
             $affiliatepress_export_col = array(
                 'ap_payment_id'           => __( 'Payment ID', 'affiliatepress-affiliate-marketing' ),
                 'ap_affiliates_id'        => __( 'Affiliate ID', 'affiliatepress-affiliate-marketing' ),
+                'ap_affiliates_user_name' => __( 'Affiliate Username', 'affiliatepress-affiliate-marketing' ),
                 'ap_affiliates_email'     => __( 'Affiliate Email', 'affiliatepress-affiliate-marketing' ),
                 'ap_affiliates_payment_email'   => __( 'Affiliate Payment Email', 'affiliatepress-affiliate-marketing' ),
                 'ap_affiliates_name'      => __( 'Affiliate Name', 'affiliatepress-affiliate-marketing' ),
                 'ap_payment_amount'       => __( 'Amount', 'affiliatepress-affiliate-marketing' ),
                 'ap_payment_method'       => __( 'Payment Method', 'affiliatepress-affiliate-marketing' ),
                 'ap_payment_status'       => __( 'Payment Status', 'affiliatepress-affiliate-marketing' ),
+                'ap_total_commission'       => __( 'Total Commission', 'affiliatepress-affiliate-marketing' ),
+                'ap_total_visit'       => __( 'Total Visit', 'affiliatepress-affiliate-marketing' ),
+                'ap_conversion_rate'       => __( 'Conversion Rate', 'affiliatepress-affiliate-marketing' ),
             );
 
-            $affiliatepress_export_col = apply_filters('affiliatepress_export_payout_extra_details',$affiliatepress_export_col,$affiliatepress_payment_method);
+            $affiliatepress_export_col = apply_filters('affiliatepress_export_payout_extra_details',$affiliatepress_export_col,$affiliatepress_payout_paymnet_method);
 
             return $affiliatepress_export_col;
         }
@@ -1188,13 +1253,16 @@ if (! class_exists('affiliatepress_payout') ) {
          * @return array
          */
         function affiliatepress_get_affiliate_export_data($affiliatepress_export_payout_id){
-            global  $affiliatepress_tbl_ap_payments,$affiliatepress_global_options,$affiliatepress_tbl_ap_affiliates;
+            global  $wpdb,$affiliatepress_tbl_ap_payments,$affiliatepress_global_options,$affiliatepress_tbl_ap_affiliates,$affiliatepress_tbl_ap_payment_commission;
 
             if(empty($affiliatepress_export_payout_id)){
                 return;
             }
 
-            $affiliatepress_export_payouts_data = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_payments, '*', 'WHERE ap_payout_id = %d', array( $affiliatepress_export_payout_id ), '', '', '', false, false,ARRAY_A);
+            $affiliatepress_where_clause = " WHERE 1 = 1 ";
+            $affiliatepress_where_clause.= $wpdb->prepare( " AND (payment.ap_payout_id = %d) ", $affiliatepress_export_payout_id);
+
+            $affiliatepress_export_payouts_data = $wpdb->get_results("SELECT payment.*, affiliate.ap_affiliates_user_email, affiliate.ap_affiliates_payment_email, affiliate.ap_affiliates_user_name FROM {$affiliatepress_tbl_ap_payments} as payment INNER JOIN {$affiliatepress_tbl_ap_affiliates} as affiliate  ON payment.ap_affiliates_id = affiliate.ap_affiliates_id {$affiliatepress_where_clause}", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates is a table name. false alarm
 
             $affiliatepress_options = $affiliatepress_global_options->affiliatepress_global_options();
             $affiliatepress_all_payment_status_list = $affiliatepress_options['payment_status'];
@@ -1209,7 +1277,6 @@ if (! class_exists('affiliatepress_payout') ) {
             if(!empty($affiliatepress_export_payouts_data)){
 
                 foreach($affiliatepress_export_payouts_data as $affiliatepress_export_payouts){
-
                     $affiliatepress_payment_affiliate_id = (isset($affiliatepress_export_payouts['ap_affiliates_id']))?stripslashes_deep($affiliatepress_export_payouts['ap_affiliates_id']):0;
                     $affiliatepress_payment_amount =(isset($affiliatepress_export_payouts['ap_payment_amount']))?stripslashes_deep($affiliatepress_export_payouts['ap_payment_amount']):0;
                     $affiliatepress_payment_currency =(isset($affiliatepress_export_payouts['ap_payment_currency']))?stripslashes_deep($affiliatepress_export_payouts['ap_payment_currency']):0;
@@ -1218,15 +1285,26 @@ if (! class_exists('affiliatepress_payout') ) {
 
                     $affiliatepress_payout['ap_payment_id'] = (isset($affiliatepress_export_payouts['ap_payment_id']))?stripslashes_deep($affiliatepress_export_payouts['ap_payment_id']):0;
                     $affiliatepress_payout['ap_affiliates_id'] = $affiliatepress_payment_affiliate_id;
-                    $affiliatepress_payout['ap_affiliates_email'] = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliates, 'ap_affiliates_user_email', 'WHERE ap_affiliates_id = %d', array( $affiliatepress_payment_affiliate_id ), '', '', '', true, true,ARRAY_A);
-                    $affiliatepress_payout['ap_affiliates_payment_email'] = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliates, 'ap_affiliates_payment_email', 'WHERE ap_affiliates_id = %d', array( $affiliatepress_payment_affiliate_id ), '', '', '', true, true,ARRAY_A);
+                    $affiliatepress_payout['ap_affiliates_user_name'] = (isset($affiliatepress_export_payouts['ap_affiliates_user_name']))?stripslashes_deep($affiliatepress_export_payouts['ap_affiliates_user_name']):'-';
+                    $affiliatepress_payout['ap_affiliates_email'] = (isset($affiliatepress_export_payouts['ap_affiliates_user_email']))?stripslashes_deep($affiliatepress_export_payouts['ap_affiliates_user_email']):'-';
+                    $affiliatepress_payout['ap_affiliates_payment_email'] = (isset($affiliatepress_export_payouts['ap_affiliates_payment_email']))?stripslashes_deep($affiliatepress_export_payouts['ap_affiliates_payment_email']):'-';
                     $affiliatepress_payout['ap_affiliates_name'] = (isset($affiliatepress_export_payouts['ap_affiliates_name']))?stripslashes_deep($affiliatepress_export_payouts['ap_affiliates_name']):'-';
                     $affiliatepress_payout['ap_payment_amount'] = $affiliatepress_payment_amount_with_currency;
                     $affiliatepress_payout['ap_payment_method'] = $affiliatepress_payment_method;
                     $affiliatepress_payout['ap_payment_status'] = (isset($affiliatepress_all_payment_status[$affiliatepress_export_payouts['ap_payment_status']])) ? stripslashes_deep($affiliatepress_all_payment_status[$affiliatepress_export_payouts['ap_payment_status']]) : '';
 
-                    $affiliatepress_payout = apply_filters('affiliatepress_export_payout_other_data_add' ,$affiliatepress_payout , $affiliatepress_export_payouts,$affiliatepress_payment_method);
+                    $affiliatepress_payout['ap_total_commission'] = intval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_payment_commission, 'count(ap_payment_commission_id)', 'WHERE ap_payment_id  = %d', array($affiliatepress_payout['ap_payment_id']), '', '', '', true, false,ARRAY_A));
 
+                    $affiliatepress_payout['ap_total_visit'] = (isset($affiliatepress_export_payouts['ap_payment_visit']))?intval($affiliatepress_export_payouts['ap_payment_visit']):'-'; 
+
+                    if($affiliatepress_payout['ap_total_visit'] > 0){
+                        $affiliatepress_conversion_rate = round(($affiliatepress_payout['ap_total_commission'] /  $affiliatepress_payout['ap_total_visit']) * 100, 2)."%";
+                    }else{
+                        $affiliatepress_conversion_rate = 0;
+                    }
+                    $affiliatepress_payout['ap_conversion_rate'] = $affiliatepress_conversion_rate;
+                    $affiliatepress_payout = apply_filters('affiliatepress_export_payout_other_data_add' ,$affiliatepress_payout , $affiliatepress_export_payouts,$affiliatepress_payment_method);
+                    
                     $affiliatepress_payouts[] = $affiliatepress_payout;
                 }
             }

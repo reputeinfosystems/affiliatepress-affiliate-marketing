@@ -917,7 +917,7 @@ if (! class_exists('affiliatepress_settings') ) {
          */
         function affiliatepress_dynamic_setting_data_fields(){
             
-            global $affiliatepress_global_options,$affiliatepress_dynamic_setting_data_fields, $affiliatepress_affiliates, $AffiliatePress;
+            global $affiliatepress_global_options,$affiliatepress_dynamic_setting_data_fields, $affiliatepress_affiliates, $AffiliatePress,$affiliatepress_max_tracking_cookie_days;
 
             $affiliatepress_options                    = $affiliatepress_global_options->affiliatepress_global_options();
             
@@ -961,6 +961,7 @@ if (! class_exists('affiliatepress_settings') ) {
                 'currency_countries'               => $affiliatepress_countries_currency_details,
                 'affiliate_account_page_url'         => get_permalink($affiliatepress_affiliate_account_page_id),
                 'affiliate_register_page_url'         => get_permalink($affiliatepress_affiliate_register_page_id),
+                'max_tracking_cookie_days'           => $affiliatepress_max_tracking_cookie_days,
                 'modals'                           => array(
                     'general_setting_modal'      => false,
                     'company_setting_modal'      => false,
@@ -1436,14 +1437,7 @@ if (! class_exists('affiliatepress_settings') ) {
                             'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
                             'trigger'  => 'blur',
                         ),
-                    ),    
-                    'visit_direct_trafic'  => array(
-                        array(
-                            'required' => true,
-                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
-                            'trigger'  => 'blur',
-                        ),
-                    ), 
+                    ),
                      'creative_title'  => array(
                         array(
                             'required' => true,
@@ -1516,6 +1510,13 @@ if (! class_exists('affiliatepress_settings') ) {
                         ),
                     ), 
                     'paymnet_select_status'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ), 
+                    'payment_minimum_amount_label'  => array(
                         array(
                             'required' => true,
                             'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
@@ -1967,7 +1968,6 @@ if (! class_exists('affiliatepress_settings') ) {
                     'visit_all'                    => '',
                     'visit_landing_url'            => '',
                     'visit_referrer_url'           => '',
-                    'visit_direct_trafic'          => '',
                     'visit_unconverted_status'     => '',
 
                     //Creative
@@ -1986,6 +1986,7 @@ if (! class_exists('affiliatepress_settings') ) {
                     //paymnets
                     'paymnet_title' => '',
                     'paymnet_select_status' =>'',
+                    'payment_minimum_amount_label' =>'',
                     'paymnet_id'=>'',
                     'paymnet_date'=>'',
                     'paymnet_method'=>'',
@@ -2120,6 +2121,7 @@ if (! class_exists('affiliatepress_settings') ) {
                     'allow_zero_amount_commission'       => false,
                     'refund_grace_period'                => 2,
                     'minimum_payment_amount'             => 10,
+                    'minimum_payment_order'              => 1,
                     'commission_billing_cycle'           => 'monthly',
                     'commission_cooling_period_days'     => 30,
                     'day_of_billing_cycle'               => 3,  
@@ -2127,6 +2129,7 @@ if (! class_exists('affiliatepress_settings') ) {
                     'auto_approve_commission_after_days' => 0,
                 ),
                 'default_commission_status_disable' => true,
+                'minimum_payment_order_disable' => true,
                 'default_commission_status_option' => array(
                     array(
                         'label'  => esc_html__('Pending', 'affiliatepress-affiliate-marketing'),
@@ -2875,6 +2878,10 @@ if (! class_exists('affiliatepress_settings') ) {
             $affiliatepress_url_types = (isset($affiliatepress_global_options_data['url_types']))?$affiliatepress_global_options_data['url_types']:array();
 
             $affiliatepress_dynamic_setting_data_fields['weekly_cycle_days'] = $affiliatepress_weekly_cycle_days;
+
+            $affiliatepress_yearly_cycle_months = (isset($affiliatepress_global_options_data['yearly_cycle_months']))?$affiliatepress_global_options_data['yearly_cycle_months']:array();
+            $affiliatepress_dynamic_setting_data_fields['yearly_cycle_months'] = $affiliatepress_yearly_cycle_months;
+
             $affiliatepress_dynamic_setting_data_fields['affiliatepress_url_types'] = $affiliatepress_url_types;
             $affiliatepress_selected_tab_name  = !empty($_REQUEST['setting_page']) ? sanitize_text_field($_REQUEST['setting_page']) : 'affiliate_settings'; // phpcs:ignore         
             $affiliatepress_dynamic_setting_data_fields['selected_tab_name'] = $affiliatepress_selected_tab_name;     
@@ -2883,6 +2890,7 @@ if (! class_exists('affiliatepress_settings') ) {
             $affiliatepress_dynamic_setting_data_fields['is_display_reset_wizard_setting_btn'] = false;
 
             $affiliatepress_dynamic_setting_data_fields['integration_reject_commission_disable'] = true;
+            $affiliatepress_dynamic_setting_data_fields['integration_upgrade_commission_disable'] = true;
             $affiliatepress_dynamic_setting_data_fields['affiliate_integration_refund_disabled_switch'] = true;
 
             $affiliatepress_dynamic_setting_data_fields['integrations_setting_form'] = array(
@@ -2915,6 +2923,7 @@ if (! class_exists('affiliatepress_settings') ) {
                 'easy_digital_downloads_exclude_shipping' => true,
                 'easy_digital_downloads_exclude_taxes' =>true ,
                 'easy_digital_downloads_reject_commission_on_refund' => true,
+                'easy_digital_downloads_disable_commission_on_upgrade' => true,
 
                 'enable_easy_digital_downloads' => false,
                 'memberpress_exclude_taxes' =>true ,
@@ -3082,6 +3091,9 @@ if (! class_exists('affiliatepress_settings') ) {
                 change_auto_payout_cycle(val){
                     const vm = this;
                     if(val == "weekly"){
+                        vm.commissions_setting_form.day_of_billing_cycle = "1";
+                    }
+                    if(val == "yearly"){
                         vm.commissions_setting_form.day_of_billing_cycle = "1";
                     }
                 },
