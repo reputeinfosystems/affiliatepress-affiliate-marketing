@@ -1165,7 +1165,7 @@
                             <div class="ap-affiliate-generated-link">
                                 <div class="ap-affiliate-generated-link-header ap-affiliat-panel-pading">
                                     <div class="ap-tab-heading" :aria-label="affiliate_panel_labels.link_custome_Affiliate_links" v-html="affiliate_panel_labels.link_custome_Affiliate_links"></div>
-                                    <el-button type="primary" @click="open_affiliate_link_model" class="ap-btn--primary ap-remove-m-b-title">
+                                    <el-button type="primary" @click="open_affiliate_link_model" class="ap-btn--primary ap-remove-m-b-title" :disabled="!is_add_affiliate_link">
                                         <span class="ap-btn__icon"><?php do_action('affiliatepress_common_svg_code','add_icon'); ?></span>
                                         <span class="ap-btn__label" :aria-label="affiliate_panel_labels.link_generate_affiliate_link" v-html="affiliate_panel_labels.link_generate_affiliate_link"></span>
                                     </el-button>                                
@@ -1186,7 +1186,7 @@
                                                         <template #label>
                                                             <span class="ap-form-label" :aria-label="affiliate_panel_labels.link_page_url" v-html="affiliate_panel_labels.link_page_url"></span>
                                                         </template>
-                                                        <el-input  ref="generate_link_pageUrlInput" class="ap-form-control" type="text" v-model="affiliate_links_data.ap_page_link" size="large" :placeholder="affiliate_panel_labels.link_enter_page_url" />
+                                                        <el-input  ref="generate_link_pageUrlInput" class="ap-form-control" type="text" v-model="affiliate_links_data.ap_page_link" size="large" :placeholder="affiliate_panel_labels.link_enter_page_url"  maxlength="255"/>
                                                     </el-form-item>                     
                                                 </div> 
                                                 <div class="ap-single-field__form">                    
@@ -1222,7 +1222,7 @@
                                 <div v-if="affiliate_custom_links != '' && affiliate_custom_links.length != 0" class="ap-affiliate-link-table">
                                     <el-table v-if="(current_screen_size == 'tablet' || current_screen_size == 'desktop')" :data="affiliate_custom_links">    
                                         <el-table-column prop="" label="" min-width="10"></el-table-column>                                
-                                        <el-table-column min-width="40" prop="sr_no" :label="affiliate_panel_labels.link_serial_number">
+                                        <el-table-column min-width="70" prop="sr_no" :label="affiliate_panel_labels.link_serial_number">
                                             <template #default="scope">
                                                 <span  class="ap-copy-data" :aria-label="scope.row.sr_no">{{scope.row.sr_no}}</span>
                                             </template>   
@@ -1240,7 +1240,32 @@
                                                 </div>
                                             </template>    
                                         </el-table-column>
-                                        <el-table-column prop="" label="" min-width="10"></el-table-column>
+                                        <el-table-column prop="ap_page_link" label="" min-width="115">
+                                            <template #default="scope">
+                                                <el-popconfirm 
+                                                    :confirm-button-text=affiliate_panel_labels.yes_label
+                                                    :cancel-button-text=affiliate_panel_labels.no_label
+                                                    confirm-button-type="danger"
+                                                    cancel-button-type="plain"
+                                                    :hide-icon="true"
+                                                    :placement="bottom"  
+                                                    popper-class="el-popover ap-popconfirm-delete"                                                                                                      
+                                                    :title= affiliate_panel_labels.custome_link_delete_confirm 
+                                                    @confirm="deleteAffiliatelink(scope.row.ap_affiliate_link_id,scope.$index)"
+                                                    width="300"> 
+                                                    <template #reference>  
+                                                        <el-button type="primary" :disabled="(affiliate_delete_link_loader === scope.$index)?true:false" :class="affiliate_delete_link_loader === scope.$index ? 'ap-btn--is-loader' : ''" class="ap-btn--primary ap-delete-account-btn">
+                                                            <span class="ap-btn__label">{{affiliate_panel_labels.delete_custome_link_label}}</span>
+                                                            <div class="ap-btn--loader__circles">
+                                                                <div></div>
+                                                                <div></div>
+                                                                <div></div>
+                                                            </div>
+                                                        </el-button>    
+                                                    </template>                                         
+                                            </el-popconfirm>
+                                            </template> 
+                                        </el-table-column>
                                     </el-table>
                                     <el-table class="ap-mobile-view-table" cell-class-name="ap-single-row-table" v-if="current_screen_size == 'mobile'" :data="affiliate_custom_links">                                                                                
                                         <el-table-column prop="ap_affiliate_link_id">
@@ -1261,7 +1286,28 @@
                                                             <span class="ap-copy-data" :aria-label="scope.row.ap_page_link">{{scope.row.ap_page_link}}</span>
                                                             <el-button @click="affiliatepress_copy_data(scope.row.ap_page_link)" type="primary" class="ap-btn--primary ap-copy-txt-btn"><span class="ap-btn__label" v-html="affiliate_panel_labels.link_click_to_copy"></span></el-button>
                                                         </div>
-                                                    </div>                                                                                                      
+                                                    </div>    
+                                                    <div class="ap-expand-top-row-data ap-mb-10">
+                                                        <div class="ap-expan-top-data">
+                                                            <el-popconfirm 
+                                                                :confirm-button-text=affiliate_panel_labels.yes_label
+                                                                :cancel-button-text=affiliate_panel_labels.no_label
+                                                                confirm-button-type="danger"
+                                                                cancel-button-type="plain"
+                                                                :hide-icon="true"
+                                                                :placement="bottom"  
+                                                                popper-class="el-popover ap-popconfirm-delete"                                                                                                      
+                                                                :title= affiliate_panel_labels.custome_link_delete_confirm 
+                                                                @confirm="deleteAffiliatelink(scope.row.ap_affiliate_link_id,scope.$index)"
+                                                                width="300"> 
+                                                                <template #reference>  
+                                                                    <el-button type="primary" class="ap-btn--primary ap-delete-account-btn" tabindex="0">  
+                                                                        <span class="ap-btn-lbl" >{{affiliate_panel_labels.delete_custome_link_label}}</span>
+                                                                    </el-button> 
+                                                                </template>                                         
+                                                            </el-popconfirm>                                                        
+                                                        </div>      
+                                                    </div>                                                                                                     
                                                 </div>    
                                             </template>
                                         </el-table-column>

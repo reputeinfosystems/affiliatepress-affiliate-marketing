@@ -374,9 +374,33 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
                                 </el-col>
                                 <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-settings-col ap-gs__cb-item-left" >
                                     <div class="ap-combine-field">
+                                        <label><span class="ap-form-label"><?php esc_html_e('Link Required Message', 'affiliatepress-affiliate-marketing'); ?></span></label>    
+                                        <el-form-item prop="link_empty_validation">
+                                            <el-input class="ap-form-control" type="text" v-model="messages_setting_form.link_empty_validation" size="large"  />                                         
+                                        </el-form-item>
+                                    </div>
+                                </el-col>
+                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-settings-col ap-gs__cb-item-left" >
+                                    <div class="ap-combine-field">
+                                        <label><span class="ap-form-label"><?php esc_html_e('Custom Link Invalid Format Message', 'affiliatepress-affiliate-marketing'); ?></span></label>    
+                                        <el-form-item prop="link_pattern_validation">
+                                            <el-input class="ap-form-control" type="text" v-model="messages_setting_form.link_pattern_validation" size="large"  />                                         
+                                        </el-form-item>
+                                    </div>
+                                </el-col>
+                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-settings-col ap-gs__cb-item-left" >
+                                    <div class="ap-combine-field">
                                         <label><span class="ap-form-label"><?php esc_html_e('Campaign Name', 'affiliatepress-affiliate-marketing'); ?></span></label>    
                                         <el-form-item prop="link_compaign_name">
                                             <el-input class="ap-form-control" type="text" v-model="messages_setting_form.link_compaign_name" size="large"  />                                         
+                                        </el-form-item>
+                                    </div>
+                                </el-col>
+                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-settings-col ap-gs__cb-item-left" >
+                                    <div class="ap-combine-field">
+                                        <label><span class="ap-form-label"><?php esc_html_e('Campaign name Required Message', 'affiliatepress-affiliate-marketing'); ?></span></label>    
+                                        <el-form-item prop="link_campaign_name_empty_validation">
+                                            <el-input class="ap-form-control" type="text" v-model="messages_setting_form.link_campaign_name_empty_validation" size="large"  />                                         
                                         </el-form-item>
                                     </div>
                                 </el-col>
@@ -409,6 +433,22 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
                                         <label><span class="ap-form-label"><?php esc_html_e('Generate Link', 'affiliatepress-affiliate-marketing'); ?></span></label>    
                                         <el-form-item prop="link_generate_link">
                                             <el-input class="ap-form-control" type="text" v-model="messages_setting_form.link_generate_link" size="large"  />                                         
+                                        </el-form-item>
+                                    </div>
+                                </el-col>
+                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-settings-col ap-gs__cb-item-left" >
+                                    <div class="ap-combine-field">
+                                        <label><span class="ap-form-label"><?php esc_html_e('Are you sure you want to delete this Link?', 'affiliatepress-affiliate-marketing'); ?></span></label>    
+                                        <el-form-item prop="custome_link_delete_confirm">
+                                            <el-input class="ap-form-control" type="text" v-model="messages_setting_form.custome_link_delete_confirm" size="large"  />                                         
+                                        </el-form-item>
+                                    </div>
+                                </el-col>
+                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-settings-col ap-gs__cb-item-left" >
+                                    <div class="ap-combine-field">
+                                        <label><span class="ap-form-label"><?php esc_html_e('Delete', 'affiliatepress-affiliate-marketing'); ?></span></label>    
+                                        <el-form-item prop="delete_custome_link_label">
+                                            <el-input class="ap-form-control" type="text" v-model="messages_setting_form.delete_custome_link_label" size="large"  />                                         
                                         </el-form-item>
                                     </div>
                                 </el-col>
@@ -948,6 +988,14 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
                                 </el-col>
                                 <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-settings-col ap-gs__cb-item-left" >
                                     <div class="ap-combine-field">
+                                        <label><span class="ap-form-label"><?php esc_html_e('Username or Email Required Message', 'affiliatepress-affiliate-marketing'); ?></span></label>    
+                                        <el-form-item prop="login_username_empty_validation">
+                                            <el-input class="ap-form-control" type="text" v-model="messages_setting_form.login_username_empty_validation" size="large"  />                                         
+                                        </el-form-item>
+                                    </div>
+                                </el-col>
+                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-settings-col ap-gs__cb-item-left" >
+                                    <div class="ap-combine-field">
                                         <label><span class="ap-form-label"><?php esc_html_e('Password', 'affiliatepress-affiliate-marketing'); ?></span></label>    
                                         <el-form-item prop="login_password">
                                             <el-input class="ap-form-control" type="text" v-model="messages_setting_form.login_password" size="large"  />
@@ -959,6 +1007,14 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
                                         <label><span class="ap-form-label"><?php esc_html_e('Enter Your Password', 'affiliatepress-affiliate-marketing'); ?></span></label>    
                                         <el-form-item prop="login_password_placeholder">
                                             <el-input class="ap-form-control" type="text" v-model="messages_setting_form.login_password_placeholder" size="large"  />                                         
+                                        </el-form-item>
+                                    </div>
+                                </el-col>
+                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-settings-col ap-gs__cb-item-left" >
+                                    <div class="ap-combine-field">
+                                        <label><span class="ap-form-label"><?php esc_html_e('Password Required Message', 'affiliatepress-affiliate-marketing'); ?></span></label>    
+                                        <el-form-item prop="login_password_empty_validation">
+                                            <el-input class="ap-form-control" type="text" v-model="messages_setting_form.login_password_empty_validation" size="large"  />                                         
                                         </el-form-item>
                                     </div>
                                 </el-col>
@@ -1041,6 +1097,14 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
                                         <label><span class="ap-form-label"><?php esc_html_e('Enter Email Address', 'affiliatepress-affiliate-marketing'); ?></span></label>    
                                         <el-form-item prop="forget_password_placeholder">
                                             <el-input class="ap-form-control" type="text" v-model="messages_setting_form.forget_password_placeholder" size="large"  />
+                                        </el-form-item>
+                                    </div>
+                                </el-col>
+                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-settings-col ap-gs__cb-item-left" >
+                                    <div class="ap-combine-field">
+                                        <label><span class="ap-form-label"><?php esc_html_e('Email Required for Password Reset Message', 'affiliatepress-affiliate-marketing'); ?></span></label>    
+                                        <el-form-item prop="forget_password_empty_validation">
+                                            <el-input class="ap-form-control" type="text" v-model="messages_setting_form.forget_password_empty_validation" size="large"  />
                                         </el-form-item>
                                     </div>
                                 </el-col>
@@ -1145,6 +1209,22 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
                                         <label><span class="ap-form-label"><?php esc_html_e('Per Page', 'affiliatepress-affiliate-marketing'); ?></span></label>    
                                         <el-form-item prop="pagination_change_label">
                                             <el-input class="ap-form-control" type="text" v-model="messages_setting_form.pagination_change_label" size="large"  />                                         
+                                        </el-form-item>
+                                    </div>
+                                </el-col>
+                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-settings-col ap-gs__cb-item-left" >
+                                    <div class="ap-combine-field">
+                                        <label><span class="ap-form-label"><?php esc_html_e('No', 'affiliatepress-affiliate-marketing'); ?></span></label>    
+                                        <el-form-item prop="no_label">
+                                            <el-input class="ap-form-control" type="text" v-model="messages_setting_form.no_label" size="large"  />                                         
+                                        </el-form-item>
+                                    </div>
+                                </el-col>
+                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-settings-col ap-gs__cb-item-left" >
+                                    <div class="ap-combine-field">
+                                        <label><span class="ap-form-label"><?php esc_html_e('Yes', 'affiliatepress-affiliate-marketing'); ?></span></label>    
+                                        <el-form-item prop="yes_label">
+                                            <el-input class="ap-form-control" type="text" v-model="messages_setting_form.yes_label" size="large"  />                                         
                                         </el-form-item>
                                     </div>
                                 </el-col>

@@ -799,6 +799,15 @@ if (! class_exists('affiliatepress_affiliate_fields') ) {
                     'new_and_current_password_not_match'    => '',
                     'password_successfully_updated'         => '',
                     'profile_fields_successfully_updated'   => '',
+                    'affiliate_pending_register_message'    => '',
+                    'affiliate_user_block_message'          => '',
+                    'link_limit_reached_error'              => '',
+                    'affiliate_link_delete'                 => '',
+                    'link_copied'                           => '',
+                    'file_upload_type_validation'           => '',
+                    'file_upload_limit_validation'          => '',
+                    'not_allow_affiliate_register'          => '',
+                    'affiliate_already_registered_message'  => '',
                     'required_field_validation'             => '',
                 ),
                 'rules_messages'=> array(
@@ -920,7 +929,70 @@ if (! class_exists('affiliatepress_affiliate_fields') ) {
                             'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
                             'trigger'  => 'blur',
                         ),
-                    ),         
+                    ),      
+                    'affiliate_pending_register_message'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ),      
+                    'affiliate_already_registered_message'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ),    
+                    'affiliate_user_block_message'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ),      
+                    'link_limit_reached_error'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ),     
+                    'affiliate_link_delete'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ),     
+                    'link_copied'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ),     
+                    'file_upload_type_validation'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ),     
+                    'file_upload_limit_validation'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ),    
+                    'not_allow_affiliate_register'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ),
                 ),  
                 'loading'                    => false,
                 'affiliates_search'          => array(

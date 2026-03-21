@@ -653,9 +653,14 @@ if( !class_exists('affiliatepress_armember') ){
 
             $affiliatepress_default_commission_status = $affiliatepress_tracking->affiliatepress_get_default_commission_status();
 
+            $affiliatepress_ap_transaction_status = isset($affiliatepress_armaff_entry['arm_transaction_status']) ? sanitize_text_field($affiliatepress_armaff_entry['arm_transaction_status']) : '';
+            if($affiliatepress_ap_transaction_status == "canceled"){
+                do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Commission Not Created', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', 'Commission was not created because the plan status is canceled.', $affiliatepress_commission_debug_log_id);
+                return ;
+            }
+
             if(!empty($affiliatepress_armaff_entry))
             {
-                $affiliatepress_ap_transaction_status = isset($affiliatepress_armaff_entry['arm_transaction_status']) ? sanitize_text_field($affiliatepress_armaff_entry['arm_transaction_status']) : '';
                 $affiliatepress_updated_commission_status = 1;
                 if($affiliatepress_default_commission_status != "auto")
                 {

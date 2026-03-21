@@ -449,7 +449,7 @@ if (! class_exists('affiliatepress_dashboard') ) {
         */
         function affiliatepress_dashboard_dynamic_data_fields_func($affiliatepress_dashboard_vue_data_fields){            
             
-            global $AffiliatePress,$affiliatepress_dashboard_vue_data_fields, $wpdb, $affiliatepress_tbl_ap_affiliates,$affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_tbl_ap_affiliate_visits,$affiliatepress_global_options;
+            global $AffiliatePress,$affiliatepress_dashboard_vue_data_fields, $wpdb, $affiliatepress_tbl_ap_affiliates,$affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_tbl_ap_affiliate_visits,$affiliatepress_global_options,$affiliatepress_tracking;
                                     
             $affiliatepress_dashboard_vue_data_fields['all_status'] = array();
             $affiliatepress_dashboard_vue_data_fields['affiliates']['affiliate_user_name'] = '';
@@ -539,14 +539,9 @@ if (! class_exists('affiliatepress_dashboard') ) {
             $affiliatepress_dashboard_vue_data_fields['commissions'] = $affiliatepress_all_commissions; 
 
             $affiliatepress_any_interation_active = false;
-
-            $affiliatepress_integrations = array('enable_woocommerce','enable_armember','enable_easy_digital_downloads', 'enable_bookingpress', 'enable_memberpress','enable_surecart', 'enable_restrict_content','enable_wp_easycart','enable_lifter_lms', 'enable_arforms', 'enable_give_wp', 'enable_simple_membership', 'enable_paid_memberships_pro','enable_paid_memberships_subscriptions','enable_ultimate_membership_pro','enable_ninjaforms','enable_wp_forms', 'enable_gravity_forms','enable_wp_simple_pay','enable_masteriyo_lms','enable_getpaid','enable_learnpress', 'enable_accept_stripe_payments','enable_download_manager','enable_learndash' );
-
-            foreach ($affiliatepress_integrations as $affiliatepress_integration) {
-                if ($AffiliatePress->affiliatepress_get_settings($affiliatepress_integration, 'integrations_settings') === 'true') {
-                    $affiliatepress_any_interation_active = true;
-                    break;
-                }
+            $affiliatepress_active_integration_list = $affiliatepress_tracking->affiliatepress_integration_list('active');
+            if(!empty($affiliatepress_active_integration_list)){
+                $affiliatepress_any_interation_active = true;
             }
 
             $affiliatepress_dashboard_vue_data_fields['affiliatepress_any_interation_active'] = $affiliatepress_any_interation_active;

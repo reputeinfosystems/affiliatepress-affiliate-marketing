@@ -847,7 +847,7 @@ if (! class_exists('AffiliatePress') ) {
         {
             global $affiliatepress_version, $AffiliatePress;
             $affiliatepress_old_version = get_option('affiliatepress_version', true);
-            if (version_compare($affiliatepress_old_version, '2.2', '<') ) {
+            if (version_compare($affiliatepress_old_version, '2.3', '<') ) {
                 $affiliatepress_load_upgrade_file = AFFILIATEPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $affiliatepress_load_upgrade_file;
                 $AffiliatePress->affiliatepress_send_anonymous_data_cron();
@@ -970,6 +970,7 @@ if (! class_exists('AffiliatePress') ) {
             $affiliatepress_primary_opacity_border = 0.2;
             $affiliatepress_primary_rgb_color = $this->affiliatepress_hex_to_rgb_color($affiliatepress_primary_color,$affiliatepress_primary_opacity_border);
             $affiliatepress_primary_color_opacity_5 = $this->affiliatepress_hex_to_rgb_color($affiliatepress_primary_color,0.05);
+            $affiliatepress_primary_color_opacity_6 = $this->affiliatepress_hex_to_rgb_color($affiliatepress_primary_color,0.06);
             $affiliatepress_primary_color_opacity_1 = $this->affiliatepress_hex_to_rgb_color($affiliatepress_primary_color,0.1);
 
             $affiliatepress_orignal_date_icon_base64 = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSA2LjQ0NDQ0SDE1TTQuMTExMSAxVjIuNTU1NTZNMTEuODg4OSAxVjIuNTU1NTZNMy40ODg4OSAxNUgxMi41MTExQzEzLjM4MjMgMTUgMTMuODE3OSAxNSAxNC4xNTA3IDE0LjgzMDRDMTQuNDQzMyAxNC42ODEzIDE0LjY4MTMgMTQuNDQzMyAxNC44MzA0IDE0LjE1MDdDMTUgMTMuODE3OSAxNSAxMy4zODIzIDE1IDEyLjUxMTFWNS4wNDQ0NEMxNSA0LjE3MzI1IDE1IDMuNzM3NjUgMTQuODMwNCAzLjQwNDlDMTQuNjgxMyAzLjExMjIgMTQuNDQzMyAyLjg3NDIzIDE0LjE1MDcgMi43NTEwQzEzLjgxNzkgMi41NTU2NiAxMy4zODIzIDIuNTU1NiAxMi41MTExIDIuNTU1NkgzLjQ4ODg5QzIuNjE3NyAyLjU1NTYgMi4xODIxIDIuNTU1NiAxLjg0OTM1IDIuNzUxMEMxLjU1NjY1IDIuODc0MjMgMS4zMTg2OCAzLjExMjIgMS4xNjk1NSAzLjQwNDlDMSAzLjczNzY1IDEgNC4xNzMyNSAxIDUuMDQ0NDRWMTIuNTExMUMxIDEzLjM4MjMgMSAxMy44MTc5IDEuMTY5NTUgMTQuMTUwN0MxLjMxODY4IDE0LjQ0MzMgMS41NTY2NSAxNC42ODEzIDEuODQ5MzUgMTQuODMwNEMyLjE4MjEgMTUgMi42MTc2OSAxNSAzLjQ4ODg5IDE1WiIgc3Ryb2tlPSIjNjE3MTkxIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+";
@@ -1049,7 +1050,8 @@ if (! class_exists('AffiliatePress') ) {
                     --ap-color-primary-light-7:'. $affiliatepress_primary_light7_color.';
                     --ap-color-primary-light-8:'. $affiliatepress_primary_light8_color.';     
                     --ap-color-primary-rgb-border:'. $affiliatepress_primary_rgb_color.';    
-                    --ap-color-primary-color-opacity-5:'. $affiliatepress_primary_color_opacity_5.';    
+                    --ap-color-primary-color-opacity-5:'. $affiliatepress_primary_color_opacity_5.'; 
+                    --ap-color-primary-color-opacity-6:'. $affiliatepress_primary_color_opacity_6.';    
                     --ap-color-primary-color-opacity-1:'. $affiliatepress_primary_color_opacity_1.';  
                     --ap-heading-color:'. $affiliatepress_text_color.';  
                 }
@@ -1203,7 +1205,7 @@ if (! class_exists('AffiliatePress') ) {
         */
         function affiliatepress_update_all_auto_load_settings(){            
             global $wpdb, $affiliatepress_tbl_ap_settings,$AffiliatePress,$affiliatepress_auto_load_settings;
-            $affiliatepress_common_auto_load_settings = array('affiliate_url_parameter','enable_fancy_affiliate_url','payment_default_currency','enable_masterstudy_lms','enable_learn_dash','enable_memberpress','enable_easy_digital_downloads','enable_armember','enable_woocommerce','price_number_of_decimals','price_separator','price_symbol_position');
+            $affiliatepress_common_auto_load_settings = array('affiliate_url_parameter','enable_fancy_affiliate_url','payment_default_currency','enable_learn_dash','enable_memberpress','enable_easy_digital_downloads','enable_armember','enable_woocommerce','price_number_of_decimals','price_separator','price_symbol_position');
             $affiliatepress_default_settings = $AffiliatePress->affiliatepress_install_all_settings();
             foreach($affiliatepress_default_settings as $affiliatepress_all_set){
                 $affiliatepress_auto_load = (isset($affiliatepress_all_set['auto_load']))?$affiliatepress_all_set['auto_load']:'';            
@@ -3647,6 +3649,7 @@ if (! class_exists('AffiliatePress') ) {
                 array('ap_setting_name' => 'allow_affiliate_registration','ap_setting_value' => 'true','ap_setting_type' => 'affiliate_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'affiliate_default_status','ap_setting_value' => 'true','ap_setting_type' => 'affiliate_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'tracking_cookie_days','ap_setting_value' => '30','ap_setting_type' => 'affiliate_settings','auto_load'=>1,'type'=>'integer'),
+                array('ap_setting_name' => 'affiliate_link_limit','ap_setting_value' => '50','ap_setting_type' => 'affiliate_settings','auto_load'=>1,'type'=>'integer'),
                 array('ap_setting_name' => 'affiliate_url_parameter','ap_setting_value' => 'afref','ap_setting_type' => 'affiliate_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'enable_fancy_affiliate_url','ap_setting_value' => 'false','ap_setting_type' => 'affiliate_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'affiliate_usage_stats','ap_setting_value' => 'false','ap_setting_type' => 'affiliate_settings','auto_load'=>1,'type'=>'text'),
@@ -3692,6 +3695,7 @@ if (! class_exists('AffiliatePress') ) {
                 array('ap_setting_name' => 'easy_digital_downloads_exclude_taxes','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'easy_digital_downloads_reject_commission_on_refund','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'easy_digital_downloads_disable_commission_on_upgrade','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'memberpress_disable_commission_on_upgrade','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'enable_surecart','ap_setting_value' => 'false','ap_setting_type' => 'integrations_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'surecart_exclude_shipping','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'surecart_exclude_taxes','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0,'type'=>'text'),
@@ -3729,7 +3733,6 @@ if (! class_exists('AffiliatePress') ) {
                 array('ap_setting_name' => 'enable_learnpress','ap_setting_value' => 'false','ap_setting_type' => 'integrations_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'learnpress_reject_commission_on_refund','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'enable_tutor_lms','ap_setting_value' => 'false','ap_setting_type' => 'integrations_settings','auto_load'=>1,'type'=>'text'),
-                array('ap_setting_name' => 'enable_masterstudy_lms','ap_setting_value' => 'false','ap_setting_type' => 'integrations_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'enable_download_manager','ap_setting_value' => 'false','ap_setting_type' => 'integrations_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'download_manager_reject_commission_on_refund','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'enable_bookingpress','ap_setting_value' => 'false','ap_setting_type' => 'integrations_settings','auto_load'=>1,'type'=>'text'),
@@ -3757,6 +3760,18 @@ if (! class_exists('AffiliatePress') ) {
                 array('ap_setting_name' => 'new_and_current_password_not_match','ap_setting_value' => esc_html__('New password and confirm password do not match.', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'password_successfully_updated','ap_setting_value' => esc_html__('Password successfully updated.', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'profile_fields_successfully_updated','ap_setting_value' => esc_html__('Affiliate profile fields successfully updated.', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'affiliate_pending_register_message','ap_setting_value' => esc_html__('Your affiliate account is currently under review. You will be notified by email once it has been approved.', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'affiliate_user_block_message','ap_setting_value' => esc_html__('Sorry, Affiliate user temporarily blocked by admin.', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'link_limit_reached_error','ap_setting_value' => esc_html__('You cannot add a custom affiliate link because the maximum limit has been reached.', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'affiliate_link_delete','ap_setting_value' => esc_html__('Affiliate Link has been deleted successfully.', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'link_copied','ap_setting_value' => esc_html__('Link copied successfully.', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'file_upload_type_validation','ap_setting_value' => esc_html__('Please upload jpg,jpeg,png or webp file only.', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'file_upload_limit_validation','ap_setting_value' => esc_html__('Please upload maximum 1 MB file only.', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'not_allow_affiliate_register','ap_setting_value' => esc_html__('Sorry! you are not allowed to access the affiliate panel.', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'link_empty_validation','ap_setting_value' => esc_html__('Please add page link.', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'link_pattern_validation','ap_setting_value' => esc_html__('Please enter a valid URL.', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'link_campaign_name_empty_validation','ap_setting_value' => esc_html__('Please add campaign name.', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'affiliate_already_registered_message','ap_setting_value' => esc_html__('Your account is already registered as an affiliate.', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'required_field_validation','ap_setting_value' => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'login_error_message','ap_setting_value' => esc_html__('Dashboard', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 //form label
@@ -3857,6 +3872,8 @@ if (! class_exists('AffiliatePress') ) {
                 array('ap_setting_name' => 'signin','ap_setting_value' => esc_html__('Sign in', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'login_signin','ap_setting_value' => esc_html__('Sign in', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'login_login_description','ap_setting_value' => esc_html__('Stay updated on your professional world', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'login_username_empty_validation','ap_setting_value' => esc_html__('Please enter username or email address', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'login_password_empty_validation','ap_setting_value' => esc_html__('Please enter password', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'login_user_name','ap_setting_value' => esc_html__('Username or Email Address', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'login_user_name_placeholder','ap_setting_value' => esc_html__('Enter Email Address', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'delete_account_confirmation_msg','ap_setting_value' => esc_html__('Are you sure you want to delete your account?', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
@@ -3873,6 +3890,7 @@ if (! class_exists('AffiliatePress') ) {
                 array('ap_setting_name' => 'forget_password_label','ap_setting_value' => esc_html__('Forgot Password', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'forget_password_description','ap_setting_value' => esc_html__('Stay updated on your professional world', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'forget_password_email','ap_setting_value' => esc_html__('Email Address', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'forget_password_empty_validation','ap_setting_value' => esc_html__('Please enter email address', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'forget_password_placeholder','ap_setting_value' => esc_html__('Enter Email Address', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'forget_password_button','ap_setting_value' => esc_html__('Submit', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'forget_password_signin','ap_setting_value' => esc_html__('Sign in ', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
@@ -3884,6 +3902,10 @@ if (! class_exists('AffiliatePress') ) {
                 array('ap_setting_name' => 'no_data','ap_setting_value' => esc_html__('No Data Found!', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'no_data_description','ap_setting_value' => esc_html__('but the journey has just begun. Let every click will write your story.', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'pagination_change_label','ap_setting_value' => esc_html__('Per Page', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'custome_link_delete_confirm','ap_setting_value' => esc_html__('Are you sure you want to delete this Link?', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'delete_custome_link_label','ap_setting_value' => esc_html__('Delete', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'no_label','ap_setting_value' => esc_html__('No', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'yes_label','ap_setting_value' => esc_html__('Yes', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 //complete form label
                 array('ap_setting_name' => 'enable_ninjaforms','ap_setting_value' => 'false','ap_setting_type' => 'integrations_settings','auto_load'=>1,'type'=>'text'),                
                 array('ap_setting_name' => 'enable_paid_memberships_pro','ap_setting_value' => 'false','ap_setting_type' => 'integrations_settings','auto_load'=>1,'type'=>'text'),

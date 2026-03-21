@@ -390,7 +390,7 @@
                                                 <el-avatar shape="square" :src="affiliates.avatar_url" class="ap-uploaded-avatar__picture"></el-avatar>
                                             </div>                                    
                                         </div>
-                                        <div class="ap-upload-component__text"><?php esc_html_e('jpg/png files with a size less than 500kb', 'affiliatepress-affiliate-marketing'); ?></div>
+                                        <div class="ap-upload-component__text"><?php esc_html_e('Select avatar image (Max size: 1MB)', 'affiliatepress-affiliate-marketing'); ?></div>
                                     </div>
                                 </el-form-item>
                             </div>
@@ -591,7 +591,7 @@
                             </el-form-item>  
                         </div>
                         <el-form v-if="import_file_name != ''" ref="affiliates_form_import" :rules="affiliatepress_affiliate_import_rules" require-asterisk-position="right" :model="affiliatepress_import_fields" label-position="top">
-                            <div v-if="affiliatepress_import_field_data.lenght != 0" class="ap-import-field-data">
+                            <div v-if="affiliatepress_import_field_data.length != 0" class="ap-import-field-data">
                                 <el-row type="flex" class="ap-import-field-head">
                                     <el-col class="ap-import-field__left-area" :xs="24" :sm="12" :md="12" :lg="12" :xl="12">                                
                                         <div class="ap-head-fields"><?php esc_html_e('Affiliate Field', 'affiliatepress-affiliate-marketing'); ?></div>
@@ -607,7 +607,7 @@
                                     <el-col class="ap-import-field__right-area" :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
                                         <div class="ap-import-fields-select">
                                             <el-form-item :prop="import_field.field_key">                                        
-                                                <el-select size="large" class="ap-form-control" v-model="affiliatepress_import_fields[import_field.field_key]" placeholder="Select">
+                                                <el-select size="large" class="ap-form-control" v-model="affiliatepress_import_fields[import_field.field_key]" placeholder="Select" filterable>
                                                     <el-option label="<?php esc_html_e('- Ignore this field -', 'affiliatepress-affiliate-marketing'); ?>" value=""></el-option>
                                                     <el-option v-for="item in import_file_fields" :key="item.key" :label="item.value" :value="item.key"></el-option>
                                                 </el-select>

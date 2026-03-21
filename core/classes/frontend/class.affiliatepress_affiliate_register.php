@@ -251,9 +251,9 @@ if (! class_exists('affiliatepress_affiliate_register') ) {
                     
                     $affiliatepress_dashboard_affiliate_status = intval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliates, 'ap_affiliates_status', 'WHERE  ap_affiliates_user_id = %d', array( $affiliatepress_current_user_id ), '', '', '', true, false,ARRAY_A));
 
-                    $response['msg'] = esc_html__('Your account is already registered as an affiliate.', 'affiliatepress-affiliate-marketing');
+                    $response['msg'] = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('affiliate_already_registered_message', 'message_settings'));
                     if($affiliatepress_dashboard_affiliate_status == 2){
-                        $response['msg'] = esc_html__('Your account is under review. You will be notified by email once it is approved.', 'affiliatepress-affiliate-marketing');
+                        $response['msg'] = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('affiliate_pending_register_message', 'message_settings'));
                     }
 
                     

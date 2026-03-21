@@ -802,10 +802,10 @@ if (! class_exists('affiliatepress_creative') ) {
             }, 
             checkUploadedFile(file){
                 const vm = this;
-                if(file.type != "image/jpeg" && file.type != "image/png" && file.type != "image/webp"){
+                if(file.type != "image/jpeg" && file.type != "image/jpg" && file.type != "image/png" && file.type != "image/webp"){
                     vm.$notify({
                         title: "'.esc_html__('Error', 'affiliatepress-affiliate-marketing').'",
-                        message: "'.esc_html__('Please upload jpg/png file only', 'affiliatepress-affiliate-marketing').'",
+                        message: "'.esc_html__('Please upload jpg,jpeg,png or webp file only', 'affiliatepress-affiliate-marketing').'",
                         type: "error",
                         customClass: "error_notification",
                         duration:'.intval($affiliatepress_notification_duration).',
@@ -813,10 +813,10 @@ if (! class_exists('affiliatepress_creative') ) {
                     return false;
                 }else{
                     var ap_image_size = parseFloat(file.size / 1000000);
-                    if(ap_image_size > 1){
+                    if(ap_image_size >= vm.creative_upload_file_size){
                         vm.$notify({
                             title: "'.esc_html__('Error', 'affiliatepress-affiliate-marketing').'",
-                            message: "'.esc_html__('Please upload maximum 1 MB file only', 'affiliatepress-affiliate-marketing').'",
+                            message: "'.esc_html__('Please upload maximum 5 MB file only', 'affiliatepress-affiliate-marketing').'",
                             type: "error",
                             customClass: "error_notification",
                             duration:'.intval($affiliatepress_notification_duration).',
@@ -1310,7 +1310,7 @@ if (! class_exists('affiliatepress_creative') ) {
                 'pagination_length_val'      => '10',
                 'pagination_val'             => $affiliatepress_pagination_value,
                 'affiliate_add_disable' => true,
-
+                'creative_upload_file_size' => 5,
             );
         }
 

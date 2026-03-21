@@ -334,6 +334,78 @@
                                             </el-form-item>
                                         </div>
                                     </div>
+                                    <div class="ap-message-settings-wrapper">
+                                        <div class="ap-message-label"><?php esc_html_e( 'Affiliate Pending Account Login', 'affiliatepress-affiliate-marketing' ); ?></div>
+                                        <div class="ap-message-text"> 
+                                            <el-form-item prop="affiliate_pending_register_message">
+                                                <el-input class="ap-form-control" type="text" v-model="messages_setting_form.affiliate_pending_register_message" size="large"  />                                                                             
+                                            </el-form-item>
+                                        </div>
+                                    </div>
+                                    <div class="ap-message-settings-wrapper">
+                                        <div class="ap-message-label"><?php esc_html_e( 'Affiliate Account Already Registered', 'affiliatepress-affiliate-marketing' ); ?></div>
+                                        <div class="ap-message-text"> 
+                                            <el-form-item prop="affiliate_already_registered_message">
+                                                <el-input class="ap-form-control" type="text" v-model="messages_setting_form.affiliate_already_registered_message" size="large"  />                                                                             
+                                            </el-form-item>
+                                        </div>
+                                    </div>
+                                    <div class="ap-message-settings-wrapper">
+                                        <div class="ap-message-label"><?php esc_html_e( 'Affiliate Account Blocked', 'affiliatepress-affiliate-marketing' ); ?></div>
+                                        <div class="ap-message-text"> 
+                                            <el-form-item prop="affiliate_user_block_message">
+                                                <el-input class="ap-form-control" type="text" v-model="messages_setting_form.affiliate_user_block_message" size="large"  />                                                                             
+                                            </el-form-item>
+                                        </div>
+                                    </div>
+                                    <div class="ap-message-settings-wrapper">
+                                        <div class="ap-message-label"><?php esc_html_e( 'Affiliate Link Limit Reached', 'affiliatepress-affiliate-marketing' ); ?></div>
+                                        <div class="ap-message-text"> 
+                                            <el-form-item prop="link_limit_reached_error">
+                                                <el-input class="ap-form-control" type="text" v-model="messages_setting_form.link_limit_reached_error" size="large"  />                                                                             
+                                            </el-form-item>
+                                        </div>
+                                    </div>
+                                    <div class="ap-message-settings-wrapper">
+                                        <div class="ap-message-label"><?php esc_html_e( 'Affiliate Link Deleted', 'affiliatepress-affiliate-marketing' ); ?></div>
+                                        <div class="ap-message-text"> 
+                                            <el-form-item prop="affiliate_link_delete">
+                                                <el-input class="ap-form-control" type="text" v-model="messages_setting_form.affiliate_link_delete" size="large"  />                                                                             
+                                            </el-form-item>
+                                        </div>
+                                    </div>
+                                    <div class="ap-message-settings-wrapper">
+                                        <div class="ap-message-label"><?php esc_html_e( 'Affiliate Link Copied', 'affiliatepress-affiliate-marketing' ); ?></div>
+                                        <div class="ap-message-text"> 
+                                            <el-form-item prop="link_copied">
+                                                <el-input class="ap-form-control" type="text" v-model="messages_setting_form.link_copied" size="large"  />                                                                             
+                                            </el-form-item>
+                                        </div>
+                                    </div>
+                                    <div class="ap-message-settings-wrapper">
+                                        <div class="ap-message-label"><?php esc_html_e( 'Avatar Invalid File Type Message', 'affiliatepress-affiliate-marketing' ); ?></div>
+                                        <div class="ap-message-text"> 
+                                            <el-form-item prop="file_upload_type_validation">
+                                                <el-input class="ap-form-control" type="text" v-model="messages_setting_form.file_upload_type_validation" size="large"  />                                                                             
+                                            </el-form-item>
+                                        </div>
+                                    </div>
+                                    <div class="ap-message-settings-wrapper">
+                                        <div class="ap-message-label"><?php esc_html_e( 'Avatar File Size Limit Message', 'affiliatepress-affiliate-marketing' ); ?></div>
+                                        <div class="ap-message-text"> 
+                                            <el-form-item prop="file_upload_limit_validation">
+                                                <el-input class="ap-form-control" type="text" v-model="messages_setting_form.file_upload_limit_validation" size="large"  />                                                                             
+                                            </el-form-item>
+                                        </div>
+                                    </div>
+                                    <div class="ap-message-settings-wrapper">
+                                        <div class="ap-message-label"><?php esc_html_e( 'Not Allow Affiliate Registration', 'affiliatepress-affiliate-marketing' ); ?></div>
+                                        <div class="ap-message-text"> 
+                                            <el-form-item prop="not_allow_affiliate_register">
+                                                <el-input class="ap-form-control" type="text" v-model="messages_setting_form.not_allow_affiliate_register" size="large"  />                                                                             
+                                            </el-form-item>
+                                        </div>
+                                    </div>
                                 </el-form>  
                             </div>
                         </div>

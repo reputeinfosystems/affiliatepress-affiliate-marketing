@@ -22,7 +22,7 @@
                         <div class="ap-gs__cb--item-heading ap-gs__cb--item--main-heading ap-integration-heading">
                             <?php esc_html_e('Integrations', 'affiliatepress-affiliate-marketing'); ?>
                         </div>
-                        <div class="ap-gs__cb--item-heading ap-gs__cb--item--main-heading ap-integration-sub-heading" v-if="integrations_setting_form.enable_woocommerce == true || integrations_setting_form.enable_armember == true || integrations_setting_form.enable_easy_digital_downloads == true || integrations_setting_form.enable_bookingpress == true || integrations_setting_form.enable_memberpress == true || integrations_setting_form.enable_surecart == true || integrations_setting_form.enable_restrict_content == true || integrations_setting_form.enable_wp_easycart == true || integrations_setting_form.enable_lifter_lms == true || integrations_setting_form.enable_arforms == true || integrations_setting_form.enable_give_wp == true || integrations_setting_form.enable_simple_membership == true || integrations_setting_form.enable_paid_memberships_pro == true || integrations_setting_form.enable_paid_memberships_subscriptions == true || integrations_setting_form.enable_ultimate_membership_pro == true || integrations_setting_form.enable_ninjaforms == true || integrations_setting_form.enable_wp_forms == true || integrations_setting_form.enable_gravity_forms == true || integrations_setting_form.enable_wp_simple_pay == true || integrations_setting_form.enable_masteriyo_lms == true || integrations_setting_form.enable_getpaid == true || integrations_setting_form.enable_learnpress == true || integrations_setting_form.enable_accept_stripe_payments == true || integrations_setting_form.enable_download_manager == true || integrations_setting_form.enable_learndash == true">
+                        <div class="ap-gs__cb--item-heading ap-gs__cb--item--main-heading ap-integration-sub-heading" v-if="affiliate_integration_active_list != ''">
                             <?php esc_html_e('Active Integrations', 'affiliatepress-affiliate-marketing'); ?>
                         </div>
                         <div class="ap-gs__cb--item-body">
@@ -33,7 +33,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_woocommerce">
-                                            <el-switch  v-model="integrations_setting_form.enable_woocommerce"/>                                         
+                                            <el-switch  v-model="integrations_setting_form.enable_woocommerce" @click="ap_deactive_integration('woocommerce','enable_woocommerce')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
@@ -87,7 +87,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_armember">
-                                            <el-switch   v-model="integrations_setting_form.enable_armember"/>                                         
+                                            <el-switch   v-model="integrations_setting_form.enable_armember" @click="ap_deactive_integration('armember','enable_armember')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row> 
@@ -131,7 +131,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_easy_digital_downloads">
-                                            <el-switch   v-model="integrations_setting_form.enable_easy_digital_downloads"/>                                         
+                                            <el-switch  v-model="integrations_setting_form.enable_easy_digital_downloads" @click="ap_deactive_integration('easy_digital_downloads','enable_easy_digital_downloads')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row> 
@@ -200,7 +200,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_bookingpress">
-                                            <el-switch  v-model="integrations_setting_form.enable_bookingpress"/>                                         
+                                            <el-switch  v-model="integrations_setting_form.enable_bookingpress" @click="ap_deactive_integration('bookingpress','enable_bookingpress')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
@@ -234,7 +234,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_memberpress">
-                                            <el-switch   v-model="integrations_setting_form.enable_memberpress"/>                                         
+                                            <el-switch   v-model="integrations_setting_form.enable_memberpress" @click="ap_deactive_integration('memberpress','enable_memberpress')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row>    
@@ -251,7 +251,7 @@
                                                     </el-form-item>
                                                 </el-col>
                                             </el-row>   
-                                            <el-row type="flex" lass="ap-gs--tabs-pb__cb-item-row-inner">
+                                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row-inner">
                                                 <el-col :xs="20" :sm="20" :md="20" :lg="20" :xl="20" class="ap-gs__cb-item-left">
                                                     <h4><?php esc_html_e('Reject Commission on Refund, Fail or Delete Transaction', 'affiliatepress-affiliate-marketing'); ?><span class="ap-premium-integration" v-if="integration_reject_commission_disable == true"><?php echo $AffiliatePress->affiliatepress_get_premium_content(); //phpcs:ignore ?></span></h4>
                                                 </el-col>
@@ -263,6 +263,21 @@
                                                 <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-else>
                                                     <el-form-item prop="affiliate_integration_refund_disabled_switch">
                                                         <el-switch v-model="affiliate_integration_refund_disabled_switch" :disabled="integration_reject_commission_disable"/>
+                                                    </el-form-item>
+                                                </el-col>
+                                            </el-row>
+                                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row-inner">
+                                                <el-col :xs="20" :sm="20" :md="20" :lg="20" :xl="20" class="ap-gs__cb-item-left">
+                                                    <h4><?php esc_html_e('Disable Commission on Upgrade Membership', 'affiliatepress-affiliate-marketing'); ?><span class="ap-premium-integration" v-if="integration_upgrade_commission_disable == true"><?php echo $AffiliatePress->affiliatepress_get_premium_content(); //phpcs:ignore ?></span></h4>
+                                                </el-col>
+                                                <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-if="integration_upgrade_commission_disable == false">		
+                                                    <el-form-item prop="memberpress_disable_commission_on_upgrade">
+                                                        <el-switch  v-model="integrations_setting_form.memberpress_disable_commission_on_upgrade"/>                                         
+                                                    </el-form-item>
+                                                </el-col>
+                                                <el-col :xs="4" :sm="4" :md="4" :lg="4" :xl="4" class="ap-gs__cb-item-right" v-else>
+                                                    <el-form-item prop="affiliate_integration_refund_disabled_switch">
+                                                        <el-switch v-model="affiliate_integration_refund_disabled_switch" :disabled="integration_upgrade_commission_disable"/>
                                                     </el-form-item>
                                                 </el-col>
                                             </el-row>
@@ -278,7 +293,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_surecart">
-                                            <el-switch   v-model="integrations_setting_form.enable_surecart"/>                                         
+                                            <el-switch   v-model="integrations_setting_form.enable_surecart" @click="ap_deactive_integration('surecart','enable_surecart')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row> 
@@ -326,7 +341,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_restrict_content">
-                                            <el-switch   v-model="integrations_setting_form.enable_restrict_content"/>                                         
+                                            <el-switch   v-model="integrations_setting_form.enable_restrict_content" @click="ap_deactive_integration('restrict_content','enable_restrict_content')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row> 
@@ -360,7 +375,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_wp_easycart">
-                                            <el-switch   v-model="integrations_setting_form.enable_wp_easycart"/>                                         
+                                            <el-switch   v-model="integrations_setting_form.enable_wp_easycart" @click="ap_deactive_integration('wp_easycart','enable_wp_easycart')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row> 
@@ -414,7 +429,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_lifter_lms">
-                                            <el-switch   v-model="integrations_setting_form.enable_lifter_lms"/>                                         
+                                            <el-switch   v-model="integrations_setting_form.enable_lifter_lms" @click="ap_deactive_integration('lifter_lms','enable_lifter_lms')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row> 
@@ -448,7 +463,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_arforms">
-                                            <el-switch  v-model="integrations_setting_form.enable_arforms"/>                                         
+                                            <el-switch  v-model="integrations_setting_form.enable_arforms" @click="ap_deactive_integration('arforms','enable_arforms')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
@@ -467,7 +482,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_give_wp">
-                                            <el-switch   v-model="integrations_setting_form.enable_give_wp"/>                                         
+                                            <el-switch   v-model="integrations_setting_form.enable_give_wp" @click="ap_deactive_integration('give_wp','enable_give_wp')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row> 
@@ -486,7 +501,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_simple_membership">
-                                            <el-switch   v-model="integrations_setting_form.enable_simple_membership"/>                                         
+                                            <el-switch   v-model="integrations_setting_form.enable_simple_membership" @click="ap_deactive_integration('simple_membership','enable_simple_membership')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row>    
@@ -505,7 +520,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_give_wp">
-                                            <el-switch   v-model="integrations_setting_form.enable_paid_memberships_pro"/>                                         
+                                            <el-switch   v-model="integrations_setting_form.enable_paid_memberships_pro" @click="ap_deactive_integration('paid_memberships_pro','enable_paid_memberships_pro')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
@@ -539,7 +554,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_paid_memberships_subscriptions">
-                                            <el-switch  v-model="integrations_setting_form.enable_paid_memberships_subscriptions"/>                                         
+                                            <el-switch  v-model="integrations_setting_form.enable_paid_memberships_subscriptions" @click="ap_deactive_integration('paid_memberships_subscriptions','enable_paid_memberships_subscriptions')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row> 
@@ -583,7 +598,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_ultimate_membership_pro">
-                                            <el-switch  v-model="integrations_setting_form.enable_ultimate_membership_pro"/>                                         
+                                            <el-switch  v-model="integrations_setting_form.enable_ultimate_membership_pro" @click="ap_deactive_integration('ultimate_membership_pro','enable_ultimate_membership_pro')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row> 
@@ -627,7 +642,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_ninjaforms">
-                                            <el-switch  v-model="integrations_setting_form.enable_ninjaforms"/>                                         
+                                            <el-switch  v-model="integrations_setting_form.enable_ninjaforms" @click="ap_deactive_integration('ninjaforms','enable_ninjaforms')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
@@ -646,7 +661,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_wp_forms">
-                                            <el-switch  v-model="integrations_setting_form.enable_wp_forms"/>                                         
+                                            <el-switch  v-model="integrations_setting_form.enable_wp_forms" @click="ap_deactive_integration('wp_forms','enable_wp_forms')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row>	
@@ -665,7 +680,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_give_wp">
-                                            <el-switch  v-model="integrations_setting_form.enable_gravity_forms"/>                                         
+                                            <el-switch  v-model="integrations_setting_form.enable_gravity_forms" @click="ap_deactive_integration('gravity_forms','enable_gravity_forms')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
@@ -699,7 +714,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_wp_simple_pay">
-                                            <el-switch  v-model="integrations_setting_form.enable_wp_simple_pay"/>                                         
+                                            <el-switch  v-model="integrations_setting_form.enable_wp_simple_pay" @click="ap_deactive_integration('wp_simple_pay','enable_wp_simple_pay')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
@@ -718,7 +733,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_masteriyo_lms">
-                                            <el-switch  v-model="integrations_setting_form.enable_masteriyo_lms"/>                                         
+                                            <el-switch  v-model="integrations_setting_form.enable_masteriyo_lms" @click="ap_deactive_integration('masteriyo_lms','enable_masteriyo_lms')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
@@ -759,7 +774,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_getpaid">
-                                            <el-switch  v-model="integrations_setting_form.enable_getpaid"/>                                         
+                                            <el-switch  v-model="integrations_setting_form.enable_getpaid" @click="ap_deactive_integration('getpaid','enable_getpaid')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row>   
@@ -793,7 +808,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_learnpress">
-                                            <el-switch  v-model="integrations_setting_form.enable_learnpress"/>                                         
+                                            <el-switch  v-model="integrations_setting_form.enable_learnpress" @click="ap_deactive_integration('learnpress','enable_learnpress')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
@@ -827,7 +842,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_accept_stripe_payments">
-                                            <el-switch  v-model="integrations_setting_form.enable_accept_stripe_payments"/>                                         
+                                            <el-switch  v-model="integrations_setting_form.enable_accept_stripe_payments" @click="ap_deactive_integration('accept_stripe_payments','enable_accept_stripe_payments')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
@@ -881,7 +896,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_download_manager">
-                                            <el-switch  v-model="integrations_setting_form.enable_download_manager"/>                                         
+                                            <el-switch  v-model="integrations_setting_form.enable_download_manager" @click="ap_deactive_integration('download_manager','enable_download_manager')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
@@ -915,7 +930,7 @@
                                     </el-col>
                                     <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                         <el-form-item prop="enable_learndash">
-                                            <el-switch   v-model="integrations_setting_form.enable_learndash"/>                                         
+                                            <el-switch   v-model="integrations_setting_form.enable_learndash" @click="ap_deactive_integration('learndash','enable_learndash')"/>                                         
                                         </el-form-item>
                                     </el-col>
                                 </el-row> 
@@ -927,259 +942,265 @@
                                     </el-row>  
                                 </transition>
                             </div>
-                            <div class="ap-gs__cb--item-heading ap-gs__cb--item--main-heading ap-integration-sub-heading ap-inactive-heading" v-if="integrations_setting_form.enable_woocommerce != true || integrations_setting_form.enable_armember != true || integrations_setting_form.enable_easy_digital_downloads != true || integrations_setting_form.enable_bookingpress != true || integrations_setting_form.enable_memberpress != true || integrations_setting_form.enable_surecart != true || integrations_setting_form.enable_restrict_content != true || integrations_setting_form.enable_wp_easycart != true || integrations_setting_form.enable_lifter_lms != true || integrations_setting_form.enable_arforms != true || integrations_setting_form.enable_give_wp != true || integrations_setting_form.enable_simple_membership != true || integrations_setting_form.enable_paid_memberships_pro != true || integrations_setting_form.enable_paid_memberships_subscriptions != true || integrations_setting_form.enable_ultimate_membership_pro != true || integrations_setting_form.enable_ninjaforms != true || integrations_setting_form.enable_wp_forms != true || integrations_setting_form.enable_gravity_forms != true || integrations_setting_form.enable_wp_simple_pay != true || integrations_setting_form.enable_masteriyo_lms != true || integrations_setting_form.enable_getpaid != true || integrations_setting_form.enable_learnpress != true || integrations_setting_form.enable_accept_stripe_payments != true || integrations_setting_form.enable_download_manager != true || integrations_setting_form.enable_learndash != true">
+                            <?php
+                                do_action('affiliatepress_register_integrations','enable');
+                            ?>
+                            <div class="ap-gs__cb--item-heading ap-gs__cb--item--main-heading ap-integration-sub-heading ap-inactive-heading" v-if="affiliate_integration_inactive_list != ''">
                                 <?php esc_html_e('Inactive Integrations', 'affiliatepress-affiliate-marketing'); ?>
                             </div>
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_woocommerce == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_woocommerce"  @click="ap_active_integration('woocommerce')">
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_woocommerce == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_woocommerce">
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('WooCommerce', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_woocommerce">
-                                        <el-switch  v-model="integrations_setting_form.enable_woocommerce"/>                                         
+                                        <el-switch  v-model="integrations_setting_form.enable_woocommerce"  @click="ap_active_integration('woocommerce','enable_woocommerce')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row>
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_armember == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_armember"  @click="ap_active_integration('armember')">
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_armember == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_armember"  >
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('ARMember', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_armember">
-                                        <el-switch   v-model="integrations_setting_form.enable_armember"/>                                         
+                                        <el-switch   v-model="integrations_setting_form.enable_armember" @click="ap_active_integration('armember','enable_armember')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row> 
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_easy_digital_downloads == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_easy_digital_downloads"  @click="ap_active_integration('easy_digital_downloads')">
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_easy_digital_downloads == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_easy_digital_downloads" >
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('Easy Digital Downloads', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_easy_digital_downloads">
-                                        <el-switch   v-model="integrations_setting_form.enable_easy_digital_downloads"/>                                         
+                                        <el-switch   v-model="integrations_setting_form.enable_easy_digital_downloads" @click="ap_active_integration('easy_digital_downloads','enable_easy_digital_downloads')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row> 
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_bookingpress == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_bookingpress"  @click="ap_active_integration('bookingpress')">
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_bookingpress == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_bookingpress">
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('BookingPress', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_bookingpress">
-                                        <el-switch  v-model="integrations_setting_form.enable_bookingpress"/>                                         
+                                        <el-switch  v-model="integrations_setting_form.enable_bookingpress"  @click="ap_active_integration('bookingpress','enable_bookingpress')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row>
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_memberpress == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_memberpress"  @click="ap_active_integration('memberpress')">
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_memberpress == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_memberpress" >
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('MemberPress', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_memberpress">
-                                        <el-switch   v-model="integrations_setting_form.enable_memberpress"/>                                         
+                                        <el-switch  v-model="integrations_setting_form.enable_memberpress"  @click="ap_active_integration('memberpress','enable_memberpress')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row>
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_surecart == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_surecart"  @click="ap_active_integration('surecart')">
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_surecart == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_surecart">
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('SureCart', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_surecart">
-                                        <el-switch   v-model="integrations_setting_form.enable_surecart"/>                                         
+                                        <el-switch   v-model="integrations_setting_form.enable_surecart"  @click="ap_active_integration('surecart','enable_surecart')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row>     
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_restrict_content == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_restrict_content"  @click="ap_active_integration('restrict_content')">
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_restrict_content == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_restrict_content" >
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('Restrict Content Pro', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_restrict_content">
-                                        <el-switch   v-model="integrations_setting_form.enable_restrict_content"/>                                         
+                                        <el-switch   v-model="integrations_setting_form.enable_restrict_content" @click="ap_active_integration('restrict_content','enable_restrict_content')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row> 
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_wp_easycart == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_wp_easycart"  @click="ap_active_integration('wp_easycart')">
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_wp_easycart == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_wp_easycart" >
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('WP EasyCart', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_wp_easycart">
-                                        <el-switch   v-model="integrations_setting_form.enable_wp_easycart"/>                                         
+                                        <el-switch   v-model="integrations_setting_form.enable_wp_easycart"  @click="ap_active_integration('wp_easycart','enable_wp_easycart')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row> 
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_lifter_lms == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_lifter_lms"  @click="ap_active_integration('lifter_lms')">
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_lifter_lms == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_lifter_lms" >
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('LifterLMS', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_lifter_lms">
-                                        <el-switch   v-model="integrations_setting_form.enable_lifter_lms"/>                                         
+                                        <el-switch   v-model="integrations_setting_form.enable_lifter_lms"  @click="ap_active_integration('lifter_lms','enable_lifter_lms')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row> 
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_arforms == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_arforms"  @click="ap_active_integration('arforms')">
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_arforms == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_arforms">
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('ARForms', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_arforms">
-                                        <el-switch  v-model="integrations_setting_form.enable_arforms"/>                                         
+                                        <el-switch  v-model="integrations_setting_form.enable_arforms" @click="ap_active_integration('arforms','enable_arforms')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row>
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_give_wp == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_give_wp"  @click="ap_active_integration('give_wp')">
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_give_wp == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_give_wp" >
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('GiveWP', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_give_wp">
-                                        <el-switch   v-model="integrations_setting_form.enable_give_wp"/>                                         
+                                        <el-switch   v-model="integrations_setting_form.enable_give_wp"  @click="ap_active_integration('give_wp','enable_give_wp')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row> 
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_simple_membership == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_simple_membership"  @click="ap_active_integration('simple_membership')">
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_simple_membership == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_simple_membership" >
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('Simple Membership', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_simple_membership">
-                                        <el-switch   v-model="integrations_setting_form.enable_simple_membership"/>                                         
+                                        <el-switch   v-model="integrations_setting_form.enable_simple_membership"  @click="ap_active_integration('simple_membership','enable_simple_membership')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row>   
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_paid_memberships_pro == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_paid_memberships_pro"  @click="ap_active_integration('paid_memberships_pro')">
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_paid_memberships_pro == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_paid_memberships_pro">
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('Paid Memberships Pro', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_give_wp">
-                                        <el-switch   v-model="integrations_setting_form.enable_paid_memberships_pro"/>                                         
+                                        <el-switch   v-model="integrations_setting_form.enable_paid_memberships_pro" @click="ap_active_integration('paid_memberships_pro','enable_paid_memberships_pro')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row>
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_paid_memberships_subscriptions == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_paid_memberships_subscriptions"  @click="ap_active_integration('paid_memberships_subscriptions')">
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_paid_memberships_subscriptions == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_paid_memberships_subscriptions">
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('Paid Member Subscriptions', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_paid_memberships_subscriptions">
-                                        <el-switch  v-model="integrations_setting_form.enable_paid_memberships_subscriptions"/>                                         
+                                        <el-switch  v-model="integrations_setting_form.enable_paid_memberships_subscriptions"  @click="ap_active_integration('paid_memberships_subscriptions','enable_paid_memberships_subscriptions')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row> 
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_ultimate_membership_pro == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_ultimate_membership_pro" @click="ap_active_integration('ultimate_membership_pro')" >
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_ultimate_membership_pro == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_ultimate_membership_pro">
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('Ultimate Membership Pro', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_ultimate_membership_pro">
-                                        <el-switch  v-model="integrations_setting_form.enable_ultimate_membership_pro"/>                                         
+                                        <el-switch  v-model="integrations_setting_form.enable_ultimate_membership_pro" @click="ap_active_integration('ultimate_membership_pro','enable_ultimate_membership_pro')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row> 
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_ninjaforms == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_ninjaforms"  @click="ap_active_integration('ninjaforms')">
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_ninjaforms == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_ninjaforms" >
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('Ninja Forms', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_ninjaforms">
-                                        <el-switch  v-model="integrations_setting_form.enable_ninjaforms"/>                                         
+                                        <el-switch  v-model="integrations_setting_form.enable_ninjaforms" @click="ap_active_integration('ninjaforms','enable_ninjaforms')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row>
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_wp_forms == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_wp_forms"  @click="ap_active_integration('wp_forms')">
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_wp_forms == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_wp_forms">
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('WPForms', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_wp_forms">
-                                        <el-switch  v-model="integrations_setting_form.enable_wp_forms"/>                                         
+                                        <el-switch  v-model="integrations_setting_form.enable_wp_forms" @click="ap_active_integration('wp_forms','enable_wp_forms')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row>	
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_gravity_forms == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_gravity_forms"  @click="ap_active_integration('gravity_forms')">
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_gravity_forms == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_gravity_forms">
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('Gravity Forms', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_give_wp">
-                                        <el-switch  v-model="integrations_setting_form.enable_gravity_forms"/>                                         
+                                        <el-switch  v-model="integrations_setting_form.enable_gravity_forms" @click="ap_active_integration('gravity_forms','enable_gravity_forms')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row>
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_wp_simple_pay == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_wp_simple_pay"  @click="ap_active_integration('wp_simple_pay')">
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_wp_simple_pay == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_wp_simple_pay">
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('WP Simple Pay (Stripe)', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_wp_simple_pay">
-                                        <el-switch  v-model="integrations_setting_form.enable_wp_simple_pay"/>                                         
+                                        <el-switch  v-model="integrations_setting_form.enable_wp_simple_pay" @click="ap_active_integration('wp_simple_pay','enable_wp_simple_pay')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row>
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_masteriyo_lms == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_masteriyo_lms"  @click="ap_active_integration('masteriyo_lms')">
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_masteriyo_lms == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_masteriyo_lms">
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('Masteriyo LMS', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_masteriyo_lms">
-                                        <el-switch  v-model="integrations_setting_form.enable_masteriyo_lms"/>                                         
+                                        <el-switch  v-model="integrations_setting_form.enable_masteriyo_lms" @click="ap_active_integration('masteriyo_lms','enable_masteriyo_lms')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row>
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_getpaid == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_getpaid"  @click="ap_active_integration('getpaid')">
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_getpaid == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_getpaid">
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('GetPaid', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_getpaid">
-                                        <el-switch  v-model="integrations_setting_form.enable_getpaid"/>                                         
+                                        <el-switch  v-model="integrations_setting_form.enable_getpaid" @click="ap_active_integration('getpaid','enable_getpaid')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row>   
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_learnpress == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_learnpress"  @click="ap_active_integration('learnpress')">
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_learnpress == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_learnpress">
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('LearnPress', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_learnpress">
-                                        <el-switch  v-model="integrations_setting_form.enable_learnpress"/>                                         
+                                        <el-switch  v-model="integrations_setting_form.enable_learnpress" @click="ap_active_integration('learnpress','enable_learnpress')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row>
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_accept_stripe_payments == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_accept_stripe_payments"  @click="ap_active_integration('accept_stripe_payments')">
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_accept_stripe_payments == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_accept_stripe_payments">
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('Accept Stripe Payments', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_accept_stripe_payments">
-                                        <el-switch  v-model="integrations_setting_form.enable_accept_stripe_payments"/>                                         
+                                        <el-switch  v-model="integrations_setting_form.enable_accept_stripe_payments" @click="ap_active_integration('accept_stripe_payments','enable_accept_stripe_payments')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row>
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_download_manager == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_download_manager"  @click="ap_active_integration('download_manager')">
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_download_manager == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_download_manager">
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('Download Manager', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_download_manager">
-                                        <el-switch  v-model="integrations_setting_form.enable_download_manager"/>                                         
+                                        <el-switch  v-model="integrations_setting_form.enable_download_manager" @click="ap_active_integration('download_manager','enable_download_manager')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row>
-                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_learndash == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_learndash" @click="ap_active_integration('learndash')" >
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row ap-settings-main-row" :class="(integrations_setting_form.enable_learndash == true)?'ap-integration-enabled':''" v-show="!integrations_setting_form.enable_learndash">
                                 <el-col :xs="12" :sm="12" :md="12" :lg="14" :xl="14" class="ap-gs__cb-item-left">
                                     <h4><?php esc_html_e('LearnDash', 'affiliatepress-affiliate-marketing'); ?></h4>
                                 </el-col>
                                 <el-col :xs="12" :sm="12" :md="12" :lg="10" :xl="10" class="ap-gs__cb-item-right">				
                                     <el-form-item prop="enable_learndash">
-                                        <el-switch   v-model="integrations_setting_form.enable_learndash"/>                                         
+                                        <el-switch   v-model="integrations_setting_form.enable_learndash" @click="ap_active_integration('learndash','enable_learndash')"/>                                         
                                     </el-form-item>
                                 </el-col>
                             </el-row> 
+                            <?php
+                                do_action('affiliatepress_register_integrations','disable');
+                            ?>
                         </div>
                     </div>
                     <div class="ap-settings-new-section"></div>   

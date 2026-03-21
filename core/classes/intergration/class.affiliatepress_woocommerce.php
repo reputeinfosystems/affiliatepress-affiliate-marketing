@@ -642,6 +642,7 @@ if( !class_exists('affiliatepress_woocommerce') ){
 
             $affiliatepress_visit_id = apply_filters( 'affiliatepress_get_visit_id', $affiliatepress_visit_id,$affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, $affiliatepress_order_id ,$affiliatepress_order );
 
+            $affiliatepress_commisison_other_details = array();
             $affiliatepress_commisison_other_details  = apply_filters( 'affiliatepress_get_commisison_other_details',$affiliatepress_commisison_other_details,$affiliatepress_affiliate_id, $affiliatepress_visit_id ,$this->affiliatepress_integration_slug, $affiliatepress_order_id ,$affiliatepress_order );
 
             /* Prepare commission data */

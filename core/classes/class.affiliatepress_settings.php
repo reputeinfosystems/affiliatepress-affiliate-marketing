@@ -135,12 +135,14 @@ if (! class_exists('affiliatepress_settings') ) {
                             </div>
                         </el-row>
                         <el-row type="flex" class="ap-gs--tabs-fields-description">
-                            <div><?php esc_html_e('If you need to run the setup wizard again, Please click the button bellow.', 'affiliatepress-affiliate-marketing'); ?></div>
+                            <div><?php esc_html_e('If you need to run the setup wizard again, click the Start button.', 'affiliatepress-affiliate-marketing'); ?></div>
                         </el-row>
                     </el-col>
                     <el-col :xs="2" :sm="2" :md="2" :lg="4" :xl="4" class="ap-gs__cb-item-right">				
-                        <el-form-item>                       
-                            <span class="ap-redirect-btn"  @click="affiliatepress_resetup_wizard()"><?php do_action('affiliatepress_common_svg_code','redirect_icon'); ?></span>    
+                        <el-form-item>
+                            <el-tooltip popper-class="ap--popover-tool-tip" show-after="300" effect="dark" content="<?php esc_html_e('Start the Setup Wizard', 'affiliatepress-affiliate-marketing'); ?>" placement="top">
+                                <span class="ap-redirect-btn"  @click="affiliatepress_resetup_wizard()"><?php do_action('affiliatepress_common_svg_code','redirect_icon'); ?></span>
+                            </el-tooltip>
                         </el-form-item> 
                     </el-col>
                 </el-row>
@@ -994,6 +996,13 @@ if (! class_exists('affiliatepress_settings') ) {
                             'trigger'  => 'blur',
                         ),
                     ),
+                    'affiliate_link_limit'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('Please add custom affiliate link limit.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ),
                     'affiliate_url_parameter'  => array(
                         array(
                             'required' => true,
@@ -1327,6 +1336,27 @@ if (! class_exists('affiliatepress_settings') ) {
                         ),
                     ), 
                     'link_enter_page_url'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ),    
+                    'link_empty_validation'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ),    
+                    'link_pattern_validation'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ),    
+                    'link_campaign_name_empty_validation'  => array(
                         array(
                             'required' => true,
                             'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
@@ -1719,6 +1749,20 @@ if (! class_exists('affiliatepress_settings') ) {
                             'trigger'  => 'blur',
                         ),
                     ), 
+                    'login_username_empty_validation'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ), 
+                    'login_password_empty_validation'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ), 
                     'login_user_name'  => array(
                         array(
                             'required' => true,
@@ -1783,6 +1827,13 @@ if (! class_exists('affiliatepress_settings') ) {
                         ),
                     ), 
                     'forget_password_email'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ), 
+                    'forget_password_empty_validation'  => array(
                         array(
                             'required' => true,
                             'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
@@ -1901,6 +1952,34 @@ if (! class_exists('affiliatepress_settings') ) {
                             'trigger'  => 'blur',
                         ),
                     ),      
+                    'custome_link_delete_confirm'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ),      
+                    'delete_custome_link_label'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ),     
+                    'no_label'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ),     
+                    'yes_label'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ),     
                 ),                
                 'messages_setting_form'             => array(
 
@@ -1951,11 +2030,16 @@ if (! class_exists('affiliatepress_settings') ) {
                     'link_generate_link_description'        => '',
                     'link_page_url'                         => '',
                     'link_enter_page_url'                   => '',
+                    'link_empty_validation'                 => '',
+                    'link_pattern_validation'               => '',
+                    'link_campaign_name_empty_validation'   => '',
                     'link_compaign_name'                    => '',
                     'link_enter_compaign_name'              => '',
                     'link_sub_id'                           => '',
                     'link_enter_sub_id'                     => '',
                     'link_generate_link'                    => '', 
+                    'custome_link_delete_confirm'     => '',
+                    'delete_custome_link_label'       => '',
 
                     //visits
                     'visit_visits'                 => '',
@@ -2031,6 +2115,8 @@ if (! class_exists('affiliatepress_settings') ) {
                     'login_signin_button'=>'',
                     'login_dont_have_account'=>'',
                     'login_create_account'=>'',
+                    'login_username_empty_validation' => '',
+                    'login_password_empty_validation' =>'',
 
                     //forget_password
                     'forget_password_label'=>'',
@@ -2039,6 +2125,7 @@ if (! class_exists('affiliatepress_settings') ) {
                     'forget_password_placeholder'=>'',
                     'forget_password_button'=>'',
                     'forget_password_signin'=>'',
+                    'forget_password_empty_validation' => '',
 
                     //common 
                     'apply'                           => '',
@@ -2050,13 +2137,15 @@ if (! class_exists('affiliatepress_settings') ) {
                     'no_data'                         => '',
                     'no_data_description'             => '',
                     'pagination_change_label'         => '',
-                    'filters'=>'',
-                    
+                    'filters'                         => '',
+                    'no_label'                        => '',
+                    'yes_label'                       => '',
                 ),
                 'affiliate_setting_form'             => array(
                     'allow_affiliate_registration'        => false,
                     'affiliate_default_status'            => '1',
                     'tracking_cookie_days'                => 5,
+                    'affiliate_link_limit'                => 50,
                     'website_field_required'              => false,
                     'promote_us_field_required'           => false,
                     'affiliate_url_parameter'             => 'afref',
@@ -2849,7 +2938,7 @@ if (! class_exists('affiliatepress_settings') ) {
         */
         function affiliatepress_settings_dynamic_data_fields_func($affiliatepress_dynamic_setting_data_fields){            
             
-            global $AffiliatePress,$affiliatepress_dynamic_setting_data_fields,$affiliatepress_affiliates,$affiliatepress_global_options;
+            global $AffiliatePress,$affiliatepress_dynamic_setting_data_fields,$affiliatepress_affiliates,$affiliatepress_global_options,$affiliatepress_tracking;
 
             $affiliatepress_current_currency_symbol = $AffiliatePress->affiliatepress_get_current_currency_symbol();
             $affiliatepress_dynamic_setting_data_fields['current_currency_symbol'] = $affiliatepress_current_currency_symbol;
@@ -2893,6 +2982,9 @@ if (! class_exists('affiliatepress_settings') ) {
             $affiliatepress_dynamic_setting_data_fields['integration_upgrade_commission_disable'] = true;
             $affiliatepress_dynamic_setting_data_fields['affiliate_integration_refund_disabled_switch'] = true;
 
+            $affiliatepress_dynamic_setting_data_fields['affiliate_integration_active_list'] = $affiliatepress_tracking->affiliatepress_integration_list('active');
+            $affiliatepress_dynamic_setting_data_fields['affiliate_integration_inactive_list'] = $affiliatepress_tracking->affiliatepress_integration_list('inactive');
+
             $affiliatepress_dynamic_setting_data_fields['integrations_setting_form'] = array(
                 'enable_woocommerce' => false,
                 'woocommerce_exclude_shipping' =>true,
@@ -2928,6 +3020,7 @@ if (! class_exists('affiliatepress_settings') ) {
                 'enable_easy_digital_downloads' => false,
                 'memberpress_exclude_taxes' =>true ,
                 'memberpress_reject_commission_on_refund' => true,
+                'memberpress_disable_commission_on_upgrade' => true,
 
                 'enable_surecart' => false,
                 'surecart_exclude_shipping' => true,
@@ -2965,8 +3058,6 @@ if (! class_exists('affiliatepress_settings') ) {
                 'learnpress_reject_commission_on_refund'=>true,
 
                 'enable_tutor_lms' => false,
-                
-                'enable_masterstudy_lms' => false,
 
                 'enable_restrict_content' =>false,
                 'restrict_content_reject_commission_on_refund' => true,
@@ -3471,7 +3562,8 @@ if (! class_exists('affiliatepress_settings') ) {
                     el.style.padding = "0";
                     setTimeout(() => done(), 400);
                 },
-                ap_active_integration(integration) {
+                ap_active_integration(integration,integration_settings) {
+                    const vm = this;  
                     this.$nextTick(() => {
                         const el = document.getElementById(`ap-enable-integration-${integration}`);
                         if (el) {
@@ -3490,6 +3582,22 @@ if (! class_exists('affiliatepress_settings') ) {
                             }
                         }
                     });
+                    vm.affiliate_integration_active_list.push(integration_settings);
+
+                    const index = vm.affiliate_integration_inactive_list.indexOf(integration_settings);
+                    if (index > -1) {
+                        vm.affiliate_integration_inactive_list.splice(index, 1);
+                    }
+                },
+                ap_deactive_integration(integration, integration_settings) {
+                    const vm = this;
+
+                    const index = vm.affiliate_integration_active_list.indexOf(integration_settings);
+                    if (index > -1) {
+                        vm.affiliate_integration_active_list.splice(index, 1);
+                    }
+
+                    vm.affiliate_integration_inactive_list.push(integration_settings);
                 },
                 affiliatepress_get_page_url(affiliate_page_id,type){
                     const vm = this;  

@@ -77,6 +77,9 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             add_action('wp_ajax_affiliatepress_update_nonce_page_load', array( $this, 'affiliatepress_update_nonce_page_load_func' ), 10);
             add_action('wp_ajax_nopriv_affiliatepress_update_nonce_page_load', array( $this, 'affiliatepress_update_nonce_page_load_func' ), 10);
 
+            /* Delete Affiliate */
+            add_action('wp_ajax_affiliatepress_delete_affiliate_custome_link', array( $this, 'affiliatepress_delete_affiliate_custome_link_func' ));
+
         }
 
         function affiliatepress_update_nonce_page_load_func(){
@@ -186,7 +189,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             if(!$affiliatepress_affiliate_id){
                 $response['variant'] = 'error';
                 $response['title']   = esc_html__('Error', 'affiliatepress-affiliate-marketing');
-                $response['msg']     = esc_html__('Sorry, Affiliate user temporarily blocked by admin.', 'affiliatepress-affiliate-marketing');
+                $response['msg']     = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('affiliate_user_block_message', 'message_settings'));
                 wp_send_json($response);
                 exit();                
             }
@@ -226,6 +229,8 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
         */
         function affiliatepress_upload_edit_profile_image_func(){
 
+            global $AffiliatePress;
+
             $return_data = array(
                 'error'            => 0,
                 'msg'              => '',
@@ -253,7 +258,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             if(!$affiliatepress_affiliate_id){
                 $response['variant'] = 'error';
                 $response['title']   = esc_html__('Error', 'affiliatepress-affiliate-marketing');
-                $response['msg']     = esc_html__('Sorry, Affiliate user temporarily blocked by admin.', 'affiliatepress-affiliate-marketing');
+                $response['msg']     = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('affiliate_user_block_message', 'message_settings'));
                 wp_send_json($response);
                 exit();                
             }
@@ -323,7 +328,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             if(!$affiliatepress_affiliate_id){
                 $response['variant'] = 'error';
                 $response['title']   = esc_html__('Error', 'affiliatepress-affiliate-marketing');
-                $response['msg']     = esc_html__('Sorry, Affiliate user temporarily blocked by admin.', 'affiliatepress-affiliate-marketing');
+                $response['msg']     = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('affiliate_user_block_message', 'message_settings'));
                 wp_send_json($response);
                 exit();                
             }
@@ -527,7 +532,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             if(!$affiliatepress_affiliate_id){
                 $response['variant'] = 'error';
                 $response['title']   = esc_html__('Error', 'affiliatepress-affiliate-marketing');
-                $response['msg']     = esc_html__('Sorry, Affiliate user temporarily blocked by admin.', 'affiliatepress-affiliate-marketing');
+                $response['msg']     = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('affiliate_user_block_message', 'message_settings'));
                 wp_send_json($response);
                 exit();                
             }            
@@ -703,14 +708,13 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
 
             $response['variant'] = 'success';
             $response['title']   = esc_html__( 'success', 'affiliatepress-affiliate-marketing');
-            $response['msg']     = esc_html__( 'Affiliate custom link successfully added.', 'affiliatepress-affiliate-marketing');
             $response['dashboard_total_earning']    = $affiliatepress_dashboard_total_earning;
             $response['dashboard_paid_earning']     = $affiliatepress_dashboard_paid_earning;
             $response['dashboard_unpaid_earning']   = $affiliatepress_dashboard_unpaid_earning;
             $response['dashboard_total_commission'] = intval($affiliatepress_dashboard_total_commission);
             $response['dashboard_total_visits']     = intval($affiliatepress_dashboard_total_visits); 
             $response['revenue_chart_data']         = $affiliatepress_revenue_chart_data;      
-            $response['revenue_chart_other_data']         = $affiliatepress_revenue_chart_other_data;      
+            $response['revenue_chart_other_data']   = $affiliatepress_revenue_chart_other_data;
             $response['affiliate_panel_labels']     = $affiliatepress_panel_labels; 
             
             wp_send_json($response);
@@ -773,7 +777,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             if(!$affiliatepress_affiliate_id){
                 $response['variant'] = 'error';
                 $response['title']   = esc_html__('Error', 'affiliatepress-affiliate-marketing');
-                $response['msg']     = esc_html__('Sorry, Affiliate user temporarily blocked by admin.', 'affiliatepress-affiliate-marketing');
+                $response['msg']     = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('affiliate_user_block_message', 'message_settings'));
                 wp_send_json($response);
                 exit();                
             }
@@ -790,18 +794,29 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 wp_send_json($response);
                 exit();                 
             }else{
-                $affiliatepress_args = array(
-                    'ap_affiliates_id'            => $affiliatepress_affiliate_id,
-                    'ap_page_link'                => $affiliatepress_page_link,
-                    'ap_affiliates_sub_id'        => $affiliatepress_affiliates_sub_id,
-                    'ap_affiliates_campaign_name' => $affiliatepress_affiliates_campaign_name,
-                );
-                $affiliatepress_affiliates_id = $this->affiliatepress_insert_record($affiliatepress_tbl_ap_affiliate_links, $affiliatepress_args);
-            }
 
-            $response['variant'] = 'success';
-            $response['title']   = esc_html__( 'success', 'affiliatepress-affiliate-marketing');
-            $response['msg']     = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('affiliate_custom_link_added', 'message_settings'));
+                $affiliatepress_affiliate_links = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_links, '*', 'WHERE ap_affiliates_id = %d ', array($affiliatepress_affiliate_id), '', 'order by ap_affiliate_link_id ASC', '', false, false,ARRAY_A);
+
+                $affiliatepress_total_link = count($affiliatepress_affiliate_links);
+                $affiliatepress_link_limit = $AffiliatePress->affiliatepress_get_settings('affiliate_link_limit', 'affiliate_settings');
+                if($affiliatepress_link_limit != 0 && $affiliatepress_total_link >=$affiliatepress_link_limit ){
+                    $response['variant'] = 'error';
+                    $response['title']   = esc_html__( 'Error', 'affiliatepress-affiliate-marketing');
+                    $response['msg']     = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('link_limit_reached_error', 'message_settings'));
+                }else{
+                    $affiliatepress_args = array(
+                        'ap_affiliates_id'            => $affiliatepress_affiliate_id,
+                        'ap_page_link'                => $affiliatepress_page_link,
+                        'ap_affiliates_sub_id'        => $affiliatepress_affiliates_sub_id,
+                        'ap_affiliates_campaign_name' => $affiliatepress_affiliates_campaign_name,
+                    );
+                    $affiliatepress_affiliates_id = $this->affiliatepress_insert_record($affiliatepress_tbl_ap_affiliate_links, $affiliatepress_args);
+
+                    $response['variant'] = 'success';
+                    $response['title']   = esc_html__( 'Success', 'affiliatepress-affiliate-marketing');
+                    $response['msg']     = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('affiliate_custom_link_added', 'message_settings'));
+                }
+            }
 
             wp_send_json($response);
             exit;            
@@ -833,13 +848,19 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             if(!$affiliatepress_affiliate_id){
                 $response['variant'] = 'error';
                 $response['title']   = esc_html__('Error', 'affiliatepress-affiliate-marketing');
-                $response['msg']     = esc_html__('Sorry, Affiliate user temporarily blocked by admin.', 'affiliatepress-affiliate-marketing');
+                $response['msg']     = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('affiliate_user_block_message', 'message_settings'));
                 wp_send_json($response);
                 exit();                
             }
             
             $affiliatepress_affiliate_custom_links = array();
             $affiliatepress_affiliate_links = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_links, '*', 'WHERE ap_affiliates_id = %d ', array($affiliatepress_affiliate_id), '', 'order by ap_affiliate_link_id ASC', '', false, false,ARRAY_A); 
+            $affiliatepress_total_link = count($affiliatepress_affiliate_links);
+            $affiliatepress_link_limit = $AffiliatePress->affiliatepress_get_settings('affiliate_link_limit', 'affiliate_settings');
+            $response['is_add_affiliate_link']     = 1;  
+            if($affiliatepress_link_limit != 0 && $affiliatepress_total_link >=$affiliatepress_link_limit ){
+                $response['is_add_affiliate_link']     = 0;    
+            }
             if(!empty($affiliatepress_affiliate_links)){
                 $affiliatepress_sr_no = 0;
                 foreach($affiliatepress_affiliate_links as $affiliatepress_affiliate_links){
@@ -880,6 +901,54 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
 
         }
 
+        function affiliatepress_delete_affiliate_custome_link_func($affiliatepress_affiliates_id = ''){
+            
+            global $wpdb, $affiliatepress_tbl_ap_affiliate_links, $AffiliatePress;
+
+            $response              = array();
+            $affiliatepress_wpnonce               = isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '';// phpcs:ignore
+            $affiliatepress_verify_nonce_flag = wp_verify_nonce($affiliatepress_wpnonce, 'ap_wp_nonce');            
+            $response['variant'] = 'error';
+            $response['title']   = esc_html__( 'Error', 'affiliatepress-affiliate-marketing');
+            $response['msg']     = esc_html__( 'Something Wrong', 'affiliatepress-affiliate-marketing');
+            if (!$affiliatepress_verify_nonce_flag){
+                $response['variant'] = 'error';
+                $response['title']   = esc_html__('Error', 'affiliatepress-affiliate-marketing');
+                $response['msg']     = esc_html__('Sorry, Your request can not be processed due to security reason.', 'affiliatepress-affiliate-marketing');
+                wp_send_json($response);
+                exit();
+            }
+            $affiliatepress_affiliate_id = $this->affiliatepress_check_affiliate_user_allow_to_access_func();
+            if(!$affiliatepress_affiliate_id){
+                $response['variant'] = 'error';
+                $response['title']   = esc_html__('Error', 'affiliatepress-affiliate-marketing');
+                $response['msg']     = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('affiliate_user_block_message', 'message_settings'));
+                wp_send_json($response);
+                exit();                
+            }
+
+            $affiliatepress_custome_affiliate_link_id = (isset($_POST['ap_affiliate_link_id']))?intval($_POST['ap_affiliate_link_id']):0; // phpcs:ignore 
+
+            if($affiliatepress_custome_affiliate_link_id && $affiliatepress_affiliate_id){
+
+                $affiliatepress_link_deleted = $wpdb->delete( $affiliatepress_tbl_ap_affiliate_links,array(  'ap_affiliate_link_id' => $affiliatepress_custome_affiliate_link_id,'ap_affiliates_id'     => $affiliatepress_affiliate_id),array('%d','%d'));// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_links is a table name already prepare by affiliatepress_tablename_prepare function. false alarm
+                
+                if ( $affiliatepress_link_deleted ) {
+                    $response['variant'] = 'success';
+                    $response['title']   = esc_html__('Success', 'affiliatepress-affiliate-marketing');
+                    $response['msg']     = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('affiliate_link_delete', 'message_settings'));
+                
+                } else {
+                    $response['variant'] = 'error';
+                    $response['title']   = esc_html__('Error', 'affiliatepress-affiliate-marketing');
+                    $response['msg']     = esc_html__('Something went wrong. Please try again.', 'affiliatepress-affiliate-marketing');
+                }
+            }
+
+            wp_send_json($response);
+            exit;  
+        }
+
         
         /**
          * Function for change password functionality
@@ -906,7 +975,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             if(!$affiliatepress_affiliate_id){
                 $response['variant'] = 'error';
                 $response['title']   = esc_html__('Error', 'affiliatepress-affiliate-marketing');
-                $response['msg']     = esc_html__('Sorry, Affiliate user temporarily blocked by admin.', 'affiliatepress-affiliate-marketing');
+                $response['msg']     = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('affiliate_user_block_message', 'message_settings'));
                 wp_send_json($response);
                 exit();                
             }
@@ -974,7 +1043,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             if(!$affiliatepress_affiliate_id){
                 $response['variant'] = 'error';
                 $response['title']   = esc_html__('Error', 'affiliatepress-affiliate-marketing');
-                $response['msg']     = esc_html__('Sorry, Affiliate user temporarily blocked by admin.', 'affiliatepress-affiliate-marketing');
+                $response['msg']     = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('affiliate_user_block_message', 'message_settings'));
                 wp_send_json($response);
                 exit();                
             }
@@ -1134,7 +1203,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             if(!$affiliatepress_affiliate_id){
                 $response['variant'] = 'error';
                 $response['title']   = esc_html__('Error', 'affiliatepress-affiliate-marketing');
-                $response['msg']     = esc_html__('Sorry, Affiliate user temporarily blocked by admin.', 'affiliatepress-affiliate-marketing');
+                $response['msg']     = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('affiliate_user_block_message', 'message_settings'));
                 wp_send_json($response);
                 exit();                
             }
@@ -1209,7 +1278,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             if(!$affiliatepress_affiliate_id){
                 $response['variant'] = 'error';
                 $response['title']   = esc_html__('Error', 'affiliatepress-affiliate-marketing');
-                $response['msg']     = esc_html__('Sorry, Affiliate user temporarily blocked by admin.', 'affiliatepress-affiliate-marketing');
+                $response['msg']     = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('affiliate_user_block_message', 'message_settings'));
                 wp_send_json($response);
                 exit();                
             }
@@ -1341,7 +1410,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             if(!$affiliatepress_affiliate_id){
                 $response['variant'] = 'error';
                 $response['title']   = esc_html__('Error', 'affiliatepress-affiliate-marketing');
-                $response['msg']     = esc_html__('Sorry, Affiliate user temporarily blocked by admin.', 'affiliatepress-affiliate-marketing');
+                $response['msg']     = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('affiliate_user_block_message', 'message_settings'));
                 wp_send_json($response);
                 exit();                
             }
@@ -1489,7 +1558,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             if(!$affiliatepress_affiliate_id){
                 $response['variant'] = 'error';
                 $response['title']   = esc_html__('Error', 'affiliatepress-affiliate-marketing');
-                $response['msg']     = esc_html__('Sorry, Affiliate user temporarily blocked by admin.', 'affiliatepress-affiliate-marketing');
+                $response['msg']     = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('affiliate_user_block_message', 'message_settings'));
                 wp_send_json($response);
                 exit();                
             }
@@ -2483,7 +2552,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                     document.body.removeChild(affiliatepress_dummy_elem);
                     vm.$notify({ 
                         title: "'.esc_html__('Success', 'affiliatepress-affiliate-marketing').'",
-                        message: "'.esc_html__('Link copied successfully.', 'affiliatepress-affiliate-marketing').'",
+                        message: vm.affiliate_link_copy_message,
                         type: "success",
                         customClass: "success_notification",
                         duration:'.intval($affiliatepress_notification_duration).',
@@ -3259,7 +3328,10 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                         vm.is_display_tab_content_loader = "0";                                     
                         if(response.data.variant == "success"){                                                   
                             vm.affiliate_custom_links      = response.data.affiliate_custom_links;
-                            vm.affiliate_panel_labels       = response.data.affiliate_panel_labels;    
+                            vm.affiliate_panel_labels       = response.data.affiliate_panel_labels;  
+                            if (typeof response.data.is_add_affiliate_link !== "undefined") {
+                                vm.is_add_affiliate_link = response.data.is_add_affiliate_link;
+                            }
                             '.$affiliatepress_affiliate_panel_affiliate_links_modify_response.'                            
                         }else{
                             vm.$notify({
@@ -3685,10 +3757,10 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 },      
                 checkUploadedFile(file){
                     const vm = this;
-                    if(file.type != "image/jpeg" && file.type != "image/png" && file.type != "image/webp"){
+                    if(file.type != "image/jpeg"  && file.type != "image/jpg" && file.type != "image/png" && file.type != "image/webp"){
                         vm.$notify({
                             title: "'.esc_html__('Error', 'affiliatepress-affiliate-marketing').'",
-                            message: "'.esc_html__('Please upload jpg/png file only', 'affiliatepress-affiliate-marketing').'",
+                            message: vm.file_upload_type_validation_message,
                             type: "error",
                             customClass: "error_notification",
                             duration:'.intval($affiliatepress_notification_duration).',
@@ -3696,10 +3768,10 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                         return false;
                     }else{
                         var ap_image_size = parseFloat(file.size / 1000000);
-                        if(ap_image_size > 1){
+                        if(ap_image_size >= 1){
                             vm.$notify({
                                 title: "'.esc_html__('Error', 'affiliatepress-affiliate-marketing').'",
-                                message: "'.esc_html__('Please upload maximum 1 MB file only', 'affiliatepress-affiliate-marketing').'",
+                                message: vm.file_upload_limit_validation_message,
                                 type: "error",
                                 customClass: "error_notification",
                                 duration:'.intval($affiliatepress_notification_duration).',
@@ -3769,6 +3841,45 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                         row._refOverflow = hasOverflow;
                     });
                     };
+                },
+                deleteAffiliatelink(ap_affiliate_link_id,index){
+                    const vm = this;
+                    vm.affiliate_delete_link_loader = index;
+                    var postData = { action:"affiliatepress_delete_affiliate_custome_link", ap_affiliate_link_id: ap_affiliate_link_id, _wpnonce:"'.esc_html(wp_create_nonce('ap_wp_nonce')).'" };
+                    axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify( postData ) )
+                    .then( function (response) {
+                        if(response.data.variant == "success"){
+                            vm.get_affiliates_links_data();                                                           
+                            vm.$notify({
+                                title: response.data.title,
+                                message: response.data.msg,
+                                type: response.data.variant,
+                                customClass: response.data.variant+"_notification",
+                                duration:'.intval($affiliatepress_notification_duration).',
+                            });     
+                            vm.affiliate_delete_link_loader = null;         
+                        }
+                        else{
+                            vm.$notify({
+                                title: response.data.title,
+                                message: response.data.msg,
+                                type: response.data.variant,
+                                customClass: response.data.variant+"_notification",
+                                duration:'.intval($affiliatepress_notification_duration).',
+                            });
+                            vm.affiliate_delete_link_loader = null;
+                        }
+                    }.bind(this) )
+                    .catch( function (error) {
+                        vm.$notify({
+                            title: "'.esc_html__('Error', 'affiliatepress-affiliate-marketing').'",
+                            message: "'.esc_html__('Something went wrong..', 'affiliatepress-affiliate-marketing').'",
+                            type: "error",
+                            customClass: "error_notification",
+                            duration:'.intval($affiliatepress_notification_duration).',                        
+                        });
+                        vm.affiliate_delete_link_loader = null;
+                    });
                 },
                 ';
 
@@ -3868,8 +3979,13 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             $affiliatepress_dynamic_data_fields['default_commission_rate'] = $affiliatepress_default_commission_rate;
             $affiliatepress_dynamic_data_fields['default_discount_label'] = $affiliatepress_default_discount_label;
             $affiliatepress_dynamic_data_fields['tracking_cookie_days'] = $affiliatepress_tracking_cookie_days.' '.esc_html__( 'Days', 'affiliatepress-affiliate-marketing');
+            $affiliatepress_dynamic_data_fields['is_add_affiliate_link'] = 1;
+            $affiliatepress_dynamic_data_fields['affiliate_delete_link_loader'] = "0";
 
             $affiliatepress_dynamic_data_fields['affiliate_common_link'] = "";
+            $affiliatepress_dynamic_data_fields['affiliate_link_copy_message'] = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('link_copied', 'message_settings'));
+            $affiliatepress_dynamic_data_fields['file_upload_type_validation_message'] = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('file_upload_type_validation', 'message_settings'));
+            $affiliatepress_dynamic_data_fields['file_upload_limit_validation_message'] = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('file_upload_limit_validation', 'message_settings'));
             $affiliatepress_affiliates_avatar =  AFFILIATEPRESS_IMAGES_URL . '/default-avatar.jpg';
             $affiliatepress_affiliates_avatar =  apply_filters('affiliatepress_modify_affiliate_default_avatra' , $affiliatepress_affiliates_avatar);
             
@@ -3900,8 +4016,8 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 $affiliatepress_dynamic_data_fields['affiliate_link_slug'] = $affiliatepress_affiliate_link_slug;
             }
             
-            $affiliatepress_dynamic_data_fields['affiliate_current_tab'] = "dashboard";            
-            $affiliatepress_dynamic_data_fields['not_allow_user_affiliate_panel'] = esc_html__( 'Sorry! you are not allowed to access the affiliate panel.', 'affiliatepress-affiliate-marketing');            
+            $affiliatepress_dynamic_data_fields['affiliate_current_tab'] = "dashboard";   
+            $affiliatepress_dynamic_data_fields['not_allow_user_affiliate_panel'] = stripslashes_deep($AffiliatePress->affiliatepress_get_settings('not_allow_affiliate_register', 'message_settings'));
             $affiliatepress_dynamic_data_fields['show_forgot_password_form'] = '0'; 
             $affiliatepress_dynamic_data_fields['is_error_msg'] = "";
             $affiliatepress_dynamic_data_fields['is_display_error'] = "0";
@@ -3979,14 +4095,19 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 'ap_page_link'  => array(
                     array(
                         'required' => true,
-                        'message'  => esc_html__('Please add page link.', 'affiliatepress-affiliate-marketing'),
+                        'message'  => stripslashes_deep($AffiliatePress->affiliatepress_get_settings('link_empty_validation', 'message_settings')),
                         'trigger'  => 'blur',
+                    ),
+                    array(
+                        'pattern' => '^(https?:\/\/)(localhost|\d{1,3}(\.\d{1,3}){3}|([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}|([a-zA-Z0-9-]+\.)+local)(:\d+)?(\/[^\s]*)?$',
+                        'message' => stripslashes_deep($AffiliatePress->affiliatepress_get_settings('link_pattern_validation', 'message_settings')),
+                        'trigger' => 'blur',
                     ),
                 ), 
                 'ap_affiliates_campaign_name'  => array(
                     array(
                         'required' => true,
-                        'message'  => esc_html__('Please add campaign name.', 'affiliatepress-affiliate-marketing'),
+                        'message'  => stripslashes_deep($AffiliatePress->affiliatepress_get_settings('link_campaign_name_empty_validation', 'message_settings')),
                         'trigger'  => 'blur',
                     ),
                 )
@@ -4167,14 +4288,14 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 'affiliatepress_username' => array(
                     array(
                         'required' => true,
-                        'message'  => esc_html__('Please enter username or email address', 'affiliatepress-affiliate-marketing'),
+                        'message'  => stripslashes_deep($AffiliatePress->affiliatepress_get_settings('login_username_empty_validation', 'message_settings')),
                         'trigger'  => 'change',
                     ),
                 ),
                 'affiliatepress_password' => array(
                     array(
                         'required' => true,
-                        'message'  => esc_html__('Please enter password', 'affiliatepress-affiliate-marketing'),
+                        'message'  => stripslashes_deep($AffiliatePress->affiliatepress_get_settings('login_password_empty_validation', 'message_settings')),
                         'trigger'  => 'change',
                     ),
                 ),				
@@ -4188,7 +4309,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 'affiliatepress_email' => array(
                     array(
                         'required' => true,
-                        'message'  => esc_html__('Please enter email address', 'affiliatepress-affiliate-marketing'),
+                        'message'  => stripslashes_deep($AffiliatePress->affiliatepress_get_settings('forget_password_empty_validation', 'message_settings')),
                         'trigger'  => 'change',
                     ),
                 ),

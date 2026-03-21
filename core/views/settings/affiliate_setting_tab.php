@@ -162,6 +162,25 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
                                     </el-form-item>
                                 </el-col>
                             </el-row>
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row" :gutter="32">
+                                <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" class="ap-gs__cb-item-left">
+                                    <div class="ap-combine-field">
+                                        <label>
+                                            <span class="ap-form-label"><?php esc_html_e('Maximum Custom Affiliate Links', 'affiliatepress-affiliate-marketing'); ?> 
+                                            <el-tooltip popper-class="ap--setting-popover-tool-tip" raw-content content="<div><?php esc_html_e('Set the maximum number of custom affiliate links a user can create from the frontend.', 'affiliatepress-affiliate-marketing'); ?></div>" show-after="300" effect="light"  placement="bottom-start">
+                                                <span class="ap-setting-info-icon">
+                                                    <?php do_action('affiliatepress_common_svg_code','info_icon'); ?>                                        
+                                                </span>
+                                            </el-tooltip>
+                                            </span>
+                                        </label>
+                                        <el-form-item prop="affiliate_link_limit">
+                                            <el-input-number v-model="affiliate_setting_form.affiliate_link_limit" class="ap-form-control--number" :min="0" size="large" />                                    
+                                        </el-form-item>
+                                        <div class="ap-field-desc"><?php esc_html_e('Set the value to "0" to allow unlimited custom affiliate links.', 'affiliatepress-affiliate-marketing'); ?></div>
+                                    </div>
+                                </el-col>
+                            </el-row>
                             <?php do_action('affiliatepress_extra_affiliate_setting_html');     ?>
                         </div>
                     </div>

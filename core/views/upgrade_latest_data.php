@@ -84,7 +84,55 @@ if ( version_compare( $affiliatepress_old_version, '2.2', '<' ) ) {
     $affiliatepress_commissions->affiliatepress_commission_customer_update();
 }
 
-$affiliatepress_new_version = '2.2';
+if ( version_compare( $affiliatepress_old_version, '2.3', '<' ) ) {
+
+    global $AffiliatePress;
+
+    $affiliatepress_update_settings = array();
+    $affiliatepress_minimum_amount_label = $AffiliatePress->affiliatepress_get_settings('payment_minimum_amount_label', 'message_settings');
+
+    if(empty($affiliatepress_minimum_amount_label)){
+        $affiliatepress_update_settings[] = array(
+            'settings_key' => 'payment_minimum_amount_label',
+            'settings_type' => 'message_settings',
+            'settings_value' => esc_html__('Minimum Amount', 'affiliatepress-affiliate-marketing'),
+        );
+    }
+
+    $affiliatepress_update_settings[] = array('settings_key' => 'custome_link_delete_confirm','settings_type' => 'message_settings', 'settings_value' => esc_html__('Are you sure you want to delete this Link?', 'affiliatepress-affiliate-marketing'));
+    $affiliatepress_update_settings[] = array('settings_key' => 'delete_custome_link_label', 'settings_type' => 'message_settings','settings_value' => esc_html__('Delete', 'affiliatepress-affiliate-marketing'));
+    $affiliatepress_update_settings[] = array('settings_key' => 'no_label','settings_type' => 'message_settings','settings_value' => esc_html__('No', 'affiliatepress-affiliate-marketing'));
+    $affiliatepress_update_settings[] = array( 'settings_key' => 'yes_label', 'settings_type' => 'message_settings','settings_value' => esc_html__('Yes', 'affiliatepress-affiliate-marketing'));
+    $affiliatepress_update_settings[] = array( 'settings_key' => 'affiliate_link_limit','settings_type' => 'affiliate_settings','settings_value' => 50);
+    $affiliatepress_update_settings[] = array('settings_key' => 'affiliate_pending_register_message','settings_type' => 'message_settings','settings_value' => esc_html__('Your affiliate account is currently under review. You will be notified by email once it has been approved.', 'affiliatepress-affiliate-marketing'));
+    $affiliatepress_update_settings[] = array('settings_key' => 'affiliate_already_registered_message','settings_type' => 'message_settings','settings_value' => esc_html__('Your account is already registered as an affiliate.', 'affiliatepress-affiliate-marketing'));
+    $affiliatepress_update_settings[] = array('settings_key' => 'affiliate_user_block_message','settings_type' => 'message_settings','settings_value' => esc_html__('Sorry, Affiliate user temporarily blocked by admin.', 'affiliatepress-affiliate-marketing'));
+    $affiliatepress_update_settings[] = array('settings_key' => 'link_limit_reached_error','settings_type' => 'message_settings','settings_value' => esc_html__('You cannot add a custom affiliate link because the maximum limit has been reached.', 'affiliatepress-affiliate-marketing'));
+    $affiliatepress_update_settings[] = array('settings_key' => 'affiliate_link_delete','settings_type' => 'message_settings','settings_value' => esc_html__('Affiliate Link has been deleted successfully.', 'affiliatepress-affiliate-marketing'));
+    $affiliatepress_update_settings[] = array('settings_key' => 'link_copied','settings_type' => 'message_settings','settings_value' => esc_html__('Link copied successfully.', 'affiliatepress-affiliate-marketing'));
+    $affiliatepress_update_settings[] = array('settings_key' => 'file_upload_type_validation','settings_type' => 'message_settings','settings_value' => esc_html__('Please upload jpg,jpeg,png or webp file only.', 'affiliatepress-affiliate-marketing'));
+    $affiliatepress_update_settings[] = array('settings_key' => 'file_upload_limit_validation','settings_type' => 'message_settings','settings_value' => esc_html__('Please upload maximum 1 MB file only.', 'affiliatepress-affiliate-marketing'));
+    $affiliatepress_update_settings[] = array('settings_key' => 'not_allow_affiliate_register','settings_type' => 'message_settings','settings_value' => esc_html__('Sorry! you are not allowed to access the affiliate panel.', 'affiliatepress-affiliate-marketing'));
+    $affiliatepress_update_settings[] = array('settings_key' => 'link_empty_validation','settings_type' => 'message_settings','settings_value' => esc_html__('Please add page link.', 'affiliatepress-affiliate-marketing'));
+    $affiliatepress_update_settings[] = array('settings_key' => 'link_pattern_validation','settings_type' => 'message_settings','settings_value' => esc_html__('Please enter a valid URL.', 'affiliatepress-affiliate-marketing'));
+    $affiliatepress_update_settings[] = array('settings_key' => 'link_campaign_name_empty_validation','settings_type' => 'message_settings','settings_value' => esc_html__('Please add campaign name.', 'affiliatepress-affiliate-marketing'));
+    $affiliatepress_update_settings[] = array('settings_key' => 'login_username_empty_validation','settings_type' => 'message_settings','settings_value' => esc_html__('Please enter username or email address', 'affiliatepress-affiliate-marketing'));
+    $affiliatepress_update_settings[] = array('settings_key' => 'login_password_empty_validation','settings_type' => 'message_settings','settings_value' => esc_html__('Please enter password', 'affiliatepress-affiliate-marketing'));
+    $affiliatepress_update_settings[] = array('settings_key' => 'forget_password_empty_validation','settings_type' => 'message_settings','settings_value' => esc_html__('Please enter email address', 'affiliatepress-affiliate-marketing'));
+    $affiliatepress_update_settings[] = array('settings_key' => 'memberpress_disable_commission_on_upgrade','settings_type' => 'integrations_settings','settings_value' => "true");
+
+    if(!empty($affiliatepress_update_settings)){
+        foreach ($affiliatepress_update_settings as $affiliatepress_settings) {
+            $affiliatepress_affiliate_settings_key = $affiliatepress_settings['settings_key'];
+            $affiliatepress_affiliate_settings_type = $affiliatepress_settings['settings_type'];
+            $affiliatepress_affiliate_settings_value = $affiliatepress_settings['settings_value'];
+
+            $AffiliatePress->affiliatepress_update_settings($affiliatepress_affiliate_settings_key,$affiliatepress_affiliate_settings_type,$affiliatepress_affiliate_settings_value);
+        }
+    }
+}
+
+$affiliatepress_new_version = '2.3';
 update_option('affiliatepress_new_version_installed', 1);
 update_option('affiliatepress_version', $affiliatepress_new_version);
 update_option('affiliatepress_updated_date_' . $affiliatepress_new_version, current_time('mysql'));

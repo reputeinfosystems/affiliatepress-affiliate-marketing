@@ -612,6 +612,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
                     $affiliatepress_total_visits = intval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_affiliate_visits, 'COUNT(ap_visit_id)', 'WHERE ap_affiliates_id  = %d  ', array( $affiliatepress_affiliate_id), '', '', '', true, false,ARRAY_A));
                     $affiliate['total_visit'] = $affiliatepress_total_visits;
                     $affiliate['convert_user'] = $affiliatepress_total_commission;
+                    $affiliate['how_will_promote'] = (isset($affiliatepress_single_affiliate['ap_affiliates_promote_us']))?stripslashes_deep($affiliatepress_single_affiliate['ap_affiliates_promote_us']):'';
                     $affiliate['created_date'] = (!empty($affiliatepress_single_affiliate['ap_affiliates_created_at']))?stripslashes_deep($affiliatepress_single_affiliate['ap_affiliates_created_at']):""; ;
                     $affiliates[] = $affiliate;
 
@@ -634,6 +635,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
                 'status'                        => 'Status',
                 'total_visit'                   => 'Total Visit',
                 'convert_user'                  => 'Converted',
+                'how_will_promote'               => 'How Will You Promote Us?',
                 'created_date'                  => 'Date Registered',
             );
 
@@ -1245,7 +1247,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
         */
         function affiliatepress_change_affiliate_status_func(){
 
-            global $wpdb, $affiliatepress_tbl_ap_affiliates,$AffiliatePress;
+            global $wpdb, $affiliatepress_tbl_ap_affiliates,$AffiliatePress,$affiliatepress_tbl_ap_affiliate_commissions;
             $affiliatepress_ap_check_authorization = $this->affiliatepress_ap_check_authentication( 'change_affiliate_status', true, 'ap_wp_nonce' );
             
             $response = array();
@@ -1289,6 +1291,9 @@ if (! class_exists('affiliatepress_affiliates') ) {
 
                 $this->affiliatepress_update_record($affiliatepress_tbl_ap_affiliates, array('ap_affiliates_status'=>$affiliatepress_new_status), array( 'ap_affiliates_id' => $affiliatepress_update_id ));
 
+                if($affiliatepress_new_status == 3){
+                    $this->affiliatepress_update_commisison_status($affiliatepress_update_id , $affiliatepress_new_status,$affiliatepress_old_status);
+                }
                 $response['id']         = $affiliatepress_update_id;
                 $response['variant']    = 'success';
                 $response['title']      = esc_html__('Success', 'affiliatepress-affiliate-marketing');
@@ -1303,7 +1308,21 @@ if (! class_exists('affiliatepress_affiliates') ) {
 
         }
 
-       
+        function affiliatepress_update_commisison_status($affiliatepress_affiliate_id,$affiliatepress_new_status,$affiliatepress_old_status){
+
+            global $wpdb,$affiliatepress_tbl_ap_affiliate_commissions;
+        
+            $affiliatepress_commission_ids = $wpdb->get_col($wpdb->prepare( "SELECT ap_commission_id  FROM {$affiliatepress_tbl_ap_affiliate_commissions} WHERE ap_affiliates_id = %d  AND ap_commission_status IN (1,2)", $affiliatepress_affiliate_id ));// phpcs:ignore WordPress.DB.DirectDatabaseQuery ,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_commissions is table name already prepare in "affiliatepress_tablename_prepare". False Positive alarm
+        
+            $wpdb->query($wpdb->prepare("UPDATE {$affiliatepress_tbl_ap_affiliate_commissions} SET ap_commission_status = %d WHERE ap_affiliates_id = %d  AND ap_commission_status IN (1,2)", $affiliatepress_new_status, $affiliatepress_affiliate_id ) );// phpcs:ignore WordPress.DB.DirectDatabaseQuery ,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $affiliatepress_tbl_ap_affiliate_commissions is table name already prepare in "affiliatepress_tablename_prepare". False Positive alarm
+        
+            if(!empty($affiliatepress_commission_ids)){
+                foreach($affiliatepress_commission_ids as $affiliatepress_commission_id){
+                    do_action('affiliatepress_after_commissions_status_change',$affiliatepress_commission_id, $affiliatepress_new_status,$affiliatepress_old_status, 'backend');
+                }
+            }
+        }
+
         /**
          * affiliate module on load methods
          *
@@ -1792,6 +1811,10 @@ if (! class_exists('affiliatepress_affiliates') ) {
 
                 if($affiliatepress_old_ap_affiliates_status != $affiliatepress_affiliates_status){
                     do_action('affiliatepress_after_affiliate_status_change',$affiliatepress_affiliates_id,$affiliatepress_affiliates_status,$affiliatepress_old_ap_affiliates_status);
+
+                    if($affiliatepress_affiliates_status == 3){
+                        $this->affiliatepress_update_commisison_status($affiliatepress_update_id , $affiliatepress_affiliates_status,$affiliatepress_old_ap_affiliates_status);
+                    }
                 }
 
                 if(empty($affiliatepress_avatar_url) && !empty($affiliatepress_affiliates_user_avatar)){                    
@@ -2139,6 +2162,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
                 if(response != "" && response.error == 0){                                        
                     vm.import_file_fields = response.import_file_fields;
                     vm.import_file_name = response.import_file_name;
+                    vm.autoMapAffiliateManageImportFields();
                 }else{
                     vm.import_file_list = [];
                     if(response != ""){                        
@@ -2160,6 +2184,18 @@ if (! class_exists('affiliatepress_affiliates') ) {
                     }
                 }
             },  
+            autoMapAffiliateManageImportFields(){
+                const vm = this;
+                vm.affiliatepress_import_field_data.forEach(field => {
+                    let match = vm.import_file_fields.find(csv =>
+                        csv.value.toLowerCase().replace(/\s/g,"") ==
+                        field.field_label.toLowerCase().replace(/\s/g,"")
+                    );
+                    if(match){
+                        vm.affiliatepress_import_fields[field.field_key] = match.key;
+                    }
+                });
+            },
             checkImportUploadedFile(file){
                 const vm = this;                
                 if(file.type != "text/csv"){
@@ -2209,10 +2245,10 @@ if (! class_exists('affiliatepress_affiliates') ) {
             },
             checkUploadedFile(file){
                 const vm = this;
-                if(file.type != "image/jpeg" && file.type != "image/png" && file.type != "image/webp"){
+                if(file.type != "image/jpeg" && file.type != "image/jpg" && file.type != "image/png" && file.type != "image/webp"){
                     vm.$notify({
                         title: "'.esc_html__('Error', 'affiliatepress-affiliate-marketing').'",
-                        message: "'.esc_html__('Please upload jpg/png file only', 'affiliatepress-affiliate-marketing').'",
+                        message: "'.esc_html__('Please upload jpg,jpeg,png or webp file only', 'affiliatepress-affiliate-marketing').'",
                         type: "error",
                         customClass: "error_notification",
                         duration:'.intval($affiliatepress_notification_duration).',
@@ -2220,10 +2256,10 @@ if (! class_exists('affiliatepress_affiliates') ) {
                     return false
                 }else{
                     var ap_image_size = parseFloat(file.size / 1000000);
-                    if(ap_image_size > 0.5){
+                    if(ap_image_size >= vm.avatar_upload_file_size){
                         vm.$notify({
                             title: "'.esc_html__('Error', 'affiliatepress-affiliate-marketing').'",
-                            message: "'.esc_html__('Please upload maximum 500 KB file only', 'affiliatepress-affiliate-marketing').'",
+                            message: "'.esc_html__('Please upload maximum 1 MB file only', 'affiliatepress-affiliate-marketing').'",
                             type: "error",
                             customClass: "error_notification",
                             duration:'.intval($affiliatepress_notification_duration).',
@@ -2818,6 +2854,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
                 'order_by'                   => '',
 
                 'items'                      => array(),
+                'avatar_upload_file_size'    => 1,
                 'multipleSelection'          => array(),
                 'multipleSelectionVal'       => '',
                 'perPage'                    => $affiliatepress_pagination_selected,

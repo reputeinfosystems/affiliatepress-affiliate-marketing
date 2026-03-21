@@ -300,7 +300,7 @@ if (! class_exists('affiliatepress_email_notifications') ) {
         */
         function affiliatepress_notification_dynamic_variable_func($affiliatepress_notification_dynamic_variable, $affiliatepress_notification_slug,$affiliatepress_notification_type,$affiliatepress_notification_data_id,$affiliatepress_get_all_template_data){
 
-            global $affiliatepress_tbl_ap_affiliates, $wpdb, $AffiliatePress, $affiliatepress_affiliates, $affiliatepress_tbl_ap_affiliate_commissions,$affiliatepress_tbl_ap_payments;
+            global $affiliatepress_tbl_ap_affiliates, $wpdb, $AffiliatePress, $affiliatepress_affiliates, $affiliatepress_tbl_ap_affiliate_commissions,$affiliatepress_tbl_ap_payments,$affiliatepress_tbl_ap_payouts;
 
             $affiliatepress_company_name = esc_html($AffiliatePress->affiliatepress_get_settings('company_name', 'email_notification_settings'));
             $affiliatepress_notification_dynamic_variable['company_name'] = $affiliatepress_company_name;
@@ -378,7 +378,13 @@ if (! class_exists('affiliatepress_email_notifications') ) {
             if($affiliatepress_notification_type == 'payment'){
 
                 $affiliatepress_payment_id = (isset($affiliatepress_notification_data_id['ap_payment_id']))?intval($affiliatepress_notification_data_id['ap_payment_id']):0;
-                $affiliatepress_payment_record = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_payments, 'ap_payment_id, ap_payment_amount, ap_payment_method', 'WHERE ap_payment_id = %d', array( $affiliatepress_payment_id ), '', '', '', false, true,ARRAY_A);
+                $affiliatepress_payment_record = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_payments, 'ap_payment_id, ap_payment_amount, ap_payment_method ,ap_payout_id', 'WHERE ap_payment_id = %d', array( $affiliatepress_payment_id ), '', '', '', false, true,ARRAY_A);
+
+                $affiliatepress_payout_id = (isset($affiliatepress_payment_record['ap_payout_id']))?intval($affiliatepress_payment_record['ap_payout_id']):0;
+
+                $affiliatepress_payout_up_to_date_data = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_ap_payouts, 'ap_payout_upto_date', 'WHERE ap_payout_id = %d', array( $affiliatepress_payout_id ), '', '', '', false, true,ARRAY_A);
+
+                $affiliatepress_payout_up_to_date = isset($affiliatepress_payout_up_to_date_data['ap_payout_upto_date']) ? $affiliatepress_payout_up_to_date_data['ap_payout_upto_date'] : '';
 
                 $affiliatepress_payment_id = (isset($affiliatepress_payment_record['ap_payment_id']))?intval($affiliatepress_payment_record['ap_payment_id']):0;
                 $affiliatepress_payment_amount = (isset($affiliatepress_payment_record['ap_payment_amount']))?floatval($affiliatepress_payment_record['ap_payment_amount']):0;
@@ -388,7 +394,8 @@ if (! class_exists('affiliatepress_email_notifications') ) {
 
                 $affiliatepress_notification_dynamic_variable['payment_id'] = $affiliatepress_payment_id;
                 $affiliatepress_notification_dynamic_variable['payment_amount'] = $affiliatepress_ap_formated_payment_amount;
-                $affiliatepress_notification_dynamic_variable['payment_payout_method'] = $affiliatepress_payment_method;                
+                $affiliatepress_notification_dynamic_variable['payment_payout_method'] = $affiliatepress_payment_method;         
+                $affiliatepress_notification_dynamic_variable['payment_upto_date'] =  $AffiliatePress->affiliatepress_formated_date_display($affiliatepress_payout_up_to_date);   
 
             }
 

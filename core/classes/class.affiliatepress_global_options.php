@@ -358,7 +358,11 @@ if (! class_exists('affiliatepress_global_options') ) {
                         array(
                             'value' => '%payment_payout_method%',
                             'name'  => '%payment_payout_method%',
-                        ),                                                
+                        ),       
+                        array(
+                            'value' => '%payment_upto_date%',
+                            'name'  => '%payment_upto_date%',
+                        ),                                            
                     )
                 ),                                                                
                 'creative_status' => array(

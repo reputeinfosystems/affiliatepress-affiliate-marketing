@@ -129,6 +129,19 @@ Please follow the steps for installation:
 
 == Changelog ==
 
+= 2.3 =
+Added New facility to delete a Custom Affiliate Link from the Affiliate Panel.
+Added New facility to set "Maximum Number of Custom Link Limit" from the Admin Panel.
+Added New Email Placeholder for send payout upto date with email notification.
+On Affiliate User rejection, unpaid commissions are rejected automatically.
+Other Minor bug fixes.
+
+= 2.2 =
+* Added New Facility to add note by admin per commission from Admin Panel.
+* Improved: Yearly Billing Cycle for Payouts.
+* Added “Signup Date” column to Admin Panel Affiliates page.
+* Other Minor bug fixes.
+
 = 2.1 =
 * Added a Facility to allow selecting a payout date before the "Refund Grace Period" when generating payouts manually.
 * Added a Facility to search affiliates by Affiliate Name or Username.
