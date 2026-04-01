@@ -132,7 +132,16 @@ if ( version_compare( $affiliatepress_old_version, '2.3', '<' ) ) {
     }
 }
 
-$affiliatepress_new_version = '2.3';
+
+if ( version_compare( $affiliatepress_old_version, '2.4', '<' ) ) {
+
+    global $AffiliatePress;
+
+    $AffiliatePress->affiliatepress_update_settings('restrict_content_disable_commission_on_upgrade','integrations_settings',"true");
+    $AffiliatePress->affiliatepress_update_settings('woocommerce_disable_commission_on_upgrade','integrations_settings',"true");
+}
+
+$affiliatepress_new_version = '2.4';
 update_option('affiliatepress_new_version_installed', 1);
 update_option('affiliatepress_version', $affiliatepress_new_version);
 update_option('affiliatepress_updated_date_' . $affiliatepress_new_version, current_time('mysql'));

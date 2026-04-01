@@ -240,9 +240,13 @@ if( !class_exists('affiliatepress_restrict_content') ){
         function affiliatepress_add_pending_referral_restrict_content( $affiliatepress_post_data, $affiliatepress_user_id, $affiliatepress_price, $affiliatepress_payment_id, $affiliatepress_customer, $affiliatepress_membership_id, $affiliatepress_previous_membership, $affiliatepress_registration_type ) {
 
             global $wpdb,$affiliatepress_tracking, $affiliatepress_affiliates,$AffiliatePress,$affiliatepress_commission_debug_log_id,$rcp_payments_db;
+            
+            do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' register type', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_registration_type."--", $affiliatepress_commission_debug_log_id);
+
+            do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' posted data', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', json_encode($affiliatepress_post_data), $affiliatepress_commission_debug_log_id);
 
             // Check if the transaction is for a new subscription
-            if ( $affiliatepress_registration_type != 'new' ) {
+            if ( $affiliatepress_registration_type == 'renewal' ) {
                 return;
             }
 
@@ -264,6 +268,8 @@ if( !class_exists('affiliatepress_restrict_content') ){
                 do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' Empty Affiliate ID', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_log_msg, $affiliatepress_commission_debug_log_id);
                 return;
             }
+
+            $affiliatepress_post_data['membership_register_type'] =  $affiliatepress_registration_type;
 
             $affiliatepress_commission_validation = array();
 

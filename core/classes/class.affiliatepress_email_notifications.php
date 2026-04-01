@@ -148,6 +148,7 @@ if (! class_exists('affiliatepress_email_notifications') ) {
             if($affiliatepress_is_mail_sent){
                 $return_msg['variant']        = 'success';
                 $return_msg['title']          = esc_html__('Success', 'affiliatepress-affiliate-marketing');
+                $return_msg['success_msg']    = esc_html__('Test Email Sent Successfully', 'affiliatepress-affiliate-marketing');
             }else{
                 $return_msg['variant']        = 'error';
                 $return_msg['title']          = esc_html__('Error', 'affiliatepress-affiliate-marketing');

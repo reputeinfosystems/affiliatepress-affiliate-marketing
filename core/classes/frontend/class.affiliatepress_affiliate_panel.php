@@ -480,7 +480,13 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                     axios.post( affiliatepress_ajax_obj.ajax_url, postData )
                     .then( function (response) {
                         if(response.data.variant == "success"){
-                            document.getElementById("_wpnonce").value = response.data.affiliatepress_updated_nonce;
+                            const ap_container = document.querySelector(".ap-front-reg-container");
+                            if(ap_container){
+                                const ap_nonceInput = ap_container.querySelector("#_wpnonce");
+                                if (ap_nonceInput) {
+                                    ap_nonceInput.value = response.data.affiliatepress_updated_nonce;
+                                }
+                            }
                             if(vm.is_login == "true" && vm.allow_user_access == "true"){
                                 vm.affiliatepress_change_tab("dashboard",true);
                                 vm.is_display_tab_content_loader = "1";
@@ -2062,9 +2068,6 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
 			$affiliatepress_verify_nonce_flag = wp_verify_nonce( $affiliatepress_wpnonce, 'ap_wp_nonce' );
 			if ( ! $affiliatepress_verify_nonce_flag ) {
 				$response['msg']     = esc_html__( 'Sorry, Your request can not be processed due to security reason.', 'affiliatepress-affiliate-marketing');
-				if($return_data){
-					return $response;
-				}
 				echo wp_json_encode( $response );
 				die();
 			}            

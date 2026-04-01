@@ -2489,6 +2489,9 @@ if (! class_exists('affiliatepress_payout') ) {
             return date > graceLimit
         },
         ';
+
+        $affiliatepress_payout_dynamic_vue_methods = apply_filters('affiliatepress_payout_add_dynamic_vue_methods', $affiliatepress_payout_dynamic_vue_methods);
+
         return $affiliatepress_payout_dynamic_vue_methods;
         }
         

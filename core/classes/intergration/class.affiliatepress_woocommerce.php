@@ -405,10 +405,41 @@ if( !class_exists('affiliatepress_woocommerce') ){
          * @return void
          */
         function affiliatepress_insert_pending_commission_from_woocommerce($affiliatepress_order){
-
+            
             global $wpdb,$affiliatepress_tracking, $affiliatepress_affiliates,$AffiliatePress,$affiliatepress_commission_debug_log_id;
 
+            do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' woocommerce hook data', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', json_encode($affiliatepress_order), $affiliatepress_commission_debug_log_id);
+
             $affiliatepress_order_id = ( is_a( $affiliatepress_order, 'WC_Order' ) ? $affiliatepress_order->get_id() : $affiliatepress_order );
+
+            $affiliatepress_is_return = false;
+            if ( class_exists( 'WC_Subscriptions' ) ) {
+
+                if ( wcs_order_contains_renewal( $affiliatepress_order ) ) {    
+                    $msg = $affiliatepress_order_id . " is a RENEWAL order";
+                    do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' renewal order', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $msg, $affiliatepress_commission_debug_log_id);
+                    $affiliatepress_is_return = true;
+                }
+            
+                if ( wcs_order_contains_subscription( $affiliatepress_order ) ) {
+                    $msg = $affiliatepress_order_id . " is INITIAL subscription order";
+                    do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' subscription order', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $msg, $affiliatepress_commission_debug_log_id);
+                    $affiliatepress_is_return = true;
+                }
+
+                if ( function_exists( 'wcs_order_contains_switch' ) ) {
+                    if ( wcs_order_contains_switch( $affiliatepress_order ) ) {
+                        $msg = $affiliatepress_order_id . " is a SWITCH (upgrade/downgrade) order";
+                        do_action('affiliatepress_commission_debug_log_entry','commission_tracking_debug_logs',$this->affiliatepress_integration_slug.' switch order','affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking',$msg,$affiliatepress_commission_debug_log_id);
+                        
+                        $affiliatepress_is_return = false;
+                    }
+                }
+            }
+
+            if($affiliatepress_is_return){
+                return;
+            }
             
             /* Get and check to see if referrer exists */
             $affiliatepress_affiliate_id = $affiliatepress_tracking->affiliatepress_get_referral_affiliate();

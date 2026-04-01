@@ -3,9 +3,9 @@ Contributors: reputeinfosystems
 Tags: Affiliate, Affiliates, Affiliate marketing, Affiliate program, Affiliate management
 Donate link: https://www.affiliatepressplugin.com/
 Requires at least: 5.3.0
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.0
-Stable tag: 2.1
+Stable tag: 2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -129,12 +129,16 @@ Please follow the steps for installation:
 
 == Changelog ==
 
+= 2.4 =
+* Fixed: Nonce issue from BuddyPress plugin.
+* Other minor bug fixes.
+
 = 2.3 =
-Added New facility to delete a Custom Affiliate Link from the Affiliate Panel.
-Added New facility to set "Maximum Number of Custom Link Limit" from the Admin Panel.
-Added New Email Placeholder for send payout upto date with email notification.
-On Affiliate User rejection, unpaid commissions are rejected automatically.
-Other Minor bug fixes.
+* Added New facility to delete a Custom Affiliate Link from the Affiliate Panel.
+* Added New facility to set "Maximum Number of Custom Link Limit" from the Admin Panel.
+* Added New Email Placeholder for send payout upto date with email notification.
+* On Affiliate User rejection, unpaid commissions are rejected automatically.
+* Other Minor bug fixes.
 
 = 2.2 =
 * Added New Facility to add note by admin per commission from Admin Panel.

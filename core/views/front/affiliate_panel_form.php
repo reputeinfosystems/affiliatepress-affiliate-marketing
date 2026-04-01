@@ -1092,7 +1092,7 @@
                                                     <div class="ap-expand-top-row-data ap-mb-5">
                                                         <div class="ap-expan-top-data ap-expand-top-head-left"><span class="ap-com-date"><span class="ap-date-cal-icon ap-mr-8"><?php do_action('affiliatepress_common_affiliate_panel_svg_code','date_calendar_icon'); ?></span><span :aria-label="scope.row.visit_created_date_formated">{{scope.row.visit_created_date_formated}}</span></span></div>
                                                         <div class="ap-expan-top-data ap-expand-top-head-right">
-                                                            <span v-html="scope.row.ap_commission_id == '0' ? affiliate_panel_labels.visit_converted : affiliate_panel_labels.visit_unconverted_status" class="ap-status-col"  :class="scope.row.ap_commission_id == '0' ? 'ap-status-red' : 'ap-status-green'":aria-label="scope.row.ap_commission_id == '0'  ? affiliate_panel_labels.visit_converted  : affiliate_panel_labels.visit_unconverted_status"></span>
+                                                            <span v-html="scope.row.ap_commission_id == '0' ? affiliate_panel_labels.visit_converted : affiliate_panel_labels.visit_unconverted_status" class="ap-status-col"  :class="scope.row.ap_commission_id == '0' ? 'ap-status-red' : 'ap-status-green'" :aria-label="scope.row.ap_commission_id == 0  ? affiliate_panel_labels.visit_converted  : affiliate_panel_labels.visit_unconverted_status"></span>
                                                         </div>
                                                     </div>
                                                     <div class="ap-expand-top-row-data">

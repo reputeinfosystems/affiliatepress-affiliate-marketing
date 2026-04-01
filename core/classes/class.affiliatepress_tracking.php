@@ -698,7 +698,7 @@ if( !class_exists('affiliatepress_tracking') ){
             global $wpdb, $affiliatepress_tbl_ap_affiliate_visits, $AffiliatePress;
         
             $ip_address  = !empty($data['ip_address']) ? sanitize_text_field($data['ip_address']) : $AffiliatePress->affiliatepress_get_ip_address();
-            $user_agent  = !empty($data['browser_user_agent']) ? sanitize_text_field($data['browser_user_agent']) : sanitize_text_field($_SERVER['HTTP_USER_AGENT']);
+            $user_agent  = !empty($data['browser_user_agent']) ? sanitize_text_field($data['browser_user_agent']) : sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])); //phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
         
             $browser_data = $AffiliatePress->affiliatepress_get_browser($user_agent);
             $browser_name = isset($browser_data['name']) ? $browser_data['name'] : '';
@@ -711,7 +711,7 @@ if( !class_exists('affiliatepress_tracking') ){
         
             $args = array(
                 'ap_affiliates_id'      => intval($aff_id),
-                'ap_visit_created_date' => date('Y-m-d H:i:s', current_time('timestamp')),
+                'ap_visit_created_date' => date('Y-m-d H:i:s', current_time('timestamp')),//phpcs:ignore
                 'ap_visit_ip_address'   => $ip_address,
                 'ap_visit_country'      => $country,
                 'ap_visit_iso_code'     => $iso_code,
@@ -728,7 +728,7 @@ if( !class_exists('affiliatepress_tracking') ){
                 }
             }
         
-            $wpdb->insert($affiliatepress_tbl_ap_affiliate_visits, $args);
+            $wpdb->insert($affiliatepress_tbl_ap_affiliate_visits, $args); // phpcs:ignore WordPress.DB.DirectDatabaseQuery   
         
             $visit_id = $wpdb->insert_id;
         

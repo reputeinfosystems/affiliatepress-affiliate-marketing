@@ -847,7 +847,7 @@ if (! class_exists('AffiliatePress') ) {
         {
             global $affiliatepress_version, $AffiliatePress;
             $affiliatepress_old_version = get_option('affiliatepress_version', true);
-            if (version_compare($affiliatepress_old_version, '2.3', '<') ) {
+            if (version_compare($affiliatepress_old_version, '2.4', '<') ) {
                 $affiliatepress_load_upgrade_file = AFFILIATEPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $affiliatepress_load_upgrade_file;
                 $AffiliatePress->affiliatepress_send_anonymous_data_cron();
@@ -3696,6 +3696,8 @@ if (! class_exists('AffiliatePress') ) {
                 array('ap_setting_name' => 'easy_digital_downloads_reject_commission_on_refund','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'easy_digital_downloads_disable_commission_on_upgrade','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'memberpress_disable_commission_on_upgrade','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'restrict_content_disable_commission_on_upgrade','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'woocommerce_disable_commission_on_upgrade','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'enable_surecart','ap_setting_value' => 'false','ap_setting_type' => 'integrations_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'surecart_exclude_shipping','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'surecart_exclude_taxes','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0,'type'=>'text'),
@@ -4289,7 +4291,7 @@ if (! class_exists('AffiliatePress') ) {
                 'ap_notification_name' => esc_html__('Commission Paid', 'affiliatepress-affiliate-marketing'),
                 'ap_notification_slug' => 'affiliate_payment_paid',
                 'ap_notification_subject' => esc_html__('Commission Paid', 'affiliatepress-affiliate-marketing'),
-                'ap_notification_message_affiliate' => sprintf( esc_html__('Hey %1$s, %2$s We have processed your affiliate earnings and sent out your payment. %3$s Payment amount: %4$s %5$s Payment method: %6$s %7$s Payment ID: %8$s %9$s %10$s','affiliatepress-affiliate-marketing'),'%affiliate_first_name%','<br>','<br>','%payment_amount%','<br>','%payment_payout_method%','<br>','%payment_id%','<br>','%company_name%'),// phpcs:ignore
+                'ap_notification_message_affiliate' => sprintf( esc_html__('Hey %1$s, %2$s Great news! %3$s Your affiliate earning is processed. Your commission of %4$s has been paid. Thanks for being an awesome partner! %5$s Team %6$s','affiliatepress-affiliate-marketing'),'%affiliate_first_name%','<br><br>','<br><br>','%payment_amount%','<br><br>','%company_name%'),// phpcs:ignore
                 'ap_notification_message_admin' => sprintf( esc_html__('Hey Admin, %1$s %2$s user payment paid. %3$s Payment amount: %4$s %5$s Payment method: %6$s %7$s Payment ID: %8$s %9$s Thanks','affiliatepress-affiliate-marketing'),'<br>','%affiliate_first_name%','<br>','%payment_amount%','<br>','%payment_payout_method%','<br>','%payment_id%','<br>'),// phpcs:ignore
                 'ap_notification_type' => 'payment',
                 'ap_notification_status_affiliate' => 1,

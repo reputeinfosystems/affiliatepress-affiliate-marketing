@@ -2990,6 +2990,7 @@ if (! class_exists('affiliatepress_settings') ) {
                 'woocommerce_exclude_shipping' =>true,
                 'woocommerce_exclude_taxes' => true,
                 'woocommerce_reject_commission_on_refund'=>true,
+                'woocommerce_disable_commission_on_upgrade' => true,
 
                 'enable_accept_stripe_payments' => false,
                 'accept_stripe_payments_exclude_shipping' =>true,
@@ -3061,6 +3062,7 @@ if (! class_exists('affiliatepress_settings') ) {
 
                 'enable_restrict_content' =>false,
                 'restrict_content_reject_commission_on_refund' => true,
+                'restrict_content_disable_commission_on_upgrade' => true,
 
                 'enable_formidablepro' =>false,
                 'formidablepro_reject_commission_on_refund' => true,
@@ -3426,19 +3428,26 @@ if (! class_exists('affiliatepress_settings') ) {
                                     vm.error_send_test_email = 0;
                                     vm.smtp_mail_error_text = "";
                                     vm.error_text_of_test_email = "";
+                                    vm.$notify({
+                                        title: response.data.title,
+                                        message: response.data.success_msg,
+                                        type: response.data.variant,
+                                        customClass: response.data.variant+"_notification",
+                                        duration:'.intval($affiliatepress_notification_duration).',
+                                    });
                                 }else{
                                     vm.succesfully_send_test_email = 0;                                
                                     vm.error_send_test_email = 1;
                                     vm.error_text_of_test_email = response.data.error_msg;
                                     vm.smtp_mail_error_text = response.data.error_log_msg;
+                                    vm.$notify({
+                                        title: response.data.title,
+                                        message: response.data.error_msg,
+                                        type: response.data.variant,
+                                        customClass: response.data.variant+"_notification",
+                                        duration:'.intval($affiliatepress_notification_duration).',
+                                    });
                                 }
-                                vm.$notify({
-                                   title: response.data.title,
-                                   message: response.data.error_msg,
-                                   type: response.data.variant,
-                                   customClass: response.data.variant+"_notification",
-                                   duration:'.intval($affiliatepress_notification_duration).',
-                                });
                             }).catch(function(error){
                                 console.log(error);
                                 vm2.$notify({

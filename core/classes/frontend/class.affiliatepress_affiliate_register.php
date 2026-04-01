@@ -46,7 +46,13 @@ if (! class_exists('affiliatepress_affiliate_register') ) {
                     axios.post( affiliatepress_ajax_obj.ajax_url, postData )
                     .then( function (response) {
                         if(response.data.variant == "success"){
-                            document.getElementById("_wpnonce").value = response.data.affiliatepress_updated_nonce;
+                           const ap_container = document.querySelector(".ap-front-reg-container");
+                            if(ap_container){
+                                const ap_nonceInput = ap_container.querySelector("#_wpnonce");
+                                if (ap_nonceInput) {
+                                    ap_nonceInput.value = response.data.affiliatepress_updated_nonce;
+                                }
+                            }
                             '.$affiliatepress_load_data.'
                         }else{ 
                             vm.$notify({
