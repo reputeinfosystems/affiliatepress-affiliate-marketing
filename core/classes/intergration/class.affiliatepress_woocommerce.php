@@ -21,7 +21,7 @@ if( !class_exists('affiliatepress_woocommerce') ){
             if($this->affiliatepress_woocommerce_commission_add() && $affiliatepress_is_woocommerce_active){
 
                 /* Insert a new pending commission */
-                add_action( 'woocommerce_checkout_update_order_meta', array($this,'affiliatepress_insert_pending_commission_from_woocommerce'), 10, 1 );
+                add_action( 'woocommerce_checkout_update_order_meta', array($this,'affiliatepress_insert_pending_commission'), 10, 1 );
 
                 if ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, '6.4.0', '>=' ) ) {
                     add_action( 'woocommerce_store_api_checkout_order_processed', array($this,'affiliatepress_insert_pending_commission_from_woocommerce') );
@@ -58,6 +58,13 @@ if( !class_exists('affiliatepress_woocommerce') ){
                 add_filter('affiliatepress_modify_commission_link',array($this,'affiliatepress_get_link_order_func'),10,3); 
             }
         }
+
+        function affiliatepress_insert_pending_commission($affiliatepress_order){
+            if(!$this->affiliatepress_check_subscription_plugin_active()){
+                $this->affiliatepress_insert_pending_commission_from_woocommerce( $order );
+            }
+        }
+
         function affiliatepress_insert_commission_express_checkout_woocommerce( $order_id ) {
             global $affiliatepress_commission_debug_log_id;
         
@@ -172,6 +179,17 @@ if( !class_exists('affiliatepress_woocommerce') ){
                 require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
             }
             if ( !is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
+                $affiliatepress_flag = false;
+            }
+            return $affiliatepress_flag;
+        }
+
+        function affiliatepress_check_subscription_plugin_active(){
+            $affiliatepress_flag = true;
+            if ( ! function_exists( 'is_plugin_active' ) ) {
+                require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+            }
+            if ( !is_plugin_active( 'woocommerce-subscriptions/woocommerce-subscriptions.php' ) ) {
                 $affiliatepress_flag = false;
             }
             return $affiliatepress_flag;

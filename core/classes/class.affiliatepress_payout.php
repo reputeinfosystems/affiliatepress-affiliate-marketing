@@ -530,10 +530,14 @@ if (! class_exists('affiliatepress_payout') ) {
 
                     $wpdb->query($wpdb->prepare("UPDATE $affiliatepress_tbl_ap_affiliate_commissions SET ap_commission_status = %d WHERE ap_commission_id IN ($affiliatepress_final_commission_ids)",$affiliatepress_commission_status)); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions_temp is a table name. false alarm    
 
+                    do_action('affiliatepress_payout_debug_log_entry', 'payout_tracking_debug_logs', 'Payment status Paid  : ', 'affiliatepress_manual_payout_tracking', 'Commisison Ids which status Paid set :  '.$affiliatepress_final_commission_ids , $affiliatepress_payout_id);
+
                 }else{
                     $affiliatepress_commission_status = 1;
                     $affiliatepress_final_commission_ids = $affiliatepress_all_payment_commissions['payment_commission'];
                     $wpdb->query($wpdb->prepare("UPDATE $affiliatepress_tbl_ap_affiliate_commissions SET ap_commission_status = %d WHERE ap_commission_id IN ($affiliatepress_final_commission_ids)",$affiliatepress_commission_status));// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliate_commissions_temp is a table name. false alarm   
+
+                    do_action('affiliatepress_payout_debug_log_entry', 'payout_tracking_debug_logs', 'Payment status Unpaid  : ', 'affiliatepress_manual_payout_tracking', 'Commisison Ids which status Approved set :  '.$affiliatepress_final_commission_ids , $affiliatepress_payout_id);
 
                 }                
             }
@@ -1627,6 +1631,9 @@ if (! class_exists('affiliatepress_payout') ) {
             }
 
             $affiliatepress_perpage     = isset($_POST['perpage']) ? intval($_POST['perpage']) : 10; // phpcs:ignore 
+            if(empty($affiliatepress_perpage)){
+                $affiliatepress_perpage = 10;
+            }
             $affiliatepress_currentpage = isset($_POST['currentpage']) ? intval($_POST['currentpage']) : 1; // phpcs:ignore 
             $affiliatepress_offset      = ( ! empty($affiliatepress_currentpage) && $affiliatepress_currentpage > 1 ) ? ( ( $affiliatepress_currentpage - 1 ) * $affiliatepress_perpage ) : 0;
             $affiliatepress_order       = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : ''; // phpcs:ignore 
@@ -1669,19 +1676,18 @@ if (! class_exists('affiliatepress_payout') ) {
                 $affiliatepress_offset = ( ( $affiliatepress_currentpage - 1 ) * $affiliatepress_perpage );
             }
             
-            if(empty($affiliatepress_order)){
+            if(empty($affiliatepress_order) || strtolower($affiliatepress_order) == "desc"){
                 $affiliatepress_order = 'DESC';
+            }else{
+                $affiliatepress_order = 'ASC';
             }
-            if(empty($affiliatepress_order_by)){
-                $affiliatepress_order_by = 'ap_payout_id';
-            }     
-
             if($affiliatepress_order_by == "date_fromate"){
                 $affiliatepress_order_by = 'ap_payout_created_date';
             }
-
-            if($affiliatepress_order_by == "payout_amount"){
+            else if($affiliatepress_order_by == "payout_amount"){
                 $affiliatepress_order_by = 'ap_payout_amount';
+            }else{
+                $affiliatepress_order_by = 'ap_payout_id';
             }
 
             $affiliatepress_payouts_record   = $wpdb->get_results("SELECT * FROM {$affiliatepress_tbl_ap_payouts_temp} {$affiliatepress_where_clause}  order by {$affiliatepress_order_by} {$affiliatepress_order} LIMIT {$affiliatepress_offset} , {$affiliatepress_perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates is a table name. false alarm

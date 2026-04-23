@@ -44,8 +44,11 @@ if(!empty($request_module) && $request_module != 'lite_wizard'){
                     if( $affiliatepress_current_date_for_bf_popup >= $affiliatepress_bf_popup_start_time && $affiliatepress_current_date_for_bf_popup <= $affiliatepress_bf_popup_end_time ){
                         if( 'black_friday' == $type ){
                             $affiliatepress_upgrade_menu_text = esc_html__( 'Black Friday Sale', 'affiliatepress-affiliate-marketing' );
-                            $affiliatepress_affiliate_click_event ='@click="open_sale_premium_modal"';
                         }
+                        else if( 'spring_sale' == $type ){
+                            $affiliatepress_upgrade_menu_text = esc_html__( 'Spring Sale', 'affiliatepress-affiliate-marketing' );
+                        }
+			$affiliatepress_affiliate_click_event ='@click="open_sale_premium_modal"';
                     }
                 }
 

@@ -342,7 +342,10 @@ if (! class_exists('affiliatepress_settings') ) {
                 exit;
             }             
 
-            $affiliatepress_perpage     = isset($_POST['perpage']) ? intval($_POST['perpage']) : 20; // phpcs:ignore WordPress.Security.NonceVerification
+            $affiliatepress_perpage     = isset($_POST['perpage']) ? intval($_POST['perpage']) : 10; // phpcs:ignore WordPress.Security.NonceVerification
+            if(empty($affiliatepress_perpage)){
+                $affiliatepress_perpage = 10;
+            }
             $affiliatepress_currentpage = isset($_POST['currentpage']) ? intval($_POST['currentpage']) : 1; // phpcs:ignore WordPress.Security.NonceVerification
             $affiliatepress_offset      = ( ! empty($affiliatepress_currentpage) && $affiliatepress_currentpage > 1 ) ? ( ( $affiliatepress_currentpage - 1 ) * $affiliatepress_perpage ) : 0;
 
@@ -619,7 +622,10 @@ if (! class_exists('affiliatepress_settings') ) {
                 exit;
             } 
 
-            $affiliatepress_perpage     = isset($_POST['perpage']) ? intval($_POST['perpage']) : 20; // phpcs:ignore 
+            $affiliatepress_perpage     = isset($_POST['perpage']) ? intval($_POST['perpage']) : 10; // phpcs:ignore 
+            if(empty($affiliatepress_perpage)){
+                $affiliatepress_perpage = 10;
+            }
             $affiliatepress_currentpage = isset($_POST['currentpage']) ? intval($_POST['currentpage']) : 1; // phpcs:ignore
             $affiliatepress_offset      = ( ! empty($affiliatepress_currentpage) && $affiliatepress_currentpage > 1 ) ? ( ( $affiliatepress_currentpage - 1 ) * $affiliatepress_perpage ) : 0;
 
@@ -1008,6 +1014,18 @@ if (! class_exists('affiliatepress_settings') ) {
                             'required' => true,
                             'message'  => esc_html__('Please add affiliate url parameter.', 'affiliatepress-affiliate-marketing'),
                             'trigger'  => 'blur',
+                        ),
+                    ), 
+                    'affiliate_complete_default_url'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('Please add Default affiliate url.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                        array(
+                            'type' => 'url',
+                            'message' => esc_html__('Please enter a valid URL.', 'affiliatepress-affiliate-marketing'),
+                            'trigger' => 'blur',
                         ),
                     ), 
                     'affiliate_account_page_id'  => array(
@@ -2149,6 +2167,7 @@ if (! class_exists('affiliatepress_settings') ) {
                     'website_field_required'              => false,
                     'promote_us_field_required'           => false,
                     'affiliate_url_parameter'             => 'afref',
+                    'affiliate_complete_default_url'      => site_url(),
                     'enable_fancy_affiliate_url'          => false,
                     'affiliate_usage_stats'               => true,
                     'affiliate_account_page_id'           => '',
@@ -3002,6 +3021,7 @@ if (! class_exists('affiliatepress_settings') ) {
                 'armember_reject_commission_on_refund' => true,
 
                 'enable_gravity_forms' => false,
+                'gravity_forms_reject_commission_on_refund' =>true,
                 'enable_wp_simple_pay' => false,
 
                 'enable_member_mouse' => false,

@@ -344,6 +344,9 @@ if (! class_exists('affiliatepress_affiliate_register') ) {
 
             $affiliatepress_modify_register_postdata = '';
             $affiliatepress_modify_register_postdata = apply_filters( 'affiliatepress_modify_register_postdata', $affiliatepress_modify_register_postdata);
+            
+            $affiliatepress_register_response_data = '';
+            $affiliatepress_register_response_data = apply_filters( 'affiliatepress_register_response_data', $affiliatepress_register_response_data);
 
             $affiliatepress_affiliate_registration_vue_method.='
                 register_terms_and_condition(field_value){
@@ -459,6 +462,7 @@ if (! class_exists('affiliatepress_affiliate_register') ) {
                                 }else{                                    
                                     vm.affiliatepress_set_error_msg(response.data.msg);
                                 }
+                                '.$affiliatepress_register_response_data.'
                             }).catch(function(error){
                                 vm.reg_is_disabled = false;                           
                                 vm.is_display_reg_save_loader = "0";                                  

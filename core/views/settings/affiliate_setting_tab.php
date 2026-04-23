@@ -107,6 +107,19 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
                                 </el-col>
                             </el-row>
                             <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row" :gutter="32">
+                                <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" class="ap-gs__cb-item-left">
+                                    <div class="ap-combine-field">
+                                        <label>
+                                            <span class="ap-form-label"><?php esc_html_e('Default Affiliate URL', 'affiliatepress-affiliate-marketing'); ?>
+                                            </span>
+                                        </label>    
+                                        <el-form-item prop="affiliate_complete_default_url">
+                                            <el-input class="ap-form-control" type="text" v-model="affiliate_setting_form.affiliate_complete_default_url" size="large" placeholder="<?php esc_html_e('Enter Default URL', 'affiliatepress-affiliate-marketing'); ?>" />                                         
+                                        </el-form-item>
+                                    </div>
+                                </el-col>
+                            </el-row>
+                            <el-row type="flex" class="ap-gs--tabs-pb__cb-item-row" :gutter="32">
                                 <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
                                     <el-row type="flex" :gutter="32">
                                         <el-col :xs="20" :sm="20" :md="20" :lg="12" :xl="12" class="ap-gs__cb-item-left">

@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 global $AffiliatePress, $wpdb, $affiliatepress_version;
 
-$affiliatepress_old_version = get_option('bookingpress_version', true);
+$affiliatepress_old_version = get_option('affiliatepress_version', true);
 
 if (version_compare($affiliatepress_old_version, '1.0.2', '<') ) {
     $AffiliatePress->affiliatepress_install_default_creative_data();
@@ -141,7 +141,14 @@ if ( version_compare( $affiliatepress_old_version, '2.4', '<' ) ) {
     $AffiliatePress->affiliatepress_update_settings('woocommerce_disable_commission_on_upgrade','integrations_settings',"true");
 }
 
-$affiliatepress_new_version = '2.4';
+if ( version_compare( $affiliatepress_old_version, '2.5', '<' ) ) {
+
+    global $AffiliatePress;
+
+    $AffiliatePress->affiliatepress_update_settings('affiliate_complete_default_url','affiliate_settings',site_url());
+}
+
+$affiliatepress_new_version = '2.5';
 update_option('affiliatepress_new_version_installed', 1);
 update_option('affiliatepress_version', $affiliatepress_new_version);
 update_option('affiliatepress_updated_date_' . $affiliatepress_new_version, current_time('mysql'));

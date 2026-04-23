@@ -847,7 +847,7 @@ if (! class_exists('AffiliatePress') ) {
         {
             global $affiliatepress_version, $AffiliatePress;
             $affiliatepress_old_version = get_option('affiliatepress_version', true);
-            if (version_compare($affiliatepress_old_version, '2.4', '<') ) {
+            if (version_compare($affiliatepress_old_version, '2.5', '<') ) {
                 $affiliatepress_load_upgrade_file = AFFILIATEPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $affiliatepress_load_upgrade_file;
                 $AffiliatePress->affiliatepress_send_anonymous_data_cron();
@@ -1979,9 +1979,11 @@ if (! class_exists('AffiliatePress') ) {
             $affiliatepress_affiliate_link = '';
             $affiliatepress_affiliate_id = $this->affiliatepress_encode_affiliate_id($affiliatepress_affiliate_id);
             $affiliatepress_url_parameter = $this->affiliatepress_get_settings('affiliate_url_parameter', 'affiliate_settings');
-            $affiliatepress_enable_fancy_affiliate_url = $this->affiliatepress_get_settings('enable_fancy_affiliate_url' , 'affiliate_settings');           
+            $affiliatepress_enable_fancy_affiliate_url = $this->affiliatepress_get_settings('enable_fancy_affiliate_url' , 'affiliate_settings');     
+            $affiliatepress_default_url = $this->affiliatepress_get_settings('affiliate_complete_default_url' , 'affiliate_settings');
             if($affiliatepress_enable_fancy_affiliate_url == 'true'){
-                $affiliatepress_url = site_url();
+                $affiliatepress_url = $affiliatepress_default_url;
+                $affiliatepress_url = apply_filters('affiliatepress_modify_affiliate_url',$affiliatepress_url);
                 $affiliatepress_url= parse_url( $affiliatepress_url );// phpcs:ignore
                 $affiliatepress_query_string = array_key_exists( 'query', $affiliatepress_url ) ? '?' . $affiliatepress_url['query'] : '';
                 $affiliatepress_url_scheme      = isset( $affiliatepress_url['scheme'] ) ? $affiliatepress_url['scheme'] : 'http';
@@ -1992,7 +1994,9 @@ if (! class_exists('AffiliatePress') ) {
                 $affiliatepress_ref_url = trailingslashit( $affiliatepress_base_url ) . trailingslashit($affiliatepress_url_parameter) . trailingslashit($affiliatepress_affiliate_id) . $affiliatepress_query_string;
                 $affiliatepress_affiliate_link = $affiliatepress_ref_url;                
             }else{
-                $affiliatepress_affiliate_link = site_url().'?'.$affiliatepress_url_parameter.'='.$affiliatepress_affiliate_id;
+                $affiliatepress_url = $affiliatepress_default_url;
+                $affiliatepress_url = apply_filters('affiliatepress_modify_affiliate_url',$affiliatepress_url);
+                $affiliatepress_affiliate_link = add_query_arg( $affiliatepress_url_parameter,$affiliatepress_affiliate_id,$affiliatepress_url);
             }
 
             return $affiliatepress_affiliate_link;
@@ -2728,7 +2732,7 @@ if (! class_exists('AffiliatePress') ) {
                             vm.needHelpDrawer = false;
                         },
                         affiliatepress_redirect_sale_premium_page(){
-                            window.open("'.$affiliatepress_website_url.'pricing/?utm_source=blackfriday_liteversionpopup&utm_medium=liteversion&utm_campaign=blackfriday", "_blank");
+                            window.open("'.$affiliatepress_website_url.'pricing/?utm_source=springsale_liteversionpopup&utm_medium=liteversion&utm_campaign=springsale", "_blank");
                         },
                         openNeedHelper(page_name = "", module_name = "", module_title = ""){
                             const vm = this;
@@ -3276,6 +3280,9 @@ if (! class_exists('AffiliatePress') ) {
                         if( 'black_friday' == $type ){
                             $upgrade_menu_text = esc_html__( 'Black Friday Sale', 'affiliatepress-affiliate-marketing' );
                         }
+                        else if( 'spring_sale' == $type ){
+                            $upgrade_menu_text = esc_html__( 'Spring Sale', 'affiliatepress-affiliate-marketing' );
+                        }
                     }
                 }
                 add_submenu_page($affiliatepress_slugs->affiliatepress, $upgrade_menu_text, $upgrade_menu_text, 'affiliatepress', $affiliatepress_slugs->affiliatepress."&upgrade_action=upgrade_to_pro", array( $this, 'route' ), '99');
@@ -3651,6 +3658,7 @@ if (! class_exists('AffiliatePress') ) {
                 array('ap_setting_name' => 'tracking_cookie_days','ap_setting_value' => '30','ap_setting_type' => 'affiliate_settings','auto_load'=>1,'type'=>'integer'),
                 array('ap_setting_name' => 'affiliate_link_limit','ap_setting_value' => '50','ap_setting_type' => 'affiliate_settings','auto_load'=>1,'type'=>'integer'),
                 array('ap_setting_name' => 'affiliate_url_parameter','ap_setting_value' => 'afref','ap_setting_type' => 'affiliate_settings','auto_load'=>1,'type'=>'text'),
+                array('ap_setting_name' => 'affiliate_complete_default_url','ap_setting_value' => site_url(),'ap_setting_type' => 'affiliate_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'enable_fancy_affiliate_url','ap_setting_value' => 'false','ap_setting_type' => 'affiliate_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'affiliate_usage_stats','ap_setting_value' => 'false','ap_setting_type' => 'affiliate_settings','auto_load'=>1,'type'=>'text'),
                 array('ap_setting_name' => 'default_discount_val','ap_setting_value' => '10','ap_setting_type' => 'commissions_settings','auto_load'=>1,'type'=>'float'),
@@ -3676,6 +3684,7 @@ if (! class_exists('AffiliatePress') ) {
                 array('ap_setting_name' => 'woocommerce_exclude_shipping','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'woocommerce_exclude_taxes','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'woocommerce_reject_commission_on_refund','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'gravity_forms_reject_commission_on_refund','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0,'type'=>'text'),
 
                 array('ap_setting_name' => 'enable_accept_stripe_payments','ap_setting_value' => 'false','ap_setting_type' => 'integrations_settings','auto_load'=>1),
                 array('ap_setting_name' => 'accept_stripe_payments_exclude_shipping','ap_setting_value' => 'true','ap_setting_type' => 'integrations_settings','auto_load'=>0),

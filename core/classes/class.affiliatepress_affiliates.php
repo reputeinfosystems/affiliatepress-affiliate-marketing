@@ -1383,6 +1383,9 @@ if (! class_exists('affiliatepress_affiliates') ) {
             }            
 
             $affiliatepress_perpage     = isset($_POST['perpage']) ? intval($_POST['perpage']) : 10; // phpcs:ignore 
+            if(empty($affiliatepress_perpage)){
+                $affiliatepress_perpage = 10;
+            }
             $affiliatepress_currentpage = isset($_POST['currentpage']) ? intval($_POST['currentpage']) : 1; // phpcs:ignore
             $affiliatepress_offset      = (!empty($affiliatepress_currentpage) && $affiliatepress_currentpage > 1 ) ? ( ( $affiliatepress_currentpage - 1 ) * $affiliatepress_perpage ) : 0;
             $affiliatepress_order       = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : ''; // phpcs:ignore
@@ -1418,27 +1421,25 @@ if (! class_exists('affiliatepress_affiliates') ) {
                 $affiliatepress_currentpage = $affiliatepress_pagination_count;
                 $affiliatepress_offset = ( ( $affiliatepress_currentpage - 1 ) * $affiliatepress_perpage );
             }
-            if(empty($affiliatepress_order)){
+            if(empty($affiliatepress_order) || strtolower($affiliatepress_order) == "desc"){
                 $affiliatepress_order = 'DESC';
-            }
-            if(empty($affiliatepress_order_by)){
-                $affiliatepress_order_by = 'affiliate.ap_affiliates_id';
+            }else{
+                $affiliatepress_order = 'ASC';
             }      
-            
             if($affiliatepress_order_by == "first_name"){
                 $affiliatepress_order_by = 'affiliate.ap_affiliates_first_name';
             }
-
-            if($affiliatepress_order_by == "total_visit"){
+            else if($affiliatepress_order_by == "total_visit"){
                 $affiliatepress_order_by = 'total_visit';
             }
-
-            if($affiliatepress_order_by == "converted_user"){
+            else if($affiliatepress_order_by == "converted_user"){
                 $affiliatepress_order_by = 'converted_user';
             }
-
-            if($affiliatepress_order_by == "ap_affiliates_created_at"){
+            else if($affiliatepress_order_by == "ap_affiliates_created_at"){
                 $affiliatepress_order_by = 'ap_affiliates_created_at';
+            }
+	    else {
+                $affiliatepress_order_by = 'affiliate.ap_affiliates_id';
             }
 
             $affiliatepress_sql = "  SELECT affiliate.*, COALESCE(SUM(report.ap_affiliate_report_visits), 0) AS total_visit,  COALESCE(SUM(report.ap_affiliate_report_total_commission), 0) AS converted_user, COALESCE(SUM(report.ap_affiliate_report_paid_commission_amount), 0) AS affiliatepress_paid_earning,  COALESCE(SUM(report.ap_affiliate_report_unpaid_commission_amount), 0) AS affiliatepress_unpaid_earning FROM {$affiliatepress_tbl_ap_affiliates_temp} AS affiliate  LEFT JOIN {$affiliatepress_tbl_ap_affiliate_report} AS report ON report.ap_affiliates_id = affiliate.ap_affiliates_id  {$affiliatepress_where_clause} GROUP BY affiliate.ap_affiliates_id ORDER BY {$affiliatepress_order_by} {$affiliatepress_order} LIMIT {$affiliatepress_offset}, {$affiliatepress_perpage}";

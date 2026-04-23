@@ -5,7 +5,7 @@ Donate link: https://www.affiliatepressplugin.com/
 Requires at least: 5.3.0
 Tested up to: 7.0
 Requires PHP: 7.0
-Stable tag: 2.4
+Stable tag: 2.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -128,6 +128,11 @@ Please follow the steps for installation:
 1. AffiliatePress – WordPress Affiliate Plugin
 
 == Changelog ==
+ = 2.5 = 
+ * Added a New Facility to change the default Affiliate URL from the Admin Panel.
+ * Added a New Facility to the pre-populated login form.
+ * Improved: After login, the Affiliate user will be able to access the panel without reloading the page.
+ * Other minor bug fixes.
 
 = 2.4 =
 * Fixed: Nonce issue from BuddyPress plugin.

@@ -111,6 +111,9 @@ if (! class_exists('affiliatepress_visits') ) {
             }
 
             $affiliatepress_perpage     = isset($_POST['perpage']) ? intval($_POST['perpage']) : 10; // phpcs:ignore
+            if(empty($affiliatepress_perpage)){
+                $affiliatepress_perpage = 10;
+            }
             $affiliatepress_currentpage = isset($_POST['currentpage']) ? intval($_POST['currentpage']) : 1; // phpcs:ignore
             $affiliatepress_offset      = (!empty($affiliatepress_currentpage) && $affiliatepress_currentpage > 1 ) ? ( ( $affiliatepress_currentpage - 1 ) * $affiliatepress_perpage ) : 0;
             $affiliatepress_order       = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : ''; // phpcs:ignore 
@@ -154,15 +157,15 @@ if (! class_exists('affiliatepress_visits') ) {
 
             $affiliatepress_get_total_visits = intval($wpdb->get_var("SELECT count(visits.ap_visit_id) FROM {$affiliatepress_tbl_ap_affiliate_visits_temp} as visits INNER JOIN {$affiliatepress_tbl_ap_affiliates_temp} as affiliate  ON visits.ap_affiliates_id = affiliate.ap_affiliates_id  {$affiliatepress_where_clause}")); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates_temp is a table name. false alarm
 
-            if(empty($affiliatepress_order)){
+            if(empty($affiliatepress_order) || strtolower($affiliatepress_order) == "desc"){
                 $affiliatepress_order = 'DESC';
+            }else{
+                $affiliatepress_order = 'ASC';
             }
-            if(empty($affiliatepress_order_by)){
-                $affiliatepress_order_by = 'visits.ap_visit_id';
-            }
-
             if($affiliatepress_order_by == "first_name"){
                 $affiliatepress_order_by = 'affiliate.ap_affiliates_first_name';
+            }else{
+                $affiliatepress_order_by = 'visits.ap_visit_id';
             }
 
             $affiliatepress_visits_record    = $wpdb->get_results("SELECT visits.ap_visit_id, visits.ap_commission_id,visits.ap_visit_browser, visits.ap_visit_created_date, visits.ap_visit_ip_address, visits.ap_visit_country,visits.ap_visit_iso_code, visits.ap_visit_landing_url, visits.ap_referrer_url, visits.ap_affiliates_campaign_name, affiliate.ap_affiliates_first_name, affiliate.ap_affiliates_last_name,visits.ap_affiliates_id,affiliate.ap_affiliates_user_id  FROM {$affiliatepress_tbl_ap_affiliate_visits_temp} as visits INNER JOIN {$affiliatepress_tbl_ap_affiliates_temp} as affiliate  ON visits.ap_affiliates_id = affiliate.ap_affiliates_id {$affiliatepress_where_clause}  order by {$affiliatepress_order_by} {$affiliatepress_order} LIMIT {$affiliatepress_offset} , {$affiliatepress_perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates_temp is a table name. false alarm 
