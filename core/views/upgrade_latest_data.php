@@ -148,7 +148,7 @@ if ( version_compare( $affiliatepress_old_version, '2.5', '<' ) ) {
     $AffiliatePress->affiliatepress_update_settings('affiliate_complete_default_url','affiliate_settings',site_url());
 }
 
-$affiliatepress_new_version = '2.5';
+$affiliatepress_new_version = '2.6';
 update_option('affiliatepress_new_version_installed', 1);
 update_option('affiliatepress_version', $affiliatepress_new_version);
 update_option('affiliatepress_updated_date_' . $affiliatepress_new_version, current_time('mysql'));

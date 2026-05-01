@@ -27,7 +27,8 @@ if( !class_exists('affiliatepress_woocommerce') ){
                     add_action( 'woocommerce_store_api_checkout_order_processed', array($this,'affiliatepress_insert_pending_commission_from_woocommerce') );
                 } else {
                     add_action( 'woocommerce_blocks_checkout_order_processed', array($this,'affiliatepress_insert_pending_commission_from_woocommerce') );
-                }            
+                }
+                add_action( 'woocommerce_checkout_order_processed', array($this,'affiliatepress_insert_pending_commission_order_processed'), 10, 3 );
 
                 /* Affiliate Own Commission Filter Add Here  */
                 add_filter('affiliatepress_commission_validation',array($this,'affiliatepress_commission_validation_func'),15,5);
@@ -61,8 +62,17 @@ if( !class_exists('affiliatepress_woocommerce') ){
 
         function affiliatepress_insert_pending_commission($affiliatepress_order){
             if(!$this->affiliatepress_check_subscription_plugin_active()){
-                $this->affiliatepress_insert_pending_commission_from_woocommerce( $order );
+                $this->affiliatepress_insert_pending_commission_from_woocommerce( $affiliatepress_order );
             }
+        }
+
+        function affiliatepress_insert_pending_commission_order_processed($order_id, $posted_data, $order){
+
+            global $affiliatepress_commission_debug_log_id;
+            
+            do_action('affiliatepress_commission_debug_log_entry','commission_tracking_debug_logs',$this->affiliatepress_integration_slug.' : woocommerce_classic_checkout ','affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking',"hook : woocommerce_checkout_order_processed", $affiliatepress_commission_debug_log_id);
+            
+            $this->affiliatepress_insert_pending_commission_from_woocommerce( $order );
         }
 
         function affiliatepress_insert_commission_express_checkout_woocommerce( $order_id ) {
