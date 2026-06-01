@@ -362,12 +362,7 @@ if( !class_exists('affiliatepress_bookingpress') ){
                         return;
                     }
         
-                    $affiliatepress_amount = isset($affiliatepress_bookingpress_appointment_data['bookingpress_service_price']) ? floatval($affiliatepress_bookingpress_appointment_data['bookingpress_service_price']) : 0;
-        
-                    $affiliatepress_staffmember_price = isset($affiliatepress_bookingpress_appointment_data['bookingpress_staff_member_price']) ? floatval($affiliatepress_bookingpress_appointment_data['bookingpress_staff_member_price']) : 0;
-                    if($affiliatepress_staffmember_price > 0){
-                        $affiliatepress_amount = $affiliatepress_staffmember_price;
-                    }
+                    $affiliatepress_amount = isset($affiliatepress_bookingpress_appointment_data['bookingpress_paid_amount']) ? floatval($affiliatepress_bookingpress_appointment_data['bookingpress_paid_amount']) : 0;
         
                     $affiliatepress_quntity = 1;
         
@@ -412,6 +407,7 @@ if( !class_exists('affiliatepress_bookingpress') ){
                         $affiliatepress_product_id   = isset($affiliatepress_cart_item['bookingpress_service_id']) ? intval($affiliatepress_cart_item['bookingpress_service_id']) :0;
                         $affiliatepress_product_name   = isset($affiliatepress_cart_item['bookingpress_service_name']) ? sanitize_text_field($affiliatepress_cart_item['bookingpress_service_name']) : '';
                         
+                        
                         $affiliatepress_bookingpress_product = array(
                             'product_id'=>$affiliatepress_product_id,
                             'source'=>$this->affiliatepress_integration_slug
@@ -432,6 +428,15 @@ if( !class_exists('affiliatepress_bookingpress') ){
                         if($affiliatepress_staffmember_price > 0){
                             $affiliatepress_amount = $affiliatepress_staffmember_price;
                         }
+
+                        /* Calculate coupon Amount */
+                        $affiliatepress_discount_amount = $this->affiliatepress_calculate_discount_amount_bpa($affiliatepress_cart_item,$affiliatepress_product_id,$affiliatepress_amount);
+
+                        $affiliatepress_amount = $affiliatepress_amount - $affiliatepress_discount_amount;
+
+                        $affiliatepress_advance_discount_amount = $this->affiliatepress_calculate_advance_discount_amount_bpa($affiliatepress_cart_item,$affiliatepress_product_id,$affiliatepress_amount);
+
+                        $affiliatepress_amount = $affiliatepress_amount - $affiliatepress_advance_discount_amount;
 
                         $affiliatepress_quntity = 1;
 
@@ -575,6 +580,63 @@ if( !class_exists('affiliatepress_bookingpress') ){
 
         }
         
+        function affiliatepress_calculate_discount_amount_bpa($affiliatepress_cart_item,$affiliatepress_product_id,$affiliatepress_amount){
+
+            $affiliatepress_discount_amount = 0;
+
+            $affiliatepress_coupon_details = isset($affiliatepress_cart_item['bookingpress_coupon_details']) ? $affiliatepress_cart_item['bookingpress_coupon_details'] : '';
+
+            $affiliatepress_coupon_details = json_decode($affiliatepress_coupon_details, true);
+
+            if(!empty($affiliatepress_coupon_details)){
+                
+                $affiliatepress_coupon_data = isset($affiliatepress_coupon_details['coupon_data']) ? $affiliatepress_coupon_details['coupon_data'] : array();
+                
+                if(!empty($affiliatepress_coupon_data)){
+                    $affiliatepress_bpa_coupon_id = isset($affiliatepress_coupon_data['bookingpress_coupon_id']) ? intval($affiliatepress_coupon_data['bookingpress_coupon_id']) : 0;
+                    $affiliatepress_bpa_coupon_code = isset($affiliatepress_coupon_data['bookingpress_coupon_code']) ? sanitize_text_field($affiliatepress_coupon_data['bookingpress_coupon_code']) : '';
+                    $affiliatepress_bpa_discount = isset($affiliatepress_coupon_data['bookingpress_coupon_discount']) ? floatval($affiliatepress_coupon_data['bookingpress_coupon_discount']) : 0;
+                    $affiliatepress_bpa_discount_type = isset($affiliatepress_coupon_data['bookingpress_coupon_discount_type']) ? sanitize_text_field($affiliatepress_coupon_data['bookingpress_coupon_discount_type']) : 0;
+
+                    if($affiliatepress_bpa_discount_type === "Percentage"){
+                        $affiliatepress_discount_amount = ($affiliatepress_amount * $affiliatepress_bpa_discount) / 100;
+                    } else {
+                        $affiliatepress_discount_amount = $affiliatepress_bpa_discount;
+                    }
+                }
+                
+            }
+
+            return $affiliatepress_discount_amount;
+        }
+
+        function affiliatepress_calculate_advance_discount_amount_bpa($affiliatepress_cart_item,$affiliatepress_product_id,$affiliatepress_amount){
+
+            $affiliatepress_discount_amount = 0;
+
+            $affiliatepress_coupon_details = isset($affiliatepress_cart_item['bookingpress_offer_payment_discount_detail']) ? $affiliatepress_cart_item['bookingpress_offer_payment_discount_detail'] : '';
+
+            $affiliatepress_coupon_data = json_decode($affiliatepress_coupon_details, true);
+
+            if(!empty($affiliatepress_coupon_data)){
+                
+                if(!empty($affiliatepress_coupon_data)){
+                    $affiliatepress_bpa_coupon_id = isset($affiliatepress_coupon_data['bookingpress_discount_id']) ? intval($affiliatepress_coupon_data['bookingpress_discount_id']) : 0;
+                    $affiliatepress_bpa_discount = isset($affiliatepress_coupon_data['bookingpress_discount_value']) ? floatval($affiliatepress_coupon_data['bookingpress_discount_value']) : 0;
+                    $affiliatepress_bpa_discount_type = isset($affiliatepress_coupon_data['bookingpress_discount_discount_type']) ? sanitize_text_field($affiliatepress_coupon_data['bookingpress_discount_discount_type']) : 0;
+
+                    if($affiliatepress_bpa_discount_type === "Percentage"){
+                        $affiliatepress_discount_amount = ($affiliatepress_amount * $affiliatepress_bpa_discount) / 100;
+                    } else {
+                        $affiliatepress_discount_amount = $affiliatepress_bpa_discount;
+                    }
+                }
+                
+            }
+
+            return $affiliatepress_discount_amount;
+        }
+
         /**
          * Function For add Approved Commission
          *

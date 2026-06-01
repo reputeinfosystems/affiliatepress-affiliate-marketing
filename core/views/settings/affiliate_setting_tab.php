@@ -208,7 +208,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
                                     <div class="ap-combine-field">
                                         <label><span class="ap-form-label"><?php esc_html_e('Currency', 'affiliatepress-affiliate-marketing'); ?>      </span></label>    
                                         <el-form-item prop="payment_default_currency">
-                                            <el-select @change="default_currency_change($event)" class="ap-form-control" v-model="affiliate_setting_form.payment_default_currency" placeholder="<?php esc_html_e('Select Currency', 'affiliatepress-affiliate-marketing'); ?>" size="large">
+                                            <el-select @change="default_currency_change($event)" class="ap-form-control" v-model="affiliate_setting_form.payment_default_currency" placeholder="<?php esc_html_e('Select Currency', 'affiliatepress-affiliate-marketing'); ?>" size="large" filterable>
                                                 <el-option v-for="currency_data in currency_countries" :key="currency_data.name" :label="currency_data.name+' '+currency_data.symbol" :value="currency_data.code"/>                                        
                                             </el-select>                                       
                                         </el-form-item>
@@ -277,7 +277,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
                                         <?php esc_html_e('Affiliate Account Page', 'affiliatepress-affiliate-marketing'); ?>
                                     </span></label>
                                     <el-form-item prop="affiliate_account_page_id">
-                                        <el-select @change="affiliatepress_get_page_url($event,'account')" class="ap-form-control" v-model="affiliate_setting_form.affiliate_account_page_id" placeholder="Select Page" size="large">
+                                        <el-select @change="affiliatepress_get_page_url($event,'account')" class="ap-form-control" v-model="affiliate_setting_form.affiliate_account_page_id" placeholder="Select Page" size="large" filterable>
                                             <el-option v-for="item in all_wordpress_pages" :key="item.value" :key="item.id" :label="item.title" :value="''+item.id"/>
                                         </el-select>
                                     </el-form-item>
@@ -293,7 +293,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
                                             <?php esc_html_e('Affiliate Registration Page', 'affiliatepress-affiliate-marketing'); ?>
                                         </span></label>
                                         <el-form-item prop="affiliate_registration_page_id">			
-                                            <el-select class="ap-form-control" @change="affiliatepress_get_page_url($event,'register')" v-model="affiliate_setting_form.affiliate_registration_page_id" placeholder="Select Page" size="large">
+                                            <el-select class="ap-form-control" @change="affiliatepress_get_page_url($event,'register')" v-model="affiliate_setting_form.affiliate_registration_page_id" placeholder="Select Page" size="large" filterable>
                                                 <el-option v-for="item in all_wordpress_pages" :key="item.value" :key="item.id" :label="item.title" :value="''+item.id"/>
                                             </el-select>
                                         </el-form-item> 

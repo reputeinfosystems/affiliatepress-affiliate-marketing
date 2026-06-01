@@ -593,7 +593,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
 
                     $affiliatepress_affiliate_id = (isset($affiliatepress_single_affiliate['ap_affiliates_id']))?stripslashes_deep($affiliatepress_single_affiliate['ap_affiliates_id']):0;
                     $affiliate['ap_affiliates_id'] = (isset($affiliatepress_single_affiliate['ap_affiliates_id']))?stripslashes_deep($affiliatepress_single_affiliate['ap_affiliates_id']):'-';
-                    $affiliate['ap_affiliates_user_name'] = (isset($affiliatepress_single_affiliate['user_login']))?stripslashes_deep($affiliatepress_single_affiliate['user_login']):stripslashes_deep($affiliatepress_single_affiliate['ap_affiliates_user_email']);
+                    $affiliate['ap_affiliates_user_name'] = (isset($affiliatepress_single_affiliate['ap_affiliates_user_name']))?stripslashes_deep($affiliatepress_single_affiliate['ap_affiliates_user_name']):stripslashes_deep($affiliatepress_single_affiliate['ap_affiliates_user_email']);
 
                     $affiliate['email'] = (isset($affiliatepress_single_affiliate['ap_affiliates_user_email']))?stripslashes_deep($affiliatepress_single_affiliate['ap_affiliates_user_email']):'-';
 
@@ -875,7 +875,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
                     $affiliatepress_affiliates_data['ap_affiliates_user_avatar']   = (!empty($affiliatepress_affiliates_user_avatar))?esc_url($affiliatepress_affiliates_user_avatar):'';
                     $affiliatepress_affiliates_data['ap_affiliates_promote_us']    = stripslashes_deep($affiliates['ap_affiliates_promote_us']);
                     $affiliatepress_affiliates_data['affiliate_user_name']         = $AffiliatePress->affiliatepress_get_affiliate_user_name_by_id($affiliates['ap_affiliates_user_id']);
-                    $affiliatepress_note = html_entity_decode( $affiliatepress_affiliates_data['ap_affiliates_note'], ENT_QUOTES, 'UTF-8' );
+                    $affiliatepress_note = !empty($affiliatepress_note) ? (html_entity_decode( $affiliatepress_affiliates_data['ap_affiliates_note'], ENT_QUOTES, 'UTF-8' )) : '';
                     $affiliatepress_affiliates_data['ap_affiliates_note']          = $affiliatepress_note;
 
                     if(empty($affiliatepress_affiliates_data['affiliate_user_name'])){

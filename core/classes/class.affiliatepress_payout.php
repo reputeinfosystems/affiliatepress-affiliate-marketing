@@ -980,11 +980,14 @@ if (! class_exists('affiliatepress_payout') ) {
             $affiliatepress_total_affiliate = 0;
             $affiliatepress_all_payout_affiliate = array();
             $affiliatepress_minimum_payment_amount = floatval($AffiliatePress->affiliatepress_get_settings('minimum_payment_amount', 'commissions_settings'));
-            $affiliatepress_minimum_payment_order = $affiliatepress_tracking->affiliatepress_get_payout_minimum_payment_order();
+            $affiliatepress_minimum_payment_order_default = $affiliatepress_tracking->affiliatepress_get_payout_minimum_payment_order();
             $affiliatepress_final_payout_affiliate = array();
             if(!empty($affiliatepress_payout_affiliates)){
                 $affiliatepress_i = 0;
                 foreach($affiliatepress_payout_affiliates as $affiliatepress_key=>$affiliatepress_value){ 
+                    $affiliatepress_payout_affiliate_id = isset($affiliatepress_value['ap_affiliates_id']) ? intval($affiliatepress_value['ap_affiliates_id']) : 0;
+                    $affiliatepress_minimum_payment_order = $affiliatepress_minimum_payment_order_default;
+                    $affiliatepress_minimum_payment_order = apply_filters( 'affiliatepress_modify_payout_minimum_order', $affiliatepress_minimum_payment_order,$affiliatepress_payout_affiliate_id );
                     $affiliatepress_total_commission_count = count($affiliatepress_payout_affiliates[$affiliatepress_key]['commission_record']);  
                     if($affiliatepress_payout_affiliates[$affiliatepress_key]['total_amount'] >= $affiliatepress_minimum_payment_amount &&
                     $affiliatepress_total_commission_count >= $affiliatepress_minimum_payment_order){

@@ -287,6 +287,10 @@ if( !class_exists('affiliatepress_surecart') ){
                     $affiliatepress_amount =$affiliatepress_amount-$affiliatepress_shipping_amount;
                 }
 
+                if($affiliatepress_amount < 0){
+                    $affiliatepress_amount = 0;
+                }
+                
                 $affiliatepress_args = array(
                     'origin'	   => $this->affiliatepress_integration_slug,
                     'type' 		   => 'sale',
@@ -316,15 +320,19 @@ if( !class_exists('affiliatepress_surecart') ){
             }
             else
             {
-                $affiliatepress_order_amount = round( $affiliatepress_checkout->subtotal_amount / 100, 2 );
+                $affiliatepress_order_amount = round( $affiliatepress_checkout->total_amount / 100, 2 );
 
-                if($affiliatepress_exclude_taxes == 'false'){
-                    $affiliatepress_order_amount = $affiliatepress_order_amount + round( $affiliatepress_checkout->tax_amount / 100, 2 ) ;
+                if($affiliatepress_exclude_taxes == 'true'){
+                    $affiliatepress_order_amount = $affiliatepress_order_amount - round( $affiliatepress_checkout->tax_amount / 100, 2 ) ;
                 }
 
                 /* Include Shipping */
-                if($affiliatepress_exclude_shipping == 'false'){
-                    $affiliatepress_order_amount = $affiliatepress_order_amount + round( $affiliatepress_checkout->shipping_amount / 100, 2 ) ;
+                if($affiliatepress_exclude_shipping == 'true'){
+                    $affiliatepress_order_amount = $affiliatepress_order_amount - round( $affiliatepress_checkout->shipping_amount / 100, 2 ) ;
+                }
+
+                if($affiliatepress_order_amount < 0){
+                    $affiliatepress_order_amount = 0;
                 }
 
                 $affiliatepress_args = array(

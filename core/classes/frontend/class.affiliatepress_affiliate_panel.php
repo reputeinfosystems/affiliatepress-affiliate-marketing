@@ -1171,7 +1171,10 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 }                        
 
             }else{
-                $affiliatepress_field_update['ap_affiliates_user_avatar'] = "";
+                if(isset($_POST['avatar_url']))
+                {
+                    $affiliatepress_field_update['ap_affiliates_user_avatar'] = "";
+                }
             }
 
             if(!empty($affiliatepress_field_update)){

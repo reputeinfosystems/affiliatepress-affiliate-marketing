@@ -45,7 +45,7 @@
                         <div class="ap-single-field__form">  
                             <div class="ap-disp-flex-box">
                                 <el-checkbox v-model="affiliatepress_login_form.affiliatepress_is_remember" class="ap-form-label ap-custom-checkbox--is-label" size="large"><div :aria-label="affiliate_panel_labels.login_remember_me" v-html="affiliate_panel_labels.login_remember_me"></div></el-checkbox>
-                                <div><a href="javascript:void(0);" @click="showForgotpassword()" class="ap-acnt-link ap-acnt-link-forgot ap-title-text-color" :aria-label="affiliate_panel_labels.login_forgot_password" v-html="affiliate_panel_labels.login_forgot_password"></a></div>
+                                <div><el-link href="javascript:void(0);" @click="showForgotpassword()" class="ap-acnt-link ap-acnt-link-forgot ap-title-text-color" :aria-label="affiliate_panel_labels.login_forgot_password" v-html="affiliate_panel_labels.login_forgot_password"/></div>
                             </div>      
                         </div>                
                         <div class="ap-frm-btn">
@@ -59,7 +59,8 @@
                             </el-button>                 
                         </div>
                         <div style="display:none;" :style="(allow_affiliate_registration != 'false') ? 'display:flex;' : ''" class="ap-frm-account-link-upper">
-                            <span :aria-label="affiliate_panel_labels.login_dont_have_account" v-html="affiliate_panel_labels.login_dont_have_account"></span>&nbsp;<a  class="ap-acnt-link ap-title-text-color" @click="affiliatepress_go_to_register" href="javascript:void(0);"  :aria-label="affiliate_panel_labels.login_create_account" v-html="affiliate_panel_labels.login_create_account"></a>
+                            <span :aria-label="affiliate_panel_labels.login_dont_have_account" v-html="affiliate_panel_labels.login_dont_have_account"></span>&nbsp;
+                            <el-link class="ap-acnt-link ap-title-text-color" @click="affiliatepress_go_to_register" href="javascript:void(0);"  :aria-label="affiliate_panel_labels.login_create_account" v-html="affiliate_panel_labels.login_create_account"/>
                         </div>
                     </el-form>
                     <div :class="(show_register_form == '0')?'ap-hide-form':''">
@@ -125,7 +126,8 @@
                                 </el-button>                 
                             </div>
                             <div class="ap-frm-account-link-upper">
-                                <span :aria-label="affiliate_panel_labels.do_you_have_account" v-html="affiliate_panel_labels.do_you_have_account"></span>&nbsp;<a @click="go_to_login_page()" href="javascript:void(0);" class="ap-acnt-link ap-title-text-color"  :aria-label="affiliate_panel_labels.signin" v-html="affiliate_panel_labels.signin"></a>
+                                <span :aria-label="affiliate_panel_labels.do_you_have_account" v-html="affiliate_panel_labels.do_you_have_account"></span>&nbsp;
+                                <el-link @click="go_to_login_page()" href="javascript:void(0);" class="ap-acnt-link ap-title-text-color"  :aria-label="affiliate_panel_labels.signin" v-html="affiliate_panel_labels.signin"/>
                             </div>
                     </el-form>
 
@@ -155,7 +157,7 @@
                                 </el-button>                 
                             </div>
                             <div class="ap-frm-account-link-upper">
-                                <a class="ap-acnt-link ap-title-text-color" @click="showLoginForm()" href="javascript:void(0);" :aria-label="affiliate_panel_labels.forget_password_signin" v-html="affiliate_panel_labels.forget_password_signin"></a>
+                                <el-link class="ap-acnt-link ap-title-text-color" @click="showLoginForm()" href="javascript:void(0);" :aria-label="affiliate_panel_labels.forget_password_signin" v-html="affiliate_panel_labels.forget_password_signin"/>
                             </div>
                         </el-form>
 
@@ -257,33 +259,33 @@
                         <?php do_action('affiliatepress_common_affiliate_panel_svg_code','front_menu_close_icon'); ?>
                     </div>    
                     <div class="ap-affiliate-panel-sidebar">
-                        <a href="javascript:void(0);" @click="affiliatepress_change_tab('dashboard')" :class="(affiliate_current_tab == 'dashboard')?'ap-affiliate-menu-item-active':''" class="ap-affiliate-menu-item">
+                        <el-link href="javascript:void(0);" @click="affiliatepress_change_tab('dashboard')" :class="(affiliate_current_tab == 'dashboard')?'ap-affiliate-menu-item-active':''" class="ap-affiliate-menu-item">
                             <div class="ap-affiliate-menu-item-icon"><?php do_action('affiliatepress_common_affiliate_panel_svg_code','dashboard'); ?></div>    
                             <div class="ap-affiliate-menu-item-txt" :aria-label="affiliate_panel_labels.dashboard_menu" v-html="affiliate_panel_labels.dashboard_menu"></div>                                        
-                        </a>
-                        <a href="javascript:void(0);" @click="affiliatepress_change_tab('commission')" :class="(affiliate_current_tab == 'commission')?'ap-affiliate-menu-item-active':''" class="ap-affiliate-menu-item">
+                        </el-link>
+                        <el-link href="javascript:void(0);" @click="affiliatepress_change_tab('commission')" :class="(affiliate_current_tab == 'commission')?'ap-affiliate-menu-item-active':''" class="ap-affiliate-menu-item">
                             <div class="ap-affiliate-menu-item-icon"><?php do_action('affiliatepress_common_affiliate_panel_svg_code','commission'); ?></div>    
                             <div class="ap-affiliate-menu-item-txt" :aria-label="affiliate_panel_labels.commission_menu" v-html="affiliate_panel_labels.commission_menu"></div>
-                        </a>
-                        <a href="javascript:void(0);" @click="affiliatepress_change_tab('affiliates_links')" :class="(affiliate_current_tab == 'affiliates_links')?'ap-affiliate-menu-item-active':''" class="ap-affiliate-menu-item">
+                        </el-link>
+                        <el-link href="javascript:void(0);" @click="affiliatepress_change_tab('affiliates_links')" :class="(affiliate_current_tab == 'affiliates_links')?'ap-affiliate-menu-item-active':''" class="ap-affiliate-menu-item">
                             <div class="ap-affiliate-menu-item-icon"><?php do_action('affiliatepress_common_affiliate_panel_svg_code','affiliates_links'); ?></div>    
                             <div class="ap-affiliate-menu-item-txt" :aria-label="affiliate_panel_labels.affiliate_links_menu" v-html="affiliate_panel_labels.affiliate_links_menu"></div>                                         
-                        </a>
-                        <a href="javascript:void(0);" @click="affiliatepress_change_tab('visit')" :class="(affiliate_current_tab == 'visit')?'ap-affiliate-menu-item-active':''" class="ap-affiliate-menu-item">
+                        </el-link>
+                        <el-link href="javascript:void(0);" @click="affiliatepress_change_tab('visit')" :class="(affiliate_current_tab == 'visit')?'ap-affiliate-menu-item-active':''" class="ap-affiliate-menu-item">
                             <div class="ap-affiliate-menu-item-icon"><?php do_action('affiliatepress_common_affiliate_panel_svg_code','visit'); ?></div>    
                             <div class="ap-affiliate-menu-item-txt" :aria-label="affiliate_panel_labels.visits_menu" v-html="affiliate_panel_labels.visits_menu"></div>                                          
-                        </a>
-                        <a href="javascript:void(0);" @click="affiliatepress_change_tab('creative')" class="ap-affiliate-menu-item" :class="(affiliate_current_tab == 'creative')?'ap-affiliate-menu-item-active':''">
+                        </el-link>
+                        <el-link href="javascript:void(0);" @click="affiliatepress_change_tab('creative')" class="ap-affiliate-menu-item" :class="(affiliate_current_tab == 'creative')?'ap-affiliate-menu-item-active':''">
                             <div class="ap-affiliate-menu-item-icon"><?php do_action('affiliatepress_common_affiliate_panel_svg_code','creative'); ?></div>    
                             <div class="ap-affiliate-menu-item-txt" :aria-label="affiliate_panel_labels.creative_menu" v-html="affiliate_panel_labels.creative_menu"></div>                                           
-                        </a>
-                        <a href="javascript:void(0);" @click="affiliatepress_change_tab('payments')" class="ap-affiliate-menu-item" :class="(affiliate_current_tab == 'payments')?'ap-affiliate-menu-item-active':''">                        
+                        </el-link>
+                        <el-link href="javascript:void(0);" @click="affiliatepress_change_tab('payments')" class="ap-affiliate-menu-item" :class="(affiliate_current_tab == 'payments')?'ap-affiliate-menu-item-active':''">                        
                             <div class="ap-affiliate-menu-item-icon"><?php do_action('affiliatepress_common_affiliate_panel_svg_code','payouts'); ?></div>    
                             <div class="ap-affiliate-menu-item-txt" :aria-label="affiliate_panel_labels.paymnets_menu" v-html="affiliate_panel_labels.paymnets_menu"></div>                    
-                        </a>
+                        </el-link>
                         <div class="ap-front-menu-seperator"></div>
                         <div class="ap-sidebar-profile-section">
-                            <img :src="userAvatar" alt="User Avatar" /><?php // phpcs:ignore ?>
+                            <el-image :src="userAvatar" alt="User Avatar"></el-image>
                             <div class="ap-sidebar-profile-detais">
                                 <div class="ap-sidebar-username">{{ userName }}</div>
                                 <div class="ap-sidebar-useremail">{{ userEmail }}</div>
@@ -303,7 +305,7 @@
                 <div class="ap-avatar-container">                    
                     <el-dropdown popper-class="ap-top-profile-menu" trigger="click" >
                         <div class="ap-top-profile">
-                        <img :src="userAvatar" alt="User Avatar" /><?php // phpcs:ignore ?>
+                        <el-image :src="userAvatar" alt="User Avatar"></el-image>
                         <span class="ap-droup-down-arrow" tabindex="0">
                             <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M1 1.5L6 6.5L11 1.5" stroke="#656E81" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -355,33 +357,33 @@
                 </el-dialog>
                 <div class="ap-affiliate-panel-container" style="display:none;" :style="(is_affiliate_form_loader == '1') ? 'display:inherit;' : ''">
                     <div class="ap-affiliate-panel-sidebar" v-if="(current_screen_size == 'desktop')">
-                        <a href="javascript:void(0);" @click.prevent="affiliatepress_change_tab('dashboard')" :class="(affiliate_current_tab == 'dashboard')?'ap-affiliate-menu-item-active':''" class="ap-affiliate-menu-item">
+                        <el-link href="javascript:void(0);" @click.prevent="affiliatepress_change_tab('dashboard')" :class="(affiliate_current_tab == 'dashboard')?'ap-affiliate-menu-item-active':''" class="ap-affiliate-menu-item">
                             <div class="ap-affiliate-menu-item-icon"><?php do_action('affiliatepress_common_affiliate_panel_svg_code','dashboard'); ?></div>    
                             <div class="ap-affiliate-menu-item-txt" :aria-label="affiliate_panel_labels.dashboard_menu" v-html="affiliate_panel_labels.dashboard_menu"></div>                                        
-                        </a>
-                        <a href="javascript:void(0);" @click.prevent="affiliatepress_change_tab('commission')" :class="(affiliate_current_tab == 'commission')?'ap-affiliate-menu-item-active':''" class="ap-affiliate-menu-item">
+                        </el-link>
+                        <el-link href="javascript:void(0);" @click.prevent="affiliatepress_change_tab('commission')" :class="(affiliate_current_tab == 'commission')?'ap-affiliate-menu-item-active':''" class="ap-affiliate-menu-item">
                             <div class="ap-affiliate-menu-item-icon"><?php do_action('affiliatepress_common_affiliate_panel_svg_code','commission'); ?></div>    
                             <div class="ap-affiliate-menu-item-txt" :aria-label="affiliate_panel_labels.commission_menu" v-html="affiliate_panel_labels.commission_menu"></div>
-                        </a>
-                        <a href="javascript:void(0);" @click.prevent="affiliatepress_change_tab('affiliates_links')" :class="(affiliate_current_tab == 'affiliates_links')?'ap-affiliate-menu-item-active':''" class="ap-affiliate-menu-item">
+                        </el-link>
+                        <el-link href="javascript:void(0);" @click.prevent="affiliatepress_change_tab('affiliates_links')" :class="(affiliate_current_tab == 'affiliates_links')?'ap-affiliate-menu-item-active':''" class="ap-affiliate-menu-item">
                             <div class="ap-affiliate-menu-item-icon"><?php do_action('affiliatepress_common_affiliate_panel_svg_code','affiliates_links'); ?></div>    
                             <div class="ap-affiliate-menu-item-txt" :aria-label="affiliate_panel_labels.affiliate_links_menu" v-html="affiliate_panel_labels.affiliate_links_menu"></div>                                         
-                        </a>
-                        <a href="javascript:void(0);" @click.prevent="affiliatepress_change_tab('visit')" :class="(affiliate_current_tab == 'visit')?'ap-affiliate-menu-item-active':''" class="ap-affiliate-menu-item">
+                        </el-link>
+                        <el-link href="javascript:void(0);" @click.prevent="affiliatepress_change_tab('visit')" :class="(affiliate_current_tab == 'visit')?'ap-affiliate-menu-item-active':''" class="ap-affiliate-menu-item">
                             <div class="ap-affiliate-menu-item-icon"><?php do_action('affiliatepress_common_affiliate_panel_svg_code','visit'); ?></div>    
                             <div class="ap-affiliate-menu-item-txt" :aria-label="affiliate_panel_labels.visits_menu" v-html="affiliate_panel_labels.visits_menu"></div>                                          
-                        </a>
-                        <a href="javascript:void(0);" @click.prevent="affiliatepress_change_tab('creative')" class="ap-affiliate-menu-item" :class="(affiliate_current_tab == 'creative')?'ap-affiliate-menu-item-active':''">
+                        </el-link>
+                        <el-link href="javascript:void(0);" @click.prevent="affiliatepress_change_tab('creative')" class="ap-affiliate-menu-item" :class="(affiliate_current_tab == 'creative')?'ap-affiliate-menu-item-active':''">
                             <div class="ap-affiliate-menu-item-icon"><?php do_action('affiliatepress_common_affiliate_panel_svg_code','creative'); ?></div>    
                             <div class="ap-affiliate-menu-item-txt" :aria-label="affiliate_panel_labels.creative_menu" v-html="affiliate_panel_labels.creative_menu"></div>                                           
-                        </a>
-                        <a href="javascript:void(0);" @click.prevent="affiliatepress_change_tab('payments')" class="ap-affiliate-menu-item" :class="(affiliate_current_tab == 'payments')?'ap-affiliate-menu-item-active':''">                        
+                        </el-link>
+                        <el-link href="javascript:void(0);" @click.prevent="affiliatepress_change_tab('payments')" class="ap-affiliate-menu-item" :class="(affiliate_current_tab == 'payments')?'ap-affiliate-menu-item-active':''">                        
                             <div class="ap-affiliate-menu-item-icon"><?php do_action('affiliatepress_common_affiliate_panel_svg_code','payouts'); ?></div>    
                             <div class="ap-affiliate-menu-item-txt" :aria-label="affiliate_panel_labels.paymnets_menu" v-html="affiliate_panel_labels.paymnets_menu"></div>                    
-                        </a>
+                        </el-link>
                         <div class="ap-front-menu-seperator"></div>
                         <div class="ap-sidebar-profile-section">
-                            <img :src="userAvatar" alt="User Avatar" /><?php // phpcs:ignore ?>
+                            <el-image :src="userAvatar" alt="User Avatar"></el-image>
                             <div class="ap-sidebar-profile-detais">
                                 <div class="ap-sidebar-username">{{ userName }}</div>
                                 <div class="ap-sidebar-useremail">{{ userEmail }}</div>
@@ -1016,7 +1018,7 @@
                                                 <template #default="scope">
                                                     <div  class="ap-url-wrapper"  :class="{ clickable: scope.row._isOverflow }" @click="scope.row._isOverflow ? (scope.row._expanded = true) : null">
                                                         <div class="ap-url-text" :class="{ expanded: scope.row._expanded }" :ref="checklandingOverflow(scope.row)" >  {{ scope.row.ap_visit_landing_url }}</div>
-                                                        <a v-if="scope.row._isOverflow && !scope.row._expanded" class="ap-more-inline ap-refrance-link" @click.stop="scope.row._expanded = true" >...</a>
+                                                        <el-link v-if="scope.row._isOverflow && !scope.row._expanded" class="ap-more-inline ap-refrance-link" @click.stop="scope.row._expanded = true">...</el-link>
                                                     </div>
                                                 </template>
                                             </el-table-column>
@@ -1024,7 +1026,7 @@
                                                 <template #default="scope">
                                                     <div   v-if="scope.row.ap_referrer_url"  class="ap-url-wrapper" :class="{ clickable: scope.row._refOverflow }" @click="scope.row._refOverflow ? (scope.row._refExpanded = true) : null">
                                                         <div class="ap-url-text" :class="{ expanded: scope.row._refExpanded }" :ref="checkrefgOverflow(scope.row)" >{{ scope.row.ap_referrer_url }}</div>
-                                                        <a v-if="scope.row._refOverflow && !scope.row._refExpanded"  class="ap-more-inline ap-refrance-link" @click.stop="scope.row._refExpanded = true">...</a>
+                                                        <el-link v-if="scope.row._refOverflow && !scope.row._refExpanded"  class="ap-more-inline ap-refrance-link" @click.stop="scope.row._refExpanded = true">...</el-link>
                                                     </div>
                                                     <span v-if="!scope.row.ap_referrer_url">-</span>
                                                 </template>
@@ -1454,7 +1456,7 @@
                                                 </template>
                                             </el-image>
                                             <div class="ap-text-preview" v-else>
-                                                <a href="javascript:void(0);" v-html="creative_popup_data.ap_creative_text" :aria-label="creative_popup_data.ap_creative_text"></a>
+                                                <el-link href="javascript:void(0);" v-html="creative_popup_data.ap_creative_text" :aria-label="creative_popup_data.ap_creative_text"/>
                                             </div>
                                         </div>
                                         <div v-if="creative_popup_data.ap_creative_type == 'image'" class="ap-flex-between">
@@ -1536,7 +1538,7 @@
                                     <div class="ap-profile-avtar-wrapper">
                                         {{affiliate_panel_labels.profile_picture}}
                                         <div class="ap-edit-profile-avatar-container">
-                                            <img class="ap-edit-profile-avatar-img" alt="User Avatar" :src="userAvatar" /><?php // phpcs:ignore ?>
+                                            <el-image class="ap-edit-profile-avatar-img" alt="User Avatar" :src="userAvatar"></el-image>
                                             <div class="ap-tf-btn-group">
                                                 <el-upload class="ap-edit-profile-avatar" ref="avatarRef" multiple="false" limit="1" action="<?php echo wp_nonce_url(admin_url('admin-ajax.php') . '?action=affiliatepress_upload_edit_profile_image', 'affiliatepress_upload_edit_profile_image'); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped --Reason - esc_html is already used by wp_nonce_url function and it's false positive ?>" 
                                                     :file-list="image_list"

@@ -29,7 +29,8 @@ if( !class_exists('affiliatepress_wp_simple_pay') ){
 
                     add_action('simpay_webhook_checkout_session_completed', array($this, 'affiliatepress_commission_stripe_checkout'), 10);
                     add_action('simpay_webhook_subscription_created', array($this, 'affiliatepress_add_pending_commission'), 10, 2);        
-                    add_action('simpay_webhook_payment_intent_succeeded', array($this, 'affiliatepress_add_pending_commission'), 10, 2);                
+                    add_action('simpay_webhook_payment_intent_succeeded', array($this, 'affiliatepress_add_pending_commission'), 10, 2);   
+                    add_action('_simpay_payment_confirmation',array( $this, 'affiliatepress_wp_simplepay_commission_add' ) ,10 ,3);                       
 
                 }else{
 
@@ -204,6 +205,12 @@ if( !class_exists('affiliatepress_wp_simple_pay') ){
             $affiliatepress_object_args['metadata']['affiliatepress_affiliate_id'] = $affiliatepress_affiliate_id;
 
             return $affiliatepress_object_args;
+        }
+
+        public function affiliatepress_wp_simplepay_commission_add( $affiliatepress_payment_data ,$affiliatepress_paymnet_form ,$afiliatepress_simple_pay_get_data){
+            global $AffiliatePress;
+            $affiliatepress_payment_info = current( $affiliatepress_payment_data['paymentintents'] );
+            $this->affiliatepress_add_pending_commission( null, $affiliatepress_payment_info );
         }
 
         /**

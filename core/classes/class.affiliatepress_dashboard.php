@@ -154,7 +154,7 @@ if (! class_exists('affiliatepress_dashboard') ) {
                 die;
             }
 
-            if(!is_array($_POST['dashboard_date_range'])){
+            if( !empty($_POST['dashboard_date_range']) && !is_array($_POST['dashboard_date_range'])){ //phpcs:ignore
                 $response['variant'] = 'error';
                 $response['title'] = esc_html__( 'Error', 'affiliatepress-affiliate-marketing');
                 $response['msg'] = esc_html__( 'Error', 'affiliatepress-affiliate-marketing');
@@ -165,7 +165,8 @@ if (! class_exists('affiliatepress_dashboard') ) {
             $affiliatepress_dashboard_start_date = (isset($_POST['dashboard_date_range'][0]) && !empty($_POST['dashboard_date_range'][0])) ? sanitize_text_field($_POST['dashboard_date_range'][0]): ''; // phpcs:ignore
             $affiliatepress_dashboard_end_date   = (isset($_POST['dashboard_date_range'][1]) && !empty($_POST['dashboard_date_range'][1])) ? sanitize_text_field($_POST['dashboard_date_range'][1]): ''; // phpcs:ignore 
 
-            if ( empty( $affiliatepress_dashboard_start_date ) || empty( $affiliatepress_dashboard_end_date ) ||! strtotime( $affiliatepress_dashboard_start_date ) || ! strtotime( $affiliatepress_dashboard_end_date )) {
+
+            if((!empty($affiliatepress_dashboard_start_date) && !strtotime($affiliatepress_dashboard_start_date)) ||(!empty($affiliatepress_dashboard_end_date) && !strtotime($affiliatepress_dashboard_end_date))){
     
                 $response['variant'] = 'error';
                 $response['title']   = esc_html__( 'Error', 'affiliatepress-affiliate-marketing');
@@ -300,6 +301,16 @@ if (! class_exists('affiliatepress_dashboard') ) {
                 $affiliatepress_dashboard_end_date = $affiliatepress_currentDate->format('Y-m-d');
                 $affiliatepress_currentDate->modify('-3 years');
                 $affiliatepress_dashboard_start_date = $affiliatepress_currentDate->format('Y-m-d');            
+            }
+
+            if ( empty( $affiliatepress_dashboard_start_date ) || empty( $affiliatepress_dashboard_end_date ) ||! strtotime( $affiliatepress_dashboard_start_date ) || ! strtotime( $affiliatepress_dashboard_end_date )) {
+    
+                $response['variant'] = 'error';
+                $response['title']   = esc_html__( 'Error', 'affiliatepress-affiliate-marketing');
+                $response['msg']     = esc_html__( 'Invalid Date Format', 'affiliatepress-affiliate-marketing' );
+            
+                wp_send_json( $response );
+                die;
             }
 
             $affiliatepress_total_year_dates = $AffiliatePress->affiliatepress_get_date_between_year($affiliatepress_dashboard_start_date, $affiliatepress_dashboard_end_date);

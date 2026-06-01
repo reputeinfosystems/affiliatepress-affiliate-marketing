@@ -84,7 +84,8 @@
                     </el-button>                 
                 </div>
                 <div class="ap-frm-account-link-upper">
-                    <span :aria-label="affiliate_panel_labels.do_you_have_account" v-html="affiliate_panel_labels.do_you_have_account"></span>&nbsp;<a href="javascript:void(0);"  class="ap-acnt-link ap-title-text-color" @click="go_to_login_page()" href="javascript:void(0);"  :aria-label="affiliate_panel_labels.signin" v-html="affiliate_panel_labels.signin"></a>
+                    <span :aria-label="affiliate_panel_labels.do_you_have_account" v-html="affiliate_panel_labels.do_you_have_account"></span>&nbsp;
+                    <el-link href="javascript:void(0);"  class="ap-acnt-link ap-title-text-color" @click="go_to_login_page()" href="javascript:void(0);"  :aria-label="affiliate_panel_labels.signin" v-html="affiliate_panel_labels.signin"></el-link>
                 </div>
             </el-form>
         </div>

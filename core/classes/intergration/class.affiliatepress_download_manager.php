@@ -273,6 +273,9 @@ if( !class_exists('affiliatepress_download_manager') ){
                 );
             }else{
                 if(!empty($affiliatepress_cart_data)){
+
+                    $affiliatepress_total_cart_amount = isset($affiliatepress_order_data->subtotal) ? floatval($affiliatepress_order_data->subtotal) : 0;
+
                     foreach($affiliatepress_cart_data as $affiliatepress_cart_item){
 
                         $affiliatepress_downlods_manager_product = array(
@@ -290,13 +293,44 @@ if( !class_exists('affiliatepress_download_manager') ){
 
                         $affiliatepress_amount = !empty($affiliatepress_cart_item['price']) ? floatval($affiliatepress_cart_item['price']) : 0;
 
-                        if($affiliatepress_cart_item['discount_amount'] > 0 ){
-                            $affiliatepress_amount = $$affiliatepress_amount - $affiliatepress_cart_item['discount_amount'];
+                        $affiliatepress_quntity = !empty($affiliatepress_cart_item['quantity']) ? intval($affiliatepress_cart_item['quantity']) : 1;
+
+                        $affiliatepress_amount = $affiliatepress_quntity * $affiliatepress_amount;
+
+                        $affiliatepress_coupon_amount = 0;
+                        if(!empty($affiliatepress_order_data->coupon_discount)){
+                            $affiliatepress_apply_Coupon_code = isset($affiliatepress_order_data->coupon_code) ? sanitize_text_field($affiliatepress_order_data->coupon_code) : '';
+
+                            $affiliatepress_tbl_coupon = $this->affiliatepress_tablename_prepare( $wpdb->prefix . 'ahm_coupons' );
+                            $affiliatepress_apply_coupon_data = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_coupon, '*', 'WHERE code = %s', array( $affiliatepress_apply_Coupon_code ), '', '', '', false, true,ARRAY_A);
+
+                            $affiliatepress_coupon_type = isset($affiliatepress_apply_coupon_data['type']) ? sanitize_text_field($affiliatepress_apply_coupon_data['type']) : '';
+                            $affiliatepress_coupon_rate = isset($affiliatepress_apply_coupon_data['discount']) ? floatval($affiliatepress_apply_coupon_data['discount']) : 0;
+
+                            if($affiliatepress_coupon_type == 'percent'){
+                                $affiliatepress_coupon_amount = round( ($affiliatepress_amount * $affiliatepress_coupon_rate / 100), 2 );
+                            }else{
+                                if($affiliatepress_total_cart_amount > 0){
+                                    $affiliatepress_coupon_amount = round(($affiliatepress_amount / $affiliatepress_total_cart_amount) * $affiliatepress_coupon_rate,2);
+
+
+                                    do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : caclulate fix coupon amount ', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', "total cart amount =".$affiliatepress_total_cart_amount ."| product amount = ".$affiliatepress_amount ." | coupon rate = ".$affiliatepress_coupon_rate ." | affiliatepress_coupon_amount =". $affiliatepress_coupon_amount , $affiliatepress_commission_debug_log_id);
+
+                                }
+                            }
+
+                            if($affiliatepress_coupon_amount > 0){
+                                $affiliatepress_amount = $affiliatepress_amount - $affiliatepress_coupon_amount;
+                            }
+                        }
+
+                        if($affiliatepress_amount < 0){
+                            $affiliatepress_amount = 0;
                         }
 
                         $affiliatepress_product_id   = ( ! empty( $affiliatepress_cart_item['pid'] ) ? intval($affiliatepress_cart_item['pid']) : 0);
                         $affiliatepress_product_name   = !empty( $affiliatepress_cart_item['product_name']) ? sanitize_text_field($affiliatepress_cart_item['product_name']) : '';
-                        $affiliatepress_quntity = !empty($affiliatepress_cart_item['quantity']) ? intval($affiliatepress_cart_item['quantity']) : 1;
+                        
 
                         $affiliatepress_args = array(
                             'origin'	       => $this->affiliatepress_integration_slug,
@@ -309,7 +343,7 @@ if( !class_exists('affiliatepress_download_manager') ){
                             'quntity'          => $affiliatepress_quntity, 
                         );
 
-                        $affiliatepress_amount = $affiliatepress_quntity * $affiliatepress_amount;
+                       
                         $affiliatepress_commission_rules = $affiliatepress_tracking->affiliatepress_calculate_commission_amount($affiliatepress_amount, $affiliatepress_currency, $affiliatepress_args );
 
                         $affiliatepress_single_product_commission_amount = (isset($affiliatepress_commission_rules['commission_amount']))?floatval($affiliatepress_commission_rules['commission_amount']):0;
