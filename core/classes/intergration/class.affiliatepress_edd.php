@@ -450,12 +450,37 @@ if( !class_exists('affiliatepress_edd') ){
                         }
                         
                         $affiliatepress_amount = $affiliatepress_cart_item['item_price'];
+
+                        $affiliatepress_discount_amount = 0;
+                       
+                        if(isset($affiliatepress_cart_item['discount']) && !empty($affiliatepress_cart_item['discount'])){
+                            $affiliatepress_discount_amount = $affiliatepress_cart_item['discount'];
+                            $affiliatepress_amount = $affiliatepress_amount - $affiliatepress_discount_amount;
+                        }
+
+                        $affiliatepress_discount_pro_edd_rate = 0;
+                        if(isset($affiliatepress_cart_item['fees'])){
+                            if(isset($affiliatepress_cart_item['fees']['dp_'.$affiliatepress_product_id])){
+
+                                if(isset($affiliatepress_cart_item['fees']['dp_'.$affiliatepress_product_id]['amount'])){
+                                    $affiliatepress_discount_pro_edd_rate = $affiliatepress_cart_item['fees']['dp_'.$affiliatepress_product_id]['amount'];
+                                }
+                            }
+                        }
                         $affiliatepress_amount = apply_filters('affiliatepress_edd_chnage_product_amount',$affiliatepress_amount,$affiliatepress_cart_item);
 
                         if($affiliatepress_exclude_taxes == 'false'){
                             $affiliatepress_amount = $affiliatepress_cart_item['price'];
                         }
 
+                        if(!empty($affiliatepress_amount)){
+                            $affiliatepress_amount = $affiliatepress_amount + $affiliatepress_discount_pro_edd_rate;
+                        }
+			
+			if($affiliatepress_amount < 0){
+				$affiliatepress_amount = 0;
+			}
+                        
                         if($affiliatepress_exclude_shipping == 'false'){
                             
                             foreach ( $affiliatepress_cart_item['fees'] as $affiliatepress_key => $affiliatepress_fee ) {
@@ -491,7 +516,7 @@ if( !class_exists('affiliatepress_edd') ){
                         $affiliatepress_single_product_commission_amount = (isset($affiliatepress_commission_rules['commission_amount']))?floatval($affiliatepress_commission_rules['commission_amount']):0;
 
                         $affiliatepress_commission_amount += $affiliatepress_single_product_commission_amount;
-    
+
                         $affiliatepress_order_referal_amount += $affiliatepress_amount;
 
                         $affiliatepress_allow_products_commission[] = array(
@@ -540,6 +565,7 @@ if( !class_exists('affiliatepress_edd') ){
             
             $affiliatepress_visit_id = apply_filters( 'affiliatepress_get_visit_id', $affiliatepress_visit_id, $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, array('order_id'=>$affiliatepress_order_id) ,$affiliatepress_order_data ); 
 
+            $affiliatepress_commisison_other_details = array();
             $affiliatepress_commisison_other_details  = apply_filters( 'affiliatepress_get_commisison_other_details',$affiliatepress_commisison_other_details,$affiliatepress_affiliate_id, $affiliatepress_visit_id ,$this->affiliatepress_integration_slug, $affiliatepress_order_id ,$affiliatepress_order_data );
 
             $affiliatepress_commission_data = array(

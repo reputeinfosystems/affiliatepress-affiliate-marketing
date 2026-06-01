@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: AffiliatePress - Affiliate Marketing v2.6\n"
+"Project-Id-Version: AffiliatePress - Affiliate Marketing v2.7\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-04-23 07:52:10+0000\n"
+"PO-Revision-Date: 2026-05-07 05:34:38+0000\n"
 "Last-Translator: admin <testrepute@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -859,11 +859,10 @@ msgstr "Partnerprovision genehmigt"
 #: core/classes/intergration/class.affiliatepress_accept_stripe_payment.php:239
 #: core/classes/intergration/class.affiliatepress_arforms.php:210
 #: core/classes/intergration/class.affiliatepress_armember.php:381
-#: core/classes/intergration/class.affiliatepress_armember_old.php:381
 #: core/classes/intergration/class.affiliatepress_bookingpress.php:217
 #: core/classes/intergration/class.affiliatepress_download_manager.php:142
 #: core/classes/intergration/class.affiliatepress_easycart.php:311
-#: core/classes/intergration/class.affiliatepress_edd.php:653
+#: core/classes/intergration/class.affiliatepress_edd.php:673
 #: core/classes/intergration/class.affiliatepress_getpaid.php:247
 #: core/classes/intergration/class.affiliatepress_getpaid.php:252
 #: core/classes/intergration/class.affiliatepress_give_wp.php:256
@@ -880,7 +879,7 @@ msgstr "Partnerprovision genehmigt"
 #: core/classes/intergration/class.affiliatepress_simple_membership.php:145
 #: core/classes/intergration/class.affiliatepress_surecart.php:168
 #: core/classes/intergration/class.affiliatepress_ultimate_membership_pro.php:201
-#: core/classes/intergration/class.affiliatepress_woocommerce.php:409
+#: core/classes/intergration/class.affiliatepress_woocommerce.php:419
 #: core/classes/intergration/class.affiliatepress_wp_forms.php:289
 #: core/classes/intergration/class.affiliatepress_wp_simple_pay.php:167
 #@ affiliatepress-affiliate-marketing
@@ -2319,7 +2318,6 @@ msgstr "E-Mail existiert bereits. Bitte verwenden Sie eine andere E-Mail-Adresse
 #: core/classes/intergration/class.affiliatepress_accept_stripe_payment.php:175
 #: core/classes/intergration/class.affiliatepress_arforms.php:75
 #: core/classes/intergration/class.affiliatepress_armember.php:167
-#: core/classes/intergration/class.affiliatepress_armember_old.php:167
 #: core/classes/intergration/class.affiliatepress_bookingpress.php:82
 #: core/classes/intergration/class.affiliatepress_easycart.php:258
 #: core/classes/intergration/class.affiliatepress_edd.php:142
@@ -2332,7 +2330,7 @@ msgstr "E-Mail existiert bereits. Bitte verwenden Sie eine andere E-Mail-Adresse
 #: core/classes/intergration/class.affiliatepress_restrict_content.php:94
 #: core/classes/intergration/class.affiliatepress_simple_membership.php:90
 #: core/classes/intergration/class.affiliatepress_ultimate_membership_pro.php:136
-#: core/classes/intergration/class.affiliatepress_woocommerce.php:144
+#: core/classes/intergration/class.affiliatepress_woocommerce.php:154
 #: core/classes/intergration/class.affiliatepress_wp_forms.php:249
 #@ affiliatepress-affiliate-marketing
 msgid "Select Source Product"
@@ -2341,8 +2339,6 @@ msgstr "Quellprodukt auswählen"
 #: core/classes/intergration/class.affiliatepress_accept_stripe_payment.php:63
 #: core/classes/intergration/class.affiliatepress_armember.php:195
 #: core/classes/intergration/class.affiliatepress_armember.php:252
-#: core/classes/intergration/class.affiliatepress_armember_old.php:195
-#: core/classes/intergration/class.affiliatepress_armember_old.php:252
 #: core/classes/intergration/class.affiliatepress_edd.php:162
 #: core/classes/intergration/class.affiliatepress_memberpress.php:174
 #: core/classes/intergration/class.affiliatepress_paid_memberships_subscriptions.php:174
@@ -2353,8 +2349,6 @@ msgstr "AffiliatePress-Provisionseinstellungen"
 
 #: core/classes/intergration/class.affiliatepress_armember.php:206
 #: core/classes/intergration/class.affiliatepress_armember.php:261
-#: core/classes/intergration/class.affiliatepress_armember_old.php:206
-#: core/classes/intergration/class.affiliatepress_armember_old.php:261
 #@ affiliatepress-affiliate-marketing
 msgid "Disable Commission For This Plan"
 msgstr "Provision für diesen Plan deaktivieren"
@@ -2362,11 +2356,10 @@ msgstr "Provision für diesen Plan deaktivieren"
 #: core/classes/intergration/class.affiliatepress_accept_stripe_payment.php:240
 #: core/classes/intergration/class.affiliatepress_arforms.php:211
 #: core/classes/intergration/class.affiliatepress_armember.php:382
-#: core/classes/intergration/class.affiliatepress_armember_old.php:382
 #: core/classes/intergration/class.affiliatepress_bookingpress.php:218
 #: core/classes/intergration/class.affiliatepress_download_manager.php:143
 #: core/classes/intergration/class.affiliatepress_easycart.php:312
-#: core/classes/intergration/class.affiliatepress_edd.php:654
+#: core/classes/intergration/class.affiliatepress_edd.php:674
 #: core/classes/intergration/class.affiliatepress_getpaid.php:248
 #: core/classes/intergration/class.affiliatepress_getpaid.php:253
 #: core/classes/intergration/class.affiliatepress_give_wp.php:257
@@ -2383,14 +2376,14 @@ msgstr "Provision für diesen Plan deaktivieren"
 #: core/classes/intergration/class.affiliatepress_simple_membership.php:146
 #: core/classes/intergration/class.affiliatepress_surecart.php:169
 #: core/classes/intergration/class.affiliatepress_ultimate_membership_pro.php:202
-#: core/classes/intergration/class.affiliatepress_woocommerce.php:410
+#: core/classes/intergration/class.affiliatepress_woocommerce.php:420
 #: core/classes/intergration/class.affiliatepress_wp_forms.php:290
 #: core/classes/intergration/class.affiliatepress_wp_simple_pay.php:168
 #@ affiliatepress-affiliate-marketing
 msgid "Pending commission was not created because the customer is also the affiliate."
 msgstr "Ausstehende Provision wurde nicht erstellt, da der Kunde auch der Affiliate ist."
 
-#: core/classes/intergration/class.affiliatepress_lifterlms.php:464
+#: core/classes/intergration/class.affiliatepress_lifterlms.php:472
 #: core/classes/intergration/class.affiliatepress_paid_memberships_pro.php:208
 #: core/classes/intergration/class.affiliatepress_simple_membership.php:214
 #@ affiliatepress-affiliate-marketing
@@ -2411,7 +2404,7 @@ msgstr "Provisionen deaktivieren"
 msgid "Disable commissions for this membership."
 msgstr "Provisionen für diese Mitgliedschaft deaktivieren."
 
-#: core/classes/intergration/class.affiliatepress_woocommerce.php:242
+#: core/classes/intergration/class.affiliatepress_woocommerce.php:252
 #@ affiliatepress-affiliate-marketing
 msgid "Disable AffiliatePress commission on sale of this product."
 msgstr "AffiliatePress-Provision für den Verkauf dieses Produkts deaktivieren."
@@ -2420,7 +2413,7 @@ msgstr "AffiliatePress-Provision für den Verkauf dieses Produkts deaktivieren."
 #: core/classes/intergration/class.affiliatepress_bookingpress.php:131
 #: core/classes/intergration/class.affiliatepress_paid_memberships_pro.php:204
 #: core/classes/intergration/class.affiliatepress_ultimate_membership_pro.php:60
-#: core/classes/intergration/class.affiliatepress_woocommerce.php:269
+#: core/classes/intergration/class.affiliatepress_woocommerce.php:279
 #@ affiliatepress-affiliate-marketing
 msgid "AffiliatePress Settings"
 msgstr "AffiliatePress-Einstellungen"
@@ -4811,8 +4804,6 @@ msgstr "Entschuldigung! Sie haben keinen Zugriff auf das Affiliate-Panel."
 
 #: core/classes/intergration/class.affiliatepress_armember.php:208
 #: core/classes/intergration/class.affiliatepress_armember.php:269
-#: core/classes/intergration/class.affiliatepress_armember_old.php:208
-#: core/classes/intergration/class.affiliatepress_armember_old.php:269
 #@ affiliatepress-affiliate-marketing
 msgid "Enable AffiliatePress Commission to prevent adding commission for this plan."
 msgstr "Aktivieren Sie die AffiliatePress-Provision, um das Hinzufügen von Provisionen für diesen Plan zu verhindern."
@@ -4838,7 +4829,7 @@ msgid "Customer Email"
 msgstr "E-Mail des Kunden"
 
 #: core/classes/intergration/class.affiliatepress_restrict_content.php:147
-#: core/classes/intergration/class.affiliatepress_woocommerce.php:241
+#: core/classes/intergration/class.affiliatepress_woocommerce.php:251
 #@ affiliatepress-affiliate-marketing
 msgid "Disable commissions"
 msgstr "Provisionen deaktivieren"
@@ -5285,7 +5276,7 @@ msgstr "Assistent schließen und beenden, ohne zu speichern"
 msgid "Enable AffiliatePress Commission to add commission for this Form"
 msgstr "AffiliatePress-Provision aktivieren, um Provisionen für dieses Formular hinzuzufügen"
 
-#: core/classes/intergration/class.affiliatepress_lifterlms.php:465
+#: core/classes/intergration/class.affiliatepress_lifterlms.php:473
 #, php-format
 #@ affiliatepress-affiliate-marketing
 msgid "Activate this setting to stop commissions for affiliates on purchases of this %s."
@@ -7475,7 +7466,6 @@ msgid "Earnings"
 msgstr "Einnahmen"
 
 #: core/classes/intergration/class.affiliatepress_armember.php:206
-#: core/classes/intergration/class.affiliatepress_armember_old.php:206
 #@ affiliatepress-affiliate-marketing
 msgid "Turn on AffiliatePress Commission to disable commission calculations for this plan and prevent affiliates from earning on it."
 msgstr "Aktivieren Sie die AffiliatePress-Provision, um die Provisionsberechnung für diesen Plan zu deaktivieren und zu verhindern, dass Affiliates damit Einnahmen erzielen."
@@ -7824,15 +7814,15 @@ msgstr "Standard-Affiliate-URL"
 msgid "Enter Default URL"
 msgstr "Standard-URL eingeben"
 
-#. translators: plugin header field 'Version'
-#: affiliatepress-affiliate-marketing.php:0
-#@ affiliatepress-affiliate-marketing
-msgid "2.6"
-msgstr "2.6"
-
 #: core/classes/class.affiliatepress.php:3284
 #: core/views/affiliatepress_header.php:49
 #@ affiliatepress-affiliate-marketing
 msgid "Spring Sale"
 msgstr "Spring Sale"
+
+#. translators: plugin header field 'Version'
+#: affiliatepress-affiliate-marketing.php:0
+#@ affiliatepress-affiliate-marketing
+msgid "2.7"
+msgstr "2.7"
 

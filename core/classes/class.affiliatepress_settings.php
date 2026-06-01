@@ -95,6 +95,15 @@ if (! class_exists('affiliatepress_settings') ) {
                 die;
             }
 
+            if(!current_user_can('affiliatepress_settings')){
+                $affiliatepress_error_msg = esc_html__( 'Sorry, you do not have permission to perform this action.', 'affiliatepress-affiliate-marketing');
+                $response['variant'] = 'error';
+                $response['title'] = esc_html__( 'Error', 'affiliatepress-affiliate-marketing');
+                $response['msg'] = $affiliatepress_error_msg; 
+                wp_send_json( $response );
+                die;                
+            }
+
             $affiliatepress_wpnonce               = isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '';// phpcs:ignore
             $affiliatepress_verify_nonce_flag = wp_verify_nonce($affiliatepress_wpnonce, 'ap_wp_nonce');            
             $response['variant'] = 'error';

@@ -176,6 +176,12 @@ if( !class_exists('affiliatepress_easycart') ){
                 wp_send_json( $response_data );
             }
 
+            if ( !current_user_can( 'manage_options' ) && !current_user_can( 'wpec_products' ) ) {
+                $response_data['status']  = 'error';
+                $response_data['message'] = esc_html__( 'Sorry, you do not have permission to perform this action.', 'affiliatepress-affiliate-marketing' );
+                wp_send_json( $response_data );
+            }
+            
             $affiliatepress_product_id = isset( $_POST['product_id'] ) ? intval( $_POST['product_id'] ) : 0;
 
             if ( $affiliatepress_product_id <= 0 ) {

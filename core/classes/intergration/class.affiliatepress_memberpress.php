@@ -288,7 +288,8 @@ if( !class_exists('affiliatepress_memberpress') ){
             $affiliatepress_affiliate_id = !empty($affiliatepress_affiliate_id) ? intval($affiliatepress_affiliate_id) : 0;
 
             $affiliatepress_order_data = array('order_id'=>$affiliatepress_transaction_id);
-            $affiliatepress_affiliate_id = apply_filters( 'affiliatepress_referrer_affiliate_id', $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, $affiliatepress_order_data );
+            // $affiliatepress_affiliate_id = apply_filters( 'affiliatepress_referrer_affiliate_id', $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, $affiliatepress_order_data );
+            $affiliatepress_affiliate_id = apply_filters( 'affiliatepress_get_affiliate_id', $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, array('order_id'=>$affiliatepress_transaction_id) ,$affiliatepress_transaction );
 
             if ( empty( $affiliatepress_affiliate_id ) ) {
                 $affiliatepress_log_msg = "Empty Affiliate ID";
@@ -377,16 +378,14 @@ if( !class_exists('affiliatepress_memberpress') ){
                     $affiliatepress_total_amount =  isset($affiliatepress_transaction->subscription()->trial_total) ? floatval($affiliatepress_transaction->subscription()->trial_total) : 0;
                 }
 
-                $affiliatepress_tax_amount = isset($affiliatepress_transaction->tax_amount) ? intval($affiliatepress_transaction->tax_amount) : 0;
+                $affiliatepress_tax_amount = isset($affiliatepress_transaction->tax_amount) ? floatval($affiliatepress_transaction->tax_amount) : 0;
+
+                $affiliatepress_amount = $affiliatepress_total_amount;
 
                 if($affiliatepress_exclude_taxes == 'true'){
 
                     $affiliatepress_amount = $affiliatepress_total_amount - $affiliatepress_tax_amount;
                 }
-
-                $affiliatepress_amount = $affiliatepress_total_amount;
-
-                
 
                 $affiliatepress_currency = !empty($affiliatepress_memberpres_options->currency_code) ? sanitize_text_field($affiliatepress_memberpres_options->currency_code) : '';
 
@@ -505,6 +504,11 @@ if( !class_exists('affiliatepress_memberpress') ){
 
             $affiliatepress_commission_products_name_string = (is_array($affiliatepress_commission_products_name) && !empty($affiliatepress_commission_products_name))?implode(',',$affiliatepress_commission_products_name):'';
 
+            $affiliatepress_visit_id = apply_filters( 'affiliatepress_get_visit_id', $affiliatepress_visit_id, $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, array('order_id'=>$affiliatepress_transaction_id) ,$affiliatepress_transaction ); 
+
+            $affiliatepress_commisison_other_details = array();
+            $affiliatepress_commisison_other_details  = apply_filters( 'affiliatepress_get_commisison_other_details',$affiliatepress_commisison_other_details,$affiliatepress_affiliate_id, $affiliatepress_visit_id ,$this->affiliatepress_integration_slug, $affiliatepress_transaction_id ,$affiliatepress_transaction );
+
             /* Prepare commission data */
             $affiliatepress_commission_data = array(
                 'ap_affiliates_id'		         => $affiliatepress_affiliate_id,
@@ -535,6 +539,7 @@ if( !class_exists('affiliatepress_memberpress') ){
 
                 $affiliatepress_commission_data['products_commission'] = $affiliatepress_allow_products_commission;
                 $affiliatepress_commission_data['commission_rules'] = $affiliatepress_commission_rules;
+                $affiliatepress_commission_data['commission_other_details'] = $affiliatepress_commisison_other_details;
                 do_action('affiliatepress_after_commission_created', $affiliatepress_ap_commission_id, $affiliatepress_commission_data);
 
                 $affiliatepress_debug_log_msg = sprintf( 'Pending commission #%s has been successfully inserted.', $affiliatepress_ap_commission_id );

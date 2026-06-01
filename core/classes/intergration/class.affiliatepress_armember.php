@@ -464,24 +464,15 @@ if( !class_exists('affiliatepress_armember') ){
                 }                
             }
 
-            $affiliatepress_armember_is_trial = isset($affiliatepress_plan_data['arm_is_trial']) ? intval($affiliatepress_plan_data['arm_is_trial']) : 0;
-
             $affiliatepress_armember_withtaxvalue = isset($affiliatepress_plan_data['arm_amount']) ? floatval($affiliatepress_plan_data['arm_amount']) : 0;
 
             $affiliatepress_armember_extra_details = isset($affiliatepress_plan_data['arm_extra_vars']) ? sanitize_text_field($affiliatepress_plan_data['arm_extra_vars']) : '';
 
             $affiliatepress_armember_extra_details = unserialize($affiliatepress_armember_extra_details);
 
-            $affiliatepress_armember_planamount = isset($affiliatepress_armember_extra_details['plan_amount']) ? floatval($affiliatepress_armember_extra_details['plan_amount']) : 0;
-
-            $affiliatepress_armember_coupon_amount = 0;
-            if(isset($affiliatepress_armember_extra_details['coupon']) && !empty($affiliatepress_armember_extra_details['coupon']) && $affiliatepress_armember_withtaxvalue != 0){
-                $affiliatepress_armember_coupon_amount = isset($affiliatepress_armember_extra_details['coupon']['amount']) ? floatval($affiliatepress_armember_extra_details['coupon']['amount']) : 0;
-                $affiliatepress_armember_planamount = $affiliatepress_armember_planamount - $affiliatepress_armember_coupon_amount;
-            }
-
-            if($affiliatepress_armember_is_trial == 1){
-                $affiliatepress_armember_planamount = isset($affiliatepress_armember_extra_details['trial']['amount']) ? floatval($affiliatepress_armember_extra_details['trial']['amount']) : 0;
+            $affiliatepress_plan_tax_amount = 0;
+            if($affiliatepress_armember_extra_details['tax_amount']){
+                $affiliatepress_plan_tax_amount  =isset($affiliatepress_armember_extra_details['tax_amount']) ? floatval($affiliatepress_armember_extra_details['tax_amount']) : 0;
             }
 
             $affiliatepress_exclude_taxes = $AffiliatePress->affiliatepress_get_settings('armember_exclude_taxes', 'integrations_settings');       
@@ -529,7 +520,6 @@ if( !class_exists('affiliatepress_armember') ){
             if($affiliatepress_tracking->affiliatepress_is_commission_basis_per_order()){
 
                 $affiliatepress_order_referal_amount = !empty($affiliatepress_armember_withtaxvalue) ? floatval($affiliatepress_armember_withtaxvalue) : 0;
-                $affiliatepress_plan_tax_amount  =isset($affiliatepress_armember_extra_details['tax_amount']) ? floatval($affiliatepress_armember_extra_details['tax_amount']) : 0;
 
                 if ( $affiliatepress_exclude_taxes == 'true' ) {
                     $affiliatepress_order_referal_amount = $affiliatepress_order_referal_amount - $affiliatepress_plan_tax_amount ;
@@ -562,10 +552,10 @@ if( !class_exists('affiliatepress_armember') ){
             }
             else
             {
-                $affiliatepress_plan_amount = !empty($affiliatepress_armember_planamount) ? floatval($affiliatepress_armember_planamount) : 0;
+                $affiliatepress_plan_amount = !empty($affiliatepress_armember_withtaxvalue) ? floatval($affiliatepress_armember_withtaxvalue) : 0;
 
-                if ( $affiliatepress_exclude_taxes == 'false' ) {
-                    $affiliatepress_plan_amount = !empty($affiliatepress_armember_withtaxvalue) ? floatval($affiliatepress_armember_withtaxvalue) : 0;
+                if ( $affiliatepress_exclude_taxes == 'true' ) {
+                    $affiliatepress_plan_amount = $affiliatepress_armember_withtaxvalue - $affiliatepress_plan_tax_amount;
                 }
 
                 $affiliatepress_plan_id = !empty($affiliatepress_plan_data['arm_plan_id']) ? intval($affiliatepress_plan_data['arm_plan_id']) : '';
@@ -742,6 +732,7 @@ if( !class_exists('affiliatepress_armember') ){
                 $arm_completed_recurring = isset($arm_user_plan['arm_completed_recurring']) ? $arm_user_plan['arm_completed_recurring'] : '';
 
                 do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Recurring Completed Paymnets', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $arm_completed_recurring, $affiliatepress_commission_debug_log_id);          
+                $affiliatepress_tbl_arm_payment_log = $this->affiliatepress_tablename_prepare($wpdb->prefix . 'arm_payment_log'); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'arm_payment_log' contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
 
                 if($arm_completed_recurring > 1){
                     $affiliatepress_is_recurring =  true;
@@ -749,11 +740,36 @@ if( !class_exists('affiliatepress_armember') ){
                     $affiliatepress_tbl_activity = $this->affiliatepress_tablename_prepare($wpdb->prefix . 'arm_activity'); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'arm_subscriptarm_activityion_plans' contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
                     $affiliatepress_get_first_payment_date = $wpdb->get_var($wpdb->prepare("SELECT arm_date_recorded FROM {$affiliatepress_tbl_activity} WHERE arm_user_id = %d && arm_item_id = %d ORDER BY arm_date_recorded DESC",$affiliatepress_user_id,$affiliatepress_user_plan));// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arm_subscription_plan is a table name. false alarm 
 
-                    $affiliatepress_tbl_arm_payment_log = $this->affiliatepress_tablename_prepare($wpdb->prefix . 'arm_payment_log'); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'arm_payment_log' contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
                     $affiliatepress_total_recurring_paymnet = intval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_arm_payment_log, 'COUNT(arm_log_id)', 'WHERE arm_user_id  = %d  && arm_plan_id = %d && arm_created_date >=%s', array( $affiliatepress_user_id,$affiliatepress_user_plan,$affiliatepress_get_first_payment_date), '', '', '', true, false,ARRAY_A));
 
                     if($affiliatepress_total_recurring_paymnet > 1){
                         $affiliatepress_is_recurring =  true;
+                    }else{
+                        // this code only case coupon apply: when free trail set and its first paymnet done with 0 amount now its second recurring paymnet at time this second paymnet in not coupon so not get affiliate id and its not consider recurring bcz activity tabl in armember side to not add entry add its 0 paymnet --its reason to its if part not recurring conider that solution : 
+
+                        $affiliatepress_tbl_arm_plan = $this->affiliatepress_tablename_prepare($wpdb->prefix . 'arm_subscription_plans'); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'arm_payment_log' contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
+                        $affiliatepress_arm_plan = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_arm_plan, '*', 'WHERE arm_subscription_plan_id  = %d', array( $affiliatepress_user_plan ), '', '', '', false, true,ARRAY_A);
+                        $affiliatepress_plan_option = isset($affiliatepress_arm_plan['arm_subscription_plan_options']) ? $affiliatepress_arm_plan['arm_subscription_plan_options'] : '';
+
+                        $affiliatepress_plan_option = unserialize($affiliatepress_plan_option);
+
+                        if(isset($affiliatepress_plan_option['trial']) && !empty($affiliatepress_plan_option['trial'])){
+                            $affiliatepress_trial_amount = isset($affiliatepress_plan_option['amount']) ? floatval($affiliatepress_plan_option['amount']) : 0;
+                            
+                            if($affiliatepress_trial_amount == 0){
+                                $affiliatepress_first_coupon_paymnet = intval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_arm_payment_log, 'COUNT(arm_log_id)', 'WHERE arm_user_id  = %d  && arm_plan_id = %d && arm_coupon_code != "" ', array( $affiliatepress_user_id,$affiliatepress_user_plan), '', '', '', true, false,ARRAY_A));
+
+                                if($affiliatepress_first_coupon_paymnet >= 1){
+                                    $affiliatepress_total_paymnet = intval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_arm_payment_log, 'COUNT(arm_log_id)', 'WHERE arm_user_id  = %d  && arm_plan_id = %d ', array( $affiliatepress_user_id,$affiliatepress_user_plan), '', '', '', true, false,ARRAY_A));
+
+                                    if($affiliatepress_total_paymnet > 1){
+                                        $affiliatepress_is_recurring =  true;
+                                    }
+
+                                }
+                            }
+                            
+                        }
                     }
                 }
             }
