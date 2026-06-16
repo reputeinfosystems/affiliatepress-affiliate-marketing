@@ -78,7 +78,7 @@
                                 </el-table-column>
                                 <el-table-column  prop="full_name"  min-width="200" label="<?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?>" sortable="true">
                                     <template #default="scope">
-                                        <el-popover trigger="click" width="350" popper-class="ap-affiliate-user-details-popover" :placement="(is_rtl == 'is_rtl') ? 'left-start' : 'right-start'" :visible="userPopoverVisible">
+                                        <el-popover trigger="click" width="350" popper-class="ap-affiliate-user-details-popover" :placement="(is_rtl == 'is_rtl') ? 'left' : 'right'" :visible="userPopoverVisible">
                                             <div class="ap-affiliate-user-details-container">
                                                 <div class="ap-status-loader-wrapper" v-if="is_get_user_data_loader == 1">
                                                     <el-image class="ap-status-loader" src="<?php echo esc_url(AFFILIATEPRESS_IMAGES_URL . '/status-loader.gif'); ?>" alt="<?php esc_attr_e('Loader', 'affiliatepress-affiliate-marketing'); ?>"></el-image>

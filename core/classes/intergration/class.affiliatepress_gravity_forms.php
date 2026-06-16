@@ -40,7 +40,52 @@ if( !class_exists('affiliatepress_gravity_forms') ){
             if($affiliatepress_is_gravity_forms_active){
                 /**Get Order Link */
                 add_filter('affiliatepress_modify_commission_link',array($this,'affiliatepress_get_gravity_forms_link_order_func'),10,3); 
+
+                add_filter('affiliatepress_get_source_product',array($this,'affiliatepress_get_gravity_form_func'),10,3); 
             }
+        }
+
+        function affiliatepress_get_gravity_form_func($affiliatepress_existing_source_product_data, $affiliatepress_ap_commission_source, $affiliatepress_search_product_str){
+
+            global $wpdb;
+        
+            if($affiliatepress_ap_commission_source == $this->affiliatepress_integration_slug){
+        
+                $affiliatepress_existing_products_data = array();
+                $affiliatepress_tbl_gf_form = $this->affiliatepress_tablename_prepare( $wpdb->prefix . 'gf_form' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'gf_form' contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
+                
+                $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT id FROM {$affiliatepress_tbl_gf_form} WHERE title LIKE %s",'%' . $wpdb->esc_like($affiliatepress_search_product_str) . '%'),ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_gf_form is a table name. false alarm 
+    
+                $affiliatepress_form_ids = array_column($affiliatepress_results, 'id');
+
+                if($affiliatepress_form_ids){
+                    foreach ($affiliatepress_form_ids as $affiliatepress_form_id) {
+
+                        $affiliatepress_result = $wpdb->get_row($wpdb->prepare( "SELECT title FROM {$affiliatepress_tbl_gf_form} WHERE id = %d",$affiliatepress_form_id), ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_gf_form is a table name. false alarm
+                        
+                        $affiliatepress_form_name = !empty($affiliatepress_result) ? $affiliatepress_result['title'] : '';
+
+                        if(!empty($affiliatepress_form_name))
+                        {
+                            $affiliatepress_existing_product_data[] = array(
+                                'value' => intval($affiliatepress_form_id),
+                                'label' => $affiliatepress_form_name
+                            );
+                        }
+                    }    
+
+                    $affiliatepress_existing_products_data[] = array(
+                        'category'     => esc_html__('Select Source Product', 'affiliatepress-affiliate-marketing'),
+                        'product_data' => $affiliatepress_existing_product_data,
+                    );  
+                    
+                }
+                
+                $affiliatepress_existing_source_product_data = $affiliatepress_existing_products_data;
+        
+            }
+        
+            return $affiliatepress_existing_source_product_data;
         }
 
         /**

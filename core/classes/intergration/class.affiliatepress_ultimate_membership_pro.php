@@ -122,11 +122,12 @@ if( !class_exists('affiliatepress_ultimate_membership_pro') ){
                         $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT label FROM $affiliatepress_tbl_ihc_memberships_pro WHERE id = %d",$affiliatepress_plan_id),ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ihc_memberships_pro is a table name. false alarm
 
                         $affiliatepress_plan_name = !empty($affiliatepress_results) ? $affiliatepress_results[0]['label'] : '';
+                        $affiliatepress_plan_name = !empty($affiliatepress_plan_name) ? html_entity_decode($affiliatepress_plan_name) : '';
 
                         if(!empty($affiliatepress_plan_name))
                         {
                             $affiliatepress_existing_product_data[] = array(
-                                'value' => $affiliatepress_plan_id,
+                                'value' => intval($affiliatepress_plan_id),
                                 'label' => $affiliatepress_plan_name
                             );
                         }

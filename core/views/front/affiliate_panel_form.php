@@ -252,7 +252,6 @@
             </div>
         </div>        
         <div class="affiliatepress-affiliate-panel" v-if="is_login == 'true' && allow_user_access == 'true'">
-
             <el-drawer :direction="drawer_direction" modal-class="ap-add__drawer-main ap-menu__drawer-main" :withHeader="false" @close="closeDrawerModal()" v-model="open_mobile_menu_modal" style="display:none;" :style="(is_affiliate_form_loader == '1') ? 'display:inherit;' : ''">   
                 <div class="ap-mobile-menu">
                     <div @click="close_drawer_menu" class="ap-drawer-close">

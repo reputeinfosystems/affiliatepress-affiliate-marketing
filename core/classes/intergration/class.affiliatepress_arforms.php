@@ -58,14 +58,15 @@ if( !class_exists('affiliatepress_arforms') ){
                 if($affiliatepress_plan_ids){
                     foreach ($affiliatepress_plan_ids as $affiliatepress_plan_id) {
                         
-                        $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT name FROM {$affiliatepress_tbl_arf_forms} WHERE id = %d",$affiliatepress_plan_id),ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arf_forms is a table name. false alarm 
+                        $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT name FROM {$affiliatepress_tbl_arf_forms} WHERE id = %d AND is_template = 0",$affiliatepress_plan_id),ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arf_forms is a table name. false alarm 
 
                         $affiliatepress_plan_name = !empty($affiliatepress_results) ? $affiliatepress_results[0]['name'] : '';
+                        $affiliatepress_plan_name = !empty($affiliatepress_plan_name) ? html_entity_decode($affiliatepress_plan_name) : '';
 
                         if(!empty($affiliatepress_plan_name))
                         {
                             $affiliatepress_existing_product_data[] = array(
-                                'value' => $affiliatepress_plan_id,
+                                'value' => intval($affiliatepress_plan_id),
                                 'label' => $affiliatepress_plan_name
                             );
                         }

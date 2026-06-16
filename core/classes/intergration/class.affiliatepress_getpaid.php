@@ -44,7 +44,52 @@ if( !class_exists('affiliatepress_getpaid') ){
 
             if($affiliatepress_is_getpaid_active){
                 add_filter('affiliatepress_modify_commission_link',array($this,'affiliatepress_get_getpaid_link_order_func'),10,3); 
+
+                add_filter('affiliatepress_get_source_product',array($this,'affiliatepress_get_getpaid_product_func'),10,3); 
             }
+        }
+
+        function affiliatepress_get_getpaid_product_func($affiliatepress_existing_source_product_data, $affiliatepress_ap_commission_source, $affiliatepress_search_product_str){
+            
+            if($affiliatepress_ap_commission_source == $this->affiliatepress_integration_slug){
+
+                $affiliatepress_existing_products_data = array();
+
+                $affiliatepress_args = array(
+                    'post_type'   => 'wpi_item',
+                    'post_status' => 'publish',
+                    's'           => $affiliatepress_search_product_str,
+                    'fields'      => 'ids', 
+                );
+
+                $affiliatepress_query = new WP_Query($affiliatepress_args);
+
+                if ($affiliatepress_query->have_posts()) {
+
+                    $affiliatepress_post_ids = $affiliatepress_query->posts;
+                    foreach ($affiliatepress_post_ids as $affiliatepress_post_id) {
+
+                        $affiliatepress_post_name = get_the_title($affiliatepress_post_id);
+                        $affiliatepress_post_name = !empty($affiliatepress_post_name) ? html_entity_decode($affiliatepress_post_name) : '';
+                        
+                        $affiliatepress_existing_product_data[] = array(
+                            'value' => $affiliatepress_post_id,
+                            'label' => $affiliatepress_post_name
+                        );
+
+                    }
+
+                    $affiliatepress_existing_products_data[] = array(
+                        'category'     => esc_html__('Select Source Product', 'affiliatepress-affiliate-marketing'),
+                        'product_data' => $affiliatepress_existing_product_data,
+                    );  
+                }
+
+                $affiliatepress_existing_source_product_data = $affiliatepress_existing_products_data;
+
+            }
+
+            return $affiliatepress_existing_source_product_data;
         }
                 
         /**
@@ -270,12 +315,15 @@ if( !class_exists('affiliatepress_getpaid') ){
 
             global $wpdb,$affiliatepress_tracking, $affiliatepress_affiliates,$AffiliatePress,$affiliatepress_commission_debug_log_id;
 
+            $affiliatepress_invoice_id = isset($affiliatepress_invoice) ? intval($affiliatepress_invoice->get_id()) : 0;
+
             /* Get and check to see if referrer exists */
             $affiliatepress_affiliate_id = $affiliatepress_tracking->affiliatepress_get_referral_affiliate();
             $affiliatepress_visit_id	  = $affiliatepress_tracking->affiliatepress_get_referral_visit();           
             
             $affiliatepress_affiliate_id = !empty($affiliatepress_affiliate_id) ? intval($affiliatepress_affiliate_id):0;
-            $affiliatepress_affiliate_id = apply_filters( 'affiliatepress_referrer_affiliate_id', $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, array('order_id'=>$affiliatepress_invoice->get_id()) );
+            // $affiliatepress_affiliate_id = apply_filters( 'affiliatepress_referrer_affiliate_id', $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, array('order_id'=>$affiliatepress_invoice->get_id()) );
+            $affiliatepress_affiliate_id = apply_filters( 'affiliatepress_get_affiliate_id', $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, array('order_id'=>$affiliatepress_invoice_id) , $affiliatepress_invoice );
 
             if(empty($affiliatepress_affiliate_id)){
                 $affiliatepress_log_msg = "Empty Affiliate ID";
@@ -290,7 +338,6 @@ if( !class_exists('affiliatepress_getpaid') ){
                 return;
             }            
             
-            $affiliatepress_invoice_id = isset($affiliatepress_invoice) ? intval($affiliatepress_invoice->get_id()) : 0;
             if( !$affiliatepress_invoice_id ) {                
                 $affiliatepress_log_msg = "Empty Invoice ID ";
                 do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' Empty Invoice ID ', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_log_msg, $affiliatepress_commission_debug_log_id);
@@ -461,6 +508,11 @@ if( !class_exists('affiliatepress_getpaid') ){
             
             $affiliatepress_ip_address = $AffiliatePress->affiliatepress_get_ip_address();
 
+            $affiliatepress_visit_id = apply_filters( 'affiliatepress_get_visit_id', $affiliatepress_visit_id, $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, array('order_id'=>$affiliatepress_invoice_id) ,$affiliatepress_invoice); 
+
+            $affiliatepress_commisison_other_details = array();
+            $affiliatepress_commisison_other_details  = apply_filters( 'affiliatepress_get_commisison_other_details',$affiliatepress_commisison_other_details,$affiliatepress_affiliate_id, $affiliatepress_visit_id ,$this->affiliatepress_integration_slug, $affiliatepress_invoice_id , $affiliatepress_invoice);
+
             /* Prepare commission data */
             $affiliatepress_commission_data = array(
                 'ap_affiliates_id'		         => $affiliatepress_affiliate_id,
@@ -491,6 +543,7 @@ if( !class_exists('affiliatepress_getpaid') ){
 
                 $affiliatepress_commission_data['products_commission'] = $affiliatepress_allow_products_commission;
                 $affiliatepress_commission_data['commission_rules'] = $affiliatepress_commission_rules;
+                $affiliatepress_commission_data['commission_other_details'] = $affiliatepress_commisison_other_details;
                 do_action('affiliatepress_after_commission_created', $affiliatepress_commission_id, $affiliatepress_commission_data);
                 $affiliatepress_msg = sprintf( 'Pending commission #%s has been successfully inserted.', $affiliatepress_commission_id );
                 

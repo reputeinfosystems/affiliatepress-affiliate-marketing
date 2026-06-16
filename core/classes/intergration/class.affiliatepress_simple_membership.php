@@ -80,7 +80,7 @@ if( !class_exists('affiliatepress_simple_membership') ){
                         if(!empty($affiliatepress_membership_level_name))
                         {
                             $affiliatepress_existing_product_data[] = array(
-                                'value' => $affiliatepress_membership_level,
+                                'value' => intval($affiliatepress_membership_level),
                                 'label' => $affiliatepress_membership_level_name
                             );
                         }

@@ -289,6 +289,7 @@ if (! class_exists('affiliatepress_affiliate_register') ) {
             );
             $affiliatepress_affiliates_id = $this->affiliatepress_insert_record($affiliatepress_tbl_ap_affiliates, $affiliatepress_args);
             do_action('affiliatepress_after_signup_affiliate', $affiliatepress_affiliates_id); // phpcs:ignore
+            add_filter('wordfence_ls_require_captcha', '__return_false'); //WordFence Captcha not varify
             if($affiliatepress_affiliates_id){
 
                 $affiliatepress_affiliates->affiliatepress_add_affiliate_user_role($affiliatepress_affiliates_user_id);

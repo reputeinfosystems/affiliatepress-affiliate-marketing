@@ -1,6 +1,6 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 1,
+  "apiVersion": 3,
   "name": "affiliatepress/signup-form",
   "title": "AffiliatePress Signup Form",
   "category": "affiliatepress",
@@ -9,7 +9,7 @@
       "affiliate",
       "commission"
   ],
-  "version": "1.0",
-  "textdomain": "affiliatepress",
+  "version": "2.9",
+  "textdomain": "affiliatepress-affiliate-marketing",
   "editorScript": "file:./index.js"  
 }

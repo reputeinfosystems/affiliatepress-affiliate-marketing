@@ -120,9 +120,13 @@ if( !class_exists('affiliatepress_paid_memberships_pro') ){
                 $affiliatepress_all_level_list = $this->affiliatepress_get_levels_by_name($affiliatepress_search_product_str);                
                 if(!empty($affiliatepress_all_level_list)){
                     foreach($affiliatepress_all_level_list as $affiliatepress_affiliate_level){
+
+                        $affiliatepress_level_name = $affiliatepress_affiliate_level->name;
+                        $affiliatepress_level_name = !empty($affiliatepress_level_name) ? html_entity_decode($affiliatepress_level_name) : '';
+
                         $affiliatepress_existing_product_data[] = array(
-                            'value' => $affiliatepress_affiliate_level->id,
-                            'label' => $affiliatepress_affiliate_level->name,
+                            'value' => intval($affiliatepress_affiliate_level->id),
+                            'label' => $affiliatepress_level_name,
                         );    
                     }
                     $affiliatepress_existing_products_data[] = array(

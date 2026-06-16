@@ -72,7 +72,7 @@ if( !class_exists('affiliatepress_bookingpress') ){
                         if(!empty($affiliatepress_plan_name))
                         {
                             $affiliatepress_existing_product_data[] = array(
-                                'value' => $affiliatepress_plan_id,
+                                'value' => intval($affiliatepress_plan_id),
                                 'label' => $affiliatepress_plan_name
                             );
                         }

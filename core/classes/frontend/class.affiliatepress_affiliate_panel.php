@@ -2113,7 +2113,9 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                     $response['msg']       = stripslashes_deep($affiliatepress_login_err_msg);
                     echo wp_json_encode($response);
                     exit;
-                }                
+                }     
+                
+                add_filter('wordfence_ls_require_captcha', '__return_false'); //WordFence Captcha not varify
 
 				$affiliatepress_login_arr = array(
 					'user_login'    => $affiliatepress_login_email,

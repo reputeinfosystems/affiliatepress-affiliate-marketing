@@ -233,41 +233,42 @@ if( !class_exists('affiliatepress_easycart') ){
         */
         function affiliatepress_get_wp_easycart_product_func($affiliatepress_existing_source_product_data, $affiliatepress_ap_commission_source, $affiliatepress_search_product_str){
             
+            global $wpdb;
+
             if($affiliatepress_ap_commission_source == $this->affiliatepress_integration_slug){
-
+        
                 $affiliatepress_existing_products_data = array();
+                $affiliatepress_tbl_ec_product = $this->affiliatepress_tablename_prepare( 'ec_product' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - 'ec_product' contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
+                
+                $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT product_id FROM {$affiliatepress_tbl_ec_product} WHERE title LIKE %s",'%' . $wpdb->esc_like($affiliatepress_search_product_str) . '%'),ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ec_product is a table name. false alarm 
+    
+                $affiliatepress_product_ids = array_column($affiliatepress_results, 'product_id');
 
-                $affiliatepress_args = array(
-                    'post_type'   => 'ec_store',  // Your custom post type
-                    'post_status' => 'publish',   // Only published posts
-                    's'           => $affiliatepress_search_product_str, // Search term
-                    'fields'      => 'ids',       // Only return post IDs
-                    'ping_status'  => 'open', 
-                );
+                if($affiliatepress_product_ids){
+                    foreach ($affiliatepress_product_ids as $affiliatepress_product_id) {
 
-                $affiliatepress_query = new WP_Query($affiliatepress_args);
-
-                if ($affiliatepress_query->have_posts()) {
-                    $affiliatepress_post_ids = $affiliatepress_query->posts;
-                    foreach ($affiliatepress_post_ids as $affiliatepress_post_id) {
-
-                        $affiliatepress_post_name = get_the_title($affiliatepress_post_id);
+                        $affiliatepress_result = $wpdb->get_row($wpdb->prepare( "SELECT title FROM {$affiliatepress_tbl_ec_product} WHERE product_id = %d",$affiliatepress_product_id), ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ec_product is a table name. false alarm
                         
-                        $affiliatepress_existing_product_data[] = array(
-                            'value' => $affiliatepress_post_id,
-                            'label' => $affiliatepress_post_name
-                        );
+                        $affiliatepress_product_name = !empty($affiliatepress_result) ? html_entity_decode($affiliatepress_result['title']) : '';
 
-                    }
+                        if(!empty($affiliatepress_product_name))
+                        {
+                            $affiliatepress_existing_product_data[] = array(
+                                'value' => intval($affiliatepress_product_id),
+                                'label' => $affiliatepress_product_name
+                            );
+                        }
+                    }    
 
                     $affiliatepress_existing_products_data[] = array(
                         'category'     => esc_html__('Select Source Product', 'affiliatepress-affiliate-marketing'),
                         'product_data' => $affiliatepress_existing_product_data,
                     );  
+                    
                 }
-
+                
                 $affiliatepress_existing_source_product_data = $affiliatepress_existing_products_data;
-
+        
             }
 
             return $affiliatepress_existing_source_product_data;

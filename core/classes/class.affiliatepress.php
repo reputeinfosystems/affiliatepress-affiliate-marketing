@@ -847,7 +847,7 @@ if (! class_exists('AffiliatePress') ) {
         {
             global $affiliatepress_version, $AffiliatePress;
             $affiliatepress_old_version = get_option('affiliatepress_version', true);
-            if (version_compare($affiliatepress_old_version, '2.8', '<') ) {
+            if (version_compare($affiliatepress_old_version, '2.9', '<') ) {
                 $affiliatepress_load_upgrade_file = AFFILIATEPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $affiliatepress_load_upgrade_file;
                 $AffiliatePress->affiliatepress_send_anonymous_data_cron();
@@ -1189,9 +1189,9 @@ if (! class_exists('AffiliatePress') ) {
             global $wpdb,$affiliatepress_tbl_ap_settings, $affiliatepress_auto_load_settings; 
             if(!empty($affiliatepress_auto_load_settings) && isset($affiliatepress_auto_load_settings['table_logs']['settings_table']) && !empty($affiliatepress_auto_load_settings['table_logs']['settings_table'])){
                 return true;
-            }                      
-            $affiliatepress_table_exists = $wpdb->get_var("SHOW TABLES LIKE '$affiliatepress_tbl_ap_settings'") == $affiliatepress_tbl_ap_settings; // phpcs:ignore 
-            if($affiliatepress_table_exists){
+            }
+            $affiliatepress_table_exists = $wpdb->get_var("SHOW TABLES LIKE '$affiliatepress_tbl_ap_settings'"); // phpcs:ignore 
+            if(!empty($affiliatepress_table_exists)){
                 return true;
             } else {
                 return false;
@@ -1918,9 +1918,8 @@ if (! class_exists('AffiliatePress') ) {
                     if ($affiliatepress_user_data) {
                         $affiliatepress_user_id = $affiliatepress_user_data->ID;
                         $affiliatepress_affiliate_id = $this->affiliatepress_get_affiliate_id_by_userid($affiliatepress_user_id);
-
-                        return $affiliatepress_affiliate_id;
                     }
+                    return $affiliatepress_affiliate_id;
                 }
                 elseif ($affiliatepress_default_link_type == "md5"){
                     $affiliatepress_actual_affiliate_id = $wpdb->get_var( $wpdb->prepare( "SELECT ap_affiliates_id as encoding_id FROM $affiliatepress_tbl_ap_affiliates WHERE md5(ap_affiliates_id) = %s ", $affiliatepress_affiliate_id ) ); //phpcs:ignore

@@ -236,6 +236,8 @@ if( !class_exists('affiliatepress_wp_forms') ){
 
                         $affiliatepress_post_name = get_the_title($affiliatepress_post_id);
 
+                        $affiliatepress_post_name = !empty($affiliatepress_post_name) ? html_entity_decode($affiliatepress_post_name) : '';
+
                         // echo "<>".$affiliatepress_post_name."<br>";
                         
                         $affiliatepress_existing_product_data[] = array(

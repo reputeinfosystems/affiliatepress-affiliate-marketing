@@ -92,6 +92,7 @@ if( !class_exists('affiliatepress_masteriyo_lms') ){
                     foreach ($post_ids as $post_id) {
 
                         $affiliatepress_post_name = get_the_title($post_id);
+                        $affiliatepress_post_name = !empty($affiliatepress_post_name) ? html_entity_decode($affiliatepress_post_name) : '';
                         
                         $affiliatepress_existing_product_data[] = array(
                             'value' => $post_id,

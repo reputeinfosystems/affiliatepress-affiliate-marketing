@@ -55,7 +55,58 @@ if( !class_exists('affiliatepress_wp_simple_pay') ){
 
             if($affiliatepress_is_wp_simple_pay_active){
                 add_filter('affiliatepress_modify_commission_link',array($this,'affiliatepress_get_wp_simple_pay_link_order_func'),10,2); 
+
+                add_filter('affiliatepress_get_source_product',array($this,'affiliatepress_get_simple_pay_product_func'),10,3);
             }
+        }
+
+        function affiliatepress_get_simple_pay_product_func($affiliatepress_existing_source_product_data, $affiliatepress_ap_commission_source, $affiliatepress_search_product_str) {
+            global $wpdb;
+            
+            if ($affiliatepress_ap_commission_source == $this->affiliatepress_integration_slug) {
+                
+                $affiliatepress_existing_products_data = array();
+
+                $affiliatepress_args = array(
+                    'post_type'   => 'simple-pay',
+                    'post_status' => 'publish',
+                    'meta_query'     => array(                   //phpcs:ignore
+                        array(
+                            'key'     => '_company_name',
+                            'value'   => $affiliatepress_search_product_str,
+                            'compare' => 'LIKE'
+                        )
+                        ),
+                    'fields'      => 'ids', 
+                );
+
+                $affiliatepress_query = new WP_Query($affiliatepress_args);
+
+                if ($affiliatepress_query->have_posts()) {
+
+                    $affiliatepress_post_ids = $affiliatepress_query->posts;
+
+                    foreach ($affiliatepress_post_ids as $affiliatepress_post_id) {
+
+                        $affiliatepress_post_name = get_post_meta($affiliatepress_post_id, '_company_name', true);
+                        
+                        $affiliatepress_existing_product_data[] = array(
+                            'value' => $affiliatepress_post_id,
+                            'label' => html_entity_decode( $affiliatepress_post_name )
+                        );
+
+                    }
+                    
+                    $affiliatepress_existing_products_data[] = array(
+                        'category'     => esc_html__('Select Source Product', 'affiliatepress-affiliate-marketing'),
+                        'product_data' => $affiliatepress_existing_product_data,
+                    );  
+                }
+
+                $affiliatepress_existing_source_product_data = $affiliatepress_existing_products_data;
+            }
+        
+            return $affiliatepress_existing_source_product_data;
         }
         
         /**

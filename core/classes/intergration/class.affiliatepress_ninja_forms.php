@@ -38,10 +38,54 @@ if( !class_exists('affiliatepress_ninja_forms') ){
 
             if($affiliatepress_is_ninjaforms_active){
                 add_filter('affiliatepress_modify_commission_link',array($this,'affiliatepress_get_link_order_func'),10,3);
+
+                add_filter('affiliatepress_get_source_product',array($this,'affiliatepress_get_ninja_form_func'),10,3); 
             }
               
         }
 
+        function affiliatepress_get_ninja_form_func($affiliatepress_existing_source_product_data, $affiliatepress_ap_commission_source, $affiliatepress_search_product_str){
+
+            global $wpdb;
+        
+            if($affiliatepress_ap_commission_source == $this->affiliatepress_integration_slug){
+        
+                $affiliatepress_existing_products_data = array();
+                $affiliatepress_tbl_nf3_forms = $this->affiliatepress_tablename_prepare( $wpdb->prefix . 'nf3_forms' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'nf3_forms' contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
+                
+                $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT id FROM {$affiliatepress_tbl_nf3_forms} WHERE title LIKE %s",'%' . $wpdb->esc_like($affiliatepress_search_product_str) . '%'),ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_nf3_forms is a table name. false alarm 
+    
+                $affiliatepress_form_ids = array_column($affiliatepress_results, 'id');
+
+                if($affiliatepress_form_ids){
+                    foreach ($affiliatepress_form_ids as $affiliatepress_form_id) {
+
+                        $affiliatepress_result = $wpdb->get_row($wpdb->prepare( "SELECT title FROM {$affiliatepress_tbl_nf3_forms} WHERE id = %d",$affiliatepress_form_id), ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_nf3_forms is a table name. false alarm
+                        
+                        $affiliatepress_form_name = !empty($affiliatepress_result) ? $affiliatepress_result['title'] : '';
+
+                        if(!empty($affiliatepress_form_name))
+                        {
+                            $affiliatepress_existing_product_data[] = array(
+                                'value' => intval($affiliatepress_form_id),
+                                'label' => $affiliatepress_form_name
+                            );
+                        }
+                    }    
+
+                    $affiliatepress_existing_products_data[] = array(
+                        'category'     => esc_html__('Select Source Product', 'affiliatepress-affiliate-marketing'),
+                        'product_data' => $affiliatepress_existing_product_data,
+                    );  
+                    
+                }
+                
+                $affiliatepress_existing_source_product_data = $affiliatepress_existing_products_data;
+        
+            }
+        
+            return $affiliatepress_existing_source_product_data;
+        }
 
         /**
          * Function for affiliate validation
@@ -192,6 +236,19 @@ if( !class_exists('affiliatepress_ninja_forms') ){
                 $affiliatepress_amount       = $affiliatepress_total_amount;
                 $affiliatepress_product_id   = $affiliatepress_form_id;
                 $affiliatepress_product_name = $affiliatepress_name;
+
+                $affiliatepress_ninja_forms_details = array(
+                    'product_id'=>$affiliatepress_product_id,
+                    'source'=>$this->affiliatepress_integration_slug
+                );
+                
+                $affiliatepress_product_disable = $affiliatepress_tracking->affiliatepress_check_product_disabled( $affiliatepress_ninja_forms_details );
+
+                if($affiliatepress_product_disable){
+
+                    return;
+                }
+
                 $affiliatepress_args = array(
                     'origin'	       => $this->affiliatepress_integration_slug,
                     'type' 		       => $affiliatepress_commission_type,

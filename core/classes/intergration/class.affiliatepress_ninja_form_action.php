@@ -1,5 +1,7 @@
 <?php
-if ( !defined( 'ABSPATH' ) || !class_exists('NF_Abstracts_Action')) { exit; }
+if ( !defined( 'ABSPATH' )) { exit; }
+
+if ( !class_exists('NF_Abstracts_Action')) { exit; }
     
     final class affiliatepress_ninja_form_action extends NF_Abstracts_Action{
 
@@ -179,12 +181,7 @@ if ( !defined( 'ABSPATH' ) || !class_exists('NF_Abstracts_Action')) { exit; }
         private function affiliatepress_get_product_or_form_name( $affiliatepress_act_settings, $affiliatepress_data ){
 
             $affiliatepress_description = '';
-            $affiliatepress_products    = $this->affiliatepress_get_product_data( $affiliatepress_data );
-            if( !empty( $affiliatepress_products ) ) {
-                $affiliatepress_description = $affiliatepress_products;
-            }elseif( ! empty( $affiliatepress_act_settings[ 'affiliatepress_description' ] ) ) {
-                $affiliatepress_description = $affiliatepress_act_settings[ 'affiliatepress_description' ];
-            } elseif( ! empty( $affiliatepress_data[ 'settings' ][ 'title' ] ) ) {
+            if( ! empty( $affiliatepress_data[ 'settings' ][ 'title' ] ) ) {
                 $affiliatepress_description = $affiliatepress_data[ 'settings' ][ 'title' ];
             }
 
@@ -205,28 +202,5 @@ if ( !defined( 'ABSPATH' ) || !class_exists('NF_Abstracts_Action')) { exit; }
                 $affiliatepress_field_value = $affiliatepress_act_settings[$affiliatepress_key];
             }
             return $affiliatepress_field_value;
-        }       
-        
-        /**
-         * Function for get product data 
-         *
-         * @param  array $affiliatepress_data
-         * @return void
-        */
-        private function affiliatepress_get_product_data( $affiliatepress_data ) {
-            $affiliatepress_product_name = '';    
-            if( ! empty( $affiliatepress_data['extra']['product_fields'] ) ) {    
-                $affiliatepress_product_labels = array();
-                foreach( $affiliatepress_data['fields'] as $affiliatepress_field ) {
-                    if( 'product' == $affiliatepress_field[ 'type' ] ) {
-                        $affiliatepress_product_labels[] = $affiliatepress_field['label'];
-                        continue;
-                    }    
-                }
-                $affiliatepress_product_name = implode( ', ', $affiliatepress_product_labels );
-            }
-            return $affiliatepress_product_name;
-        }        
-
-
+        }   
     }

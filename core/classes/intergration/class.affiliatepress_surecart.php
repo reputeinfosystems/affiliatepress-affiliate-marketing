@@ -71,8 +71,41 @@ if( !class_exists('affiliatepress_surecart') ){
         */
         function affiliatepress_get_source_product_func_surecart($affiliatepress_existing_source_product_data, $affiliatepress_ap_commission_source, $affiliatepress_search_product_str){
             
-            if($affiliatepress_ap_commission_source == $this->affiliatepress_integration_slug){
+            if ($affiliatepress_ap_commission_source == $this->affiliatepress_integration_slug) {
+                
+                $affiliatepress_existing_products_data = array();
 
+                $affiliatepress_args = array(
+                    'post_type'   => 'sc_product',
+                    'post_status' => 'publish', 
+                    's'           => $affiliatepress_search_product_str,
+                    'fields'      => 'ids',
+                );
+
+                $affiliatepress_query = new WP_Query($affiliatepress_args);
+
+                if ($affiliatepress_query->have_posts()) {
+                    $affiliatepress_post_ids = $affiliatepress_query->posts;
+                    foreach ($affiliatepress_post_ids as $affiliatepress_post_id) {
+
+                        $affiliatepress_product_id = get_post_meta($affiliatepress_post_id, 'sc_id', true );
+                        $affiliatepress_post_name = get_the_title($affiliatepress_post_id);
+                        $affiliatepress_post_name = !empty($affiliatepress_post_name) ? html_entity_decode($affiliatepress_post_name) : '';
+                        
+                        $affiliatepress_existing_product_data[] = array(
+                            'value' => $affiliatepress_product_id,
+                            'label' => $affiliatepress_post_name
+                        );
+
+                    }
+
+                    $affiliatepress_existing_products_data[] = array(
+                        'category'     => esc_html__('Select Source Product', 'affiliatepress-affiliate-marketing'),
+                        'product_data' => $affiliatepress_existing_product_data,
+                    );  
+                }
+
+                $affiliatepress_existing_source_product_data = $affiliatepress_existing_products_data;
             }
 
             return $affiliatepress_existing_source_product_data;

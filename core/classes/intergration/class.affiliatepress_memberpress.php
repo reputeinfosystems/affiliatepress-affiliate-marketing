@@ -101,6 +101,7 @@ if( !class_exists('affiliatepress_memberpress') ){
                     foreach ($affiliatepress_post_ids as $affiliatepress_post_id) {
 
                         $affiliatepress_post_name = get_the_title($affiliatepress_post_id);
+                        $affiliatepress_post_name = !empty($affiliatepress_post_name) ? html_entity_decode($affiliatepress_post_name) : '';
                         
                         $affiliatepress_existing_product_data[] = array(
                             'value' => $affiliatepress_post_id,

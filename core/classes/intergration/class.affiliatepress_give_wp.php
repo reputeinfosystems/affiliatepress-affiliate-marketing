@@ -113,7 +113,7 @@ if( !class_exists('affiliatepress_give') ){
 
                         $affiliatepress_post_name = get_the_title($affiliatepress_post_id);
 
-                        // echo "<>".$affiliatepress_post_name."<br>";
+                        $affiliatepress_post_name = !empty($affiliatepress_post_name) ? html_entity_decode($affiliatepress_post_name) : '';
                         
                         $affiliatepress_existing_product_data[] = array(
                             'value' => $affiliatepress_post_id,
@@ -289,16 +289,6 @@ if( !class_exists('affiliatepress_give') ){
 
             $affiliatepress_affiliate_id = apply_filters( 'affiliatepress_referrer_affiliate_id', $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, array('order_id'=>$affiliatepress_payment_id) );
 
-            $affiliatepress_givewp_product = array(
-                'product_id'=> $affiliatepress_form_id,
-                'source'=>$this->affiliatepress_integration_slug
-            );
-
-            $affiliatepress_product_disable = $affiliatepress_tracking->affiliatepress_check_product_disabled( $affiliatepress_givewp_product );
-            if($affiliatepress_product_disable){
-                return;
-            }
-
             if ( empty( $affiliatepress_affiliate_id ) ) {
                 $affiliatepress_log_msg = "Empty Affiliate ID";
                 do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' Empty Affiliate ID', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_log_msg, $affiliatepress_commission_debug_log_id);
@@ -396,6 +386,17 @@ if( !class_exists('affiliatepress_give') ){
             }
             else
             {
+
+                $affiliatepress_givewp_product = array(
+                    'product_id'=> $affiliatepress_form_id,
+                    'source'=>$this->affiliatepress_integration_slug
+                );
+    
+                $affiliatepress_product_disable = $affiliatepress_tracking->affiliatepress_check_product_disabled( $affiliatepress_givewp_product );
+                if($affiliatepress_product_disable){
+                    return;
+                }
+
                 $affiliatepress_amount = !empty($affiliatepress_payment_data['price']) ? floatval($affiliatepress_payment_data['price']):0;
 
                 $affiliatepress_args = array(
