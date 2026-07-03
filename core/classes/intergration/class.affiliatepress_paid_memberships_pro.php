@@ -335,7 +335,27 @@ if( !class_exists('affiliatepress_paid_memberships_pro') ){
             }
 
             $affiliatepress_affiliate_id = $affiliatepress_tracking->affiliatepress_get_referral_affiliate();
-            $affiliatepress_affiliate_id = apply_filters( 'affiliatepress_get_affiliate_id', $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, array('order_id'=>$affiliatepress_order_id) ,$affiliatepress_order );
+
+            $affiliatepress_FirstName = $affiliatepress_LastName = $affiliatepress_Email ='';
+            $affiliatepress_user_id = (isset($affiliatepress_order->user_id))?$affiliatepress_order->user_id:0;
+
+            if ($affiliatepress_user_id) {
+                $user = get_userdata($affiliatepress_user_id);
+                if ($user) {
+                    $affiliatepress_Email = sanitize_email($user->user_email);
+                    $affiliatepress_FirstName = sanitize_text_field(get_user_meta($affiliatepress_user_id, 'first_name', true));
+                    $affiliatepress_LastName = sanitize_text_field( get_user_meta($affiliatepress_user_id, 'last_name', true));
+                }
+            }            
+
+            $affiliatepress_customer_args = array(
+                'email'   	   => $affiliatepress_Email,
+                'user_id' 	   => $affiliatepress_user_id,
+                'first_name'   => $affiliatepress_FirstName,
+                'last_name'	   => $affiliatepress_LastName,
+            );
+
+            $affiliatepress_affiliate_id = apply_filters( 'affiliatepress_get_affiliate_id', $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, array('order_id'=>$affiliatepress_order_id) ,$affiliatepress_order ,$affiliatepress_customer_args );
 
             $affiliatepress_visit_id	  = $affiliatepress_tracking->affiliatepress_get_referral_visit();
 
@@ -346,6 +366,8 @@ if( !class_exists('affiliatepress_paid_memberships_pro') ){
                 do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' Empty Affiliate ID', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_log_msg, $affiliatepress_commission_debug_log_id);
                 return;
             }
+
+            $affiliatepress_customer_args['affiliate_id'] = $affiliatepress_affiliate_id;
 
             /* Get description */
             if ( isset( $affiliatepress_order->membership_name ) ) {                
@@ -384,21 +406,8 @@ if( !class_exists('affiliatepress_paid_memberships_pro') ){
             $affiliatepress_commission_type = 'subscription';
             $affiliatepress_order_referal_amount = 0;
 
-            $affiliatepress_FirstName = (isset($affiliatepress_order->FirstName))?sanitize_text_field($affiliatepress_order->FirstName):'';
-            $affiliatepress_LastName  = (isset($affiliatepress_order->LastName))?sanitize_text_field($affiliatepress_order->LastName):'';
-            $affiliatepress_Email     = (isset($affiliatepress_order->Email))?sanitize_email($affiliatepress_order->Email):'';
-
             if(!empty($affiliatepress_Email)){                
-                $affiliatepress_user_id = (isset($affiliatepress_order->user_id))?$affiliatepress_order->user_id:0;
                 /* Add Commission Customer Here */
-                $affiliatepress_customer_args = array(
-                    'email'   	   => $affiliatepress_Email,
-                    'user_id' 	   => $affiliatepress_user_id,
-                    'first_name'   => $affiliatepress_FirstName,
-                    'last_name'	   => $affiliatepress_LastName,
-                    'affiliate_id' => $affiliatepress_affiliate_id
-                );
-
                 $affiliatepress_customer_commisison_add = true;
                 $affiliatepress_customer_commisison_add = apply_filters('affiliatepress_validate_customer_for_commission', $affiliatepress_customer_commisison_add, $affiliatepress_customer_args,$this->affiliatepress_integration_slug);
     
@@ -519,10 +528,12 @@ if( !class_exists('affiliatepress_paid_memberships_pro') ){
 
             $affiliatepress_ip_address = $AffiliatePress->affiliatepress_get_ip_address();
 
-            $affiliatepress_visit_id = apply_filters( 'affiliatepress_get_visit_id', $affiliatepress_visit_id, $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, array('order_id'=>$affiliatepress_order_id) ,$affiliatepress_order ); 
+            $affiliatepress_visit_id = apply_filters( 'affiliatepress_get_visit_id', $affiliatepress_visit_id, $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, array('order_id'=>$affiliatepress_order_id) ,$affiliatepress_order ,$affiliatepress_args, $affiliatepress_commission_rules,$affiliatepress_customer_args); 
 
             $affiliatepress_commisison_other_details = array();
-            $affiliatepress_commisison_other_details  = apply_filters( 'affiliatepress_get_commisison_other_details',$affiliatepress_commisison_other_details,$affiliatepress_affiliate_id, $affiliatepress_visit_id ,$this->affiliatepress_integration_slug, $affiliatepress_order_id ,$affiliatepress_order );
+            $affiliatepress_commisison_other_details  = apply_filters( 'affiliatepress_get_commisison_other_details',$affiliatepress_commisison_other_details,$affiliatepress_affiliate_id, $affiliatepress_visit_id ,$this->affiliatepress_integration_slug, $affiliatepress_order_id ,$affiliatepress_order,$affiliatepress_args, $affiliatepress_commission_rules,$affiliatepress_customer_args );
+
+            $affiliatepress_commission_type  = apply_filters( 'affiliatepress_modify_commission_type',$affiliatepress_commission_type,$affiliatepress_affiliate_id,  $affiliatepress_visit_id ,$this->affiliatepress_integration_slug ,$affiliatepress_order_id ,$affiliatepress_order, $affiliatepress_args, $affiliatepress_commission_rules,$affiliatepress_customer_args );
             
             $affiliatepress_ap_commission_status = 2;
             $affiliatepress_default_commission_status = $affiliatepress_tracking->affiliatepress_get_default_commission_status();            

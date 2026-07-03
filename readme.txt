@@ -5,7 +5,7 @@ Donate link: https://www.affiliatepressplugin.com/
 Requires at least: 5.3.0
 Tested up to: 7.0
 Requires PHP: 7.0
-Stable tag: 2.6
+Stable tag: 3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -128,6 +128,27 @@ Please follow the steps for installation:
 1. AffiliatePress – WordPress Affiliate Plugin
 
 == Changelog ==
+= 3.0 =
+* Improved: Updated the supported currency list.
+* Minor bug fixes.
+
+= 2.9 =
+* Updated: AffiliatePress Blocks for Latest Gutenberg API Version 3.0.
+* Admin Panel: Added Facility to search by product name for: GetPaid, Gravity Forms, Ninja Forms and Simple Pay Plugins while adding Manual Commission.
+* Fixed: When Adding Manual Commission, Product name Contain Special Character then it was not showing properly.
+* Fixed: Wordfence Google ReCaptcha enabled, Affiliate signup and login form issue.
+* Other minor bug fixes.
+
+= 2.8 =
+* Added Support for the Commission with Simple Pay Pro plugin.
+* Improved: SureCart, Download Manager, and BookingPress Integration.
+* Improved: Compatibility with WordPress 7.0
+* Other minor bug fixes.
+
+= 2.7 =
+* Added Support for Easy Digital Downloads discount using “EDD Discount Pro” plugin.
+* Fixed: issue with ARMember Paid Trial Membership Purchase.
+* Other minor bug fixes.
 
 = 2.6 = 
  * Fixed: WooCommerce Checkout issue.

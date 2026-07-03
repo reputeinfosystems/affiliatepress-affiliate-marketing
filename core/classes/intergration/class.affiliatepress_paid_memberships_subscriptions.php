@@ -32,7 +32,7 @@ if( !class_exists('affiliatepress_paid_memberships_subscriptions') ){
                 add_action( 'pms_payment_update', array($this,'affiliatepress_accept_pending_commission_pms'), 10, 3 );
 
                 // Update the status of the commission to "rejected" when the originating payment is failed
-		// Update the status of the commission to "pending" when the originating paymnet status change
+		        // Update the status of the commission to "pending" when the originating paymnet status change
                 add_action( 'pms_payment_update', array($this,'affiliatepress_pending_commission_change_status_pms'), 10, 3 );
 
                // Hook the function to the 'add_meta_boxes' action
@@ -294,13 +294,23 @@ if( !class_exists('affiliatepress_paid_memberships_subscriptions') ){
             $affiliatepress_affiliate_id = !empty($affiliatepress_affiliate_id) ? intval($affiliatepress_affiliate_id) : 0;
          
             // $affiliatepress_affiliate_id = apply_filters( 'affiliatepress_referrer_affiliate_id', $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, array('order_id'=>$affiliatepress_payment_id) );
-            $affiliatepress_affiliate_id = apply_filters( 'affiliatepress_get_affiliate_id', $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, array('order_id'=>$affiliatepress_payment_id) ,$affiliatepress_payment_data );
+
+            $affiliatepress_customer_args = array(
+                'email'   	   => !empty($affiliatepress_payment_data['user_data']['user_email']) ? sanitize_email($affiliatepress_payment_data['user_data']['user_email']) : '',
+                'user_id' 	   => !empty($affiliatepress_payment_data['user_data']['user_id']) ? intval($affiliatepress_payment_data['user_data']['user_id']) : 0,
+                'first_name'   => !empty($affiliatepress_payment_data['user_data']['first_name']) ? sanitize_text_field($affiliatepress_payment_data['user_data']['first_name']) : '',
+                'last_name'	   => !empty($affiliatepress_payment_data['user_data']['last_name']) ? sanitize_text_field($affiliatepress_payment_data['user_data']['last_name']) : '',
+            );
+
+            $affiliatepress_affiliate_id = apply_filters( 'affiliatepress_get_affiliate_id', $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, array('order_id'=>$affiliatepress_payment_id) ,$affiliatepress_payment_data ,$affiliatepress_customer_args );
 
             if ( empty( $affiliatepress_affiliate_id ) ) {
                 $affiliatepress_log_msg = "Empty Affiliate ID";
                 do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' Empty Affiliate ID', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_log_msg, $affiliatepress_commission_debug_log_id);
                 return;
             }
+
+            $affiliatepress_customer_args['affiliate_id'] = $affiliatepress_affiliate_id;
 
             $affiliatepress_commission_validation = array();
 
@@ -315,14 +325,6 @@ if( !class_exists('affiliatepress_paid_memberships_subscriptions') ){
 
                 }                
             }
-
-            $affiliatepress_customer_args = array(
-                'email'   	   => !empty($affiliatepress_payment_data['user_data']['user_email']) ? sanitize_email($affiliatepress_payment_data['user_data']['user_email']) : '',
-                'user_id' 	   => !empty($affiliatepress_payment_data['user_data']['user_id']) ? intval($affiliatepress_payment_data['user_data']['user_id']) : 0,
-                'first_name'   => !empty($affiliatepress_payment_data['user_data']['first_name']) ? sanitize_text_field($affiliatepress_payment_data['user_data']['first_name']) : '',
-                'last_name'	   => !empty($affiliatepress_payment_data['user_data']['last_name']) ? sanitize_text_field($affiliatepress_payment_data['user_data']['last_name']) : '',
-                'affiliate_id' => $affiliatepress_affiliate_id
-            );
 
             $affiliatepress_customer_commisison_add = true;
             $affiliatepress_customer_commisison_add = apply_filters('affiliatepress_validate_customer_for_commission', $affiliatepress_customer_commisison_add, $affiliatepress_customer_args,$this->affiliatepress_integration_slug);
@@ -487,13 +489,15 @@ if( !class_exists('affiliatepress_paid_memberships_subscriptions') ){
 
             $affiliatepress_ip_address = $AffiliatePress->affiliatepress_get_ip_address();
             
-            $affiliatepress_visit_id = apply_filters( 'affiliatepress_get_visit_id', $affiliatepress_visit_id, $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, array('order_id'=>$affiliatepress_payment_id) ,$affiliatepress_payment_data ); 
+            $affiliatepress_visit_id = apply_filters( 'affiliatepress_get_visit_id', $affiliatepress_visit_id, $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, array('order_id'=>$affiliatepress_payment_id) ,$affiliatepress_payment_data,$affiliatepress_args, $affiliatepress_commission_rules,$affiliatepress_customer_args ); 
 
             $affiliatepress_commisison_other_details = array();
-            $affiliatepress_commisison_other_details  = apply_filters( 'affiliatepress_get_commisison_other_details',$affiliatepress_commisison_other_details,$affiliatepress_affiliate_id, $affiliatepress_visit_id ,$this->affiliatepress_integration_slug, $affiliatepress_payment_id ,$affiliatepress_payment_data );
+            $affiliatepress_commisison_other_details  = apply_filters( 'affiliatepress_get_commisison_other_details',$affiliatepress_commisison_other_details,$affiliatepress_affiliate_id, $affiliatepress_visit_id ,$this->affiliatepress_integration_slug, $affiliatepress_payment_id ,$affiliatepress_payment_data ,$affiliatepress_args, $affiliatepress_commission_rules,$affiliatepress_customer_args);
 
-             /* Prepare commission data */
-             $affiliatepress_commission_data = array(
+            $affiliatepress_commission_type  = apply_filters( 'affiliatepress_modify_commission_type',$affiliatepress_commission_type,$affiliatepress_affiliate_id,  $affiliatepress_visit_id ,$this->affiliatepress_integration_slug ,$affiliatepress_payment_id ,$affiliatepress_payment_data, $affiliatepress_args, $affiliatepress_commission_rules,$affiliatepress_customer_args );
+
+            /* Prepare commission data */
+            $affiliatepress_commission_data = array(
                 'ap_affiliates_id'		         => $affiliatepress_affiliate_id,
                 'ap_visit_id'			         => (!is_null($affiliatepress_visit_id)?$affiliatepress_visit_id:0),
                 'ap_commission_type'	         => $affiliatepress_commission_type,

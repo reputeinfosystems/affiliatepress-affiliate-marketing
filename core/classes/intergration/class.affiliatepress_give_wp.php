@@ -287,7 +287,18 @@ if( !class_exists('affiliatepress_give') ){
             $affiliatepress_affiliate_id = !empty($affiliatepress_affiliate_id) ? intval($affiliatepress_affiliate_id) : 0;
             $affiliatepress_form_id =$affiliatepress_payment_data['give_form_id'];
 
-            $affiliatepress_affiliate_id = apply_filters( 'affiliatepress_referrer_affiliate_id', $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, array('order_id'=>$affiliatepress_payment_id) );
+            // $affiliatepress_affiliate_id = apply_filters( 'affiliatepress_referrer_affiliate_id', $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, array('order_id'=>$affiliatepress_payment_id) );
+
+            $affiliatepress_user_info = $affiliatepress_payment_data['user_info'];
+
+            $affiliatepress_customer_args = array(
+                'email'   	   => !empty($affiliatepress_user_info['email']) ? sanitize_email($affiliatepress_user_info['email']) : '',
+                'user_id' 	   => !empty($affiliatepress_user_info['id']) ? intval($affiliatepress_user_info['id']) : 0,
+                'first_name'   => !empty($affiliatepress_user_info['first_name']) ? sanitize_text_field($affiliatepress_user_info['first_name']) : '',
+                'last_name'	   => !empty($affiliatepress_user_info['last_name']) ? sanitize_text_field($affiliatepress_user_info['last_name']) : '',
+            );
+
+            $affiliatepress_affiliate_id = apply_filters( 'affiliatepress_get_affiliate_id', $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, array('order_id'=>$affiliatepress_payment_id) ,$affiliatepress_payment_data ,$affiliatepress_customer_args);
 
             if ( empty( $affiliatepress_affiliate_id ) ) {
                 $affiliatepress_log_msg = "Empty Affiliate ID";
@@ -295,9 +306,9 @@ if( !class_exists('affiliatepress_give') ){
                 return;
             }
 
-            $affiliatepress_commission_validation = array();
+            $affiliatepress_customer_args['affiliate_id'] = $affiliatepress_affiliate_id;
 
-            $affiliatepress_user_info = $affiliatepress_payment_data['user_info'];
+            $affiliatepress_commission_validation = array();
 
             $affiliatepress_commission_validation = apply_filters( 'affiliatepress_commission_validation', $affiliatepress_commission_validation, $affiliatepress_affiliate_id,$this->affiliatepress_integration_slug, $affiliatepress_payment_id, $affiliatepress_user_info);
 
@@ -313,14 +324,6 @@ if( !class_exists('affiliatepress_give') ){
 
             
             /* Add Commission Customer Here */
-            $affiliatepress_customer_args = array(
-                'email'   	   => !empty($affiliatepress_user_info['email']) ? sanitize_email($affiliatepress_user_info['email']) : '',
-                'user_id' 	   => !empty($affiliatepress_user_info['id']) ? intval($affiliatepress_user_info['id']) : 0,
-                'first_name'   => !empty($affiliatepress_user_info['first_name']) ? sanitize_text_field($affiliatepress_user_info['first_name']) : '',
-                'last_name'	   => !empty($affiliatepress_user_info['last_name']) ? sanitize_text_field($affiliatepress_user_info['last_name']) : '',
-                'affiliate_id' => $affiliatepress_affiliate_id
-            );
-
             $affiliatepress_customer_commisison_add = true;
             $affiliatepress_customer_commisison_add = apply_filters('affiliatepress_validate_customer_for_commission', $affiliatepress_customer_commisison_add, $affiliatepress_customer_args,$this->affiliatepress_integration_slug);
 
@@ -456,6 +459,13 @@ if( !class_exists('affiliatepress_give') ){
             $affiliatepress_commission_products_name_string = (is_array($affiliatepress_commission_products_name) && !empty($affiliatepress_commission_products_name))?implode(',',$affiliatepress_commission_products_name):'';
 
             $affiliatepress_ip_address = $AffiliatePress->affiliatepress_get_ip_address();
+
+            $affiliatepress_visit_id = apply_filters( 'affiliatepress_get_visit_id', $affiliatepress_visit_id,$affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, $affiliatepress_payment_id ,$affiliatepress_payment_data ,$affiliatepress_args, $affiliatepress_commission_rules,$affiliatepress_customer_args);
+
+            $affiliatepress_commisison_other_details = array();
+            $affiliatepress_commisison_other_details  = apply_filters( 'affiliatepress_get_commisison_other_details',$affiliatepress_commisison_other_details,$affiliatepress_affiliate_id, $affiliatepress_visit_id ,$this->affiliatepress_integration_slug, $affiliatepress_payment_id ,$affiliatepress_payment_data ,$affiliatepress_args, $affiliatepress_commission_rules ,$affiliatepress_customer_args);
+
+            $affiliatepress_commission_type  = apply_filters( 'affiliatepress_modify_commission_type',$affiliatepress_commission_type,$affiliatepress_affiliate_id,  $affiliatepress_visit_id ,$this->affiliatepress_integration_slug ,$affiliatepress_payment_id ,$affiliatepress_payment_data, $affiliatepress_args, $affiliatepress_commission_rules,$affiliatepress_customer_args );
 
             /* Prepare commission data */
             $affiliatepress_commission_data = array(

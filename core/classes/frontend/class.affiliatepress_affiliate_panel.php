@@ -1645,7 +1645,8 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 $affiliatepress_sr_no   = (($affiliatepress_currentpage - 1) * $affiliatepress_perpage);
                 foreach ( $affiliatepress_commissions_record as $affiliatepress_key=>$affiliatepress_single_commission ) {
                     $affiliatepress_sr_no++;
-                    $affiliatepress_commission   = $affiliatepress_single_commission;                                       
+                    $affiliatepress_commission   = $affiliatepress_single_commission;   
+                    $affiliatepress_commission_id = isset($affiliatepress_single_commission['ap_commission_id']) ? intval($affiliatepress_single_commission['ap_commission_id']) : 0;                                          
                     $affiliatepress_commission['sr_no'] = intval($affiliatepress_sr_no);
                     $affiliatepress_formated_commission_amount = $AffiliatePress->affiliatepress_price_formatter_with_currency_symbol($affiliatepress_single_commission['ap_commission_amount']);                    
                     $affiliatepress_commission['ap_formated_commission_amount'] = $affiliatepress_formated_commission_amount;
@@ -1666,6 +1667,8 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                     }else{
                         $affiliatepress_commission['ap_commission_type_text'] = esc_html__('Sale', 'affiliatepress-affiliate-marketing');
                     }                    
+
+                    $affiliatepress_commission = apply_filters('affiliatepress_modify_affiliate_commission_data',$affiliatepress_commission,$affiliatepress_single_commission,$affiliatepress_commission_id);
 
                     $affiliatepress_commissions[] = $affiliatepress_commission;
                 }
