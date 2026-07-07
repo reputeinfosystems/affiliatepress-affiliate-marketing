@@ -5,7 +5,7 @@ Donate link: https://www.affiliatepressplugin.com/
 Requires at least: 5.3.0
 Tested up to: 7.0
 Requires PHP: 7.0
-Stable tag: 3.0
+Stable tag: 3.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -128,9 +128,14 @@ Please follow the steps for installation:
 1. AffiliatePress – WordPress Affiliate Plugin
 
 == Changelog ==
+
+= 3.0.1 = 
+* Updated Compatibility with WooCommerce Latest Version 10.9.3
+* Other minor bug fixes.
+
 = 3.0 =
 * Improved: Updated the supported currency list.
-* Minor bug fixes.
+* Other minor bug fixes.
 
 = 2.9 =
 * Updated: AffiliatePress Blocks for Latest Gutenberg API Version 3.0.

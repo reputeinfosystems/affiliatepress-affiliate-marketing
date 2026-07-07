@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: AffiliatePress - Affiliate Marketing v3.0\n"
+"Project-Id-Version: AffiliatePress - Affiliate Marketing v3.0.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-07-02 07:41:12+0000\n"
+"PO-Revision-Date: 2026-07-04 05:48:49+0000\n"
 "Last-Translator: admin <testrepute@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -7841,14 +7841,14 @@ msgstr "Spring Sale"
 msgid "Invalid Date Format"
 msgstr "Geçersiz Tarih Biçimi"
 
-#. translators: plugin header field 'Version'
-#: affiliatepress-affiliate-marketing.php:0
-#@ affiliatepress-affiliate-marketing
-msgid "3.0"
-msgstr "3.0"
-
 #: core/classes/class.affiliatepress_global_options.php:405
 #@ affiliatepress-affiliate-marketing
 msgid "Lifetime"
 msgstr "Ömür Boyu"
+
+#. translators: plugin header field 'Version'
+#: affiliatepress-affiliate-marketing.php:0
+#@ affiliatepress-affiliate-marketing
+msgid "3.0.1"
+msgstr "3.0.1"
 

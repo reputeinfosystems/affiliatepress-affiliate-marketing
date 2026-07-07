@@ -474,6 +474,8 @@ if( !class_exists('affiliatepress_woocommerce') ){
             $affiliatepress_visit_id	  = $affiliatepress_tracking->affiliatepress_get_referral_visit();        
             
             $affiliatepress_affiliate_id = !empty($affiliatepress_affiliate_id) ? intval($affiliatepress_affiliate_id) : 0;
+
+            $affiliatepress_order = ( is_a( $affiliatepress_order, 'WC_Order' ) ? $affiliatepress_order : wc_get_order( $affiliatepress_order_id ) );
             
             $affiliatepress_order_data   = array('order_id' => $affiliatepress_order_id);
             // $affiliatepress_affiliate_id = apply_filters( 'affiliatepress_referrer_affiliate_id', $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, $affiliatepress_order_data ,$affiliatepress_order );
