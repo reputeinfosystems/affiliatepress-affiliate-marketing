@@ -658,6 +658,8 @@ if( !class_exists('affiliatepress_armember') ){
                 'ap_commission_created_date'     => date('Y-m-d H:i:s', current_time('timestamp'))// phpcs:ignore
             );
 
+            $affiliatepress_commission_data  = apply_filters( 'affiliatepress_before_commission_insert',$affiliatepress_commission_data,$affiliatepress_plan_data, $affiliatepress_commission_rules);
+
             $affiliatepress_commission_data['ap_commission_status'] = 2;
 
             $affiliatepress_tbl_arm_payment_log = $this->affiliatepress_tablename_prepare( $wpdb->prefix . 'arm_payment_log' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'arm_payment_log' contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
@@ -743,7 +745,9 @@ if( !class_exists('affiliatepress_armember') ){
                     $affiliatepress_tbl_activity = $this->affiliatepress_tablename_prepare($wpdb->prefix . 'arm_activity'); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'arm_subscriptarm_activityion_plans' contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
                     $affiliatepress_get_first_payment_date = $wpdb->get_var($wpdb->prepare("SELECT arm_date_recorded FROM {$affiliatepress_tbl_activity} WHERE arm_user_id = %d && arm_item_id = %d ORDER BY arm_date_recorded DESC",$affiliatepress_user_id,$affiliatepress_user_plan));// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arm_subscription_plan is a table name. false alarm 
 
-                    $affiliatepress_total_recurring_paymnet = intval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_arm_payment_log, 'COUNT(arm_log_id)', 'WHERE arm_user_id  = %d  && arm_plan_id = %d && arm_created_date >=%s', array( $affiliatepress_user_id,$affiliatepress_user_plan,$affiliatepress_get_first_payment_date), '', '', '', true, false,ARRAY_A));
+                    $affiliatepress_get_first_payment_date_formate = gmdate( 'Y-m-d 00:00:00',  strtotime($affiliatepress_get_first_payment_date) );
+
+                    $affiliatepress_total_recurring_paymnet = intval($this->affiliatepress_select_record( true, '', $affiliatepress_tbl_arm_payment_log, 'COUNT(arm_log_id)', 'WHERE arm_user_id  = %d  && arm_plan_id = %d && arm_created_date >=%s', array( $affiliatepress_user_id,$affiliatepress_user_plan,$affiliatepress_get_first_payment_date_formate), '', '', '', true, false,ARRAY_A));
 
                     if($affiliatepress_total_recurring_paymnet > 1){
                         $affiliatepress_is_recurring =  true;

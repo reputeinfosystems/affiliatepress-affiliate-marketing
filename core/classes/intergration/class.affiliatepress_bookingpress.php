@@ -532,6 +532,8 @@ if( !class_exists('affiliatepress_bookingpress') ){
                 'ap_commission_created_date'     => date('Y-m-d H:i:s', current_time('timestamp')) // phpcs:ignore
             );
 
+            $affiliatepress_commission_data  = apply_filters( 'affiliatepress_before_commission_insert',$affiliatepress_commission_data,$affiliatepress_payment_gateway_data, $affiliatepress_commission_rules);
+
             $affiliatepress_tbl_bookingpress_payment_transactions = $this->affiliatepress_tablename_prepare( $wpdb->prefix . 'bookingpress_payment_transactions' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'bookingpress_appointment_bookings' contains table name and it's prepare properly using 'arm_payment_log' function
 
             $affiliatepress_bookingpress_paymnet_status = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_bookingpress_payment_transactions, 'bookingpress_payment_status', 'WHERE bookingpress_payment_log_id = %d', array($affiliatepress_payment_id), '', '', '', false, true,ARRAY_A);
@@ -551,6 +553,9 @@ if( !class_exists('affiliatepress_bookingpress') ){
                     $affiliatepress_commission_data['products_commission'] = $affiliatepress_allow_products_commission;
 
                     $affiliatepress_commission_data['commission_rules'] = $affiliatepress_commission_rules;
+
+                    $affiliatepress_commission_data['commission_other_details'] = $affiliatepress_commisison_other_details;
+                    
                     do_action('affiliatepress_after_commission_created', $affiliatepress_ap_commission_id, $affiliatepress_commission_data );
                     $affiliatepress_debug_log_msg = sprintf( 'Pending commission #%s has been successfully inserted.', $affiliatepress_ap_commission_id );
 

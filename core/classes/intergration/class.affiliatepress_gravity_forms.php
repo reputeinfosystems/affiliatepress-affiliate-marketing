@@ -294,7 +294,7 @@ if( !class_exists('affiliatepress_gravity_forms') ){
             $affiliatepress_commission_products_ids = array();
             $affiliatepress_commission_products_name = array();
             $affiliatepress_order_referal_amount = 0;
-
+            $affiliatepress_currency = isset($affiliatepress_entry['currency']) ? sanitize_text_field($affiliatepress_entry['currency']) : '';
 
             
             $affiliatepress_all_product_name     = isset( $affiliatepress_form['title'] ) ? $affiliatepress_form['title'] : '';
@@ -339,7 +339,7 @@ if( !class_exists('affiliatepress_gravity_forms') ){
                     'customer_id'      => $affiliatepress_customer_id,
                     'commission_basis' => 'per_order',
                 );                
-                $affiliatepress_commission_rules    = $affiliatepress_tracking->affiliatepress_calculate_commission_amount($affiliatepress_amount,'',$affiliatepress_args);
+                $affiliatepress_commission_rules    = $affiliatepress_tracking->affiliatepress_calculate_commission_amount($affiliatepress_amount,$affiliatepress_currency,$affiliatepress_args);
                 $affiliatepress_commission_amount = (isset($affiliatepress_commission_rules['commission_amount']))?floatval($affiliatepress_commission_rules['commission_amount']):0;
 
                 $affiliatepress_allow_products_commission[] = array(
@@ -379,7 +379,7 @@ if( !class_exists('affiliatepress_gravity_forms') ){
                     'commission_basis' => 'per_product',
                     'order_id'         => $affiliatepress_entry_id,
                 );
-                $affiliatepress_commission_rules = $affiliatepress_tracking->affiliatepress_calculate_commission_amount(  $affiliatepress_total, '', $affiliatepress_args );
+                $affiliatepress_commission_rules = $affiliatepress_tracking->affiliatepress_calculate_commission_amount(  $affiliatepress_total, $affiliatepress_currency, $affiliatepress_args );
 
                 $affiliatepress_single_product_commission_amount = (isset($affiliatepress_commission_rules['commission_amount']))?floatval($affiliatepress_commission_rules['commission_amount']):0;
 
@@ -455,6 +455,8 @@ if( !class_exists('affiliatepress_gravity_forms') ){
                 'ap_commission_created_date'     => date('Y-m-d H:i:s', current_time('timestamp'))// phpcs:ignore
             );
 
+            $affiliatepress_commission_data  = apply_filters( 'affiliatepress_before_commission_insert',$affiliatepress_commission_data,$affiliatepress_entry, $affiliatepress_commission_rules);
+
             /* Insert The Commission */
             $affiliatepress_commission_id = $affiliatepress_tracking->affiliatepress_insert_commission( $affiliatepress_commission_data, $affiliatepress_affiliate_id, $affiliatepress_visit_id);
             if($affiliatepress_commission_id == 0){
@@ -464,6 +466,7 @@ if( !class_exists('affiliatepress_gravity_forms') ){
 
                 $affiliatepress_commission_data['products_commission'] = $affiliatepress_allow_products_commission;
                 $affiliatepress_commission_data['commission_rules'] = $affiliatepress_commission_rules;
+                $affiliatepress_commission_data['commission_other_details'] = $affiliatepress_commisison_other_details;
                 do_action('affiliatepress_after_commission_created', $affiliatepress_commission_id, $affiliatepress_commission_data);
                 $affiliatepress_msg = sprintf( 'Pending commission #%s has been successfully inserted.', $affiliatepress_commission_id );
 

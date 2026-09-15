@@ -324,7 +324,7 @@
                     </el-dropdown>
                 </div>
             </div>            
-            <div class="ap-affiliate-panel" style="min-height:800px;background-color: var(--ap-front-cl-white);">
+            <div class="ap-affiliate-panel" style="min-height:800px;background-color: var(--ap-front-cl-white);" :class=" current_screen_size == 'mobile' ? 'ap-mobile' : current_screen_size == 'ap-tablet'  ? 'tablet' : 'ap-desktop'">
                 <div v-if="is_affiliate_form_loader == '0'" class="ap-front-loader-container" style="margin:auto;">
                     <div class="ap-front-loader"></div>
                 </div>

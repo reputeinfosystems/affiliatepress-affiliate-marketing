@@ -393,6 +393,8 @@ if( !class_exists('affiliatepress_masteriyo_lms') ){
                 'ap_commission_created_date'     => date('Y-m-d H:i:s', current_time('timestamp'))// phpcs:ignore
             );
 
+            $affiliatepress_commission_data  = apply_filters( 'affiliatepress_before_commission_insert',$affiliatepress_commission_data,$affiliatepress_order, $affiliatepress_commission_rules);
+
             $affiliatepress_flat_rate_commission_basis = $AffiliatePress->affiliatepress_get_settings('flat_rate_commission_basis', 'commissions_settings');
             if($affiliatepress_flat_rate_commission_basis == 'pre_product'){
                 $affiliatepress_commission_data['ap_commission_reference_detail'] = 'Order '.$affiliatepress_order_id;
@@ -407,6 +409,7 @@ if( !class_exists('affiliatepress_masteriyo_lms') ){
 
                 $affiliatepress_commission_data['products_commission'] = $affiliatepress_allow_products_commission;
                 $affiliatepress_commission_data['commission_rules'] = $affiliatepress_commission_rules;
+                $affiliatepress_commission_data['commission_other_details'] = $affiliatepress_commisison_other_details;
                 do_action('affiliatepress_after_commission_created', $affiliatepress_commission_id, $affiliatepress_commission_data);
                 $affiliatepress_msg = sprintf( 'Pending commission #%s has been successfully inserted.', $affiliatepress_commission_id );
  

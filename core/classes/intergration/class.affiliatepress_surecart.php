@@ -455,6 +455,8 @@ if( !class_exists('affiliatepress_surecart') ){
                 'ap_commission_created_date'     => date('Y-m-d H:i:s', current_time('timestamp')) // phpcs:ignore
             );
 
+            $affiliatepress_commission_data  = apply_filters( 'affiliatepress_before_commission_insert',$affiliatepress_commission_data,$affiliatepress_checkout, $affiliatepress_commission_rules);
+
             $affiliatepress_checkout_payment_status = $affiliatepress_order->status;
             $affiliatepress_default_commission_status = $affiliatepress_tracking->affiliatepress_get_default_commission_status();
 
@@ -484,6 +486,7 @@ if( !class_exists('affiliatepress_surecart') ){
 
                     $affiliatepress_commission_data['products_commission'] = $affiliatepress_allow_products_commission;
                     $affiliatepress_commission_data['commission_rules'] = $affiliatepress_commission_rules;
+                    $affiliatepress_commission_data['commission_other_details'] = $affiliatepress_commisison_other_details;
                     do_action('affiliatepress_after_commission_created', $affiliatepress_ap_commission_id, $affiliatepress_commission_data);
 
                     if($affiliatepress_updated_commission_status != 2){
@@ -511,6 +514,7 @@ if( !class_exists('affiliatepress_surecart') ){
     
                     $affiliatepress_commission_data['products_commission'] = $affiliatepress_allow_products_commission;
                     $affiliatepress_commission_data['commission_rules'] = $affiliatepress_commission_rules;
+                    $affiliatepress_commission_data['commission_other_details'] = $affiliatepress_commisison_other_details;
                     do_action('affiliatepress_after_commission_created', $affiliatepress_ap_commission_id, $affiliatepress_commission_data);
                     $affiliatepress_debug_log_msg = sprintf( 'Pending commission #%s has been successfully inserted.', $affiliatepress_ap_commission_id );
     

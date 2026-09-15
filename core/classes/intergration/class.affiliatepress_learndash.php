@@ -26,7 +26,60 @@ if( !class_exists('affiliatepress_learndash') ){
                 add_filter('affiliatepress_commission_validation',array($this,'affiliatepress_commission_validation_func'),15,5);
 
                 add_action( 'added_post_meta', array( $this, 'affiliatepress_insert_commission_learndash' ), 10, 4 );
+
+                add_filter( 'learndash_stripe_session_args', array( $this, 'affiliatepress_order_add_cookie_data' ), 10, 1 );
+                add_filter( 'affiliatepress_get_affiliate_cookie_learndash', array( $this, 'affiliatepress_modify_affiliate_cookie_data' ), 10, 3 );
             }
+        }
+
+        function affiliatepress_order_add_cookie_data( $order_data ) {
+
+            global $affiliatepress_tracking,$affiliatepress_commission_debug_log_id;
+    
+            $ailiate_id = isset($_COOKIE['affiliatepress_ref_cookie']) ? absint( $_COOKIE['affiliatepress_ref_cookie'] ) : 0;
+            $visit_id = isset($_COOKIE['affiliatepress_visitor_id']) ? intval($_COOKIE['affiliatepress_visitor_id']) : 0 ;
+
+            $order_data['metadata']['affiliatepress_ref_affiliate_id']     = $ailiate_id;   
+            $order_data['metadata']['affiliatepress_ref_affiliate_visitor_id'] = $visit_id;
+
+            do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' Set Payment in Cookie data', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', "Add Cookie data in course data & Entry affiliate id=".$ailiate_id ."& visistor Entry data = ".$visit_id, $affiliatepress_commission_debug_log_id);
+    
+            return $order_data;
+        }
+
+        function affiliatepress_modify_affiliate_cookie_data($affiliatepress_get_cookie,$affiliatepress_order_data,$affiliatepress_cookie_type){
+            global $wpdb,$affiliatepress_commission_debug_log_id;
+            
+            if(!empty($affiliatepress_order_data)){
+
+                if($affiliatepress_cookie_type == "affiliate"){
+
+                    $affiliatepress_get_store_cookie = isset($_COOKIE['affiliatepress_ref_cookie']) ? intval($_COOKIE['affiliatepress_ref_cookie']) :$affiliatepress_get_cookie;     
+
+                    if(($affiliatepress_get_store_cookie <= 0 )){
+
+                        $affiliatepress_get_store_cookie = isset($affiliatepress_order_data->affiliatepress_ref_affiliate_id) ? $affiliatepress_order_data->affiliatepress_ref_affiliate_id : $affiliatepress_get_cookie;
+
+                        do_action( 'affiliatepress_commission_debug_log_entry',  'commission_tracking_debug_logs',  $this->affiliatepress_integration_slug . ' Inside get cookie ailiate data in Payment stored', 'affiliatepress_' . $this->affiliatepress_integration_slug . '_commission_tracking', "order data to get afiliate id and Afiliate ID = " .$affiliatepress_get_store_cookie,  $affiliatepress_commission_debug_log_id );
+                    }
+
+                    $affiliatepress_get_cookie = $affiliatepress_get_store_cookie;
+                }
+                elseif ($affiliatepress_cookie_type == "visit") {
+
+                    $affiliatepress_get_store_visit_cookie = isset($_COOKIE['affiliatepress_visitor_id']) ? intval($_COOKIE['affiliatepress_visitor_id']) : $affiliatepress_get_cookie;    
+
+                    if(($affiliatepress_get_store_visit_cookie <= 0 )){
+                        $affiliatepress_get_store_visit_cookie = isset($affiliatepress_order_data->affiliatepress_ref_affiliate_visitor_id) ? $affiliatepress_order_data->affiliatepress_ref_affiliate_visitor_id : $affiliatepress_get_cookie ;
+
+                        do_action( 'affiliatepress_commission_debug_log_entry',  'commission_tracking_debug_logs',  $this->affiliatepress_integration_slug . ' Inside get cookie visit data in Payment stored', 'affiliatepress_' . $this->affiliatepress_integration_slug . '_commission_tracking', "order data to get vist id and Visit ID = " .$affiliatepress_get_store_visit_cookie,  $affiliatepress_commission_debug_log_id );
+                    }
+
+                    $affiliatepress_get_cookie = $affiliatepress_get_store_visit_cookie;   
+                }
+            }
+
+            return $affiliatepress_get_cookie;
         }
 
         /**
@@ -61,6 +114,9 @@ if( !class_exists('affiliatepress_learndash') ){
         
         
         function affiliatepress_insert_commission_learndash($meta_id, $post_id, $meta_key, $meta_value ){
+
+            global $affiliatepress_commission_debug_log_id;
+
             if ( 'user_id' !== $meta_key ) {
                 return;
             }
@@ -69,6 +125,8 @@ if( !class_exists('affiliatepress_learndash') ){
             if ( 'sfwd-transactions' !== get_post_type( $post_id ) ) {
                 return;
             }
+
+            do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug. ' update Transection ID', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $post_id, $affiliatepress_commission_debug_log_id);
     
             // Get order details.
             $order = $this->get_order( $post_id );
@@ -307,6 +365,8 @@ if( !class_exists('affiliatepress_learndash') ){
                 'ap_commission_created_date'     => date('Y-m-d H:i:s', current_time('timestamp')) // phpcs:ignore
             );
 
+            $affiliatepress_commission_data  = apply_filters( 'affiliatepress_before_commission_insert',$affiliatepress_commission_data,$order, $affiliatepress_commission_rules);
+
             /* Insert The Commission */
             $affiliatepress_ap_commission_id = $affiliatepress_tracking->affiliatepress_insert_commission( $affiliatepress_commission_data, $affiliatepress_affiliate_id, $affiliatepress_visit_id);
             if($affiliatepress_ap_commission_id == 0){
@@ -316,6 +376,7 @@ if( !class_exists('affiliatepress_learndash') ){
 
                 $affiliatepress_commission_data['products_commission'] = $affiliatepress_allow_products_commission;
                 $affiliatepress_commission_data['commission_rules'] = $affiliatepress_commission_rules;
+                $affiliatepress_commission_data['commission_other_details'] = $affiliatepress_commisison_other_details;
                 do_action('affiliatepress_after_commission_created', $affiliatepress_ap_commission_id, $affiliatepress_commission_data );
                 $affiliatepress_debug_log_msg = sprintf( 'Pending commission #%s has been successfully inserted.', $affiliatepress_ap_commission_id );
 
@@ -327,6 +388,8 @@ if( !class_exists('affiliatepress_learndash') ){
 
             global $wpdb,$affiliatepress_tracking, $affiliatepress_affiliates,$AffiliatePress,$affiliatepress_commission_debug_log_id;
 
+            do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug. ' Process Transection ID', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $transaction_id, $affiliatepress_commission_debug_log_id);
+
             $order = $this->get_order( $transaction_id );
 
             $order_id = $order->id;
@@ -334,12 +397,15 @@ if( !class_exists('affiliatepress_learndash') ){
             if ( empty( $order ) ) {
 
                 $affiliatepress_log_msg = "Process Commission not completed because no order found.";
-                do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' Empty Affiliate ID', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_log_msg, $affiliatepress_commission_debug_log_id);
+                do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' Empty Order', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_log_msg, $affiliatepress_commission_debug_log_id);
                 return;
+            }else{
+                $affiliatepress_log_msg = " Order Data:\n" . print_r( $order, true ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
+                do_action(  'affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs',  $this->affiliatepress_integration_slug . ' Order Data', 'affiliatepress_' . $this->affiliatepress_integration_slug . '_commission_tracking',  $affiliatepress_log_msg,  $affiliatepress_commission_debug_log_id );
             }
 
-            $affiliatepress_affiliate_id = $affiliatepress_tracking->affiliatepress_get_referral_affiliate();
-            $affiliatepress_visit_id	  = $affiliatepress_tracking->affiliatepress_get_referral_visit();        
+            $affiliatepress_affiliate_id = $affiliatepress_tracking->affiliatepress_get_referral_affiliate($this->affiliatepress_integration_slug,$order);
+            $affiliatepress_visit_id	  = $affiliatepress_tracking->affiliatepress_get_referral_visit($this->affiliatepress_integration_slug,$order);        
             
             $affiliatepress_affiliate_id = !empty($affiliatepress_affiliate_id) ? intval($affiliatepress_affiliate_id) : 0;
 
@@ -417,13 +483,15 @@ if( !class_exists('affiliatepress_learndash') ){
 
             if ( $affiliatepress_customer_id ) {
                 $affiliatepress_debug_log_msg = sprintf( 'Customer #%s has been successfully processed.', $affiliatepress_customer_id );    
-                do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Customer Created', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_debug_log_msg, $affiliatepress_commission_debug_log_id);                     
+                do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Customer Created', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_debug_log_msg, $affiliatepress_commission_debug_log_id);
             } else {
                 $affiliatepress_debug_log_msg = 'Customer could not be processed due to an unexpected error.';
                 do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', 'Customer Not Created', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_debug_log_msg, $affiliatepress_commission_debug_log_id);
             }
 
             $order_total_amount =$this->get_order_total( $order->id );
+            $pricing_info_metadata = get_post_meta( $transaction_id, 'pricing_info',  true);
+            $ailiatepress_currency = isset($pricing_info_metadata['currency']) ? sanitize_text_field($pricing_info_metadata['currency']) : '';
 
             $affiliatepress_commission_amount = 0;
             $affiliatepress_allow_products_commission = array();
@@ -447,7 +515,7 @@ if( !class_exists('affiliatepress_learndash') ){
                     'commission_basis' => 'per_order',
                     'quntity'          => 1,
                 );
-                $affiliatepress_commission_rules  = $affiliatepress_tracking->affiliatepress_calculate_commission_amount($affiliatepress_order_referal_amount, '', $affiliatepress_args);     
+                $affiliatepress_commission_rules  = $affiliatepress_tracking->affiliatepress_calculate_commission_amount($affiliatepress_order_referal_amount, $ailiatepress_currency, $affiliatepress_args);     
 
                 $affiliatepress_commission_amount = (isset($affiliatepress_commission_rules['commission_amount']))?floatval($affiliatepress_commission_rules['commission_amount']):0;
 
@@ -465,22 +533,15 @@ if( !class_exists('affiliatepress_learndash') ){
 
             }else{
 
-                // $affiliatepress_plan_amount = !empty($affiliatepress_armember_planamount) ? floatval($affiliatepress_armember_planamount) : 0;
 
-                // if ( $affiliatepress_exclude_taxes == 'false' ) {
-                //     $affiliatepress_plan_amount = !empty($affiliatepress_armember_withtaxvalue) ? floatval($affiliatepress_armember_withtaxvalue) : 0;
-                // }
+                $affiliatepress_product_id = get_post_meta( $transaction_id, 'post_id',  true);
+                $affiliatepress_product_name = get_the_title($affiliatepress_product_id);
 
-                // $affiliatepress_armember_product = array(
-                //     'product_id'=>$affiliatepress_plan_id,
-                //     'source'=>$this->affiliatepress_integration_slug
-                // );
-                // $affiliatepress_product_disable = $affiliatepress_tracking->affiliatepress_check_product_disabled( $affiliatepress_armember_product );
-    
-                // if($affiliatepress_product_disable){
-    
-                //     return;
-                // }
+                $affiliatepress_debug_log_msg = sprintf( 'Product #%s has been successfully processed.', $affiliatepress_product_id );    
+                do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : product id='.$affiliatepress_product_id, 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_debug_log_msg, $affiliatepress_commission_debug_log_id);                   
+
+                $affiliatepress_commission_products_ids[] = $affiliatepress_product_id;
+                $affiliatepress_commission_products_name[] = $affiliatepress_product_name;
 
                 $affiliatepress_args = array(
                     'origin'	       => $this->affiliatepress_integration_slug,
@@ -492,15 +553,15 @@ if( !class_exists('affiliatepress_learndash') ){
                     'order_id'         => $order_id,
                 );
 
-                $affiliatepress_commission_rules = $affiliatepress_tracking->affiliatepress_calculate_commission_amount(  $order_total_amount, '', $affiliatepress_args );
+                $affiliatepress_commission_rules = $affiliatepress_tracking->affiliatepress_calculate_commission_amount(  $order_total_amount, $ailiatepress_currency, $affiliatepress_args );
 
                 $affiliatepress_commission_amount = (isset($affiliatepress_commission_rules['commission_amount']))?floatval($affiliatepress_commission_rules['commission_amount']):0;
 
-                $affiliatepress_order_referal_amount = $affiliatepress_plan_amount;
+                $affiliatepress_order_referal_amount = $order_total_amount;
 
                 $affiliatepress_allow_products_commission[] = array(
-                    'product_id'           => $order_id,
-                    'product_name'         => $order_description,
+                    'product_id'           => $affiliatepress_product_id,
+                    'product_name'         => $affiliatepress_product_name,
                     'order_id'             => $affiliatepress_order_id,
                     'commission_amount'    => $affiliatepress_commission_amount,
                     'order_referal_amount' => $order_total_amount,
@@ -563,6 +624,8 @@ if( !class_exists('affiliatepress_learndash') ){
                 'ap_commission_created_date'     => date('Y-m-d H:i:s', current_time('timestamp')) // phpcs:ignore
             );
 
+            $affiliatepress_commission_data  = apply_filters( 'affiliatepress_before_commission_insert',$affiliatepress_commission_data,$order, $affiliatepress_commission_rules);
+
             /* Insert The Commission */
             $affiliatepress_ap_commission_id = $affiliatepress_tracking->affiliatepress_insert_commission( $affiliatepress_commission_data, $affiliatepress_affiliate_id, $affiliatepress_visit_id);
             if($affiliatepress_ap_commission_id == 0){
@@ -572,6 +635,7 @@ if( !class_exists('affiliatepress_learndash') ){
 
                 $affiliatepress_commission_data['products_commission'] = $affiliatepress_allow_products_commission;
                 $affiliatepress_commission_data['commission_rules'] = $affiliatepress_commission_rules;
+                $affiliatepress_commission_data['commission_other_details'] = $affiliatepress_commisison_other_details;
                 do_action('affiliatepress_after_commission_created', $affiliatepress_ap_commission_id, $affiliatepress_commission_data );
                 $affiliatepress_debug_log_msg = sprintf( 'Pending commission #%s has been successfully inserted.', $affiliatepress_ap_commission_id );
 
@@ -616,11 +680,35 @@ if( !class_exists('affiliatepress_learndash') ){
 
         public function get_order_total( $order = 0 ) {
 
+            global $affiliatepress_commission_debug_log_id;
+
+            $order_amount = 0;
+
             if ( ! function_exists( 'learndash_transaction_get_final_price' ) ) {
-                return 0;
+
+                do_action(  'affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs',  $this->affiliatepress_integration_slug . ' get order total 1', 'affiliatepress_' . $this->affiliatepress_integration_slug . '_commission_tracking',  "Transection ID ".$order,  $affiliatepress_commission_debug_log_id );
+
+                $order_amount = 0;
+            }else{
+                do_action(  'affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs',  $this->affiliatepress_integration_slug . ' get order total 2', 'affiliatepress_' . $this->affiliatepress_integration_slug . '_commission_tracking',  "Transection ID ".$order,  $affiliatepress_commission_debug_log_id );
+
+                $order_amount = learndash_transaction_get_final_price( $order );
+
+                do_action(  'affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs',  $this->affiliatepress_integration_slug . ' Order total amount (-function)', 'affiliatepress_' . $this->affiliatepress_integration_slug . '_commission_tracking',  "Order total amount  ".$order_amount,  $affiliatepress_commission_debug_log_id );
+            }
+
+            if($order_amount <=  0){
+
+                $transaction_id = $order;
+
+                $pricing_info_metadata = get_post_meta( $transaction_id, 'pricing_info',  true);
+
+                $order_amount = isset($pricing_info_metadata['price']) ? floatval($pricing_info_metadata['price']) : 0;
+
+                do_action(  'affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs',  $this->affiliatepress_integration_slug . ' Order total amount (-manually get)', 'affiliatepress_' . $this->affiliatepress_integration_slug . '_commission_tracking',  "Order total amount  ".$order_amount,  $affiliatepress_commission_debug_log_id );
             }
     
-            return learndash_transaction_get_final_price( $order );
+            return $order_amount;
         }
 
         function get_order( $transaction_id ) {
@@ -637,6 +725,21 @@ if( !class_exists('affiliatepress_learndash') ){
             // Set some reference data.
             $order->id   = absint( $transaction_id );
             $order->post = $post; // WP Post Object.
+
+            /**set ailiate data  */
+            $getpostmeta = get_post_meta( $transaction_id, 'gateway_transaction',  true);
+            $affiliate_id = $affiliate_visitor_id = 0;
+            foreach($getpostmeta['event'] as $getpostmetaevents_key => $getpostmetaevents_val_arr)
+            {
+                if(is_array($getpostmetaevents_val_arr) && isset($getpostmetaevents_val_arr['metadata']) && !empty($getpostmetaevents_val_arr['metadata']))
+                {
+                    $affiliate_id = isset($getpostmetaevents_val_arr['metadata']['affiliatepress_ref_affiliate_id']) ? intval($getpostmetaevents_val_arr['metadata']['affiliatepress_ref_affiliate_id']) : 0;
+                    $affiliate_visitor_id = isset($getpostmetaevents_val_arr['metadata']['affiliatepress_ref_affiliate_visitor_id']) ? intval($getpostmetaevents_val_arr['metadata']['affiliatepress_ref_affiliate_visitor_id']) : 0;
+                }
+            }
+
+            $order->affiliatepress_ref_affiliate_id = $affiliate_id;
+            $order->affiliatepress_ref_affiliate_visitor_id = $affiliate_visitor_id;
     
             // Get all metadata related to the transaction. Observe that multiple values for each meta will be returned.
             $payment_data = get_post_meta( $transaction_id );

@@ -2175,6 +2175,8 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                         $response['register_fields'] = $affiliatepress_register_fields['affiliate_fields'];
                     }
                     $response = apply_filters('affiliatepress_modify_login_response', $response);  
+
+                    do_action('affiliatepress_after_login_affiliate_panel', $affiliatepress_affiliate_id );
 				}
 			}
 			echo wp_json_encode($response);

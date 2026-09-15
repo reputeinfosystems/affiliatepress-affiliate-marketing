@@ -433,6 +433,11 @@ if( !class_exists('affiliatepress_tracking') ){
                 }
             }
 
+            if($AffiliatePress->affiliatepress_pro_install()){
+                
+                $affiliatepress_commission_rules = apply_filters( 'affiliatepress_modify_commission_rules', $affiliatepress_commission_rules, $affiliatepress_amount, $affiliatepress_payment_currency, $affiliatepress_args); 
+            } 
+
             do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $affiliatepress_args['origin'].' Commission Recurring Default Rule', 'affiliatepress_'.$affiliatepress_args['origin'].'_commission_tracking', wp_json_encode($affiliatepress_commission_rules), $affiliatepress_commission_debug_log_id);
             return $affiliatepress_commission_rules;
         }

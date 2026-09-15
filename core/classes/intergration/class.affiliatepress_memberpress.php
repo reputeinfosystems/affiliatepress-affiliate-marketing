@@ -533,6 +533,8 @@ if( !class_exists('affiliatepress_memberpress') ){
                 'ap_commission_status'           => 2 
             );
 
+            $affiliatepress_commission_data  = apply_filters( 'affiliatepress_before_commission_insert',$affiliatepress_commission_data,$affiliatepress_transaction, $affiliatepress_commission_rules);
+
             $affiliatepress_ap_commission_id = $affiliatepress_tracking->affiliatepress_insert_commission( $affiliatepress_commission_data, $affiliatepress_affiliate_id, $affiliatepress_visit_id);
 
             if($affiliatepress_ap_commission_id == 0){

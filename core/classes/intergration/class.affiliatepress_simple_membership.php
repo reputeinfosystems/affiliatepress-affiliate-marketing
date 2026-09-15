@@ -445,6 +445,8 @@ if( !class_exists('affiliatepress_simple_membership') ){
                 'ap_commission_created_date'     => date('Y-m-d H:i:s', current_time('timestamp'))// phpcs:ignore
             );
 
+            $affiliatepress_commission_data  = apply_filters( 'affiliatepress_before_commission_insert',$affiliatepress_commission_data,$affiliatepress_payment_data, $affiliatepress_commission_rules);
+
             /* Insert The Commission */
             $affiliatepress_ap_commission_id = $affiliatepress_tracking->affiliatepress_insert_commission( $affiliatepress_commission_data, $affiliatepress_affiliate_id, $affiliatepress_visit_id);
             if($affiliatepress_ap_commission_id == 0){
@@ -454,6 +456,7 @@ if( !class_exists('affiliatepress_simple_membership') ){
  
                 $affiliatepress_commission_data['products_commission'] = $affiliatepress_allow_products_commission;
                 $affiliatepress_commission_data['commission_rules'] = $affiliatepress_commission_rules;
+                $affiliatepress_commission_data['commission_other_details'] = $affiliatepress_commisison_other_details;
                 do_action('affiliatepress_after_commission_created', $affiliatepress_ap_commission_id, $affiliatepress_commission_data);
                 $affiliatepress_debug_log_msg = sprintf( 'Pending commission #%s has been successfully inserted.', $affiliatepress_ap_commission_id );
  

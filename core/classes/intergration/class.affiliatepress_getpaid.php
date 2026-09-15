@@ -397,6 +397,8 @@ if( !class_exists('affiliatepress_getpaid') ){
 
             $affiliatepress_order_referal_amount = 0;
 
+            $affiliatepress_currency = isset($affiliatepress_invoice) ? sanitize_text_field($affiliatepress_invoice->get_currency()) : '';
+
             if($affiliatepress_tracking->affiliatepress_is_commission_basis_per_order()){
 
                 $affiliatepress_total_price = $affiliatepress_invoice_price;
@@ -411,7 +413,7 @@ if( !class_exists('affiliatepress_getpaid') ){
                     'customer_id'      => $affiliatepress_customer_id,
                     'commission_basis' => 'per_order',
                 );
-                $affiliatepress_commission_rules    = $affiliatepress_tracking->affiliatepress_calculate_commission_amount($affiliatepress_amount, '', $affiliatepress_args);
+                $affiliatepress_commission_rules    = $affiliatepress_tracking->affiliatepress_calculate_commission_amount($affiliatepress_amount, $affiliatepress_currency, $affiliatepress_args);
 
                 $affiliatepress_commission_amount = (isset($affiliatepress_commission_rules['commission_amount']))?floatval($affiliatepress_commission_rules['commission_amount']):0;
 
@@ -461,7 +463,7 @@ if( !class_exists('affiliatepress_getpaid') ){
                         'quntity'          => $affiliatepress_quantity, 
                     );
                     $affiliatepress_amount = $affiliatepress_amount*$affiliatepress_quantity;
-                    $affiliatepress_commission_rules = $affiliatepress_tracking->affiliatepress_calculate_commission_amount( $affiliatepress_amount, '', $affiliatepress_args );
+                    $affiliatepress_commission_rules = $affiliatepress_tracking->affiliatepress_calculate_commission_amount( $affiliatepress_amount, $affiliatepress_currency, $affiliatepress_args );
 
                     $affiliatepress_single_product_commission_amount = (isset($affiliatepress_commission_rules['commission_amount']))?floatval($affiliatepress_commission_rules['commission_amount']):0;
 
@@ -537,6 +539,8 @@ if( !class_exists('affiliatepress_getpaid') ){
                 'ap_commission_created_date'     => date('Y-m-d H:i:s', current_time('timestamp'))// phpcs:ignore
             );            
             
+            $affiliatepress_commission_data  = apply_filters( 'affiliatepress_before_commission_insert',$affiliatepress_commission_data,$affiliatepress_invoice, $affiliatepress_commission_rules);
+
             /* Insert The Commission */
             $affiliatepress_commission_id = $affiliatepress_tracking->affiliatepress_insert_commission($affiliatepress_commission_data, $affiliatepress_affiliate_id, $affiliatepress_visit_id);
             if($affiliatepress_commission_id == 0){

@@ -320,10 +320,12 @@ if( !class_exists('affiliatepress_wp_forms') ){
 
             $affiliatepress_tbl_wpforms_payments = $this->affiliatepress_tablename_prepare( $wpdb->prefix . 'wpforms_payments' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $wpdb->prefix . 'wpforms_payments' contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
 
-            $affiliatepress_payment = $wpdb->get_row($wpdb->prepare("SELECT id, status FROM {$affiliatepress_tbl_wpforms_payments} WHERE entry_id = %d",$affiliatepress_entry_id),ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_wpforms_payments is a table name. false alarm 
+            $affiliatepress_payment = $wpdb->get_row($wpdb->prepare("SELECT id, status, currency FROM {$affiliatepress_tbl_wpforms_payments} WHERE entry_id = %d",$affiliatepress_entry_id),ARRAY_A );// phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_wpforms_payments is a table name. false alarm 
 
             $affiliatepress_payment_id = $affiliatepress_payment['id'];
             $affiliatepress_payment_status = $affiliatepress_payment['status'];
+
+            $affiliatepress_currency = isset($affiliatepress_payment['currency']) ? sanitize_text_field($affiliatepress_payment['currency']) : '';
 
             if(!$affiliatepress_payment_id)
             {
@@ -424,7 +426,7 @@ if( !class_exists('affiliatepress_wp_forms') ){
                     'customer_id'  => $affiliatepress_customer_id,
                     'commission_basis' => 'per_order',
                 );
-                $affiliatepress_commission_rules    = $affiliatepress_tracking->affiliatepress_calculate_commission_amount(  $affiliatepress_amount, '', $affiliatepress_args );
+                $affiliatepress_commission_rules    = $affiliatepress_tracking->affiliatepress_calculate_commission_amount(  $affiliatepress_amount, $affiliatepress_currency, $affiliatepress_args );
 
                 $affiliatepress_commission_amount = (isset($affiliatepress_commission_rules['commission_amount']))?floatval($affiliatepress_commission_rules['commission_amount']):0;
 
@@ -478,7 +480,7 @@ if( !class_exists('affiliatepress_wp_forms') ){
                     'order_id'         => $affiliatepress_payment_id,
                 );
 
-                $affiliatepress_commission_rules = $affiliatepress_tracking->affiliatepress_calculate_commission_amount(  $affiliatepress_amount, '', $affiliatepress_args );
+                $affiliatepress_commission_rules = $affiliatepress_tracking->affiliatepress_calculate_commission_amount(  $affiliatepress_amount, $affiliatepress_currency, $affiliatepress_args );
 
                 $affiliatepress_commission_amount = (isset($affiliatepress_commission_rules['commission_amount']))?floatval($affiliatepress_commission_rules['commission_amount']):0;
 
@@ -550,6 +552,8 @@ if( !class_exists('affiliatepress_wp_forms') ){
                 'ap_commission_created_date'     => date('Y-m-d H:i:s', current_time('timestamp')) // phpcs:ignore
             );
 
+            $affiliatepress_commission_data  = apply_filters( 'affiliatepress_before_commission_insert',$affiliatepress_commission_data,$affiliatepress_fields, $affiliatepress_commission_rules);
+
             if($affiliatepress_payment_status == "completed")
             {
                 $affiliatepress_default_commission_status = $affiliatepress_tracking->affiliatepress_get_default_commission_status();
@@ -578,6 +582,7 @@ if( !class_exists('affiliatepress_wp_forms') ){
                         do_action('affiliatepress_after_commissions_status_change',$affiliatepress_ap_commission_id,1,2);
                     }
                     $affiliatepress_commission_data['commission_rules'] = $affiliatepress_commission_rules;
+                    $affiliatepress_commission_data['commission_other_details'] = $affiliatepress_commisison_other_details;
                     do_action('affiliatepress_after_commission_created', $affiliatepress_ap_commission_id, $affiliatepress_commission_data);
                     $affiliatepress_debug_log_msg = sprintf( 'commission #%s has been successfully inserted.', $affiliatepress_ap_commission_id );
     
@@ -596,6 +601,7 @@ if( !class_exists('affiliatepress_wp_forms') ){
                     
                     $affiliatepress_commission_data['products_commission'] = $affiliatepress_allow_products_commission;
                     $affiliatepress_commission_data['commission_rules'] = $affiliatepress_commission_rules;
+                    $affiliatepress_commission_data['commission_other_details'] = $affiliatepress_commisison_other_details;
                     do_action('affiliatepress_after_commission_created', $affiliatepress_ap_commission_id, $affiliatepress_commission_data);
                     $affiliatepress_debug_log_msg = sprintf( 'Pending commission #%s has been successfully inserted.', $affiliatepress_ap_commission_id );
     

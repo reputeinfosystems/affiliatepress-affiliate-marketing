@@ -370,6 +370,8 @@ if( !class_exists('affiliatepress_lifter_lms') ){
                 'ap_commission_created_date'     => date('Y-m-d H:i:s', current_time('timestamp'))// phpcs:ignore
             );
 
+            $affiliatepress_commission_data  = apply_filters( 'affiliatepress_before_commission_insert',$affiliatepress_commission_data,$affiliatepress_order, $affiliatepress_commission_rules);
+
              /* Insert The Commission */
              $affiliatepress_ap_commission_id = $affiliatepress_tracking->affiliatepress_insert_commission( $affiliatepress_commission_data, $affiliatepress_affiliate_id, $affiliatepress_visit_id);
              if($affiliatepress_ap_commission_id == 0){
