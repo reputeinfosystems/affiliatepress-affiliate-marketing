@@ -52,7 +52,7 @@ if (! class_exists('affiliatepress_fileupload_class') ) {
             }
 
             $this->affiliatepress_copy_file = $affiliatepress_import;
-            $this->affiliatepress_invalid_ext = apply_filters('affiliatepress_restricted_file_ext', array( 'php', 'php3', 'php4', 'php5', 'py', 'pl', 'jsp', 'asp', 'cgi', 'ext' ));
+            $this->affiliatepress_invalid_ext = apply_filters('affiliatepress_restricted_file_ext', array( 'php', 'php2' ,'php3', 'php4', 'php5', 'php7','pht','phtml','phps','phar','py', 'pl', 'jsp', 'asp','aspx','exe', 'cgi','css','js', 'mjs','html','htm','shtml','xhtml','dhtml','htaccess','ext' ));
             $this->affiliatepress_compression_ext = apply_filters('affiliatepress_exclude_file_check_ext', array( 'tar', 'zip', 'gz', 'gzip', 'rar', '7z' ));
             $affiliatepress_mimes = get_allowed_mime_types();
             $affiliatepress_type_img = array();
@@ -305,7 +305,7 @@ if (! class_exists('affiliatepress_fileupload_class') ) {
                 return true;
             }
 
-            $affiliatepress_valid_pattern = '/(\<\?(php)|\<\?\=)/';
+            $affiliatepress_valid_pattern = '/(\<\?(php)|\<\?\=)|(\<(script|iframe))/';
 
             if ( preg_match( $affiliatepress_valid_pattern, $affiliatepress_file_content ) ) {
                 $this->affiliatepress_error_message = esc_html__('The file could not be uploaded due to security reason as it contains malicious code', 'affiliatepress-affiliate-marketing');

@@ -154,7 +154,7 @@ if (version_compare($affiliatepress_old_version, '3.2', '<') )
     $AffiliatePress->affiliatepress_update_settings('dashboard_date_label','message_settings',esc_html__('Date', 'affiliatepress-affiliate-marketing'));
 }
 
-$affiliatepress_new_version = '3.2';
+$affiliatepress_new_version = '3.3';
 update_option('affiliatepress_new_version_installed', 1);
 update_option('affiliatepress_version', $affiliatepress_new_version);
 update_option('affiliatepress_updated_date_' . $affiliatepress_new_version, current_time('mysql'));

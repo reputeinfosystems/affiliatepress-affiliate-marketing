@@ -233,7 +233,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             global $AffiliatePress;
 
             $return_data = array(
-                'error'            => 0,
+                'error'            => 1,
                 'msg'              => '',
                 'upload_url'       => '',
                 'upload_file_name' => '',
@@ -243,6 +243,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             $response['variant'] = 'error';
             $response['title']   = esc_html__('Error', 'affiliatepress-affiliate-marketing');
             $response['msg']     = esc_html__('Something wrong...', 'affiliatepress-affiliate-marketing');
+            $response['error'] = 1;
             
             $affiliatepress_wpnonce = isset($_SERVER['HTTP_AP_WP_NONCE']) ? sanitize_text_field($_SERVER['HTTP_AP_WP_NONCE']) : '';//phpcs:ignore
             $affiliatepress_verify_nonce_flag = wp_verify_nonce($affiliatepress_wpnonce, 'affiliatepress_upload_edit_profile_image');
@@ -267,7 +268,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             $affiliatepress_fileupload_obj = new affiliatepress_fileupload_class( $_FILES['file'] ); //phpcs:ignore
             if (! $affiliatepress_fileupload_obj ) {
                 $return_data['error'] = 1;
-                $return_data['msg']   = $affiliatepress_fileupload_obj->error_message;
+                $return_data['msg']   = $affiliatepress_fileupload_obj->affiliatepress_error_message;
             }
             
             $affiliatepress_fileupload_obj->affiliatepress_check_nonce        = true;
@@ -289,7 +290,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 $affiliatepress_upload_file = $affiliatepress_fileupload_obj->affiliatepress_process_upload($affiliatepress_destination);
                 if ($affiliatepress_upload_file == false ) {
                     $return_data['error'] = 1;
-                    $return_data['msg']   = ! empty($affiliatepress_upload_file->error_message) ? $affiliatepress_upload_file->error_message : esc_html__('Something went wrong while updating the file', 'affiliatepress-affiliate-marketing');
+                    $return_data['msg']   = ! empty($affiliatepress_fileupload_obj->affiliatepress_error_message) ? $affiliatepress_fileupload_obj->affiliatepress_error_message : esc_html__('Something went wrong while updating the file', 'affiliatepress-affiliate-marketing');
                 } else {
                     $return_data['error']            = 0;
                     $return_data['msg']              = '';
@@ -2821,6 +2822,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                     }else{
                         ap_wpnonce_pre_fetch = ap_wpnonce_pre_fetch.value;
                     }
+                    vm.affiliate_user_file_upload_error = "";
                     var postData = { action:"affiliatepress_get_affiliate_edit_profile_data", _wpnonce:ap_wpnonce_pre_fetch };
                     axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify( postData ) )
                     .then( function(response){                         
@@ -2923,7 +2925,8 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                             axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify( postdata ) )
                             .then(function(response){                                 
                                 vm.affiliate_edit_profile_loader = "0";
-                                vm.get_edit_profile_data();                                                           
+                                vm.get_edit_profile_data();        
+                                vm.affiliate_file_upload_error = {};                                                   
                                 vm.$notify({
                                     title: response.data.title,
                                     message: response.data.msg,
@@ -3897,13 +3900,16 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 affiliatepress_upload_edit_profile_image_func(response, file, fileList){
                     const vm = this;
                     vm.$refs.avatarRef.clearFiles();
-                    if(response != ""){
+                    if(response != "" && response.error == 0){   
                         vm.affiliates_profile_fields.avatar_url = response.upload_url;
                         vm.affiliates_profile_fields.avatar_name = response.upload_file_name;
                         vm.affiliates_profile_fields.ap_edit_profile_image_url = response.upload_file_name;
                         vm.userAvatar = response.upload_url;
                         vm.default_userAvatar_show = "false";
-                    }
+                        vm.affiliate_user_file_upload_error = "";
+                    }else{
+                        vm.affiliate_user_file_upload_error = response.msg;
+                    }   
                 },   
                 affiliatepress_image_upload_limit(files, fileList){
                     const vm = this;
@@ -4319,6 +4325,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
 
             /* Affiliate Edit Profile Fields */
             $affiliatepress_dynamic_data_fields['affiliatepress_upload_edit_profile_image'] = '';
+            $affiliatepress_dynamic_data_fields['affiliate_user_file_upload_error'] = '';
             $affiliatepress_dynamic_data_fields['affiliates_profile_fields'] = array(
                 'username'                     => "",
                 'firstname'                    => "",

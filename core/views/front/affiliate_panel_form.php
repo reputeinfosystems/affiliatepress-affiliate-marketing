@@ -1572,6 +1572,7 @@
                                                     :on-exceed="affiliatepress_image_upload_limit"
                                                     :on-remove="affiliatepress_remove_affiliate_avatar"
                                                     :on-preview="affiliatepress_edit_profile_preview"
+                                                    accept=".jpg,.jpeg,.png,.webp"
                                                     :before-upload="checkUploadedFile">
                                                     <label>
                                                         <span class="ap-btn--primary is-plain">{{affiliate_panel_labels.change_button}}</span>                              
@@ -1582,6 +1583,7 @@
                                                 </el-button>
                                             </div>
                                         </div>
+                                        <div class="el-form-item__error ap-file-upload-error" v-if="affiliate_user_file_upload_error != ''">{{affiliate_user_file_upload_error}}</div>
                                     </div>       
                                     <div class="ap-edit-profile-frm">                               
                                         <el-form @submit.native.prevent ref="affiliates_profile_form_data" :rules="rules" require-asterisk-position="right" :model="affiliates_profile_fields" label-position="top">

@@ -282,7 +282,7 @@
 
             </el-container>          
         </el-row>
-        <el-drawer :direction="drawer_direction" modal-class="ap-add__drawer-main" :withHeader="false" @close="resetModal('affiliates_form_data')" v-model="open_modal">    
+        <el-drawer :direction="drawer_direction" modal-class="ap-add__drawer-main" :withHeader="false" @closed="resetModal('affiliates_form_data')" v-model="open_modal">    
             <div v-if="open_edit_modal == false" class="ap-add__drawer">
                 <div class="ap-dlt__header">
                     <div class="ap-dlt__heading"><?php esc_html_e('Generate Payout', 'affiliatepress-affiliate-marketing'); ?></div>            
@@ -566,7 +566,7 @@
                     </div>
                 </div>            
             </div>     
-            <el-drawer :direction="drawer_direction" modal-class="ap-add__drawer-main ap-add__drawer-msg" :withHeader="false" @close="closePaymentModal('payout_message_frm')" v-model="open_payment_message_modal">  
+            <el-drawer :direction="drawer_direction" modal-class="ap-add__drawer-main ap-add__drawer-msg" :withHeader="false" @closed="closePaymentModal('payout_message_frm')" v-model="open_payment_message_modal">  
                 <div  class="ap-add__drawer">
                     <div class="ap-dlt__header">
                         <div class="ap-dlt__heading"><?php esc_html_e('Add Note', 'affiliatepress-affiliate-marketing'); ?></div>            

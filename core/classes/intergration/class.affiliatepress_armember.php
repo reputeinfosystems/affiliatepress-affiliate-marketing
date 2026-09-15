@@ -150,7 +150,7 @@ if( !class_exists('affiliatepress_armember') ){
                 if($affiliatepress_plan_ids){
                     foreach ($affiliatepress_plan_ids as $affiliatepress_plan_id) {
 
-                        $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT arm_subscription_plan_name FROM {$affiliatepress_tbl_arm_subscription_plans} WHERE arm_subscription_plan_id =  %d",$affiliatepress_plan_id),ARRAY_A );// phpcs:ignore  WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arm_subscription_plans is a table name. false alarm 
+                        $affiliatepress_results = $wpdb->get_results($wpdb->prepare("SELECT arm_subscription_plan_name FROM {$affiliatepress_tbl_arm_subscription_plans} WHERE arm_subscription_plan_id =  %d AND arm_subscription_plan_status = %d",$affiliatepress_plan_id,1),ARRAY_A );// phpcs:ignore  WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_arm_subscription_plans is a table name. false alarm 
 
                         $affiliatepress_plan_name = !empty($affiliatepress_results) ? $affiliatepress_results[0]['arm_subscription_plan_name'] : '';
 

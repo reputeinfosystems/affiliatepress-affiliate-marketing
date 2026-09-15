@@ -426,14 +426,14 @@
             </el-container>                   
         </el-row>
 
-        <el-drawer modal-class="ap-add__drawer-main" :direction="drawer_direction" :withHeader="false" @close="resetModal('commission_form_data')" v-model="open_modal">    
+        <el-drawer modal-class="ap-add__drawer-main" :direction="drawer_direction" :withHeader="false" @closed="resetModal('commission_form_data')" v-model="open_modal">    
             <div class="ap-add__drawer">
                 <div class="ap-dlt__header" v-if="commission_details_show">
                     <div class="ap-dlt__heading"><?php esc_html_e('View Details ', 'affiliatepress-affiliate-marketing'); ?></div>
                 </div>
                 <div class="ap-dlt__header" v-else>
-                    <div class="ap-dlt__heading" v-if="commissions.ap_commission_id == ''"><?php esc_html_e('Add Commission', 'affiliatepress-affiliate-marketing'); ?></div>
-                    <div class="ap-dlt__heading" v-else><?php esc_html_e('Edit Commission', 'affiliatepress-affiliate-marketing'); ?></div>
+                    <div class="ap-dlt__heading" v-if="commissions.ap_commission_id == '' && edit_commission_loader == '0'"><?php esc_html_e('Add Commission', 'affiliatepress-affiliate-marketing'); ?></div>
+                    <div class="ap-dlt__heading" v-if="commissions.ap_commission_id != '' || edit_commission_loader == '1'"><?php esc_html_e('Edit Commission', 'affiliatepress-affiliate-marketing'); ?></div> 
                 </div>
                 <div v-if="commission_details_show" id="ap-drawer-body" class="ap-dlt__body ap-from-drawer-details">
                     <div class="ap-back-loader-container" id="ap-page-loading-loader" v-if="is_display_commisison_details_loader == 1">
@@ -503,123 +503,128 @@
                 </div>
                 <div v-else id="ap-drawer-body" class="ap-dlt__body">
                     <div class="ap-dlt__form_body">
-                        <div class="ap-dlt__form_title"><?php esc_html_e('Commission Details', 'affiliatepress-affiliate-marketing'); ?></div>
-                        <el-form ref="commission_form_data" :rules="rules" require-asterisk-position="right" :model="commissions" label-position="top">
+                        <div class="ap-back-loader-container" v-if="edit_commission_loader == '1'" id="ap-page-loading-loader">
+                            <div class="ap-back-loader"></div>
+                        </div>
+                        <div v-if="edit_commission_loader == '0'">
+                            <div class="ap-dlt__form_title"><?php esc_html_e('Commission Details', 'affiliatepress-affiliate-marketing'); ?></div>
+                            <el-form ref="commission_form_data" :rules="rules" require-asterisk-position="right" :model="commissions" label-position="top">
 
-                            <div v-if="commissions.ap_commission_id == ''" class="ap-single-field__form">                    
-                                <el-form-item class="ap-combine-field" prop="ap_affiliates_id">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>
-                                    <el-select ref="selectAffUserRef" size="large" class="ap-form-control ap-remove-fields-close" v-model="commissions.ap_affiliates_id" filterable placeholder="<?php esc_html_e( 'Start typing to fetch user.', 'affiliatepress-affiliate-marketing'); ?>" @change="affiliatepress_get_existing_affiliate_details($event)" remote reserve-keyword	 :remote-method="get_affiliate_users" :loading="affiliatepress_user_loading" clearable>                                                               
-                                        <el-option-group v-for="wp_user_list_cat in AffiliateUsersList" :key="wp_user_list_cat.category" :label="wp_user_list_cat.category">
-                                            <el-option v-for="item in wp_user_list_cat.wp_user_data" :key="item.value" :label="item.label" :value="item.value" ></el-option>                                    
-                                        </el-option-group>
-                                    </el-select>
-                                </el-form-item>                     
-                            </div>
-                            <div v-else class="ap-single-field__form">
-                                <el-form-item class="ap-combine-field ap-combine-field-disable" prop="affiliate_user_name">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>
-                                    <el-input class="ap-form-control" type="text" :disabled="true" v-model="commissions.affiliate_user_name" size="large" placeholder="<?php esc_html_e('Affiliate Name', 'affiliatepress-affiliate-marketing'); ?>" />
-                                </el-form-item>                     
-                            </div>
-                            <div class="ap-single-field__form">
-                                <el-form-item class="ap-combine-field" prop="ap_commission_amount">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('Amount', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>                
-                                    <el-input class="ap-form-control"  type="text"  v-model="commissions.ap_commission_amount"  size="large"  :placeholder="`${current_currency_symbol} ${amount_placeholder}`"
-                                    :formatter="(value) => {
-                                        if (!value && value !== 0) return '';
-                                            return `${current_currency_symbol} ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-                                        }"
-                                        :parser="(value) => { let parsed = value.replace(/[^0-9.]/g, ''); const parts = parsed.split('.'); if (parts.length > 2) { parsed = parts[0] + '.' + parts[1]; } return parsed; }"/>
-                                </el-form-item>                     
-                            </div>
-                            <div v-if="commissions.ap_commission_id == ''" class="ap-single-field__form">
-                                <el-form-item :class="(commissions.ap_commission_id == '')?'':'ap-combine-field-disable'" class="ap-combine-field" prop="ap_commission_reference_id">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('Order ID', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>                
-                                    <el-input :disabled="(commissions.ap_commission_id == '')?false:true" class="ap-form-control" type="text" v-model="commissions.ap_commission_reference_id" size="large" placeholder="<?php esc_html_e('Enter Order ID', 'affiliatepress-affiliate-marketing'); ?>"></el-input>
-                                </el-form-item>                     
-                            </div>
-                            <div class="ap-single-field__form">
-                                <el-form-item :class="(commissions.ap_commission_id == '')?'':'ap-combine-field-disable'" class="ap-combine-field" prop="ap_commission_order_amount">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('Order Amount', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>                
-                                    <el-input :disabled="(commissions.ap_commission_id == '') ? false : true"  class="ap-form-control"  type="text"  v-model="commissions.ap_commission_reference_amount"  size="large"  :placeholder="`${current_currency_symbol} ${ref_amount_placeholder}`"
-                                    :formatter="(value) => {
-                                        if (!value && value !== 0) return '';
-                                            return `${current_currency_symbol} ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-                                        }"
-                                        :parser="(value) => { let parsed = value.replace(/[^0-9.]/g, ''); const parts = parsed.split('.'); if (parts.length > 2) { parsed = parts[0] + '.' + parts[1]; } return parsed; }"/>
-                                </el-form-item>                     
-                            </div>                    
-                            <div class="ap-single-field__form">
-                                <el-form-item :class="(commissions.ap_commission_id == '')?'':'ap-combine-field-disable'" class="ap-combine-field" prop="ap_commission_source">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('Source', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>
-                                    <el-select :disabled="(commissions.ap_commission_id == '')?false:true" class="ap-form-control" @change="affiliatepress_change_source()" v-model="commissions.ap_commission_source" placeholder="<?php esc_html_e( 'Select Source', 'affiliatepress-affiliate-marketing'); ?>" size="large" filterable>
-                                        <el-option v-for="item in all_plugin_integration" :key="item.plugin_value" :label="item.plugin_name" :value="item.plugin_value"/>
-                                    </el-select>                            
-                                </el-form-item>                     
-                            </div>
-                            <div v-if="commissions.ap_commission_id == ''" class="ap-single-field__form">
-                                <el-form-item :class="(commissions.ap_commission_id == '')?'':'ap-combine-field-disable'" class="ap-combine-field" prop="ap_commission_product_ids">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('Reference Product/Plan', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>                                            
-                                    <el-select ref="selectRef" :disabled="(commissions.ap_commission_id == '')?false:true" size="large" class="ap-form-control" v-model="commissions.ap_commission_product_ids" @change="affiliatepress_select_products($event)" filterable placeholder="<?php esc_html_e( 'Type to fetch users', 'affiliatepress-affiliate-marketing'); ?>" remote reserve-keyword :remote-method="get_affiliate_source_product" :loading="affiliatepress_user_loading">                                                               
-                                        <el-option-group v-for="wp_user_list_cat in SourceProductsList" :key="wp_user_list_cat.category" :label="wp_user_list_cat.category">
-                                            <el-option v-for="item in wp_user_list_cat.product_data" :key="item.value" :label="item.label" :value="item.value" ></el-option>                                    
-                                        </el-option-group>
-                                    </el-select>                            
-                                </el-form-item>                     
-                            </div>
-                            <div class="ap-single-field__form">
-                                <el-form-item class="ap-combine-field" prop="ap_commission_reference_detail">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('Reference Detail', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>                
-                                    <el-input class="ap-form-control" maxlength="600" type="textarea" :rows="4" v-model="commissions.ap_commission_reference_detail" size="large" placeholder="<?php esc_html_e('Enter reference details', 'affiliatepress-affiliate-marketing'); ?>" />
-                                </el-form-item>                     
-                            </div>
-                            <div class="ap-single-field__form">
-                                <el-form-item :class="(commissions.ap_commission_id == '')?'':'ap-combine-field-disable'" class="ap-combine-field" prop="ap_commission_created_date">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('Date', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>
-                                    <el-date-picker :disabled="(commissions.ap_commission_id == '')?false:true" v-model="commissions.ap_commission_created_date" class="ap-form-date-picker-control" size="large" value-format="YYYY-MM-DD" :format="ap_common_date_format" placeholder="<?php esc_html_e('Select Date', 'affiliatepress-affiliate-marketing'); ?>"></el-date-picker>
-                                </el-form-item>                     
-                            </div>
-                            
-                            <div class="ap-single-field__form">
-                                <el-form-item class="ap-combine-field" prop="ap_commission_status">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('Status', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>                
-                                    <el-select class="ap-form-control" v-model="commissions.ap_commission_status" placeholder="Select" size="large">
-                                        <el-option v-for="item in all_filter_commissions_status" :key="item.value" :label="item.text" :value="item.value"/>
-                                    </el-select>
-                                </el-form-item>                     
-                            </div> 
+                                <div v-if="commissions.ap_commission_id == ''" class="ap-single-field__form">                    
+                                    <el-form-item class="ap-combine-field" prop="ap_affiliates_id">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>
+                                        <el-select ref="selectAffUserRef" size="large" class="ap-form-control ap-remove-fields-close" v-model="commissions.ap_affiliates_id" filterable placeholder="<?php esc_html_e( 'Start typing to fetch user.', 'affiliatepress-affiliate-marketing'); ?>" @change="affiliatepress_get_existing_affiliate_details($event)" remote reserve-keyword	 :remote-method="get_affiliate_users" :loading="affiliatepress_user_loading" clearable>                                                               
+                                            <el-option-group v-for="wp_user_list_cat in AffiliateUsersList" :key="wp_user_list_cat.category" :label="wp_user_list_cat.category">
+                                                <el-option v-for="item in wp_user_list_cat.wp_user_data" :key="item.value" :label="item.label" :value="item.value" ></el-option>                                    
+                                            </el-option-group>
+                                        </el-select>
+                                    </el-form-item>                     
+                                </div>
+                                <div v-else class="ap-single-field__form">
+                                    <el-form-item class="ap-combine-field ap-combine-field-disable" prop="affiliate_user_name">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('Affiliate User', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>
+                                        <el-input class="ap-form-control" type="text" :disabled="true" v-model="commissions.affiliate_user_name" size="large" placeholder="<?php esc_html_e('Affiliate Name', 'affiliatepress-affiliate-marketing'); ?>" />
+                                    </el-form-item>                     
+                                </div>
+                                <div class="ap-single-field__form">
+                                    <el-form-item class="ap-combine-field" prop="ap_commission_amount">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('Amount', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>                
+                                        <el-input class="ap-form-control"  type="text"  v-model="commissions.ap_commission_amount"  size="large"  :placeholder="`${current_currency_symbol} ${amount_placeholder}`"
+                                        :formatter="(value) => {
+                                            if (!value && value !== 0) return '';
+                                                return `${current_currency_symbol} ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                                            }"
+                                            :parser="(value) => { let parsed = value.replace(/[^0-9.]/g, ''); const parts = parsed.split('.'); if (parts.length > 2) { parsed = parts[0] + '.' + parts[1]; } return parsed; }"/>
+                                    </el-form-item>                     
+                                </div>
+                                <div v-if="commissions.ap_commission_id == ''" class="ap-single-field__form">
+                                    <el-form-item :class="(commissions.ap_commission_id == '')?'':'ap-combine-field-disable'" class="ap-combine-field" prop="ap_commission_reference_id">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('Order ID', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>                
+                                        <el-input :disabled="(commissions.ap_commission_id == '')?false:true" class="ap-form-control" type="text" v-model="commissions.ap_commission_reference_id" size="large" placeholder="<?php esc_html_e('Enter Order ID', 'affiliatepress-affiliate-marketing'); ?>"></el-input>
+                                    </el-form-item>                     
+                                </div>
+                                <div class="ap-single-field__form">
+                                    <el-form-item :class="(commissions.ap_commission_id == '')?'':'ap-combine-field-disable'" class="ap-combine-field" prop="ap_commission_order_amount">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('Order Amount', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>                
+                                        <el-input :disabled="(commissions.ap_commission_id == '') ? false : true"  class="ap-form-control"  type="text"  v-model="commissions.ap_commission_reference_amount"  size="large"  :placeholder="`${current_currency_symbol} ${ref_amount_placeholder}`"
+                                        :formatter="(value) => {
+                                            if (!value && value !== 0) return '';
+                                                return `${current_currency_symbol} ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                                            }"
+                                            :parser="(value) => { let parsed = value.replace(/[^0-9.]/g, ''); const parts = parsed.split('.'); if (parts.length > 2) { parsed = parts[0] + '.' + parts[1]; } return parsed; }"/>
+                                    </el-form-item>                     
+                                </div>                    
+                                <div class="ap-single-field__form">
+                                    <el-form-item :class="(commissions.ap_commission_id == '')?'':'ap-combine-field-disable'" class="ap-combine-field" prop="ap_commission_source">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('Source', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>
+                                        <el-select :disabled="(commissions.ap_commission_id == '')?false:true" class="ap-form-control" @change="affiliatepress_change_source()" v-model="commissions.ap_commission_source" placeholder="<?php esc_html_e( 'Select Source', 'affiliatepress-affiliate-marketing'); ?>" size="large" filterable>
+                                            <el-option v-for="item in all_plugin_integration" :key="item.plugin_value" :label="item.plugin_name" :value="item.plugin_value"/>
+                                        </el-select>                            
+                                    </el-form-item>                     
+                                </div>
+                                <div v-if="commissions.ap_commission_id == ''" class="ap-single-field__form">
+                                    <el-form-item :class="(commissions.ap_commission_id == '')?'':'ap-combine-field-disable'" class="ap-combine-field" prop="ap_commission_product_ids">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('Reference Product/Plan', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>                                            
+                                        <el-select ref="selectRef" :disabled="(commissions.ap_commission_id == '')?false:true" size="large" class="ap-form-control" v-model="commissions.ap_commission_product_ids" @change="affiliatepress_select_products($event)" filterable placeholder="<?php esc_html_e( 'Type to fetch users', 'affiliatepress-affiliate-marketing'); ?>" remote reserve-keyword :remote-method="get_affiliate_source_product" :loading="affiliatepress_user_loading">                                                               
+                                            <el-option-group v-for="wp_user_list_cat in SourceProductsList" :key="wp_user_list_cat.category" :label="wp_user_list_cat.category">
+                                                <el-option v-for="item in wp_user_list_cat.product_data" :key="item.value" :label="item.label" :value="item.value" ></el-option>                                    
+                                            </el-option-group>
+                                        </el-select>                            
+                                    </el-form-item>                     
+                                </div>
+                                <div class="ap-single-field__form">
+                                    <el-form-item class="ap-combine-field" prop="ap_commission_reference_detail">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('Reference Detail', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>                
+                                        <el-input class="ap-form-control" maxlength="600" type="textarea" :rows="4" v-model="commissions.ap_commission_reference_detail" size="large" placeholder="<?php esc_html_e('Enter reference details', 'affiliatepress-affiliate-marketing'); ?>" />
+                                    </el-form-item>                     
+                                </div>
+                                <div class="ap-single-field__form">
+                                    <el-form-item :class="(commissions.ap_commission_id == '')?'':'ap-combine-field-disable'" class="ap-combine-field" prop="ap_commission_created_date">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('Date', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>
+                                        <el-date-picker :disabled="(commissions.ap_commission_id == '')?false:true" v-model="commissions.ap_commission_created_date" class="ap-form-date-picker-control" size="large" value-format="YYYY-MM-DD" :format="ap_common_date_format" placeholder="<?php esc_html_e('Select Date', 'affiliatepress-affiliate-marketing'); ?>"></el-date-picker>
+                                    </el-form-item>                     
+                                </div>
+                                
+                                <div class="ap-single-field__form">
+                                    <el-form-item class="ap-combine-field" prop="ap_commission_status">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('Status', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>                
+                                        <el-select class="ap-form-control" v-model="commissions.ap_commission_status" placeholder="Select" size="large">
+                                            <el-option v-for="item in all_filter_commissions_status" :key="item.value" :label="item.text" :value="item.value"/>
+                                        </el-select>
+                                    </el-form-item>                     
+                                </div> 
 
-                            <div class="ap-single-field__form">
-                                <el-form-item class="ap-combine-field" prop="ap_commission_reference_detail">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('Note', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>                
-                                    <el-input class="ap-form-control" maxlength="600" type="textarea" :rows="4" v-model="commissions.ap_commission_note" size="large" placeholder="<?php esc_html_e('Add Commission Note Here', 'affiliatepress-affiliate-marketing'); ?>" />
-                                </el-form-item>                     
-                            </div>                      
-                            
-                        </el-form>
+                                <div class="ap-single-field__form">
+                                    <el-form-item class="ap-combine-field" prop="ap_commission_reference_detail">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('Note', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>                
+                                        <el-input class="ap-form-control" maxlength="600" type="textarea" :rows="4" v-model="commissions.ap_commission_note" size="large" placeholder="<?php esc_html_e('Add Commission Note Here', 'affiliatepress-affiliate-marketing'); ?>" />
+                                    </el-form-item>                     
+                                </div>                      
+                                
+                            </el-form>
+                        </div>
                     </div>
                 </div>
                 <div class="ap-dlt__footer">

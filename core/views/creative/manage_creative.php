@@ -260,106 +260,113 @@
 
             </el-container>                    
         </el-row>
-        <el-drawer modal-class="ap-add__drawer-main" :direction="drawer_direction" :withHeader="false" @close="resetModal('creatives_form_data')" v-model="open_modal">    
+        <el-drawer modal-class="ap-add__drawer-main" :direction="drawer_direction" :withHeader="false" @closed="resetModal('creatives_form_data')" v-model="open_modal">    
             <div class="ap-add__drawer">
                 <div class="ap-dlt__header">
-                    <div class="ap-dlt__heading" v-if="creatives.ap_creative_id == ''"><?php esc_html_e('Add Creative', 'affiliatepress-affiliate-marketing'); ?></div>
-                    <div class="ap-dlt__heading" v-else><?php esc_html_e('Edit Creative', 'affiliatepress-affiliate-marketing'); ?></div>
+                    <div class="ap-dlt__heading" v-if="creatives.ap_creative_id == '' && edit_creative_loader == '0'"><?php esc_html_e('Add Creative', 'affiliatepress-affiliate-marketing'); ?></div>
+                    <div class="ap-dlt__heading" v-if="creatives.ap_creative_id != '' || edit_creative_loader == '1'"><?php esc_html_e('Edit Creative', 'affiliatepress-affiliate-marketing'); ?></div>
                 </div>
                 <div id="ap-drawer-body" class="ap-dlt__body">
                     <div class="ap-dlt__form_body">
-                        <div class="ap-dlt__form_title"><?php esc_html_e('Creative Details', 'affiliatepress-affiliate-marketing'); ?></div>
-                        <el-form ref="creatives_form_data" :rules="rules" require-asterisk-position="right" :model="creatives" label-position="top">
-                            <div class="ap-single-field__form">
-                                <el-form-item class="ap-combine-field" prop="ap_creative_name">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('Name', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>                
-                                    <el-input class="ap-form-control" maxlength="250" type="text" v-model="creatives.ap_creative_name" size="large" placeholder="<?php esc_html_e('Enter Creative Name', 'affiliatepress-affiliate-marketing'); ?>" />
-                                </el-form-item>                     
-                            </div>
-                            <div class="ap-single-field__form">
-                                <el-form-item class="ap-combine-field" prop="ap_creative_description">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('Description', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>                
-                                    <el-input class="ap-form-control" maxlength="600" type="textarea" :rows="4" v-model="creatives.ap_creative_description" size="large" placeholder="<?php esc_html_e('Enter description', 'affiliatepress-affiliate-marketing'); ?>" />
-                                </el-form-item>                     
-                            </div>
-                            <div class="ap-single-field__form">
-                                <el-form-item class="ap-combine-field" prop="ap_creative_type">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('Creative Type', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>
-                                    <el-select class="ap-form-control" v-model="creatives.ap_creative_type" placeholder="Select" size="large">
-                                        <el-option label="<?php esc_html_e('Text Link', 'affiliatepress-affiliate-marketing'); ?>" value="text_link"/></el-option>
-                                        <el-option label="<?php esc_html_e('Image', 'affiliatepress-affiliate-marketing'); ?>" value="image"/></el-option>
-                                    </el-select>                        
-                                </el-form-item>                     
-                            </div>                 
-                            <div v-if="creatives.ap_creative_type == 'image'" class="ap-single-field__form">
-                                <el-form-item  class="ap-combine-field-upload" prop="ap_creative_image_url">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('Creative Image', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>                
-                                    <el-upload class="ap-simple-upload-form-control ap-combine-field-upload" ref="avatarRef" multiple="false" limit="1" action="<?php echo wp_nonce_url(admin_url('admin-ajax.php') . '?action=affiliatepress_upload_creative_image', 'affiliatepress_upload_creative_image'); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped --Reason - esc_html is already used by wp_nonce_url function and it's false positive ?>" 
-                                    :file-list="creatives.image_list"
-                                    :on-success="affiliatepress_upload_creative_image_func"
-                                    :on-exceed="affiliatepress_replace_image"
-                                    :on-remove="affiliatepress_remove_affiliate_avatar"
-                                    :before-upload="checkUploadedFile">
-                                        <label class="ap-simple--file-upload">
-                                            <span class="ap-fu__placeholder"><span class="ap-fu__icon"><?php do_action('affiliatepress_common_svg_code','file-upload-icon'); ?></span><span class="ap-fu__text"><?php esc_html_e('Browse file to upload', 'affiliatepress-affiliate-marketing'); ?></span></span>                                    
-                                        </label> 
-                                    </el-upload> 
-                                </el-form-item>                     
-                            </div>
-                            <div  v-if="creatives.ap_creative_type == 'image'" class="ap-single-field__form">
-                                <el-form-item class="ap-combine-field" prop="ap_creative_alt_text">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('Alternative Text', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>                
-                                    <el-input class="ap-form-control" maxlength="250" type="text" v-model="creatives.ap_creative_alt_text" size="large" placeholder="<?php esc_html_e('Enter Alternative Text', 'affiliatepress-affiliate-marketing'); ?>" />
-                                </el-form-item>                     
-                            </div>
-                            <div v-if="creatives.ap_creative_type == 'text_link'" class="ap-single-field__form">
-                                <el-form-item class="ap-combine-field" prop="ap_creative_text">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('Text', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>                
-                                    <el-input class="ap-form-control" type="text" maxlength="254" v-model="creatives.ap_creative_text" size="large" placeholder="<?php esc_html_e('Enter Text', 'affiliatepress-affiliate-marketing'); ?>" />
-                                </el-form-item>                     
-                            </div>                
-                            <div class="ap-single-field__form">
-                                <el-form-item class="ap-combine-field" prop="ap_creative_landing_url">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('Landing URL', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>                
-                                    <el-input class="ap-form-control" type="text" maxlength="300" v-model="creatives.ap_creative_landing_url" size="large" placeholder="<?php esc_html_e('Enter Website Link', 'affiliatepress-affiliate-marketing'); ?>" />
-                                </el-form-item>                     
-                            </div>
-                            <div class="ap-single-field__form">
-                                <el-form-item class="ap-combine-field" prop="ap_creative_status">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('Status', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>                
-                                    <el-select class="ap-form-control" v-model="creatives.ap_creative_status" placeholder="Select" size="large">
-                                        <el-option v-for="item in all_creatives_status" :key="item.value" :label="item.text" :value="item.value"/>
-                                    </el-select>
-                                </el-form-item>                     
-                            </div>                    
-                            <div v-if="creatives.ap_creative_id != ''" class="ap-top-border-seperator"></div>
-                            <div v-if="creatives.ap_creative_id != ''" class="ap-single-field__form">
-                                <span class="ap-form-label"><?php esc_html_e('Creative Shortcode', 'affiliatepress-affiliate-marketing'); ?></span>
-                                <div class="ap-front-copy-field">                                    
-                                    <el-button @click="copy_affiliate_data(creatives.creative_shortcode)" class="ap-btn--primary ap-copy-button" type="primary">
-                                        <span class="ap-btn__icon"><?php do_action('affiliatepress_common_affiliate_panel_svg_code','copy_icon'); ?></span>                                
-                                    </el-button>                                    
-                                    <el-input readonly="true" class="ap-form-control" type="text" v-model="creatives.creative_shortcode" size="large" />
-                                </div>                        
-                            </div>
+                        <div class="ap-back-loader-container" v-if="edit_creative_loader == '1'" id="ap-page-loading-loader">
+                            <div class="ap-back-loader"></div>
+                        </div>
+                        <div v-if="edit_creative_loader == '0'">
+                            <div class="ap-dlt__form_title"><?php esc_html_e('Creative Details', 'affiliatepress-affiliate-marketing'); ?></div>
+                            <el-form ref="creatives_form_data" :rules="rules" require-asterisk-position="right" :model="creatives" label-position="top">
+                                <div class="ap-single-field__form">
+                                    <el-form-item class="ap-combine-field" prop="ap_creative_name">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('Name', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>                
+                                        <el-input class="ap-form-control" maxlength="250" type="text" v-model="creatives.ap_creative_name" size="large" placeholder="<?php esc_html_e('Enter Creative Name', 'affiliatepress-affiliate-marketing'); ?>" />
+                                    </el-form-item>                     
+                                </div>
+                                <div class="ap-single-field__form">
+                                    <el-form-item class="ap-combine-field" prop="ap_creative_description">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('Description', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>                
+                                        <el-input class="ap-form-control" maxlength="600" type="textarea" :rows="4" v-model="creatives.ap_creative_description" size="large" placeholder="<?php esc_html_e('Enter description', 'affiliatepress-affiliate-marketing'); ?>" />
+                                    </el-form-item>                     
+                                </div>
+                                <div class="ap-single-field__form">
+                                    <el-form-item class="ap-combine-field" prop="ap_creative_type">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('Creative Type', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>
+                                        <el-select class="ap-form-control" v-model="creatives.ap_creative_type" placeholder="Select" size="large">
+                                            <el-option label="<?php esc_html_e('Text Link', 'affiliatepress-affiliate-marketing'); ?>" value="text_link"/></el-option>
+                                            <el-option label="<?php esc_html_e('Image', 'affiliatepress-affiliate-marketing'); ?>" value="image"/></el-option>
+                                        </el-select>                        
+                                    </el-form-item>                     
+                                </div>                 
+                                <div v-if="creatives.ap_creative_type == 'image'" class="ap-single-field__form">
+                                    <el-form-item  class="ap-combine-field-upload" prop="ap_creative_image_url">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('Creative Image', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>                
+                                        <el-upload class="ap-simple-upload-form-control ap-combine-field-upload" ref="avatarRef" multiple="false" limit="1" action="<?php echo wp_nonce_url(admin_url('admin-ajax.php') . '?action=affiliatepress_upload_creative_image', 'affiliatepress_upload_creative_image'); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped --Reason - esc_html is already used by wp_nonce_url function and it's false positive ?>" 
+                                        :file-list="creatives.image_list"
+                                        :on-success="affiliatepress_upload_creative_image_func"
+                                        :on-exceed="affiliatepress_replace_image"
+                                        :on-remove="affiliatepress_remove_affiliate_avatar"
+                                        accept=".jpg,.jpeg,.png,.webp"
+                                        :before-upload="checkUploadedFile">
+                                            <label class="ap-simple--file-upload">
+                                                <span class="ap-fu__placeholder"><span class="ap-fu__icon"><?php do_action('affiliatepress_common_svg_code','file-upload-icon'); ?></span><span class="ap-fu__text"><?php esc_html_e('Browse file to upload', 'affiliatepress-affiliate-marketing'); ?></span></span>                                    
+                                            </label> 
+                                        </el-upload> 
+                                        <div class="el-form-item__error ap-file-upload-error" v-if="creative_file_upload_error != ''">{{creative_file_upload_error}}</div>
+                                    </el-form-item>                     
+                                </div>
+                                <div  v-if="creatives.ap_creative_type == 'image'" class="ap-single-field__form">
+                                    <el-form-item class="ap-combine-field" prop="ap_creative_alt_text">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('Alternative Text', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>                
+                                        <el-input class="ap-form-control" maxlength="250" type="text" v-model="creatives.ap_creative_alt_text" size="large" placeholder="<?php esc_html_e('Enter Alternative Text', 'affiliatepress-affiliate-marketing'); ?>" />
+                                    </el-form-item>                     
+                                </div>
+                                <div v-if="creatives.ap_creative_type == 'text_link'" class="ap-single-field__form">
+                                    <el-form-item class="ap-combine-field" prop="ap_creative_text">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('Text', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>                
+                                        <el-input class="ap-form-control" type="text" maxlength="254" v-model="creatives.ap_creative_text" size="large" placeholder="<?php esc_html_e('Enter Text', 'affiliatepress-affiliate-marketing'); ?>" />
+                                    </el-form-item>                     
+                                </div>                
+                                <div class="ap-single-field__form">
+                                    <el-form-item class="ap-combine-field" prop="ap_creative_landing_url">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('Landing URL', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>                
+                                        <el-input class="ap-form-control" type="text" maxlength="300" v-model="creatives.ap_creative_landing_url" size="large" placeholder="<?php esc_html_e('Enter Website Link', 'affiliatepress-affiliate-marketing'); ?>" />
+                                    </el-form-item>                     
+                                </div>
+                                <div class="ap-single-field__form">
+                                    <el-form-item class="ap-combine-field" prop="ap_creative_status">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('Status', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>                
+                                        <el-select class="ap-form-control" v-model="creatives.ap_creative_status" placeholder="Select" size="large">
+                                            <el-option v-for="item in all_creatives_status" :key="item.value" :label="item.text" :value="item.value"/>
+                                        </el-select>
+                                    </el-form-item>                     
+                                </div>                    
+                                <div v-if="creatives.ap_creative_id != ''" class="ap-top-border-seperator"></div>
+                                <div v-if="creatives.ap_creative_id != ''" class="ap-single-field__form">
+                                    <span class="ap-form-label"><?php esc_html_e('Creative Shortcode', 'affiliatepress-affiliate-marketing'); ?></span>
+                                    <div class="ap-front-copy-field">                                    
+                                        <el-button @click="copy_affiliate_data(creatives.creative_shortcode)" class="ap-btn--primary ap-copy-button" type="primary">
+                                            <span class="ap-btn__icon"><?php do_action('affiliatepress_common_affiliate_panel_svg_code','copy_icon'); ?></span>                                
+                                        </el-button>                                    
+                                        <el-input readonly="true" class="ap-form-control" type="text" v-model="creatives.creative_shortcode" size="large" />
+                                    </div>                        
+                                </div>
 
-                        </el-form>
+                            </el-form>
+                        </div>
                     </div>
                 </div>
                 <div class="ap-dlt__footer">

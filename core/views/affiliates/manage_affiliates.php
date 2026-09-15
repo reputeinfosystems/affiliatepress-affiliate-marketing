@@ -357,181 +357,188 @@
                     </el-row>
             </el-container>          
         </el-row>
-        <el-drawer modal-class="ap-add__drawer-main" :direction="drawer_direction" :withHeader="false" @close="resetModal('affiliates_form_data')" v-model="open_modal">    
+        <el-drawer modal-class="ap-add__drawer-main" :direction="drawer_direction" :withHeader="false" @closed="resetModal('affiliates_form_data')" v-model="open_modal">    
             <div v-if="open_import_modal == false" class="ap-add__drawer">
                 <div class="ap-dlt__header">
-                    <div class="ap-dlt__heading" v-if="affiliates.ap_affiliates_id == ''"><?php esc_html_e('Add Affiliates', 'affiliatepress-affiliate-marketing'); ?></div>
-                    <div class="ap-dlt__heading" v-else><?php esc_html_e('Edit Affiliates', 'affiliatepress-affiliate-marketing'); ?></div>
+                    <div class="ap-dlt__heading" v-if="affiliates.ap_affiliates_id == '' && edit_affiliate_loader == '0'"><?php esc_html_e('Add Affiliates', 'affiliatepress-affiliate-marketing'); ?></div>
+                    <div class="ap-dlt__heading" v-if="affiliates.ap_affiliates_id != '' || edit_affiliate_loader == '1'"><?php esc_html_e('Edit Affiliates', 'affiliatepress-affiliate-marketing'); ?></div>
                 </div>
                 <div id="ap-drawer-body" class="ap-dlt__body">
                     <div class="ap-dlt__form_body">
-                        <div class="ap-dlt__form_title"><?php esc_html_e('Affiliate Details', 'affiliatepress-affiliate-marketing'); ?></div>
-                        <el-form ref="affiliates_form_data" :rules="rules" require-asterisk-position="right" :model="affiliates" label-position="top">
-                            <div class="ap-single-field__form">
-                                <el-form-item class="ap-combine-field ap-combine-field-search">
-                                    <template #label>
-                                        <label><span class="ap-form-label"><?php esc_html_e('Avatar', 'affiliatepress-affiliate-marketing'); ?></span></label>
-                                    </template>
-                                    <div class="ap-upload-component">
-                                        <div class="ap-upload-control-upper">
-                                            <el-upload :show-file-list="false" action="<?php echo wp_nonce_url(admin_url('admin-ajax.php') . '?action=affiliatepress_upload_affiliate_avatar', 'affiliatepress_upload_affiliate_avatar'); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped --Reason - esc_html is already used by wp_nonce_url function and it's false positive ?>" 
-                                            class="ap-upload-control" ref="avatarRef" multiple="false" 
-                                            :file-list="affiliate_image_list"
-                                            :on-success="affiliatepress_upload_affiliate_avatar_func"
-                                            :on-exceed="affiliatepress_image_upload_limit"
-                                            :on-remove="affiliatepress_remove_affiliate_avatar"
-                                            limit="1" :before-upload="checkUploadedFile">
-                                                <span class="material-icons-round ap-upload-component__icon">cloud_upload</span>                                           
-                                            </el-upload>
-                                            <div class="ap-uploaded-avatar__preview" v-if="affiliates.avatar_url != ''">
-                                                <span class="ap-avatar-close-icon" @click="affiliatepress_remove_affiliate_avatar">
-                                                    <span class="material-icons-round">close</span>
-                                                </span>
-                                                <el-avatar shape="square" :src="affiliates.avatar_url" class="ap-uploaded-avatar__picture"></el-avatar>
-                                            </div>                                    
+                        <div class="ap-back-loader-container" v-if="edit_affiliate_loader == '1'" id="ap-page-loading-loader">
+                            <div class="ap-back-loader"></div>
+                        </div>
+                        <div v-if="edit_affiliate_loader == '0'">
+                            <div class="ap-dlt__form_title"><?php esc_html_e('Affiliate Details', 'affiliatepress-affiliate-marketing'); ?></div>
+                            <el-form ref="affiliates_form_data" :rules="rules" require-asterisk-position="right" :model="affiliates" label-position="top">
+                                <div class="ap-single-field__form">
+                                    <el-form-item class="ap-combine-field ap-combine-field-search">
+                                        <template #label>
+                                            <label><span class="ap-form-label"><?php esc_html_e('Avatar', 'affiliatepress-affiliate-marketing'); ?></span></label>
+                                        </template>
+                                        <div class="ap-upload-component">
+                                            <div class="ap-upload-control-upper">
+                                                <el-upload :show-file-list="false" action="<?php echo wp_nonce_url(admin_url('admin-ajax.php') . '?action=affiliatepress_upload_affiliate_avatar', 'affiliatepress_upload_affiliate_avatar'); //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped --Reason - esc_html is already used by wp_nonce_url function and it's false positive ?>" 
+                                                class="ap-upload-control" ref="avatarRef" multiple="false" 
+                                                :file-list="affiliate_image_list"
+                                                :on-success="affiliatepress_upload_affiliate_avatar_func"
+                                                :on-exceed="affiliatepress_image_upload_limit"
+                                                :on-remove="affiliatepress_remove_affiliate_avatar"
+                                                accept=".jpg,.jpeg,.png,.webp"
+                                                limit="1" :before-upload="checkUploadedFile">
+                                                    <span class="material-icons-round ap-upload-component__icon">cloud_upload</span>                                           
+                                                </el-upload>
+                                                <div class="ap-uploaded-avatar__preview" v-if="affiliates.avatar_url != ''">
+                                                    <span class="ap-avatar-close-icon" @click="affiliatepress_remove_affiliate_avatar">
+                                                        <span class="material-icons-round">close</span>
+                                                    </span>
+                                                    <el-avatar shape="square" :src="affiliates.avatar_url" class="ap-uploaded-avatar__picture"></el-avatar>
+                                                </div>                                    
+                                            </div>
+                                            <div class="ap-upload-component__text"><?php esc_html_e('Select avatar image (Max size: 1MB)', 'affiliatepress-affiliate-marketing'); ?></div>
                                         </div>
-                                        <div class="ap-upload-component__text"><?php esc_html_e('Select avatar image (Max size: 1MB)', 'affiliatepress-affiliate-marketing'); ?></div>
+                                        <div class="el-form-item__error ap-file-upload-error" v-if="affiliate_avatar_file_upload_error != ''">{{affiliate_avatar_file_upload_error}}</div>
+                                    </el-form-item>
+                                </div>
+                                <div v-if="affiliates.ap_affiliates_id == '' || affiliates.affiliate_user_name == ''" class="ap-single-field__form">
+                                    <el-form-item class="ap-combine-field ap-combine-field-search" prop="ap_affiliates_user_id">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('WordPress User', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>
+                                        <el-select ref="selectRef" size="large" class="ap-form-control ap-remove-fields-close" v-model="affiliates.ap_affiliates_user_id" filterable placeholder="<?php esc_html_e( 'Start typing to fetch user.', 'affiliatepress-affiliate-marketing'); ?>" @change="affiliatepress_get_existing_user_details($event)" remote reserve-keyword	 :remote-method="get_wordpress_users" :loading="affiliatepress_user_loading" clearable>                                
+                                            <el-option-group label="<?php esc_html_e( 'Create New User', 'affiliatepress-affiliate-marketing'); ?>">
+                                                <el-option value="add_new" label="<?php esc_html_e( 'Create New', 'affiliatepress-affiliate-marketing'); ?>">
+                                                </el-option>
+                                            </el-option-group>                                
+                                            <el-option-group v-for="wp_user_list_cat in wpUsersList" :key="wp_user_list_cat.category" :label="wp_user_list_cat.category">
+                                                <el-option v-for="item in wp_user_list_cat.wp_user_data" :key="item.value" :label="item.label" :value="item.value" ></el-option>                                    
+                                            </el-option-group>
+                                        </el-select>
+                                    </el-form-item>                     
+                                </div>
+                                <div v-else class="ap-single-field__form">
+                                    <el-form-item  class="ap-combine-field ap-combine-field-disable" prop="affiliate_user_name">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('WordPress User', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>
+                                        <el-input class="ap-form-control" type="text" :disabled="true" v-model="affiliates.affiliate_user_name" size="large" placeholder="<?php esc_html_e('Wordpress Username', 'affiliatepress-affiliate-marketing'); ?>" />
+                                    </el-form-item>                     
+                                </div>
+                                <div v-for="affiliate_field in affiliate_fields" class="ap-dynamic-fields">
+                                    
+                                    <div v-if="affiliate_field.ap_form_field_name == 'username' && affiliates.ap_affiliates_user_id == 'add_new'" class="ap-single-field__form">
+                                        <el-form-item class="ap-combine-field" prop="username">
+                                            <template #label>
+                                                <span class="ap-form-label">{{affiliate_field.ap_field_label}}</span>
+                                            </template>                
+                                            <el-input class="ap-form-control" type="text" v-model="affiliates.username" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
+                                        </el-form-item>                     
                                     </div>
-                                </el-form-item>
-                            </div>
-                            <div v-if="affiliates.ap_affiliates_id == '' || affiliates.affiliate_user_name == ''" class="ap-single-field__form">
-                                <el-form-item class="ap-combine-field ap-combine-field-search" prop="ap_affiliates_user_id">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('WordPress User', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>
-                                    <el-select ref="selectRef" size="large" class="ap-form-control ap-remove-fields-close" v-model="affiliates.ap_affiliates_user_id" filterable placeholder="<?php esc_html_e( 'Start typing to fetch user.', 'affiliatepress-affiliate-marketing'); ?>" @change="affiliatepress_get_existing_user_details($event)" remote reserve-keyword	 :remote-method="get_wordpress_users" :loading="affiliatepress_user_loading" clearable>                                
-                                        <el-option-group label="<?php esc_html_e( 'Create New User', 'affiliatepress-affiliate-marketing'); ?>">
-                                            <el-option value="add_new" label="<?php esc_html_e( 'Create New', 'affiliatepress-affiliate-marketing'); ?>">
-                                            </el-option>
-                                        </el-option-group>                                
-                                        <el-option-group v-for="wp_user_list_cat in wpUsersList" :key="wp_user_list_cat.category" :label="wp_user_list_cat.category">
-                                            <el-option v-for="item in wp_user_list_cat.wp_user_data" :key="item.value" :label="item.label" :value="item.value" ></el-option>                                    
-                                        </el-option-group>
-                                    </el-select>
-                                </el-form-item>                     
-                            </div>
-                            <div v-else class="ap-single-field__form">
-                                <el-form-item  class="ap-combine-field ap-combine-field-disable" prop="affiliate_user_name">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('WordPress User', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>
-                                    <el-input class="ap-form-control" type="text" :disabled="true" v-model="affiliates.affiliate_user_name" size="large" placeholder="<?php esc_html_e('Wordpress Username', 'affiliatepress-affiliate-marketing'); ?>" />
-                                </el-form-item>                     
-                            </div>
-                            <div v-for="affiliate_field in affiliate_fields" class="ap-dynamic-fields">
-                                
-                                <div v-if="affiliate_field.ap_form_field_name == 'username' && affiliates.ap_affiliates_user_id == 'add_new'" class="ap-single-field__form">
-                                    <el-form-item class="ap-combine-field" prop="username">
-                                        <template #label>
-                                            <span class="ap-form-label">{{affiliate_field.ap_field_label}}</span>
-                                        </template>                
-                                        <el-input class="ap-form-control" type="text" v-model="affiliates.username" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
-                                    </el-form-item>                     
-                                </div>
-                                <div v-if="affiliate_field.ap_form_field_name == 'firstname' && affiliates.ap_affiliates_user_id == 'add_new'" class="ap-single-field__form">
-                                    <el-form-item class="ap-combine-field" prop="firstname">
-                                        <template #label>
-                                            <span class="ap-form-label">{{affiliate_field.ap_field_label}}</span>
-                                        </template>                
-                                        <el-input class="ap-form-control" type="text" v-model="affiliates.firstname" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
-                                    </el-form-item>                     
-                                </div>
-                                <div v-if="affiliate_field.ap_form_field_name == 'lastname' && affiliates.ap_affiliates_user_id == 'add_new'" class="ap-single-field__form">
-                                    <el-form-item class="ap-combine-field" prop="lastname">
-                                        <template #label>
-                                            <span class="ap-form-label">{{affiliate_field.ap_field_label}}</span>
-                                        </template>                
-                                        <el-input class="ap-form-control" type="text" v-model="affiliates.lastname" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
-                                    </el-form-item>                     
-                                </div>                                                 
-                                <div v-if="affiliate_field.ap_form_field_name == 'email' && affiliates.ap_affiliates_user_id == 'add_new'" class="ap-single-field__form">
-                                    <el-form-item class="ap-combine-field" prop="email">
-                                        <template #label>
-                                            <span class="ap-form-label">{{affiliate_field.ap_field_label}}</span>
-                                        </template>                
-                                        <el-input class="ap-form-control" type="text" v-model="affiliates.email" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
-                                    </el-form-item>                     
-                                </div>
-                                <div v-if="affiliate_field.ap_form_field_name == 'password' && affiliates.ap_affiliates_user_id == 'add_new'" class="ap-single-field__form">
-                                    <el-form-item class="ap-combine-field" prop="password">
-                                        <template #label>
-                                            <span class="ap-form-label">{{affiliate_field.ap_field_label}}</span>
-                                        </template>                
-                                        <el-input class="ap-form-control" type="password" :show-password="true" v-model="affiliates.password" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
-                                    </el-form-item>                     
-                                </div>
-                                <div v-if="affiliate_field.ap_form_field_name == 'password' && affiliates.ap_affiliates_user_id == 'add_new' && confirm_password_field.is_display_confirm_password == 'true'" class="ap-single-field__form">
-                                    <el-form-item class="ap-combine-field" prop="confirm_password">
-                                        <template #label>
-                                            <span class="ap-form-label">{{confirm_password_field.confirm_password_label}}</span>
-                                        </template>                
-                                        <el-input class="ap-form-control" type="password" :show-password="true" v-model="affiliates.confirm_password" size="large" :placeholder="confirm_password_field.confirm_password_placeholder" />
-                                    </el-form-item>                     
-                                </div>
-                                <div v-if="affiliate_field.ap_form_field_name == 'ap_affiliates_payment_email' && affiliates.ap_affiliates_id == ''" class="ap-single-field__form">
-                                    <el-form-item class="ap-combine-field" prop="ap_affiliates_payment_email_add">
-                                        <template #label>
-                                            <span class="ap-form-label">{{affiliate_field.ap_field_label}}</span>
-                                        </template>                
-                                        <el-input class="ap-form-control" type="text" v-model="affiliates.ap_affiliates_payment_email_add" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
-                                    </el-form-item>                     
-                                </div>
-                                <div v-if="affiliate_field.ap_form_field_name == 'ap_affiliates_payment_email' && affiliates.ap_affiliates_id != ''" class="ap-single-field__form">
-                                    <el-form-item class="ap-combine-field" prop="ap_affiliates_payment_email_edit">
-                                        <template #label>
-                                            <span class="ap-form-label">{{affiliate_field.ap_field_label}}</span>
-                                        </template>                
-                                        <el-input class="ap-form-control" type="text" v-model="affiliates.ap_affiliates_payment_email_edit" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
-                                    </el-form-item>                     
-                                </div>
-                                <div v-if="affiliate_field.ap_form_field_name == 'ap_affiliates_website'" class="ap-single-field__form">
-                                    <el-form-item class="ap-combine-field" prop="ap_affiliates_website">
-                                        <template #label>
-                                            <span class="ap-form-label">{{affiliate_field.ap_field_label}}</span>
-                                        </template>                
-                                        <el-input class="ap-form-control" type="text" v-model="affiliates.ap_affiliates_website" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
-                                    </el-form-item>                     
-                                </div>
-                                <div v-if="affiliate_field.ap_form_field_name == 'ap_affiliates_promote_us'" class="ap-single-field__form">
-                                    <el-form-item class="ap-combine-field" prop="ap_affiliates_promote_us">
-                                        <template #label>
-                                            <span class="ap-form-label">{{affiliate_field.ap_field_label}}</span>
-                                        </template>                
-                                        <el-input class="ap-form-control" type="textarea" :rows="2" v-model="affiliates.ap_affiliates_promote_us" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
-                                    </el-form-item>                     
-                                </div>                                                
+                                    <div v-if="affiliate_field.ap_form_field_name == 'firstname' && affiliates.ap_affiliates_user_id == 'add_new'" class="ap-single-field__form">
+                                        <el-form-item class="ap-combine-field" prop="firstname">
+                                            <template #label>
+                                                <span class="ap-form-label">{{affiliate_field.ap_field_label}}</span>
+                                            </template>                
+                                            <el-input class="ap-form-control" type="text" v-model="affiliates.firstname" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
+                                        </el-form-item>                     
+                                    </div>
+                                    <div v-if="affiliate_field.ap_form_field_name == 'lastname' && affiliates.ap_affiliates_user_id == 'add_new'" class="ap-single-field__form">
+                                        <el-form-item class="ap-combine-field" prop="lastname">
+                                            <template #label>
+                                                <span class="ap-form-label">{{affiliate_field.ap_field_label}}</span>
+                                            </template>                
+                                            <el-input class="ap-form-control" type="text" v-model="affiliates.lastname" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
+                                        </el-form-item>                     
+                                    </div>                                                 
+                                    <div v-if="affiliate_field.ap_form_field_name == 'email' && affiliates.ap_affiliates_user_id == 'add_new'" class="ap-single-field__form">
+                                        <el-form-item class="ap-combine-field" prop="email">
+                                            <template #label>
+                                                <span class="ap-form-label">{{affiliate_field.ap_field_label}}</span>
+                                            </template>                
+                                            <el-input class="ap-form-control" type="text" v-model="affiliates.email" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
+                                        </el-form-item>                     
+                                    </div>
+                                    <div v-if="affiliate_field.ap_form_field_name == 'password' && affiliates.ap_affiliates_user_id == 'add_new'" class="ap-single-field__form">
+                                        <el-form-item class="ap-combine-field" prop="password">
+                                            <template #label>
+                                                <span class="ap-form-label">{{affiliate_field.ap_field_label}}</span>
+                                            </template>                
+                                            <el-input class="ap-form-control" type="password" :show-password="true" v-model="affiliates.password" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
+                                        </el-form-item>                     
+                                    </div>
+                                    <div v-if="affiliate_field.ap_form_field_name == 'password' && affiliates.ap_affiliates_user_id == 'add_new' && confirm_password_field.is_display_confirm_password == 'true'" class="ap-single-field__form">
+                                        <el-form-item class="ap-combine-field" prop="confirm_password">
+                                            <template #label>
+                                                <span class="ap-form-label">{{confirm_password_field.confirm_password_label}}</span>
+                                            </template>                
+                                            <el-input class="ap-form-control" type="password" :show-password="true" v-model="affiliates.confirm_password" size="large" :placeholder="confirm_password_field.confirm_password_placeholder" />
+                                        </el-form-item>                     
+                                    </div>
+                                    <div v-if="affiliate_field.ap_form_field_name == 'ap_affiliates_payment_email' && affiliates.ap_affiliates_id == ''" class="ap-single-field__form">
+                                        <el-form-item class="ap-combine-field" prop="ap_affiliates_payment_email_add">
+                                            <template #label>
+                                                <span class="ap-form-label">{{affiliate_field.ap_field_label}}</span>
+                                            </template>                
+                                            <el-input class="ap-form-control" type="text" v-model="affiliates.ap_affiliates_payment_email_add" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
+                                        </el-form-item>                     
+                                    </div>
+                                    <div v-if="affiliate_field.ap_form_field_name == 'ap_affiliates_payment_email' && affiliates.ap_affiliates_id != ''" class="ap-single-field__form">
+                                        <el-form-item class="ap-combine-field" prop="ap_affiliates_payment_email_edit">
+                                            <template #label>
+                                                <span class="ap-form-label">{{affiliate_field.ap_field_label}}</span>
+                                            </template>                
+                                            <el-input class="ap-form-control" type="text" v-model="affiliates.ap_affiliates_payment_email_edit" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
+                                        </el-form-item>                     
+                                    </div>
+                                    <div v-if="affiliate_field.ap_form_field_name == 'ap_affiliates_website'" class="ap-single-field__form">
+                                        <el-form-item class="ap-combine-field" prop="ap_affiliates_website">
+                                            <template #label>
+                                                <span class="ap-form-label">{{affiliate_field.ap_field_label}}</span>
+                                            </template>                
+                                            <el-input class="ap-form-control" type="text" v-model="affiliates.ap_affiliates_website" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
+                                        </el-form-item>                     
+                                    </div>
+                                    <div v-if="affiliate_field.ap_form_field_name == 'ap_affiliates_promote_us'" class="ap-single-field__form">
+                                        <el-form-item class="ap-combine-field" prop="ap_affiliates_promote_us">
+                                            <template #label>
+                                                <span class="ap-form-label">{{affiliate_field.ap_field_label}}</span>
+                                            </template>                
+                                            <el-input class="ap-form-control" type="textarea" :rows="2" v-model="affiliates.ap_affiliates_promote_us" size="large" :placeholder="affiliate_field.ap_field_placeholder" />
+                                        </el-form-item>                     
+                                    </div>                                                
 
-                            </div>
-                            <div class="ap-single-field__form">
-                                <el-form-item class="ap-combine-field" prop="ap_affiliates_status">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('Status', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>                
-                                    <el-select class="ap-form-control" v-model="affiliates.ap_affiliates_status" placeholder="Select" size="large">
-                                        <el-option v-for="item in all_status" :key="item.value" :label="item.label" :value="item.value"/>
-                                    </el-select>
-                                </el-form-item>                     
-                            </div> 
-                            <?php  
-                                do_action('affiliatepress_backend_affiliate_extra_fields');
-                            ?>
-                            <div class="ap-single-field__form">
-                                <el-form-item class="ap-combine-field" prop="ap_affiliates_note">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('Note', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>                
-                                    <el-input class="ap-form-control" maxlength="600" type="textarea" :rows="4" v-model="affiliates.ap_affiliates_note" size="large" placeholder="<?php esc_html_e('Add Affiliate Note Here', 'affiliatepress-affiliate-marketing'); ?>" />
-                                </el-form-item>                     
-                            </div>     
-                            <div v-if="affiliates.ap_affiliates_id == ''" class="ap-single-field__form ap-single-switch ap-top-padding-top-10">
-                                <el-form-item prop="ap_send_email" class="ap-combine-field">
-                                    <template #label>
-                                        <span class="ap-form-label"><?php esc_html_e('Send Welcome Email', 'affiliatepress-affiliate-marketing'); ?></span>
-                                    </template>                
-                                    <el-switch v-model="affiliates.ap_send_email"/>
-                                </el-form-item>                     
-                            </div>                    
-                        </el-form>
+                                </div>
+                                <div class="ap-single-field__form">
+                                    <el-form-item class="ap-combine-field" prop="ap_affiliates_status">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('Status', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>                
+                                        <el-select class="ap-form-control" v-model="affiliates.ap_affiliates_status" placeholder="Select" size="large">
+                                            <el-option v-for="item in all_status" :key="item.value" :label="item.label" :value="item.value"/>
+                                        </el-select>
+                                    </el-form-item>                     
+                                </div> 
+                                <?php  
+                                    do_action('affiliatepress_backend_affiliate_extra_fields');
+                                ?>
+                                <div class="ap-single-field__form">
+                                    <el-form-item class="ap-combine-field" prop="ap_affiliates_note">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('Note', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>                
+                                        <el-input class="ap-form-control" maxlength="600" type="textarea" :rows="4" v-model="affiliates.ap_affiliates_note" size="large" placeholder="<?php esc_html_e('Add Affiliate Note Here', 'affiliatepress-affiliate-marketing'); ?>" />
+                                    </el-form-item>                     
+                                </div>     
+                                <div v-if="affiliates.ap_affiliates_id == ''" class="ap-single-field__form ap-single-switch ap-top-padding-top-10">
+                                    <el-form-item prop="ap_send_email" class="ap-combine-field">
+                                        <template #label>
+                                            <span class="ap-form-label"><?php esc_html_e('Send Welcome Email', 'affiliatepress-affiliate-marketing'); ?></span>
+                                        </template>                
+                                        <el-switch v-model="affiliates.ap_send_email"/>
+                                    </el-form-item>                     
+                                </div>                    
+                            </el-form>
+                        </div>
                     </div>
                 </div>
                 <div class="ap-dlt__footer">

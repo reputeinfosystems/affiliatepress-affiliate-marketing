@@ -113,7 +113,7 @@ if (! class_exists('affiliatepress_creative') ) {
         function affiliatepress_upload_creative_image_func(){
 
             $return_data = array(
-                'error'            => 0,
+                'error'            => 1,
                 'msg'              => '',
                 'upload_url'       => '',
                 'upload_file_name' => '',
@@ -124,6 +124,7 @@ if (! class_exists('affiliatepress_creative') ) {
             $response['variant'] = 'error';
             $response['title']   = esc_html__( 'Error', 'affiliatepress-affiliate-marketing');
             $response['msg']     = esc_html__( 'Something went wrong..', 'affiliatepress-affiliate-marketing');
+            $response['error'] = 1;
             if( preg_match( '/error/', $affiliatepress_ap_check_authorization ) ){
                 $affiliatepress_auth_error = explode( '^|^', $affiliatepress_ap_check_authorization );
                 $affiliatepress_error_msg = !empty( $affiliatepress_auth_error[1] ) ? $affiliatepress_auth_error[1] : esc_html__( 'Sorry. Something went wrong while processing the request', 'affiliatepress-affiliate-marketing');
@@ -156,7 +157,7 @@ if (! class_exists('affiliatepress_creative') ) {
             $affiliatepress_fileupload_obj = new affiliatepress_fileupload_class( $_FILES['file'] ); //phpcs:ignore
             if (! $affiliatepress_fileupload_obj ) {
                 $return_data['error'] = 1;
-                $return_data['msg']   = $affiliatepress_fileupload_obj->error_message;
+                $return_data['msg']   = $affiliatepress_fileupload_obj->affiliatepress_error_message;
             }
 
 
@@ -180,7 +181,7 @@ if (! class_exists('affiliatepress_creative') ) {
                 $affiliatepress_upload_file = $affiliatepress_fileupload_obj->affiliatepress_process_upload($affiliatepress_destination);
                 if ($affiliatepress_upload_file == false ) {
                     $return_data['error'] = 1;
-                    $return_data['msg']   = ! empty($affiliatepress_upload_file->error_message) ? $affiliatepress_upload_file->error_message : esc_html__('Something went wrong while updating the file', 'affiliatepress-affiliate-marketing');
+                    $return_data['msg']   = ! empty($affiliatepress_fileupload_obj->affiliatepress_error_message) ? $affiliatepress_fileupload_obj->affiliatepress_error_message : esc_html__('Something went wrong while updating the file', 'affiliatepress-affiliate-marketing');
                 } else {
                     $return_data['error']            = 0;
                     $return_data['msg']              = '';
@@ -357,6 +358,19 @@ if (! class_exists('affiliatepress_creative') ) {
                     $response['msg']     = esc_html__('Enter creative type', 'affiliatepress-affiliate-marketing');
                     wp_send_json($response);
                     die();                    
+                }
+                if($affiliatepress_creative_type == "image" && $affiliatepress_creative_image_url == ""){
+                    $response['variant'] = 'error';
+                    $response['title']   = esc_html__('Error', 'affiliatepress-affiliate-marketing');
+                    $response['msg']     = esc_html__('Enter creative Image', 'affiliatepress-affiliate-marketing');
+                    wp_send_json($response);
+                    die();
+                }elseif ($affiliatepress_creative_type == "text_link" && $affiliatepress_creative_text == "") {
+                    $response['variant'] = 'error';
+                    $response['title']   = esc_html__('Error', 'affiliatepress-affiliate-marketing');
+                    $response['msg']     = esc_html__('Enter creative Text', 'affiliatepress-affiliate-marketing');
+                    wp_send_json($response);
+                    die();
                 }
                     
                 $affiliatepress_args = array(                
@@ -771,11 +785,14 @@ if (! class_exists('affiliatepress_creative') ) {
             },
             affiliatepress_upload_creative_image_func(response, file, fileList){
                 const vm = this;
-                if(response != ""){
+                if(response != "" && response.error == 0){   
                     vm.creatives.avatar_url = response.upload_url;
                     vm.creatives.avatar_name = response.upload_file_name;
                     vm.creatives.ap_creative_image_url = response.upload_file_name;
-                }
+                    vm.creative_file_upload_error = "";
+                }else{
+                    vm.creative_file_upload_error = response.msg;
+                }   
             },
             affiliatepress_replace_image(files, fileList) {
                 const vm = this;
@@ -791,6 +808,7 @@ if (! class_exists('affiliatepress_creative') ) {
                 const vm = this
                 var upload_url = vm.affiliates.avatar_url;
                 var upload_filename = vm.affiliates.avatar_name;
+                vm.creatives.ap_creative_image_url = "";
                 var postData = { action:"affiliatepress_remove_creative_avatar", upload_file_url: upload_url,_wpnonce:"'.esc_html(wp_create_nonce('ap_wp_nonce')).'" };
                 axios.post( affiliatepress_ajax_obj.ajax_url, Qs.stringify( postData ) )
                 .then( function (response) {
@@ -847,8 +865,10 @@ if (! class_exists('affiliatepress_creative') ) {
             editCreative(ap_creative_id,index,row){
                 const vm = this;
                 vm.open_modal = true;
+                vm.edit_creative_loader = "1";
                 var creatie_edit_data = { action: "affiliatepress_edit_creative",edit_id: ap_creative_id,_wpnonce:"'.esc_html(wp_create_nonce('ap_wp_nonce')).'" }
                 axios.post(affiliatepress_ajax_obj.ajax_url, Qs.stringify(creatie_edit_data)).then(function(response){
+                    vm.edit_creative_loader = "0";  
                     if(response.data.creatives.ap_creative_id != undefined){
                         vm.creatives.ap_creative_id = response.data.creatives.ap_creative_id;
                     } 
@@ -1055,6 +1075,7 @@ if (! class_exists('affiliatepress_creative') ) {
                     this.$refs[form_ref].resetFields();
                 }                
                 vm.creatives = JSON.parse(JSON.stringify(vm.creatives_org));
+                vm.creative_file_upload_error = "";
                 var div = document.getElementById("ap-drawer-body");
                 if(div){
                     div.scrollTop = 0;
@@ -1062,15 +1083,7 @@ if (! class_exists('affiliatepress_creative') ) {
             },
             closeModal(form_ref){
                 vm = this;
-                var div = document.getElementById("ap-drawer-body");
-                if(div){
-                    div.scrollTop = 0;
-                }                
                 vm.open_modal = false;
-                if(form_ref){
-                    this.$refs[form_ref].resetFields();
-                }                
-                vm.creatives = JSON.parse(JSON.stringify(vm.creatives_org));
             },
             handleSortChange({ column, prop, order }){                
                 var vm = this;
@@ -1241,6 +1254,7 @@ if (! class_exists('affiliatepress_creative') ) {
                 'creatives_search'           => array(
                     "ap_creative_name"       => '',
                 ),
+                'creative_file_upload_error' => '',
                 'creatives'                 => array(
                     "avatar_url"                   => "",
                     "avatar_name"                  => "",
@@ -1256,6 +1270,7 @@ if (! class_exists('affiliatepress_creative') ) {
                     "ap_creative_status"           => "1", 
                     "creative_shortcode"           => "",                    
                 ), 
+                'edit_creative_loader'           => 0,
                 'rules'                      => array(
                     'ap_creative_name'  => array(
                         array(

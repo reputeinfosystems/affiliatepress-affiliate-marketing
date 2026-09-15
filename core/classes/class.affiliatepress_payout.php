@@ -1974,25 +1974,7 @@ if (! class_exists('affiliatepress_payout') ) {
             },
             closeModal(form_ref){
                 const vm = this;
-                var div = document.getElementById("ap-drawer-body");
-                if(div){
-                    div.scrollTop = 0;
-                }                
                 vm.open_modal = false;
-                if(form_ref && vm.open_edit_modal == false && this.$refs[form_ref]){
-                    this.$refs[form_ref].resetFields();
-                }                
-                vm.payout = JSON.parse(JSON.stringify(vm.payout_org));
-                vm.preview_total_affiliate = 0;
-                vm.preview_total_amount = "";
-                vm.selected_paymnet_method = "";
-                vm.complete_percentage = 0;
-                vm.preview_affiliates = [];
-                vm.auto_approved_payouts = false;
-                vm.payout_generate_loading = "0";
-                vm.payout_preview_loading = "0";
-                vm.payout_generate_loading_btn = "0";
-                vm.open_edit_modal = false; 
             },        
             handleSelectionPreview(val){
                 const vm = this;

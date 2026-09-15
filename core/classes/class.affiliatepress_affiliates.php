@@ -344,6 +344,9 @@ if (! class_exists('affiliatepress_affiliates') ) {
                                                 
                                                 $affiliatepress_affiliates_id = $this->affiliatepress_insert_record($affiliatepress_tbl_ap_affiliates, $affiliatepress_args);
                                                 if($affiliatepress_affiliates_id){
+
+                                                    $affiliatepress_args = apply_filters( 'affiliatepress_modify_affiliate_import_data', $affiliatepress_args, $affiliatepress_affiliates_id, $affiliatepress_final_single_import_data,$affiliatepress_final_first_row_data,$affiliatepress_row);
+
                                                     $affiliatepress_has_import_affiliate = true;
                                                     $this->affiliatepress_add_affiliate_user_role($affiliatepress_user_id);                                                    
                                                 }else{
@@ -424,7 +427,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
         function affiliatepress_upload_affiliate_import_file_func(){
 
             $return_data = array(
-                'error'            => 0,
+                'error'            => 1,
                 'msg'              => '',
                 'upload_url'       => '',
                 'upload_file_name' => '',
@@ -435,6 +438,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
             $response['variant'] = 'error';
             $response['title']   = esc_html__( 'Error', 'affiliatepress-affiliate-marketing');
             $response['msg']     = esc_html__( 'Something went wrong..', 'affiliatepress-affiliate-marketing');
+            $response['error'] = 1;
             if( preg_match( '/error/', $affiliatepress_ap_check_authorization ) ){
                 $affiliatepress_auth_error = explode( '^|^', $affiliatepress_ap_check_authorization );
                 $affiliatepress_error_msg = !empty( $affiliatepress_auth_error[1] ) ? $affiliatepress_auth_error[1] : esc_html__( 'Sorry. Something went wrong while processing the request', 'affiliatepress-affiliate-marketing');
@@ -467,7 +471,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
             $affiliatepress_fileupload_obj = new affiliatepress_fileupload_class( $_FILES['file'] ); // phpcs:ignore
             if (! $affiliatepress_fileupload_obj ) {
                 $return_data['error'] = 1;
-                $return_data['msg']   = $affiliatepress_fileupload_obj->error_message;
+                $return_data['msg']   = $affiliatepress_fileupload_obj->affiliatepress_error_message;
             }
 
             $affiliatepress_fileupload_obj->affiliatepress_check_cap          = true;
@@ -491,7 +495,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
                 $affiliatepress_upload_file = $affiliatepress_fileupload_obj->affiliatepress_process_upload($affiliatepress_destination);
                 if ($affiliatepress_upload_file == false ) {
                     $return_data['error'] = 1;
-                    $return_data['msg']   = ! empty($affiliatepress_fileupload_obj->error_message) ? $affiliatepress_fileupload_obj->error_message : esc_html__('Something went wrong while updating the file', 'affiliatepress-affiliate-marketing');
+                    $return_data['msg']   = ! empty($affiliatepress_fileupload_obj->affiliatepress_error_message) ? $affiliatepress_fileupload_obj->affiliatepress_error_message : esc_html__('Something went wrong while updating the file', 'affiliatepress-affiliate-marketing');
                 } else {
                     if (($affiliatepress_handle = fopen($affiliatepress_destination, 'r')) !== false) { // phpcs:ignore
 
@@ -613,7 +617,10 @@ if (! class_exists('affiliatepress_affiliates') ) {
                     $affiliate['total_visit'] = $affiliatepress_total_visits;
                     $affiliate['convert_user'] = $affiliatepress_total_commission;
                     $affiliate['how_will_promote'] = (isset($affiliatepress_single_affiliate['ap_affiliates_promote_us']))?stripslashes_deep($affiliatepress_single_affiliate['ap_affiliates_promote_us']):'';
-                    $affiliate['created_date'] = (!empty($affiliatepress_single_affiliate['ap_affiliates_created_at']))?stripslashes_deep($affiliatepress_single_affiliate['ap_affiliates_created_at']):""; ;
+                    $affiliate['created_date'] = (!empty($affiliatepress_single_affiliate['ap_affiliates_created_at']))?stripslashes_deep($affiliatepress_single_affiliate['ap_affiliates_created_at']):"";
+
+                    $affiliate = apply_filters('affiliatepress_modify_export_affiliate_fields_data',$affiliate,$affiliatepress_affiliate_id);
+
                     $affiliates[] = $affiliate;
 
                     
@@ -638,6 +645,8 @@ if (! class_exists('affiliatepress_affiliates') ) {
                 'how_will_promote'               => 'How Will You Promote Us?',
                 'created_date'                  => 'Date Registered',
             );
+
+            $affiliatepress_columns = apply_filters('affiliatepress_modify_export_affiliate_fields',$affiliatepress_columns);
 
             $affiliatepress_filename = 'AffiliatePress-export-affiliates.csv'; //phpcs:ignore
 
@@ -910,6 +919,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
             $response['variant'] = 'error';
             $response['title']   = esc_html__( 'Error', 'affiliatepress-affiliate-marketing');
             $response['msg']     = esc_html__( 'Something went wrong..', 'affiliatepress-affiliate-marketing');
+            $response['error'] = 1;
             if( preg_match( '/error/', $affiliatepress_ap_check_authorization ) ){
                 $affiliatepress_auth_error = explode( '^|^', $affiliatepress_ap_check_authorization );
                 $affiliatepress_error_msg = !empty( $affiliatepress_auth_error[1] ) ? $affiliatepress_auth_error[1] : esc_html__( 'Sorry. Something went wrong while processing the request', 'affiliatepress-affiliate-marketing');
@@ -940,7 +950,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
             } 
 
             $return_data = array(
-                'error'            => 0,
+                'error'            => 1,
                 'msg'              => '',
                 'upload_url'       => '',
                 'upload_file_name' => '',
@@ -948,7 +958,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
             $affiliatepress_fileupload_obj = new affiliatepress_fileupload_class( $_FILES['file'] ); //phpcs:ignore
             if (! $affiliatepress_fileupload_obj ) {
                 $return_data['error'] = 1;
-                $return_data['msg']   = $affiliatepress_fileupload_obj->error_message;
+                $return_data['msg']   = $affiliatepress_fileupload_obj->affiliatepress_error_message;
             }
 
 
@@ -972,7 +982,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
                 $affiliatepress_upload_file = $affiliatepress_fileupload_obj->affiliatepress_process_upload($affiliatepress_destination);          
                 if ($affiliatepress_upload_file == false ) {
                     $return_data['error'] = 1;
-                    $return_data['msg']   = ! empty($affiliatepress_upload_file->error_message) ? $affiliatepress_upload_file->error_message : esc_html__('Something went wrong while updating the file', 'affiliatepress-affiliate-marketing');
+                    $return_data['msg']   = ! empty($affiliatepress_fileupload_obj->affiliatepress_error_message) ? $affiliatepress_fileupload_obj->affiliatepress_error_message : esc_html__('Something went wrong while updating the file', 'affiliatepress-affiliate-marketing');
                 } else {
                     $return_data['error']            = 0;
                     $return_data['msg']              = '';
@@ -2239,9 +2249,13 @@ if (! class_exists('affiliatepress_affiliates') ) {
             }, 
             affiliatepress_upload_affiliate_avatar_func(response, file, fileList){
                 const vm = this;
-                if(response != ""){
+                if(response != "" && response.error == 0){ 
                     vm.affiliates.avatar_url = response.upload_url;
                     vm.affiliates.avatar_name = response.upload_file_name;
+                    vm.affiliate_avatar_file_upload_error = "";
+                }else{
+                    vm.affiliate_avatar_file_upload_error = response.msg;
+                    vm.$refs.avatarRef.clearFiles();
                 }
             },
             checkUploadedFile(file){
@@ -2301,9 +2315,10 @@ if (! class_exists('affiliatepress_affiliates') ) {
                 vm.open_import_modal = false;
                 vm.open_modal = true;
                 vm.affiliate_image_list = [];
+                vm.edit_affiliate_loader = "1";
                 var affiliate_edit_data = { action: "affiliatepress_edit_affiliate",edit_id: ap_affiliates_id,_wpnonce:"'.esc_html(wp_create_nonce('ap_wp_nonce')).'" }
                 axios.post(affiliatepress_ajax_obj.ajax_url, Qs.stringify(affiliate_edit_data)).then(function(response){
-
+                    vm.edit_affiliate_loader = "0";
                     if(response.data.affiliates.ap_affiliates_id != undefined){
                         vm.affiliates.ap_affiliates_id = response.data.affiliates.ap_affiliates_id;
                     } 
@@ -2540,7 +2555,8 @@ if (! class_exists('affiliatepress_affiliates') ) {
                 vm.total_count = "0";
                 vm.import_count = "0";
                 vm.duplicate_count = "0";
-                vm.affiliatepress_import_field_data = vm.affiliatepress_import_field_data_org;                
+                vm.affiliatepress_import_field_data = vm.affiliatepress_import_field_data_org;    
+                vm.affiliate_avatar_file_upload_error ="";            
 
             },
             openAddAffiliate(){
@@ -2551,27 +2567,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
             },
             closeModal(form_ref){
                 vm = this;                
-                var div = document.getElementById("ap-drawer-body");
-                if(div){
-                    div.scrollTop = 0;
-                }                
                 vm.open_modal = false;
-                if(form_ref && this.$refs[form_ref]){
-                    this.$refs[form_ref].resetFields();
-                }                
-                vm.affiliates = JSON.parse(JSON.stringify(vm.affiliates_org));
-                vm.open_import_modal = false;
-                vm.import_file_fields = [];
-                vm.import_file_name   = "";                                  
-                vm.import_file_list = [];                
-                vm.import_file_name = "";
-                vm.import_loading = "0";
-                vm.complete_percentage = "0";
-                vm.total_count = "0";
-                vm.import_count = "0";
-                vm.duplicate_count = "0";
-                vm.affiliatepress_import_field_data = vm.affiliatepress_import_field_data_org;                 
-                vm.affiliate_image_list = [];
             },  
             saveAffiliate(form_ref){                
                 vm = this;
@@ -2872,6 +2868,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
                 'wpUsersList'                => array(),
                 'affiliatepress_user_loading'=> false,
                 'affiliateUsersAbortController' => null,
+                'affiliate_avatar_file_upload_error' => '',
                 'affiliates'                 => array(
                     'username'                     => "",
                     'firstname'                    => "",
@@ -2894,6 +2891,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
                     "ap_send_email"                => false,
                     "ap_affiliates_note"            => "",
                 ),                
+                'edit_affiliate_loader'            => 0,
                 'rules'                      => array(
                     'password'  => array(
                         array(

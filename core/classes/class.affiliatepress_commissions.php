@@ -1390,9 +1390,10 @@ if (! class_exists('affiliatepress_commissions') ) {
             editCommission(ap_commission_id,index,row){
                 const vm = this;
                 vm.open_modal = true;
+                vm.edit_commission_loader = "1";
                 var creatie_edit_data = { action: "affiliatepress_edit_commission",edit_id: ap_commission_id,_wpnonce:"'.esc_html(wp_create_nonce('ap_wp_nonce')).'" }
                 axios.post(affiliatepress_ajax_obj.ajax_url, Qs.stringify(creatie_edit_data)).then(function(response){
-
+                    vm.edit_commission_loader = "0";  
                     if(response.data.commissions.ap_affiliates_id != undefined){
                         vm.commissions.ap_affiliates_id = response.data.commissions.ap_affiliates_id;
                     }
@@ -1839,25 +1840,15 @@ if (! class_exists('affiliatepress_commissions') ) {
                 var div = document.getElementById("ap-drawer-body");
                 if(div){
                     div.scrollTop = 0;
-                }                
+                }
             },
             closeModal(form_ref){
                 vm = this;
-                var div = document.getElementById("ap-drawer-body");
-                if(div){
-                    div.scrollTop = 0;
-                }                
                 vm.open_modal = false;
-                if(form_ref){
-                    this.$refs[form_ref].resetFields();
-                }                
-                vm.commissions = JSON.parse(JSON.stringify(vm.commissions_org));
-                vm.commission_details_show = false;
             },
             closedetailsModal(form_ref){
                 vm = this;
                 vm.open_modal = false;
-                vm.commission_details_show = false;
             },
             closeBulkAction(){
                 this.$refs.multipleTable.clearSelection();
@@ -2099,6 +2090,7 @@ if (! class_exists('affiliatepress_commissions') ) {
                     "ap_commission_note"                => "",
                     "ap_commission_created_date"        => "",
                 ),
+                'edit_commission_loader'                => 0,
                 'commission_details_show'               => false,
                 'commission_details'                    => array(),
                 'rules'                      => array(

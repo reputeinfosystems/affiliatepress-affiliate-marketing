@@ -3,9 +3,9 @@ Contributors: reputeinfosystems
 Tags: Affiliate, Affiliates, Affiliate marketing, Affiliate program, Affiliate management
 Donate link: https://www.affiliatepressplugin.com/
 Requires at least: 5.3.0
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.0
-Stable tag: 3.2
+Stable tag: 3.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -128,6 +128,12 @@ Please follow the steps for installation:
 1. AffiliatePress – WordPress Affiliate Plugin
 
 == Changelog ==
+
+= 3.3 =
+* Added: Loader for Add/Edit forms in the Admin Panel.
+* Improved: File upload error message and upload process.
+* Fixed: Issue with removing creative images from the Admin Panel.
+* Minor bug fixes and improvements.
 
 = 3.2 =
 * Added: Product name is now displayed when the commission basis is set to Per Order.
