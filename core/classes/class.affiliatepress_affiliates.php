@@ -231,7 +231,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
                 exit;
             }            
 
-            $affiliatepress_import_file_name =  isset($_POST['import_file_name']) ? sanitize_text_field($_POST['import_file_name']) : ''; // phpcs:ignore 
+            $affiliatepress_import_file_name =  isset($_POST['import_file_name']) ? sanitize_text_field(wp_unslash($_POST['import_file_name'])) : '';
             $affiliatepress_affiliate_field_data = '';
             if((isset($_POST['import_file_fields'])) && !empty($_POST['import_file_fields']) && is_array($_POST['import_file_fields'])){  // phpcs:ignore                               
                 $affiliatepress_affiliate_field_data = !empty($_POST['import_file_fields']) ? array_map(array( $AffiliatePress, 'affiliatepress_array_sanatize_integer_field' ), stripslashes_deep($_POST['import_file_fields'])) : array(); // phpcs:ignore
@@ -476,12 +476,12 @@ if (! class_exists('affiliatepress_affiliates') ) {
 
             $affiliatepress_fileupload_obj->affiliatepress_check_cap          = true;
             $affiliatepress_fileupload_obj->affiliatepress_check_nonce        = true;
-            $affiliatepress_fileupload_obj->affiliatepress_nonce_data         = isset($_REQUEST['_wpnonce']) ? sanitize_text_field($_REQUEST['_wpnonce']) : ''; // phpcs:ignore 
-            $affiliatepress_fileupload_obj->affiliatepress_nonce_action       = isset($_REQUEST['action']) ? sanitize_text_field($_REQUEST['action']) : ''; // phpcs:ignore 
+            $affiliatepress_fileupload_obj->affiliatepress_nonce_data         = isset($_REQUEST['_wpnonce']) ? sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'])) : '';
+            $affiliatepress_fileupload_obj->affiliatepress_nonce_action       = isset($_REQUEST['action']) ? sanitize_text_field(wp_unslash($_REQUEST['action'])) : '';
             $affiliatepress_fileupload_obj->affiliatepress_check_only_image   = false;
             $affiliatepress_fileupload_obj->affiliatepress_check_specific_ext = true;
             $affiliatepress_fileupload_obj->affiliatepress_allowed_ext        = array('csv');
-            $affiliatepress_file_name                = isset($_FILES['file']['name']) ? current_time('timestamp') . '_' . sanitize_file_name($_FILES['file']['name']) : ''; // phpcs:ignore
+            $affiliatepress_file_name                = isset($_FILES['file']['name']) ? current_time('timestamp') . '_' . sanitize_file_name($_FILES['file']['name']) : '';
             $affiliatepress_file_name                = 'affiliate-import.csv';
             $affiliatepress_upload_dir               = AFFILIATEPRESS_IMPORT_DIR . '/';
             $affiliatepress_upload_url               = AFFILIATEPRESS_IMPORT_URL . '/';
@@ -736,9 +736,8 @@ if (! class_exists('affiliatepress_affiliates') ) {
                     die;                
                 }
 
-                $affiliatepress_send_email = (isset($_POST['ap_send_email']))?sanitize_text_field($_POST['ap_send_email']):'';// phpcs:ignore 
-                $affiliatepress_action = (isset($_POST['action']))?sanitize_text_field($_POST['action']):'';// phpcs:ignore 
-                $affiliatepress_action = (isset($_POST['action']))?sanitize_text_field($_POST['action']):'';// phpcs:ignore             
+                $affiliatepress_send_email = (isset($_POST['ap_send_email']))?sanitize_text_field(wp_unslash($_POST['ap_send_email'])):'';
+                $affiliatepress_action = (isset($_POST['action']))?sanitize_text_field(wp_unslash($_POST['action'])):'';    
                 if(isset($_POST['ap_send_email']) && $affiliatepress_send_email == "false" && $affiliatepress_action == "affiliatepress_add_affiliate"){ // phpcs:ignore 
                     $affiliatepress_affiliates_id = (isset($_POST['ap_affiliates_id']))?intval($_POST['ap_affiliates_id']):0; // phpcs:ignore 
                     if($affiliatepress_affiliates_id == 0){
@@ -964,12 +963,12 @@ if (! class_exists('affiliatepress_affiliates') ) {
 
             $affiliatepress_fileupload_obj->affiliatepress_check_cap          = true;
             $affiliatepress_fileupload_obj->affiliatepress_check_nonce        = true;
-            $affiliatepress_fileupload_obj->affiliatepress_nonce_data         = isset($_REQUEST['_wpnonce']) ? sanitize_text_field($_REQUEST['_wpnonce']) : ''; // phpcs:ignore 
-            $affiliatepress_fileupload_obj->affiliatepress_nonce_action       = isset($_REQUEST['action']) ? sanitize_text_field($_REQUEST['action']) : ''; // phpcs:ignore 
+            $affiliatepress_fileupload_obj->affiliatepress_nonce_data         = isset($_REQUEST['_wpnonce']) ? sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'])) : '';
+            $affiliatepress_fileupload_obj->affiliatepress_nonce_action       = isset($_REQUEST['action']) ? sanitize_text_field(wp_unslash($_REQUEST['action'])) : '';
             $affiliatepress_fileupload_obj->affiliatepress_check_only_image   = true;
             $affiliatepress_fileupload_obj->affiliatepress_check_specific_ext = false;
             $affiliatepress_fileupload_obj->affiliatepress_allowed_ext        = array();
-            $affiliatepress_file_name                = isset($_FILES['file']['name']) ? current_time('timestamp') . '_' . sanitize_file_name($_FILES['file']['name']) : ''; // phpcs:ignore 
+            $affiliatepress_file_name                = isset($_FILES['file']['name']) ? current_time('timestamp') . '_' . sanitize_file_name($_FILES['file']['name']) : '';
             $affiliatepress_upload_dir               = AFFILIATEPRESS_TMP_IMAGES_DIR . '/';
             $affiliatepress_upload_url               = AFFILIATEPRESS_TMP_IMAGES_URL . '/';
             $affiliatepress_destination = $affiliatepress_upload_dir . $affiliatepress_file_name;
@@ -1041,7 +1040,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
             $response['variant'] = 'error';
             $response['title']   = esc_html__('Error', 'affiliatepress-affiliate-marketing');
             $response['msg']     = esc_html__('Something went wrong..', 'affiliatepress-affiliate-marketing');
-            $affiliatepress_search_user_str = ! empty( $_REQUEST['search_user_str'] ) ? sanitize_text_field( $_REQUEST['search_user_str'] ) : ''; // phpcs:ignore 
+            $affiliatepress_search_user_str = ! empty( $_REQUEST['search_user_str'] ) ? sanitize_text_field( wp_unslash($_REQUEST['search_user_str']) ) : '';
             $wordpress_user_id = ! empty( $_REQUEST['wordpress_user_id'] ) ? intval( $_REQUEST['wordpress_user_id'] ) : ''; // phpcs:ignore 
 
 			if(!empty($affiliatepress_search_user_str)) {                    
@@ -1120,7 +1119,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
                 exit;
             } 
 
-            if (! empty($_POST['bulk_action']) && sanitize_text_field($_POST['bulk_action']) == 'delete' ) { // phpcs:ignore 
+            if (! empty($_POST['bulk_action']) && sanitize_text_field(wp_unslash($_POST['bulk_action'])) == 'delete' ) {
 
                 // phpcs:ignore santize in below function affiliatepress_array_sanatize_integer_field
                 $affiliatepress_delete_ids = (isset($_POST['ids']))?stripslashes_deep($_POST['ids']):'';// phpcs:ignore                 
@@ -1212,7 +1211,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
                 $response['title']   = esc_html__('Success', 'affiliatepress-affiliate-marketing');
                 $response['msg']     = esc_html__('Affiliate has been deleted successfully.', 'affiliatepress-affiliate-marketing');
                 $return              = true;
-                if (isset($_POST['action']) && sanitize_text_field($_POST['action']) == 'affiliatepress_delete_affiliate' ) { // phpcs:ignore
+                if (isset($_POST['action']) && sanitize_text_field(wp_unslash($_POST['action'])) == 'affiliatepress_delete_affiliate' ) {
                     wp_send_json($response);
                 }
                 return $return;
@@ -1222,7 +1221,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
             $response['title']   = esc_html__('warning', 'affiliatepress-affiliate-marketing');
             $response['msg']     = $affiliatepress_error_msg;
             $return              = false;
-            if (isset($_POST['action']) && sanitize_text_field($_POST['action']) == 'affiliatepress_delete_affiliate' ) { // phpcs:ignore
+            if (isset($_POST['action']) && sanitize_text_field(wp_unslash($_POST['action'])) == 'affiliatepress_delete_affiliate' ) {
                 wp_send_json($response);
             }
             return $return;
@@ -1398,8 +1397,8 @@ if (! class_exists('affiliatepress_affiliates') ) {
             }
             $affiliatepress_currentpage = isset($_POST['currentpage']) ? intval($_POST['currentpage']) : 1; // phpcs:ignore
             $affiliatepress_offset      = (!empty($affiliatepress_currentpage) && $affiliatepress_currentpage > 1 ) ? ( ( $affiliatepress_currentpage - 1 ) * $affiliatepress_perpage ) : 0;
-            $affiliatepress_order       = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : ''; // phpcs:ignore
-            $affiliatepress_order_by    = isset($_POST['order_by']) ? sanitize_text_field($_POST['order_by']) : ''; // phpcs:ignore
+            $affiliatepress_order       = isset($_POST['order']) ? sanitize_text_field(wp_unslash($_POST['order'])) : '';
+            $affiliatepress_order_by    = isset($_POST['order_by']) ? sanitize_text_field(wp_unslash($_POST['order_by'])) : '';
             
 
             $affiliatepress_search_query = '';
@@ -1854,7 +1853,7 @@ if (! class_exists('affiliatepress_affiliates') ) {
                     $affiliatepress_upload_res = new affiliatepress_fileupload_class( $affiliatepress_user_img_url, true );
                     $affiliatepress_upload_res->affiliatepress_check_cap          = true;
                     $affiliatepress_upload_res->affiliatepress_check_nonce        = true;
-                    $affiliatepress_upload_res->affiliatepress_nonce_data         = isset($_REQUEST['_wpnonce']) ? sanitize_text_field($_REQUEST['_wpnonce']) : ''; // phpcs:ignore 
+                    $affiliatepress_upload_res->affiliatepress_nonce_data         = isset($_REQUEST['_wpnonce']) ? sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'])) : '';
                     $affiliatepress_upload_res->affiliatepress_nonce_action       = 'ap_wp_nonce';
                     $affiliatepress_upload_res->affiliatepress_check_only_image   = true;
                     $affiliatepress_upload_res->affiliatepress_check_specific_ext = false;

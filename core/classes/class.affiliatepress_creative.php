@@ -163,8 +163,8 @@ if (! class_exists('affiliatepress_creative') ) {
 
             $affiliatepress_fileupload_obj->affiliatepress_check_cap          = true;
             $affiliatepress_fileupload_obj->affiliatepress_check_nonce        = true;
-            $affiliatepress_fileupload_obj->affiliatepress_nonce_data         = isset($_REQUEST['_wpnonce']) ? sanitize_text_field($_REQUEST['_wpnonce']) : ''; // phpcs:ignore 
-            $affiliatepress_fileupload_obj->affiliatepress_nonce_action       = isset($_REQUEST['action']) ? sanitize_text_field($_REQUEST['action']) : ''; // phpcs:ignore 
+            $affiliatepress_fileupload_obj->affiliatepress_nonce_data         = isset($_REQUEST['_wpnonce']) ? sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'])) : '';
+            $affiliatepress_fileupload_obj->affiliatepress_nonce_action       = isset($_REQUEST['action']) ? sanitize_text_field(wp_unslash($_REQUEST['action'])) : '';
             $affiliatepress_fileupload_obj->affiliatepress_check_only_image   = true;
             $affiliatepress_fileupload_obj->affiliatepress_check_specific_ext = false;
             $affiliatepress_fileupload_obj->affiliatepress_allowed_ext        = array();
@@ -415,7 +415,7 @@ if (! class_exists('affiliatepress_creative') ) {
                             $affiliatepress_upload_res = new affiliatepress_fileupload_class( $affiliatepress_user_img_url, true );
                             $affiliatepress_upload_res->affiliatepress_check_cap          = true;
                             $affiliatepress_upload_res->affiliatepress_check_nonce        = true;
-                            $affiliatepress_upload_res->affiliatepress_nonce_data         = isset($_REQUEST['_wpnonce']) ? sanitize_text_field($_REQUEST['_wpnonce']) : '';// phpcs:ignore 
+                            $affiliatepress_upload_res->affiliatepress_nonce_data         = isset($_REQUEST['_wpnonce']) ? sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'])) : '';
                             $affiliatepress_upload_res->affiliatepress_nonce_action       = 'ap_wp_nonce';
                             $affiliatepress_upload_res->affiliatepress_check_only_image   = true;
                             $affiliatepress_upload_res->affiliatepress_check_specific_ext = false;
@@ -490,7 +490,7 @@ if (! class_exists('affiliatepress_creative') ) {
                 if(!empty($affiliatepress_creative_ids)){
                     $affiliatepress_creative_ids = json_decode($affiliatepress_creative_ids, true);
                 }
-                $affiliatepress_bulk_action = sanitize_text_field($_POST['bulk_action']); // phpcs:ignore 
+                $affiliatepress_bulk_action = sanitize_text_field(wp_unslash($_POST['bulk_action']));
                 $affiliatepress_new_status  = ($affiliatepress_bulk_action == 'active')?1:(($affiliatepress_bulk_action == 'inactive')?0:'');
 
                 if(is_array($affiliatepress_creative_ids) && ($affiliatepress_new_status == 0 || $affiliatepress_new_status == 1)){
@@ -653,7 +653,7 @@ if (! class_exists('affiliatepress_creative') ) {
             }
             $affiliatepress_currentpage = isset($_POST['currentpage']) ? intval($_POST['currentpage']) : 1; // phpcs:ignore
             $affiliatepress_offset      = ( ! empty($affiliatepress_currentpage) && $affiliatepress_currentpage > 1 ) ? ( ( $affiliatepress_currentpage - 1 ) * $affiliatepress_perpage ) : 0;
-            $affiliatepress_order       = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : ''; // phpcs:ignore
+            $affiliatepress_order       = isset($_POST['order']) ? sanitize_text_field(wp_unslash($_POST['order'])) : '';
             
             $affiliatepress_where_clause = " WHERE 1 = 1 ";
             if (! empty($_REQUEST['search_data']) ){// phpcs:ignore

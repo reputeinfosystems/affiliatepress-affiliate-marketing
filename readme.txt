@@ -5,7 +5,7 @@ Donate link: https://www.affiliatepressplugin.com/
 Requires at least: 5.3.0
 Tested up to: 7.1
 Requires PHP: 7.0
-Stable tag: 3.3
+Stable tag: 3.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -128,6 +128,9 @@ Please follow the steps for installation:
 1. AffiliatePress – WordPress Affiliate Plugin
 
 == Changelog ==
+
+= 3.4 =
+* Minor bug fixes and improvements.
 
 = 3.3 =
 * Added: Loader for Add/Edit forms in the Admin Panel.

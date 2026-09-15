@@ -341,7 +341,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             }
             $affiliatepress_currentpage = isset($_POST['currentpage']) ? intval($_POST['currentpage']) : 1; // phpcs:ignore
             $affiliatepress_offset      = ( ! empty($affiliatepress_currentpage) && $affiliatepress_currentpage > 1 ) ? ( ( $affiliatepress_currentpage - 1 ) * $affiliatepress_perpage ) : 0;
-            $affiliatepress_order       = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : ''; // phpcs:ignore       
+            $affiliatepress_order       = isset($_POST['order']) ? sanitize_text_field(wp_unslash($_POST['order'])) : '';
             $affiliatepress_search_query = '';
             $affiliatepress_where_clause = " WHERE 1 = 1 ";
             $affiliatepress_where_clause.= $wpdb->prepare( " AND (payments.ap_affiliates_id = %d) ", $affiliatepress_affiliate_id);
@@ -1147,7 +1147,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
 
                     $affiliatepress_upload_res = new affiliatepress_fileupload_class( $affiliatepress_user_img_url, true );
                     $affiliatepress_upload_res->affiliatepress_check_nonce        = true;
-                    $affiliatepress_upload_res->affiliatepress_nonce_data         = isset($_REQUEST['_wpnonce']) ? sanitize_text_field($_REQUEST['_wpnonce']) : '';// phpcs:ignore 
+                    $affiliatepress_upload_res->affiliatepress_nonce_data         = isset($_REQUEST['_wpnonce']) ? sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'])) : '';
                     $affiliatepress_upload_res->affiliatepress_nonce_action       = 'ap_wp_nonce';
                     $affiliatepress_upload_res->affiliatepress_check_only_image   = true;
                     $affiliatepress_upload_res->affiliatepress_check_specific_ext = false;
@@ -1306,7 +1306,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             }
             $affiliatepress_currentpage = isset($_POST['currentpage']) ? intval($_POST['currentpage']) : 1; // phpcs:ignore
             $affiliatepress_offset      = ( ! empty($affiliatepress_currentpage) && $affiliatepress_currentpage > 1 ) ? ( ( $affiliatepress_currentpage - 1 ) * $affiliatepress_perpage ) : 0;
-            $affiliatepress_order       = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : ''; // phpcs:ignore
+            $affiliatepress_order       = isset($_POST['order']) ? sanitize_text_field(wp_unslash($_POST['order'])) : '';
             
             $affiliatepress_search_query = '';
 
@@ -1439,7 +1439,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             }
             $affiliatepress_currentpage = isset($_POST['currentpage']) ? intval($_POST['currentpage']) : 1; // phpcs:ignore
             $affiliatepress_offset      = (!empty($affiliatepress_currentpage) && $affiliatepress_currentpage > 1 ) ? ( ( $affiliatepress_currentpage - 1 ) * $affiliatepress_perpage ) : 0;
-            $affiliatepress_order       = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : ''; // phpcs:ignore
+            $affiliatepress_order       = isset($_POST['order']) ? sanitize_text_field(wp_unslash($_POST['order'])) : '';
             
             $affiliatepress_search_query = '';
 
@@ -1592,7 +1592,7 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
             }
             $affiliatepress_currentpage = isset($_POST['currentpage']) ? intval($_POST['currentpage']) : 1; // phpcs:ignore 
             $affiliatepress_offset      = ( ! empty($affiliatepress_currentpage) && $affiliatepress_currentpage > 1 ) ? ( ( $affiliatepress_currentpage - 1 ) * $affiliatepress_perpage ) : 0;
-            $affiliatepress_order       = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : ''; // phpcs:ignore 
+            $affiliatepress_order       = isset($_POST['order']) ? sanitize_text_field(wp_unslash($_POST['order'])) : '';
             
             $affiliatepress_search_query = '';
             $affiliatepress_where_clause = " WHERE 1 = 1 ";

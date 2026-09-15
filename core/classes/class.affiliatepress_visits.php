@@ -116,8 +116,8 @@ if (! class_exists('affiliatepress_visits') ) {
             }
             $affiliatepress_currentpage = isset($_POST['currentpage']) ? intval($_POST['currentpage']) : 1; // phpcs:ignore
             $affiliatepress_offset      = (!empty($affiliatepress_currentpage) && $affiliatepress_currentpage > 1 ) ? ( ( $affiliatepress_currentpage - 1 ) * $affiliatepress_perpage ) : 0;
-            $affiliatepress_order       = isset($_POST['order']) ? sanitize_text_field($_POST['order']) : ''; // phpcs:ignore 
-            $affiliatepress_order_by    = isset($_POST['order_by']) ? sanitize_text_field($_POST['order_by']) : ''; // phpcs:ignore
+            $affiliatepress_order       = isset($_POST['order']) ? sanitize_text_field(wp_unslash($_POST['order'])) : '';
+            $affiliatepress_order_by    = isset($_POST['order_by']) ? sanitize_text_field(wp_unslash($_POST['order_by'])) : '';
                                     
             $affiliatepress_search_query = '';
 

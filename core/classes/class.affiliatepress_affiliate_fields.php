@@ -340,7 +340,7 @@ if (! class_exists('affiliatepress_affiliate_fields') ) {
                 die;                
             }
 
-            $affiliatepress_wpnonce = isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '';// phpcs:ignore
+            $affiliatepress_wpnonce = isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '';
             $affiliatepress_ap_verify_nonce_flag = wp_verify_nonce($affiliatepress_wpnonce, 'ap_wp_nonce');
             if (! $affiliatepress_ap_verify_nonce_flag ) {
                 $response['variant']        = 'error';

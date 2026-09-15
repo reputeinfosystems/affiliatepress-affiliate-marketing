@@ -120,7 +120,7 @@ if (! class_exists('affiliatepress_commissions') ) {
                 if(!empty($affiliatepress_commission_ids)){
                     $affiliatepress_commission_ids = json_decode($affiliatepress_commission_ids, true);
                 }
-                $affiliatepress_bulk_action = sanitize_text_field($_POST['bulk_action']); // phpcs:ignore 
+                $affiliatepress_bulk_action = sanitize_text_field(wp_unslash($_POST['bulk_action']));
                 $affiliatepress_new_status  = ($affiliatepress_bulk_action == 'approve')?1:(($affiliatepress_bulk_action == 'reject')?3:'');
                 if($affiliatepress_bulk_action == "pending"){
                     $affiliatepress_new_status = 2;
@@ -759,8 +759,8 @@ if (! class_exists('affiliatepress_commissions') ) {
                 exit;
             }
 
-            $affiliatepress_commission_source = !empty( $_REQUEST['ap_commission_source'] ) ? sanitize_text_field( $_REQUEST['ap_commission_source'] ) : ''; // phpcs:ignore 
-            $affiliatepress_search_product_str = !empty( $_REQUEST['search_product_str'] ) ? sanitize_text_field( $_REQUEST['search_product_str'] ) : ''; // phpcs:ignore 
+            $affiliatepress_commission_source = !empty( $_REQUEST['ap_commission_source'] ) ? sanitize_text_field( wp_unslash($_REQUEST['ap_commission_source']) ) : '';
+            $affiliatepress_search_product_str = !empty( $_REQUEST['search_product_str'] ) ? sanitize_text_field( wp_unslash($_REQUEST['search_product_str']) ) : '';
 
             $affiliatepress_existing_products_data = $affiliatepress_existing_product_data = array();
             if(!empty($affiliatepress_search_product_str) && !empty($affiliatepress_commission_source)) {  
@@ -942,7 +942,7 @@ if (! class_exists('affiliatepress_commissions') ) {
                 exit;
             }            
 
-            if (! empty($_POST['bulk_action']) && sanitize_text_field($_POST['bulk_action']) == 'delete' ) { // phpcs:ignore 
+            if (! empty($_POST['bulk_action']) && sanitize_text_field(wp_unslash($_POST['bulk_action'])) == 'delete' ) {
                 // phpcs:ignore because santize in below function affiliatepress_array_sanatize_integer_field 
                 $affiliatepress_delete_ids = (isset($_POST['ids']))?stripslashes_deep($_POST['ids']):''; // phpcs:ignore             
                 if(!empty($affiliatepress_delete_ids)){
