@@ -550,6 +550,9 @@ if( !class_exists('affiliatepress_armember') ){
                     'discount_val'         => ((isset($affiliatepress_commission_rules['discount_val']))?$affiliatepress_commission_rules['discount_val']:0),
                     'discount_type'        => ((isset($affiliatepress_commission_rules['discount_type']))?$affiliatepress_commission_rules['discount_type']:NULL),                    
                 );
+
+                $affiliatepress_commission_products_ids[] = $affiliatepress_plan_id;
+                $affiliatepress_commission_products_name[] = $affiliatepress_plan_name;
             }
             else
             {

@@ -429,6 +429,13 @@ if( !class_exists('affiliatepress_getpaid') ){
                 );
 
                 $affiliatepress_order_referal_amount = $affiliatepress_amount;
+
+                foreach( $affiliatepress_invoice_items as $affiliatepress_invoice_item ){
+
+                    $affiliatepress_commission_products_ids[]  = isset($affiliatepress_invoice_item) ? intval($affiliatepress_invoice_item->get_id()) : 0;
+                    $affiliatepress_commission_products_name[] = isset($affiliatepress_invoice_item) ? sanitize_text_field($affiliatepress_invoice_item->get_name()) : '';
+                }
+
             }else{
                 
                 foreach( $affiliatepress_invoice_items as $affiliatepress_invoice_item ){

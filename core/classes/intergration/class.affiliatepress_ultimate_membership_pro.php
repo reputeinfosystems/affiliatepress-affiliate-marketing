@@ -339,6 +339,9 @@ if( !class_exists('affiliatepress_ultimate_membership_pro') ){
 
                 $affiliatepress_order_referal_amount = $affiliatepress_amount;
 
+                $affiliatepress_commission_products_ids[] = $affiliatepress_plan_id;
+                $affiliatepress_commission_products_name[] = $affiliatepress_plan_name;
+
             }
             else
             {

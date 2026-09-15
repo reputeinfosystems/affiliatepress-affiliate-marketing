@@ -1722,6 +1722,9 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                 const open_commission_filter_modal = ref(false);
                 affiliatepress_affiliate_panel_return_data["open_commission_filter_modal"] = open_commission_filter_modal;
 
+                const open_dashboard_filter_modal = ref(false);
+                affiliatepress_affiliate_panel_return_data["open_dashboard_filter_modal"] = open_dashboard_filter_modal;
+
                 const open_visit_filter_modal = ref(false);
                 affiliatepress_affiliate_panel_return_data["open_visit_filter_modal"] = open_visit_filter_modal;
 
@@ -3730,6 +3733,11 @@ if (! class_exists('affiliatepress_affiliate_panel') ) {
                     var vm = this;
                     vm.open_commission_filter_modal = false;
                     vm.applyCommissionsFilter();
+                },
+                applypopupDashboardFilter(){
+                    var vm = this;
+                    vm.open_dashboard_filter_modal = false;
+                    vm.change_dashboard_date();
                 },
                 resetpopupvisit(){
                     var vm = this;

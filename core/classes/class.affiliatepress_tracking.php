@@ -477,23 +477,19 @@ if( !class_exists('affiliatepress_tracking') ){
 
             }else{
                 /* Calculation for per product commission */
-                if($affiliatepress_amount > 0){
-                    
-                    $affiliatepress_default_discount_val = $AffiliatePress->affiliatepress_get_settings('default_discount_val', 'commissions_settings');
-                    $affiliatepress_default_discount_type = $AffiliatePress->affiliatepress_get_settings('default_discount_type', 'commissions_settings');
-                    $affiliatepress_commission_amount = ( $affiliatepress_default_discount_type == 'percentage' ? round( ( $affiliatepress_amount * $affiliatepress_default_discount_val / 100 ), 2 ) : $affiliatepress_default_discount_val );
+                $affiliatepress_default_discount_val = $AffiliatePress->affiliatepress_get_settings('default_discount_val', 'commissions_settings');
+                $affiliatepress_default_discount_type = $AffiliatePress->affiliatepress_get_settings('default_discount_type', 'commissions_settings');
+                $affiliatepress_commission_amount = ( $affiliatepress_default_discount_type == 'percentage' ? round( ( $affiliatepress_amount * $affiliatepress_default_discount_val / 100 ), 2 ) : $affiliatepress_default_discount_val );
 
-                    if($affiliatepress_default_discount_type != 'percentage'){
-                        $affiliatepress_commission_amount = $affiliatepress_commission_amount * $affiliatepress_quntity;
-                    }
+                if($affiliatepress_default_discount_type != 'percentage'){
+                    $affiliatepress_commission_amount = $affiliatepress_commission_amount * $affiliatepress_quntity;
+                }
 
-                    $affiliatepress_commission_rules['commission_amount'] = $affiliatepress_commission_amount;
-                    $affiliatepress_commission_rules['discount_val']      = $affiliatepress_default_discount_val;
-                    $affiliatepress_commission_rules['discount_type']     = $affiliatepress_default_discount_type;
-                    $affiliatepress_commission_rules['commission_basis']  = $affiliatepress_args['commission_basis'];
-                    $affiliatepress_commission_rules['rule_source']       = 'default';
-
-                }    
+                $affiliatepress_commission_rules['commission_amount'] = $affiliatepress_commission_amount;
+                $affiliatepress_commission_rules['discount_val']      = $affiliatepress_default_discount_val;
+                $affiliatepress_commission_rules['discount_type']     = $affiliatepress_default_discount_type;
+                $affiliatepress_commission_rules['commission_basis']  = $affiliatepress_args['commission_basis'];
+                $affiliatepress_commission_rules['rule_source']       = 'default';
             }
 
             do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $affiliatepress_args['origin'].' Commission Default Rule', 'affiliatepress_'.$affiliatepress_args['origin'].'_commission_tracking', wp_json_encode($affiliatepress_commission_rules), $affiliatepress_commission_debug_log_id);

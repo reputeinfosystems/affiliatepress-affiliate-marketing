@@ -467,6 +467,14 @@ if( !class_exists('affiliatepress_easycart') ){
 
                 $affiliatepress_order_referal_amount = $affiliatepress_amount;
 
+                foreach ( $affiliatepress_items as $affiliatepress_cart_item ) {
+
+                    $affiliatepress_product_id = !empty($affiliatepress_cart_item->product_id ) ? intval($affiliatepress_cart_item->product_id) : 0;
+                    $affiliatepress_product_name = !empty($affiliatepress_cart_item->title) ? sanitize_text_field($affiliatepress_cart_item->title): '';
+
+                    $affiliatepress_commission_products_ids[] = $affiliatepress_product_id;
+                    $affiliatepress_commission_products_name[] = $affiliatepress_product_name;
+                }
             }
             else
             {

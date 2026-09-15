@@ -5,7 +5,7 @@ Donate link: https://www.affiliatepressplugin.com/
 Requires at least: 5.3.0
 Tested up to: 7.0
 Requires PHP: 7.0
-Stable tag: 3.1
+Stable tag: 3.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -129,7 +129,12 @@ Please follow the steps for installation:
 
 == Changelog ==
 
-= 3.1 =
+= 3.2 =
+* Added: Product name is now displayed when the commission basis is set to Per Order.
+* Fixed: Affiliate Panel Filters & Date picker were not displaying correctly on mobile devices.
+* Minor bug fixes and improvements.
+
+= 3.1 = 
 * Minor bug fixes and improvements.
 
 = 3.0.1 = 

@@ -18,7 +18,7 @@
 						<el-col :xs="12" :sm="12" :md="12" :lg="8" :xl="6" v-for="addons in addonsList" class="ap-addons-items-col">
 							<div class="ap-addon-item" :id="addons.addon_key+'_activate_addon'">
 								<div class="ap-addon-details">
-									<span class="ap-ai-icon" :class="addons.addon_icon_slug"></span>
+									<span class="ap-ai-icon" :class="addons.addon_icon_slug" :style="{ backgroundPosition: `${addons.addon_icon_horizontal_position} ${addons.addon_icon_vertical_position}`}"></span>
 									<div class="">
 										<h3>{{ addons.addon_name }}</h3>
 									</div>

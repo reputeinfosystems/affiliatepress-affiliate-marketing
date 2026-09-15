@@ -448,6 +448,9 @@ if( !class_exists('affiliatepress_wp_forms') ){
 
                 $affiliatepress_order_referal_amount = $affiliatepress_amount;
 
+                $affiliatepress_commission_products_ids[] = $affiliatepress_form_id;
+                $affiliatepress_commission_products_name[] = $affiliatepress_form_name;
+
             }
             else
             {

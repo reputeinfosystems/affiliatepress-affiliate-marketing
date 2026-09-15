@@ -321,6 +321,16 @@ if( !class_exists('affiliatepress_download_manager') ){
                     'discount_val'         => ((isset($affiliatepress_commission_rules['discount_val']))?$affiliatepress_commission_rules['discount_val']:0),
                     'discount_type'        => ((isset($affiliatepress_commission_rules['discount_type']))?$affiliatepress_commission_rules['discount_type']:NULL),                    
                 );
+
+                foreach($affiliatepress_cart_data as $affiliatepress_cart_item){
+
+                    $affiliatepress_product_id   = ( ! empty( $affiliatepress_cart_item['pid'] ) ? intval($affiliatepress_cart_item['pid']) : 0);
+                    $affiliatepress_product_name   = !empty( $affiliatepress_cart_item['product_name']) ? sanitize_text_field($affiliatepress_cart_item['product_name']) : '';
+
+                    $affiliatepress_commission_products_ids[] = $affiliatepress_product_id;
+                    $affiliatepress_commission_products_name[] = $affiliatepress_product_name;
+                }
+
             }else{
                 if(!empty($affiliatepress_cart_data)){
 

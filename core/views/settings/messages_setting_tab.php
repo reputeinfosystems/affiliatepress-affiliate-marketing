@@ -168,6 +168,14 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
                                         </el-form-item>
                                     </div>
                                 </el-col>
+                                <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="ap-settings-col ap-gs__cb-item-left" >
+                                    <div class="ap-combine-field">
+                                        <label><span class="ap-form-label"><?php esc_html_e('Date', 'affiliatepress-affiliate-marketing'); ?></span></label>    
+                                        <el-form-item prop="dashboard_reports">
+                                            <el-input class="ap-form-control" type="text" v-model="messages_setting_form.dashboard_date_label" size="large"  />                                         
+                                        </el-form-item>
+                                    </div>
+                                </el-col>
                             </el-row>
                         </div>
                     </div>    

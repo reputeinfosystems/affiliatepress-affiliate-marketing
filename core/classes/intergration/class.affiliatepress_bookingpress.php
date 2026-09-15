@@ -344,6 +344,33 @@ if( !class_exists('affiliatepress_bookingpress') ){
                     'discount_val'         => ((isset($affiliatepress_commission_rules['discount_val']))?$affiliatepress_commission_rules['discount_val']:0),
                     'discount_type'        => ((isset($affiliatepress_commission_rules['discount_type']))?$affiliatepress_commission_rules['discount_type']:NULL),                    
                 );
+
+                $affiliatepress_bookingpress_is_cart = isset($affiliatepress_bookingpress_appointment_data['bookingpress_is_cart']) ? intval($affiliatepress_bookingpress_appointment_data['bookingpress_is_cart']) : 0;
+
+                if($affiliatepress_bookingpress_is_cart == 0){
+
+                    $affiliatepress_product_id   = isset($affiliatepress_bookingpress_appointment_data['bookingpress_service_id']) ? intval($affiliatepress_bookingpress_appointment_data['bookingpress_service_id']) :0;
+                    $affiliatepress_product_name   = isset($affiliatepress_bookingpress_appointment_data['bookingpress_service_name']) ? sanitize_text_field($affiliatepress_bookingpress_appointment_data['bookingpress_service_name']) : '';
+
+                    $affiliatepress_commission_products_ids[] = $affiliatepress_product_id;
+                    $affiliatepress_commission_products_name[] = $affiliatepress_product_name;
+                }else{
+                    if ($affiliatepress_bookingpress_is_cart == 1) {
+
+                        $affiliatepress_cart_order_items = $this->affiliatepress_select_record( true, '', $affiliatepress_tbl_bookingpress_appointment_bookings, '*', 'WHERE bookingpress_payment_id = %d', array($affiliatepress_payment_id), '', '', '', false, false,ARRAY_A);
+
+                        foreach($affiliatepress_cart_order_items as $affiliatepress_cart_item){
+
+                            $affiliatepress_product_id   = isset($affiliatepress_cart_item['bookingpress_service_id']) ? intval($affiliatepress_cart_item['bookingpress_service_id']) :0;
+                            $affiliatepress_product_name   = isset($affiliatepress_cart_item['bookingpress_service_name']) ? sanitize_text_field($affiliatepress_cart_item['bookingpress_service_name']) : '';
+
+                            $affiliatepress_commission_products_ids[] = $affiliatepress_product_id;
+                            $affiliatepress_commission_products_name[] = $affiliatepress_product_name;
+                        }
+                        
+                    }
+                }
+
             }else{
                 $affiliatepress_bookingpress_is_cart = isset($affiliatepress_bookingpress_appointment_data['bookingpress_is_cart']) ? intval($affiliatepress_bookingpress_appointment_data['bookingpress_is_cart']) : 0;
         

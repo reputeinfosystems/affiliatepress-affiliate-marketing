@@ -45,7 +45,7 @@
                         <div class="ap-single-field__form">  
                             <div class="ap-disp-flex-box">
                                 <el-checkbox v-model="affiliatepress_login_form.affiliatepress_is_remember" class="ap-form-label ap-custom-checkbox--is-label" size="large"><div :aria-label="affiliate_panel_labels.login_remember_me" v-html="affiliate_panel_labels.login_remember_me"></div></el-checkbox>
-                                <div><el-link href="javascript:void(0);" @click="showForgotpassword()" class="ap-acnt-link ap-acnt-link-forgot ap-title-text-color" :aria-label="affiliate_panel_labels.login_forgot_password" v-html="affiliate_panel_labels.login_forgot_password"/></div>
+                                <div><el-link href="javascript:void(0);" @click="showForgotpassword()" class="ap-acnt-link ap-acnt-link-forgot ap-title-text-color ap-top-space-add" :aria-label="affiliate_panel_labels.login_forgot_password" v-html="affiliate_panel_labels.login_forgot_password"/></div>
                             </div>      
                         </div>                
                         <div class="ap-frm-btn">
@@ -59,8 +59,8 @@
                             </el-button>                 
                         </div>
                         <div style="display:none;" :style="(allow_affiliate_registration != 'false') ? 'display:flex;' : ''" class="ap-frm-account-link-upper">
-                            <span :aria-label="affiliate_panel_labels.login_dont_have_account" v-html="affiliate_panel_labels.login_dont_have_account"></span>&nbsp;
-                            <el-link class="ap-acnt-link ap-title-text-color" @click="affiliatepress_go_to_register" href="javascript:void(0);"  :aria-label="affiliate_panel_labels.login_create_account" v-html="affiliate_panel_labels.login_create_account"/>
+                            <span :aria-label="affiliate_panel_labels.login_dont_have_account" v-html="affiliate_panel_labels.login_dont_have_account"></span>
+                            <el-link class="ap-acnt-link ap-title-text-color ap-top-space-add" @click="affiliatepress_go_to_register" href="javascript:void(0);"  :aria-label="affiliate_panel_labels.login_create_account" v-html="affiliate_panel_labels.login_create_account"/>
                         </div>
                     </el-form>
                     <div :class="(show_register_form == '0')?'ap-hide-form':''">
@@ -126,8 +126,8 @@
                                 </el-button>                 
                             </div>
                             <div class="ap-frm-account-link-upper">
-                                <span :aria-label="affiliate_panel_labels.do_you_have_account" v-html="affiliate_panel_labels.do_you_have_account"></span>&nbsp;
-                                <el-link @click="go_to_login_page()" href="javascript:void(0);" class="ap-acnt-link ap-title-text-color"  :aria-label="affiliate_panel_labels.signin" v-html="affiliate_panel_labels.signin"/>
+                                <span :aria-label="affiliate_panel_labels.do_you_have_account" v-html="affiliate_panel_labels.do_you_have_account"></span>
+                                <el-link @click="go_to_login_page()" href="javascript:void(0);" class="ap-acnt-link ap-title-text-color ap-top-space-add"  :aria-label="affiliate_panel_labels.signin" v-html="affiliate_panel_labels.signin"/>
                             </div>
                     </el-form>
 
@@ -414,7 +414,7 @@
                                         <div class="ap-affiliate-dialog-body">
                                             <div class="ap-single-field__form">  
                                                 <span class="ap-form-label" :aria-label="affiliate_panel_labels.paymnet_date" v-html="affiliate_panel_labels.paymnet_date"></span>
-                                                <el-date-picker popper-class="ap-date-range-picker-widget-wrapper" value-format="YYYY-MM-DD" :format="ap_common_date_format" v-model="payments_search.ap_payment_created_date" class="ap-form-date-range-control ap-form-full-width-control ap-padding-right-16" type="daterange" size="large" :start-placeholder="affiliate_panel_labels.start_date" :end-placeholder="affiliate_panel_labels.end_date"  :default-time="defaultTime"/>
+                                                <el-date-picker popper-class="ap-date-range-picker-widget-wrapper ap-date-range-filter" value-format="YYYY-MM-DD" :format="ap_common_date_format" v-model="payments_search.ap_payment_created_date" class="ap-form-date-range-control ap-form-full-width-control ap-padding-right-16" type="daterange" size="large" :start-placeholder="affiliate_panel_labels.start_date" :end-placeholder="affiliate_panel_labels.end_date"  :default-time="defaultTime"/>
                                             </div>
                                             <div class="ap-single-field__form">  
                                                 <span class="ap-form-label" aria-label="affiliate_panel_labels.paymnet_status" v-html="affiliate_panel_labels.paymnet_status" ></span>
@@ -575,7 +575,7 @@
                                     <div class="ap-affiliate-dialog-body">
                                         <div class="ap-single-field__form">  
                                             <span class="ap-form-label" aria-label="affiliate_panel_labels.commission_date" v-html="affiliate_panel_labels.commission_date"></span>
-                                            <el-date-picker popper-class="ap-date-range-picker-widget-wrapper" value-format="YYYY-MM-DD" :format="ap_common_date_format" v-model="commissions_search.ap_commission_search_date" class="ap-form-date-range-control ap-form-full-width-control ap-padding-right-16" type="daterange" size="large" :start-placeholder="affiliate_panel_labels.start_date" :end-placeholder="affiliate_panel_labels.end_date"  :default-time="defaultTime"/>
+                                            <el-date-picker popper-class="ap-date-range-picker-widget-wrapper ap-date-range-filter" value-format="YYYY-MM-DD" :format="ap_common_date_format" v-model="commissions_search.ap_commission_search_date" class="ap-form-date-range-control ap-form-full-width-control ap-padding-right-16" type="daterange" size="large" :start-placeholder="affiliate_panel_labels.start_date" :end-placeholder="affiliate_panel_labels.end_date"  :default-time="defaultTime"/>
                                         </div>
                                         <div class="ap-single-field__form">  
                                             <span class="ap-form-label" aria-label="affiliate_panel_labels.commission_status" v-html="affiliate_panel_labels.commission_status"></span>
@@ -748,8 +748,34 @@
                             </div>
                         </div>
                         <div v-if="is_display_tab_content_loader == '0'" class="ap-panel-detail">
+                            <el-dialog modal-class="ap-affiliate-dialog ap-affiliate-filter-dialog ap-affiliate-creative-filter-dialog ap-mobile-full-screen-dialog" v-model="open_dashboard_filter_modal" title="" width="767">
+                                <div class="ap-affiliate-dialog">                               
+                                    <div class="ap-affiliate-dialog-header">
+                                        <div class="ap-tab-heading" :aria-label="affiliate_panel_labels.filters" v-html="affiliate_panel_labels.filters"></div>
+                                        <div @click="open_dashboard_filter_modal = false" class="ap-dialog-close1 ap-flex-center" tabindex="0" @keydown.enter.prevent="open_dashboard_filter_modal = false">
+                                            <?php do_action('affiliatepress_common_affiliate_panel_svg_code','close_dialog'); ?>
+                                        </div>                                     
+                                    </div>
+                                    <div class="ap-affiliate-dialog-body">
+                                        <div class="ap-single-field__form">
+                                            <span class="ap-form-label" aria-label="affiliate_panel_labels.dashboard_date_label" v-html="affiliate_panel_labels.dashboard_date_label"></span>
+                                            <el-date-picker popper-class="ap-date-range-picker-widget-wrapper ap-date-range-filter" value-format="YYYY-MM-DD" :format="ap_common_date_format" v-model="dashboard_date_range" class="ap-form-date-range-control ap-form-full-width-control ap-padding-right-16" type="daterange" size="large" :start-placeholder="affiliate_panel_labels.start_date" :end-placeholder="affiliate_panel_labels.end_date"  :default-time="defaultTime"/>
+                                        </div>                                                               
+                                    </div>
+                                </div>
+                                <div class="ap-tf-btn-group ap-filter-popup-btn-group">
+                                    <el-button @click="applypopupDashboardFilter" class="ap-btn--primary ap-btn--full-width" plain type="primary" :disabled="is_apply_disabled">
+                                       <span class="ap-btn__label" :aria-label="affiliate_panel_labels.apply" v-html="affiliate_panel_labels.apply"></span>
+                                    </el-button>
+                                </div>                            
+                            </el-dialog>
                             <div class="ap-affiliate-panel-content-header ap-affiliat-panel-pading">
                                 <div class="ap-tab-heading" v-html="affiliate_panel_labels.dashboard_affiliate_dashboard" :aria-label="affiliate_panel_labels.dashboard_affiliate_dashboard"></div>
+                                <div class="ap-header-right ap-flex-center ap-header-filter-right">
+                                    <el-button @click="open_dashboard_filter_modal = true" class="ap-filter-icon" aria-label="<?php esc_attr_e('Filter', 'affiliatepress-affiliate-marketing');// phpcs:ignore ?>">
+                                        <?php do_action('affiliatepress_common_affiliate_panel_svg_code','filter_icon'); ?>
+                                    </el-button>
+                                </div>     
                             </div>
                             <div class="ap-table-filter ap-affiliat-panel-pading">
                                 <el-row type="flex" :gutter="24">
@@ -898,7 +924,7 @@
                                         <div class="ap-affiliate-dialog-body">
                                             <div class="ap-single-field__form">  
                                                 <span class="ap-form-label" aria-label="affiliate_panel_labels.visit_date" v-html="affiliate_panel_labels.visit_date"></span>
-                                                <el-date-picker popper-class="ap-date-range-picker-widget-wrapper" value-format="YYYY-MM-DD" :format="ap_common_date_format" v-model="visits_search.ap_visit_date" class="ap-form-date-range-control ap-form-full-width-control ap-padding-right-16" type="daterange" size="large" :start-placeholder="affiliate_panel_labels.start_date" :end-placeholder="affiliate_panel_labels.end_date"  :unlink-panels="false" :default-time="defaultTime"/>
+                                                <el-date-picker popper-class="ap-date-range-picker-widget-wrapper ap-date-range-filter" value-format="YYYY-MM-DD" :format="ap_common_date_format" v-model="visits_search.ap_visit_date" class="ap-form-date-range-control ap-form-full-width-control ap-padding-right-16" type="daterange" size="large" :start-placeholder="affiliate_panel_labels.start_date" :end-placeholder="affiliate_panel_labels.end_date"  :unlink-panels="false" :default-time="defaultTime"/>
                                             </div>
                                             <div class="ap-single-field__form">  
                                                 <span class="ap-form-label" aria-label="affiliate_panel_labels.visit_select_type" v-html="affiliate_panel_labels.visit_select_type"></span>

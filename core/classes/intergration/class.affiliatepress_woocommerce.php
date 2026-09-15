@@ -596,6 +596,17 @@ if( !class_exists('affiliatepress_woocommerce') ){
                     'discount_val'         => ((isset($affiliatepress_commission_rules['discount_val']))?$affiliatepress_commission_rules['discount_val']:0),
                     'discount_type'        => ((isset($affiliatepress_commission_rules['discount_type']))?$affiliatepress_commission_rules['discount_type']:NULL),                    
                 );
+
+                if(!empty($affiliatepress_cart_order_items)){
+                    foreach($affiliatepress_cart_order_items as $affiliatepress_cart_item){
+                        $affiliatepress_variation_id = $affiliatepress_cart_item->get_variation_id( 'edit' );
+                        $affiliatepress_product_id   = ( ! empty( $affiliatepress_variation_id ) ? intval($affiliatepress_variation_id) : $affiliatepress_cart_item->get_product_id( 'edit' ) );
+                        $affiliatepress_product_name   = !empty($affiliatepress_cart_item->get_name()) ? $affiliatepress_cart_item->get_name() : '';
+                
+                        $affiliatepress_commission_products_ids[] = $affiliatepress_product_id;
+                        $affiliatepress_commission_products_name[] = $affiliatepress_product_name;
+                    }
+                }
                 
 
             }else{

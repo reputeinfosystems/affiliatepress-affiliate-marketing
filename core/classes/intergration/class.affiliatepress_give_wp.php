@@ -386,6 +386,9 @@ if( !class_exists('affiliatepress_give') ){
 
                 $affiliatepress_order_referal_amount = $affiliatepress_amount;
 
+                $affiliatepress_commission_products_ids[] = $affiliatepress_product_id;
+                $affiliatepress_commission_products_name[] = $affiliatepress_product_name;
+
             }
             else
             {

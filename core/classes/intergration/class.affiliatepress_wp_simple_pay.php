@@ -423,7 +423,10 @@ if( !class_exists('affiliatepress_wp_simple_pay') ){
                     'discount_type'        => ((isset($affiliatepress_commission_rules['discount_type']))?$affiliatepress_commission_rules['discount_type']:NULL),                    
                 );
 
-                $affiliatepress_order_referal_amount = $affiliatepress_amount;                
+                $affiliatepress_order_referal_amount = $affiliatepress_amount; 
+                
+                $affiliatepress_commission_products_ids[] = $affiliatepress_form_id;
+                $affiliatepress_commission_products_name[] = $affiliatepress_product_detail;
 
             }else{
 

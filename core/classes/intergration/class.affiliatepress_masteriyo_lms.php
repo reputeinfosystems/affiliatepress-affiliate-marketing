@@ -396,9 +396,7 @@ if( !class_exists('affiliatepress_masteriyo_lms') ){
             $affiliatepress_commission_data  = apply_filters( 'affiliatepress_before_commission_insert',$affiliatepress_commission_data,$affiliatepress_order, $affiliatepress_commission_rules);
 
             $affiliatepress_flat_rate_commission_basis = $AffiliatePress->affiliatepress_get_settings('flat_rate_commission_basis', 'commissions_settings');
-            if($affiliatepress_flat_rate_commission_basis == 'pre_product'){
-                $affiliatepress_commission_data['ap_commission_reference_detail'] = 'Order '.$affiliatepress_order_id;
-            }
+            $affiliatepress_commission_data['ap_commission_reference_detail'] = 'Order '.$affiliatepress_order_id;
 
              /* Insert The Commission */
              $affiliatepress_commission_id = $affiliatepress_tracking->affiliatepress_insert_commission( $affiliatepress_commission_data, $affiliatepress_affiliate_id, $affiliatepress_visit_id);

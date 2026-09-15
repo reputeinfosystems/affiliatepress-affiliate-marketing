@@ -529,6 +529,12 @@ if( !class_exists('affiliatepress_learndash') ){
                     'discount_val'         => ((isset($affiliatepress_commission_rules['discount_val']))?$affiliatepress_commission_rules['discount_val']:0),
                     'discount_type'        => ((isset($affiliatepress_commission_rules['discount_type']))?$affiliatepress_commission_rules['discount_type']:NULL),                    
                 );
+
+                $affiliatepress_product_id = get_post_meta( $transaction_id, 'post_id',  true);
+                $affiliatepress_product_name = get_the_title($affiliatepress_product_id);
+
+                $affiliatepress_commission_products_ids[] = $affiliatepress_product_id;
+                $affiliatepress_commission_products_name[] = $affiliatepress_product_name;
                 
 
             }else{

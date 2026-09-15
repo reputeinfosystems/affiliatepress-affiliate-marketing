@@ -411,9 +411,19 @@ if( !class_exists('affiliatepress_edd') ){
                 );
 
                 $affiliatepress_currency = isset($affiliatepress_order_data['currency']) ? sanitize_text_field($affiliatepress_order_data['currency']) : '';
+
+                if (empty($affiliatepress_currency)) {
+                    foreach ($affiliatepress_cart_order_items as $item) {
+                        if (!empty($item['currency'])) {
+                            $affiliatepress_currency = $item['currency'];
+                            break;
+                        }
+                    }
+                }
+
                 $affiliatepress_currency = $this->affiliatepress_get_normalized_currency_code($affiliatepress_currency);
                 $affiliatepress_commission_rules    = $affiliatepress_tracking->affiliatepress_calculate_commission_amount(  $affiliatepress_amount,$affiliatepress_currency , $affiliatepress_args );
-                
+
                 $affiliatepress_commission_amount = (isset($affiliatepress_commission_rules['commission_amount']))?floatval($affiliatepress_commission_rules['commission_amount']):0;
 
                 $affiliatepress_allow_products_commission[] = array(
@@ -428,6 +438,14 @@ if( !class_exists('affiliatepress_edd') ){
                 );
 
                 $affiliatepress_order_referal_amount = $affiliatepress_amount;
+
+                foreach($affiliatepress_cart_order_items as $affiliatepress_cart_item){
+                    $affiliatepress_product_id = isset($affiliatepress_cart_item['id']) ? intval($affiliatepress_cart_item['id']) : '';
+                    $affiliatepress_product_name = isset($affiliatepress_cart_item['name']) ? sanitize_text_field($affiliatepress_cart_item['name']) : '';
+                
+                    $affiliatepress_commission_products_ids[] = $affiliatepress_product_id;
+                    $affiliatepress_commission_products_name[] = $affiliatepress_product_name;
+                }
 
             }
             else

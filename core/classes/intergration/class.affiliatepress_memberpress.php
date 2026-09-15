@@ -418,6 +418,9 @@ if( !class_exists('affiliatepress_memberpress') ){
                 );
 
                 $affiliatepress_order_referal_amount = $affiliatepress_amount;
+
+                $affiliatepress_commission_products_ids[] = !empty($affiliatepress_product_id) ? intval($affiliatepress_product_id) : 0;
+                $affiliatepress_commission_products_name[] = html_entity_decode($affiliatepress_product_name);
             }
             else
             {

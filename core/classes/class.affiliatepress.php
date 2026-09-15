@@ -847,7 +847,7 @@ if (! class_exists('AffiliatePress') ) {
         {
             global $affiliatepress_version, $AffiliatePress;
             $affiliatepress_old_version = get_option('affiliatepress_version', true);
-            if (version_compare($affiliatepress_old_version, '3.1', '<') ) {
+            if (version_compare($affiliatepress_old_version, '3.2', '<') ) {
                 $affiliatepress_load_upgrade_file = AFFILIATEPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $affiliatepress_load_upgrade_file;
                 $AffiliatePress->affiliatepress_send_anonymous_data_cron();
@@ -3802,6 +3802,7 @@ if (! class_exists('AffiliatePress') ) {
                 array('ap_setting_name' => 'dashboard_commission_rate','ap_setting_value' => esc_html__('Commission Rate', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'dashboard_chart_earnings','ap_setting_value' => esc_html__('Earnings', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'dashboard_chart_commisisons','ap_setting_value' => esc_html__('Commissions', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
+                array('ap_setting_name' => 'dashboard_date_label','ap_setting_value' => esc_html__('Date', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'dashboard_reports','ap_setting_value' => esc_html__('Reports', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'commission_affiliate_commission','ap_setting_value' => esc_html__('Affiliate Commission', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
                 array('ap_setting_name' => 'commission_select_status','ap_setting_value' => esc_html__('Select Status', 'affiliatepress-affiliate-marketing'),'ap_setting_type' => 'message_settings','auto_load'=>0,'type'=>'text'),
@@ -5011,7 +5012,7 @@ if (! class_exists('AffiliatePress') ) {
             }else if($affiliatepress_type == 'edit_icon'){
                 $uniq_id = uniqid();
             ?>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_<?php echo $uniq_id; ?>)"><g clip-path="url(#clip1_<?php echo $uniq_id; ?>)"><path class="ap-small-btn-icon-stoke-white" d="M17.8801 5.10143L5.55182 17.4296L1.69922 18.2002L2.46973 14.3476L14.798 2.01933C15.2235 1.59382 15.9135 1.59382 16.339 2.01933L17.8801 3.56041C18.3056 3.98592 18.3056 4.67585 17.8801 5.10143Z"  stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path class="ap-small-btn-icon-stoke-white" d="M13.2578 3.56054L16.3398 6.64258"  stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/></g></g><defs><clipPath id="clip0<?php echo $uniq_id; ?>"><rect width="20" height="20" fill="white"/></clipPath><clipPath id="clip1<?php echo $uniq_id; ?>"><rect width="20" height="20" fill="white"/></clipPath></defs></svg>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_<?php echo esc_attr( $uniq_id ); ?>)"><g clip-path="url(#clip1_<?php echo esc_attr( $uniq_id ); ?>)"><path class="ap-small-btn-icon-stoke-white" d="M17.8801 5.10143L5.55182 17.4296L1.69922 18.2002L2.46973 14.3476L14.798 2.01933C15.2235 1.59382 15.9135 1.59382 16.339 2.01933L17.8801 3.56041C18.3056 3.98592 18.3056 4.67585 17.8801 5.10143Z"  stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/><path class="ap-small-btn-icon-stoke-white" d="M13.2578 3.56054L16.3398 6.64258"  stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/></g></g><defs><clipPath id="clip0<?php echo esc_attr( $uniq_id ); ?>"><rect width="20" height="20" fill="white"/></clipPath><clipPath id="clip1<?php echo esc_attr( $uniq_id ); ?>"><rect width="20" height="20" fill="white"/></clipPath></defs></svg>
             <?php 
             }
             elseif ($affiliatepress_type == 'details_action') {

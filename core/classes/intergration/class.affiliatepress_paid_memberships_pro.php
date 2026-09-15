@@ -451,7 +451,10 @@ if( !class_exists('affiliatepress_paid_memberships_pro') ){
                     'discount_val'         => ((isset($affiliatepress_commission_rules['discount_val']))?$affiliatepress_commission_rules['discount_val']:0),
                     'discount_type'        => ((isset($affiliatepress_commission_rules['discount_type']))?$affiliatepress_commission_rules['discount_type']:NULL),                    
                 );
-                $affiliatepress_order_referal_amount = $affiliatepress_amount;                
+                $affiliatepress_order_referal_amount = $affiliatepress_amount;     
+                
+                $affiliatepress_commission_products_ids[] = $affiliatepress_membership_level;
+                $affiliatepress_commission_products_name[] = $affiliatepress_membership_name;
 
             }else{
 

@@ -1180,6 +1180,13 @@ if (! class_exists('affiliatepress_settings') ) {
                             'trigger'  => 'blur',
                         ),
                     ),
+                    'dashboard_date_label'  => array(
+                        array(
+                            'required' => true,
+                            'message'  => esc_html__('This field is required.', 'affiliatepress-affiliate-marketing'),
+                            'trigger'  => 'blur',
+                        ),
+                    ),
                     'dashboard_reports'  => array(
                         array(
                             'required' => true,
@@ -2030,6 +2037,7 @@ if (! class_exists('affiliatepress_settings') ) {
                     'dashboard_reports'               => '',
                     'dashboard_chart_earnings'        => '',
                     'dashboard_chart_commisisons'     => '',
+                    'dashboard_date_label'            => '',
 
                     //Commission panel
                     'commission_affiliate_commission'   => '',
