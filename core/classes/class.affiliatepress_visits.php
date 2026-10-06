@@ -100,7 +100,7 @@ if (! class_exists('affiliatepress_visits') ) {
                 die;                
             }
             
-            $affiliatepress_wpnonce = isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '';// phpcs:ignore
+            $affiliatepress_wpnonce = isset($_POST['_wpnonce']) ? sanitize_text_field(wp_unslash($_POST['_wpnonce'])) : '';
             $affiliatepress_ap_verify_nonce_flag = wp_verify_nonce($affiliatepress_wpnonce, 'ap_wp_nonce');
             if (! $affiliatepress_ap_verify_nonce_flag ) {
                 $response['variant']        = 'error';
@@ -110,11 +110,11 @@ if (! class_exists('affiliatepress_visits') ) {
                 exit;
             }
 
-            $affiliatepress_perpage     = isset($_POST['perpage']) ? intval($_POST['perpage']) : 10; // phpcs:ignore
+            $affiliatepress_perpage     = isset($_POST['perpage']) ? intval($_POST['perpage']) : 10; 
             if(empty($affiliatepress_perpage)){
                 $affiliatepress_perpage = 10;
             }
-            $affiliatepress_currentpage = isset($_POST['currentpage']) ? intval($_POST['currentpage']) : 1; // phpcs:ignore
+            $affiliatepress_currentpage = isset($_POST['currentpage']) ? intval($_POST['currentpage']) : 1; 
             $affiliatepress_offset      = (!empty($affiliatepress_currentpage) && $affiliatepress_currentpage > 1 ) ? ( ( $affiliatepress_currentpage - 1 ) * $affiliatepress_perpage ) : 0;
             $affiliatepress_order       = isset($_POST['order']) ? sanitize_text_field(wp_unslash($_POST['order'])) : '';
             $affiliatepress_order_by    = isset($_POST['order_by']) ? sanitize_text_field(wp_unslash($_POST['order_by'])) : '';
@@ -122,28 +122,28 @@ if (! class_exists('affiliatepress_visits') ) {
             $affiliatepress_search_query = '';
 
             $affiliatepress_where_clause = " WHERE 1 = 1 ";
-            if (! empty($_REQUEST['search_data']) ) {// phpcs:ignore
+            if (! empty($_REQUEST['search_data']) ) {
                
-                if(isset($_REQUEST['search_data']['ap_visit_date'])) {// phpcs:ignore
+                if(isset($_REQUEST['search_data']['ap_visit_date'])) {
 
-                    $affiliatepress_start_date = (isset($_REQUEST['search_data']['ap_visit_date'][0]))?sanitize_text_field($_REQUEST['search_data']['ap_visit_date'][0]):'';// phpcs:ignore
-                    $affiliatepress_end_date   = (isset($_REQUEST['search_data']['ap_visit_date'][1]))?sanitize_text_field($_REQUEST['search_data']['ap_visit_date'][1]):'';// phpcs:ignore
+                    $affiliatepress_start_date = (isset($_REQUEST['search_data']['ap_visit_date'][0]))?sanitize_text_field(wp_unslash($_REQUEST['search_data']['ap_visit_date'][0])):'';
+                    $affiliatepress_end_date   = (isset($_REQUEST['search_data']['ap_visit_date'][1]))?sanitize_text_field(wp_unslash($_REQUEST['search_data']['ap_visit_date'][1])):'';
 
                     if(!empty($affiliatepress_start_date) && !empty($affiliatepress_end_date)){
-                        $affiliatepress_start_date = date('Y-m-d',strtotime($affiliatepress_start_date));// phpcs:ignore
-                        $affiliatepress_end_date = date('Y-m-d',strtotime($affiliatepress_end_date));// phpcs:ignore
+                        $affiliatepress_start_date = gmdate('Y-m-d',strtotime($affiliatepress_start_date));
+                        $affiliatepress_end_date = gmdate('Y-m-d',strtotime($affiliatepress_end_date));
 
                         $affiliatepress_where_clause.= $wpdb->prepare( " AND (DATE(visits.ap_visit_created_date) >= %s AND DATE(visits.ap_visit_created_date) <= %s) ", $affiliatepress_start_date, $affiliatepress_end_date);
                     }
                 }                
-                if (isset($_REQUEST['search_data']['ap_affiliates_user']) && !empty($_REQUEST['search_data']['ap_affiliates_user']) ) {// phpcs:ignore
-                    $affiliatepress_search_id   = intval($_REQUEST['search_data']['ap_affiliates_user']);// phpcs:ignore
+                if (isset($_REQUEST['search_data']['ap_affiliates_user']) && !empty($_REQUEST['search_data']['ap_affiliates_user']) ) {
+                    $affiliatepress_search_id   = intval($_REQUEST['search_data']['ap_affiliates_user']);
 
                     $affiliatepress_where_clause.= $wpdb->prepare( " AND (affiliate.ap_affiliates_id = %d) ", $affiliatepress_search_id);
 
                 }
-                if (isset($_REQUEST['search_data']['visit_type']) && !empty($_REQUEST['search_data']['visit_type'])){// phpcs:ignore
-                    if(sanitize_text_field($_REQUEST['search_data']['visit_type']) == 'converted'){// phpcs:ignore
+                if (isset($_REQUEST['search_data']['visit_type']) && !empty($_REQUEST['search_data']['visit_type'])){
+                    if(sanitize_text_field(wp_unslash($_REQUEST['search_data']['visit_type'])) == 'converted'){
                         $affiliatepress_where_clause.= $wpdb->prepare( " AND (visits.ap_commission_id <> %d) ", 0);
                     }else{
                         $affiliatepress_where_clause.= $wpdb->prepare( " AND (visits.ap_commission_id = %d) ", 0);
@@ -151,9 +151,9 @@ if (! class_exists('affiliatepress_visits') ) {
                 }
             }  
 
-            $affiliatepress_tbl_ap_affiliate_visits_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_affiliate_visits); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $affiliatepress_tbl_ap_affiliate_visits contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function
+            $affiliatepress_tbl_ap_affiliate_visits_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_affiliate_visits);
             
-            $affiliatepress_tbl_ap_affiliates_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_affiliates); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $affiliatepress_tbl_ap_affiliates contains table name and it's prepare properly using 'affiliatepress_tablename_prepare' function                        
+            $affiliatepress_tbl_ap_affiliates_temp = $this->affiliatepress_tablename_prepare($affiliatepress_tbl_ap_affiliates);
 
             $affiliatepress_get_total_visits = intval($wpdb->get_var("SELECT count(visits.ap_visit_id) FROM {$affiliatepress_tbl_ap_affiliate_visits_temp} as visits INNER JOIN {$affiliatepress_tbl_ap_affiliates_temp} as affiliate  ON visits.ap_affiliates_id = affiliate.ap_affiliates_id  {$affiliatepress_where_clause}")); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_tbl_ap_affiliates_temp is a table name. false alarm
 
