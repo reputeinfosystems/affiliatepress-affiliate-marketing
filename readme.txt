@@ -3,9 +3,9 @@ Contributors: reputeinfosystems
 Tags: Affiliate, Affiliates, Affiliate marketing, Affiliate program, Affiliate management
 Donate link: https://www.affiliatepressplugin.com/
 Requires at least: 5.3.0
-Tested up to: 7.1
+Tested up to: 7.1.3
 Requires PHP: 7.0
-Stable tag: 3.5
+Stable tag: 3.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -128,6 +128,11 @@ Please follow the steps for installation:
 1. AffiliatePress – WordPress Affiliate Plugin
 
 == Changelog ==
+
+= 3.6 =
+* Improved: Removed affiliate tracking parameters from the URL after tracking a referral visit.
+* Fixed: Pagination issues when accessed through fancy affiliate URLs.
+* Fixed minor bugs.
 
 = 3.5 =
 * Minor bug fixes and improvements.

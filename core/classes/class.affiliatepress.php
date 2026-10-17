@@ -324,7 +324,7 @@ if (! class_exists('AffiliatePress') ) {
          * @return void
         */
         function affiliatepress_send_anonymous_data_cron(){
-            global $AffiliatePress, $affiliatepress_global_options, $affiliatepress_website_url;
+            global $AffiliatePress, $affiliatepress_global_options, $affiliatepress_website_url,$affiliatepress_addons;
 
             $affiliatepress_affiliate_usage_stats = $this->affiliatepress_get_settings('affiliate_usage_stats', 'affiliate_settings');
 
@@ -399,40 +399,19 @@ if (! class_exists('AffiliatePress') ) {
 
                 $affiliatepress_total_wp_users =  count_users();
                 $affiliatepress_total_wp_users = $affiliatepress_total_wp_users['total_users'];
-                
-                $affiliatepress_addon_url = $affiliatepress_website_url.'ap_misc/addons_list.php';
-                $affiliatepress_addons_res = wp_remote_post(
-                    $affiliatepress_addon_url,
-                    array(
-                        'method'    => 'POST',
-                        'timeout'   => 45,
-                        'sslverify' => false,
-                        'body'      => array(
-                            'affiliatepress_addons_list' => 1,
-                        ),
-                    )
-                );
+
+                $affiliatepress_addons_res = $affiliatepress_addons->get_affiliatepress_addon_list();
                 $affiliatepress_active_addon_list = $affiliatepress_inactive_addon_list =  array();
-                if ( ! is_wp_error( $affiliatepress_addons_res ) ) {
-                    $affiliatepress_body_res = base64_decode( $affiliatepress_addons_res['body'] );
-                    if ( ! empty( $affiliatepress_body_res ) ) {
-                        $affiliatepress_body_res = json_decode( $affiliatepress_body_res, true );
-                        foreach ( $affiliatepress_body_res as $affiliatepress_body_key => $affiliatepress_body_data_arr ) {  
-                            foreach ( $affiliatepress_body_data_arr as $affiliatepress_body_data_key => $affiliatepress_body_val ) {
-                                if(!empty($affiliatepress_body_val['addon_installer'])) {
-                                    if(file_exists( WP_PLUGIN_DIR . '/'.$affiliatepress_body_val['addon_installer'])) {        
-                                        $is_addon_active = is_plugin_active($affiliatepress_body_val['addon_installer']);
-                                        if($is_addon_active) {
-                                            $affiliatepress_active_addon_list[$affiliatepress_body_val['addon_name']] = $affiliatepress_body_val['addon_version'];
-                                        } else {
-                                            $affiliatepress_inactive_addon_list[$affiliatepress_body_val['addon_name']] = $affiliatepress_body_val['addon_version'];
-                                        } 
-                                    }
-                                }
-                            }
+                
+                if( is_array( $affiliatepress_addons_res ) ){
+                    foreach( $affiliatepress_addons_res as $avav_installer => $avav_details ){
+                        if( is_plugin_active( $avav_installer ) ){
+                            $affiliatepress_active_addon_list[ $avav_details['Name'] ] = $avav_details['Version'];
+                        } else {
+                            $affiliatepress_inactive_addon_list[ $avav_details['Name'] ] = $avav_details['Version'];
                         }
                     }
-                } 
+                }
 
                 $affiliatepress_currency_name = $this->affiliatepress_get_settings('payment_default_currency', 'affiliate_settings');
                 $affiliatepress_currency = $affiliatepress_currency_name;
@@ -847,7 +826,7 @@ if (! class_exists('AffiliatePress') ) {
         {
             global $affiliatepress_version, $AffiliatePress;
             $affiliatepress_old_version = get_option('affiliatepress_version', true);
-            if (version_compare($affiliatepress_old_version, '3.5', '<') ) {
+            if (version_compare($affiliatepress_old_version, '3.6', '<') ) {
                 $affiliatepress_load_upgrade_file = AFFILIATEPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $affiliatepress_load_upgrade_file;
                 $AffiliatePress->affiliatepress_send_anonymous_data_cron();
@@ -5379,7 +5358,7 @@ if (! class_exists('AffiliatePress') ) {
         /** validate affiliate plugin */
         function affiliatepress_validate_plugin_setup(){
 
-            global $affiliatepress_website_url;
+            global $affiliatepress_website_url,$affiliatepress_addons;
 
             $ap_plugin_setup_check_time = get_option( 'affiliatepress_validate_plugin_setup_timings' );
 
@@ -5403,50 +5382,24 @@ if (! class_exists('AffiliatePress') ) {
                 $avava_data = [];
                 $avavd_data = [];
 
-                $avav_url =  $affiliatepress_website_url.'ap_misc/addons_list.php';
-                $avav_resp = wp_remote_post(
-                    $avav_url,
-                    array(
-                        'method'    => 'POST',
-                        'timeout'   => 45,
-                        'sslverify' => false,
-                        'body'      => array(
-                            'affiliatepress_addons_list' => 1,
-                        ),
-                    )
-                );            
-                if ( ! is_wp_error( $avav_resp ) ) {
-                    $avav_data = base64_decode( $avav_resp['body'] );
-                    if( !empty( $avav_data ) ){
-                        $avav_response = json_decode( $avav_data, true );
-                        if( !empty( $avav_response ) && is_array( $avav_response ) )
-                        {
-                            $avav_filtered = array_values( $avav_response );
-                            $avallav = array_merge( ...$avav_filtered );
-                            if( !empty( $avallav ) ) {
-                                foreach( $avallav as $avav_details ){
-                                    $avav_installer = $avav_details['addon_installer'];
+                $avav_resp = $affiliatepress_addons->get_affiliatepress_addon_list();
 
-                                    if( file_exists( WP_PLUGIN_DIR . '/' . $avav_installer ) ){
-                                        $avavpdata = get_plugin_data( WP_PLUGIN_DIR . '/' . $avav_installer );
-                                        $avavactv = is_plugin_active( $avav_installer );
-                                        if( $avavactv ){
-                                            $avava_data[ $avav_details['addon_name'] ] = $avavpdata['Version'];
-                                        } else {
-                                            $avavd_data[ $avav_details['addon_name'] ] = $avavpdata['Version'];
-                                        }
-                                    }
-                                }
-                            }
+                if( is_array( $avav_resp ) ){
+                    foreach( $avav_resp as $avav_installer => $avav_details ){
+                        if( is_plugin_active( $avav_installer ) ){
+                            $avava_data[ $avav_details['Name'] ] = $avav_details['Version'];
+                        } else {
+                            $avavd_data[ $avav_details['Name'] ] = $avav_details['Version'];
                         }
                     }
                 }
+
                 $avav_setup_data = [
                     'avlv' => $avlv,
                     'avpv' => $avpv.static::$checksum,
                     'avava' => $avava_data,
                     'avavd' => $avavd_data,
-                    'avurl' => home_url()
+                    'avurl' => home_url(),
                 ];
 
                 $ap_validation_data = wp_json_encode( $avav_setup_data );

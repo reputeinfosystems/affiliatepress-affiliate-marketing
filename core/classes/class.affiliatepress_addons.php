@@ -167,6 +167,64 @@ if (! class_exists('affiliatepress_addons') ) {
             $response['addons_response'] = '';
             $response['css'] = '';
 
+            $addons_list = $this->affiliatepress_addons_list();
+
+            if( !empty( $addons_list ) ){
+                $affiliatepress_addon_list_css = '';
+
+                foreach ( $addons_list as $affiliatepress_body_key => $affiliatepress_body_data_arr ) {
+                    foreach ( $affiliatepress_body_data_arr as $affiliatepress_body_data_key => $affiliatepress_body_val ) {
+                        if ( is_plugin_active( $affiliatepress_body_val['addon_installer'] ) ) {
+                            $addons_list[$affiliatepress_body_key][$affiliatepress_body_data_key]['addon_isactive'] = 1;
+                            $affiliatepress_body_data_arr[$affiliatepress_body_data_key]['addon_isactive'] = 1;
+                        } else {
+                            if ( ! file_exists( WP_PLUGIN_DIR . '/' . $affiliatepress_body_val['addon_installer'] ) ) {
+                                $addons_list[$affiliatepress_body_key][$affiliatepress_body_data_key]['addon_isactive'] = 2;
+                                $affiliatepress_body_data_arr[$affiliatepress_body_data_key]['addon_isactive'] = 2;
+                            }
+                        }
+                        $affiliatepress_horizontal_postion = isset($affiliatepress_body_val['addon_icon_horizontal_position'])  ? $affiliatepress_body_val['addon_icon_horizontal_position'] : 0;
+                        $addon_icon_vertical_position = isset($affiliatepress_body_val['addon_icon_vertical_position'])  ? $affiliatepress_body_val['addon_icon_vertical_position'] : 0;
+                        $addon_icon_slug = isset($affiliatepress_body_val['addon_icon_slug'])  ? $affiliatepress_body_val['addon_icon_slug'] : '';
+                        $addon_icon_background = isset($affiliatepress_body_val['addon_icon_background'])  ? $affiliatepress_body_val['addon_icon_background'] : '';
+                        $affiliatepress_addon_list_css .= '
+                            .ap-addons-container .ap-addon-item .ap-ai-icon.'.$addon_icon_slug.'{
+                                background-color: '.$addon_icon_background.';
+                                background-position: '.$affiliatepress_horizontal_postion.' '.$addon_icon_vertical_position.';
+                            }';   
+    
+                    }
+                    $affiliatepress_body_data_arr = apply_filters( 'affiliatepress_addon_list_data_filter', $affiliatepress_body_data_arr );
+                    $addons_list[$affiliatepress_body_key] = $affiliatepress_body_data_arr;
+                }
+            }
+
+            $affiliatepress_addon_list_css .= '.ap-addons-container .ap-addon-item .ap-ai-icon{
+                background: url('.$affiliatepress_website_url.'"ap_misc/icons/addon-icon-sprite.png?ver='.current_time('timestamp').'") 0 0 no-repeat var(--ap-pt-main-green);
+            }';
+
+            $response['variant']         = 'success';
+            $response['title']           = esc_html__( 'Success', 'affiliatepress-affiliate-marketing' );
+            $response['msg']             = esc_html__( 'Addons list fetched successfully', 'affiliatepress-affiliate-marketing' );
+            $response['addons_response'] = $addons_list;
+            $response['css']             = $affiliatepress_addon_list_css; 
+
+            echo wp_json_encode( $response );
+            die;
+        }
+
+        function affiliatepress_addons_list($is_array = true){
+
+            global $affiliatepress_website_url;
+
+            $addons = [];
+
+            $fetch_list = get_transient( 'affiliatepress_addons_list' );
+
+            if( $fetch_list !== false ) {
+                return $fetch_list;
+            }
+
             $affiliatepress_addon_url = $affiliatepress_website_url.'ap_misc/addons_list.php';
 
 			$affiliatepress_addons_res = wp_remote_post(
@@ -179,51 +237,39 @@ if (! class_exists('affiliatepress_addons') ) {
 						'affiliatepress_addons_list' => 1,
 					),
 				)
-			);     
-
+			);    
+            
             if ( ! is_wp_error( $affiliatepress_addons_res ) ) {
                 $affiliatepress_body_res = base64_decode( $affiliatepress_addons_res['body'] );
-
                 if ( ! empty( $affiliatepress_body_res ) ) {
-                    $affiliatepress_body_res = json_decode( $affiliatepress_body_res, true );                        
-                    $affiliatepress_addon_list_css = '';
-
-                    foreach ( $affiliatepress_body_res as $affiliatepress_body_key => $affiliatepress_body_data_arr ) {
-
-                        foreach ( $affiliatepress_body_data_arr as $affiliatepress_body_data_key => $affiliatepress_body_val ) {
-
-                            if ( is_plugin_active( $affiliatepress_body_val['addon_installer'] ) ) {
-                                $affiliatepress_body_res[$affiliatepress_body_key][$affiliatepress_body_data_key]['addon_isactive'] = 1;
-                                $affiliatepress_body_data_arr[$affiliatepress_body_data_key]['addon_isactive'] = 1;
-                            } else {
-                                if ( ! file_exists( WP_PLUGIN_DIR . '/' . $affiliatepress_body_val['addon_installer'] ) ) {
-                                    $affiliatepress_body_res[$affiliatepress_body_key][$affiliatepress_body_data_key]['addon_isactive'] = 2;
-                                    $affiliatepress_body_data_arr[$affiliatepress_body_data_key]['addon_isactive'] = 2;
-                                }
-                            }
-                            $affiliatepress_horizontal_postion = isset($affiliatepress_body_val['addon_icon_horizontal_position'])  ? $affiliatepress_body_val['addon_icon_horizontal_position'] : 0;
-                            $addon_icon_vertical_position = isset($affiliatepress_body_val['addon_icon_vertical_position'])  ? $affiliatepress_body_val['addon_icon_vertical_position'] : 0;
-                            $addon_icon_slug = isset($affiliatepress_body_val['addon_icon_slug'])  ? $affiliatepress_body_val['addon_icon_slug'] : '';
-                            $addon_icon_background = isset($affiliatepress_body_val['addon_icon_background'])  ? $affiliatepress_body_val['addon_icon_background'] : '';
-
-                        }
-                        $affiliatepress_body_res[$affiliatepress_body_key] = $affiliatepress_body_data_arr;
-                    }
-
-                    $affiliatepress_body_res = apply_filters( 'affiliatepress_addon_list_data_filter', $affiliatepress_body_res );
-                    $affiliatepress_addon_list_css = "";
-
-                    $response['variant']         = 'success';
-                    $response['title']           = esc_html__( 'Success', 'affiliatepress-affiliate-marketing' );
-                    $response['msg']             = esc_html__( 'Addons list fetched successfully', 'affiliatepress-affiliate-marketing' );
-                    $response['addons_response'] = $affiliatepress_body_res;
-                    $response['css']             = $affiliatepress_addon_list_css; 
+                    $addons = json_decode( $affiliatepress_body_res, $is_array );
+                    set_transient( 'affiliatepress_addons_list', $addons, (DAY_IN_SECONDS) );
                 }
-            } else {
-                $response['msg'] = $affiliatepress_addons_res->get_error_message();
             }
-            echo wp_json_encode( $response );
-            die;
+    
+            return $addons;
+        }
+
+        public static function get_affiliatepress_addon_list(){
+
+            if( !function_exists( 'get_plugins' ) ){
+                require_once ABSPATH . 'wp-admin/includes/plugin.php';
+            }
+    
+            $all_plugins = get_plugins();
+    
+            $affiliatepress_addon_list = [];
+            $primary_plugins = ['affiliatepress-affiliate-marketing/affiliatepress-affiliate-marketing.php', 'affiliatepress-affiliate-marketing-pro/affiliatepress-affiliate-marketing-pro.php'];
+    
+            if( !empty( $all_plugins ) ){
+                foreach ( $all_plugins as $plugin_key => $plugin_data ) {
+                    if ( !in_array( $plugin_key, $primary_plugins ) && preg_match( '/((affiliatepress(.+?)\/affiliatepress(.+?)(\.php)))/i', $plugin_key ) ) {
+                        $affiliatepress_addon_list[ $plugin_key ] = $plugin_data;
+                    }
+                }
+            }
+            return $affiliatepress_addon_list;
+    
         }
         
     }

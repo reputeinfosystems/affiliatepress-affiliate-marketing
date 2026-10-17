@@ -11,6 +11,7 @@ if( !class_exists('affiliatepress_tracking') ){
         private $referral_var;
         private $affiliatepress_expiration_time;
         public $referral;
+        private $affiliatepress_url_ref_value = '';
                 
         /**
          * Function for construct
@@ -21,6 +22,12 @@ if( !class_exists('affiliatepress_tracking') ){
             
             /**Common Function for set affiliatepress cookie  */
             add_action( 'wp', array( &$this, 'affiliatepress_set_ref_in_cookie' ),10);
+
+            /**fancy affiliate URL query vars so trailing pagination is honoured */
+            add_filter( 'request', array( $this, 'affiliatepress_normalize_fancy_url_request' ), 10, 1 );
+
+            /**Redirect to the same page without affiliate tracking parameters once the visit is tracked */
+            add_action( 'template_redirect', array( $this, 'affiliatepress_remove_affiliate_params_from_url' ), 5 );
 
             /**Function for common validation for all integration */
             add_filter('affiliatepress_commission_validation',array($this,'affiliatepress_commission_common_validation_func'),10,5);
@@ -648,11 +655,14 @@ if( !class_exists('affiliatepress_tracking') ){
                         if(strpos($affiliatepress_final_variable,$referral_var.'/')){
                             $affiliatepress_track_arr = explode($referral_var.'/',$affiliatepress_final_variable);
                             if(isset($affiliatepress_track_arr[1]) && !empty($affiliatepress_track_arr[1])){
-                                $affiliatepress_ref_affiliate = $affiliatepress_track_arr[1];                                
+                                $affiliatepress_track_segments = explode('/', trim($affiliatepress_track_arr[1], '/'));
+                                $affiliatepress_ref_affiliate = $affiliatepress_track_segments[0];
                             }
                         }
                     }
                 } /* Function for get affiliate id encode value from URL using variable */
+
+                $this->affiliatepress_url_ref_value = is_string($affiliatepress_ref_affiliate) ? $affiliatepress_ref_affiliate : '';
 
                 $affiliatepress_ref_affiliate = $AffiliatePress->affiliatepress_decode_affiliate_id($affiliatepress_ref_affiliate); /* Function for decode affiliate ID */
 
@@ -693,6 +703,113 @@ if( !class_exists('affiliatepress_tracking') ){
                 }
 
             }
+        }
+
+        /**
+         * Normalize the fancy affiliate URL query var.
+         *
+         * @param  array $affiliatepress_query_vars Parsed request query vars.
+         * @return array
+         */
+        function affiliatepress_normalize_fancy_url_request( $affiliatepress_query_vars ) {
+            global $AffiliatePress, $wp_rewrite;
+
+            $affiliatepress_url_parameter = $AffiliatePress->affiliatepress_get_settings('affiliate_url_parameter', 'affiliate_settings');
+
+            if ( empty( $affiliatepress_url_parameter ) || empty( $affiliatepress_query_vars[ $affiliatepress_url_parameter ] ) || ! is_string( $affiliatepress_query_vars[ $affiliatepress_url_parameter ] ) ) {
+                return $affiliatepress_query_vars;
+            }
+
+            $affiliatepress_ref_value = trim( $affiliatepress_query_vars[ $affiliatepress_url_parameter ], '/' );
+            if ( false === strpos( $affiliatepress_ref_value, '/' ) ) {
+                return $affiliatepress_query_vars;
+            }
+
+            $affiliatepress_segments = explode( '/', $affiliatepress_ref_value );
+            $affiliatepress_query_vars[ $affiliatepress_url_parameter ] = $affiliatepress_segments[0];
+
+            $affiliatepress_pagination_base = ( ! empty( $wp_rewrite ) && ! empty( $wp_rewrite->pagination_base ) ) ? $wp_rewrite->pagination_base : 'page';
+            if ( isset( $affiliatepress_segments[1], $affiliatepress_segments[2] ) && $affiliatepress_pagination_base === $affiliatepress_segments[1] && ctype_digit( $affiliatepress_segments[2] ) && empty( $affiliatepress_query_vars['paged'] ) ) {
+                $affiliatepress_query_vars['paged'] = absint( $affiliatepress_segments[2] );
+            }
+
+            return $affiliatepress_query_vars;
+        }
+
+        /**
+         * Build the current URL without the affiliate parameter (fancy segment or query arg)
+         * @param  string $affiliatepress_url Current URL.
+         * @return string Clean URL, or empty string when it can not be built.
+         */
+        function affiliatepress_get_url_without_affiliate_params( $affiliatepress_url ) {
+            $affiliatepress_url_parts = wp_parse_url( $affiliatepress_url );
+            if ( empty( $affiliatepress_url_parts['host'] ) || empty( $this->referral_var ) ) {
+                return '';
+            }
+
+            $affiliatepress_path = isset( $affiliatepress_url_parts['path'] ) ? $affiliatepress_url_parts['path'] : '/';
+
+            /* Remove the fancy "/{parameter}/{reference}" segment, keeping anything after it (e.g. /page/2/) */
+            if ( '' !== $this->affiliatepress_url_ref_value ) {
+                $affiliatepress_ref_patterns = array_unique( array( preg_quote( $this->affiliatepress_url_ref_value, '#' ), preg_quote( rawurlencode( $this->affiliatepress_url_ref_value ), '#' ) ) );
+                $affiliatepress_pattern      = '#/' . preg_quote( $this->referral_var, '#' ) . '/(?:' . implode( '|', $affiliatepress_ref_patterns ) . ')(?=/|$)#';
+                $affiliatepress_path         = preg_replace( $affiliatepress_pattern, '', $affiliatepress_path, 1 );
+            }
+            if ( '' === $affiliatepress_path || null === $affiliatepress_path ) {
+                $affiliatepress_path = '/';
+            }
+
+            $affiliatepress_clean_url = ( isset( $affiliatepress_url_parts['scheme'] ) ? $affiliatepress_url_parts['scheme'] : 'http' ) . '://' . $affiliatepress_url_parts['host'];
+            if ( ! empty( $affiliatepress_url_parts['port'] ) ) {
+                $affiliatepress_clean_url .= ':' . $affiliatepress_url_parts['port'];
+            }
+            $affiliatepress_clean_url .= $affiliatepress_path;
+            if ( ! empty( $affiliatepress_url_parts['query'] ) ) {
+                $affiliatepress_clean_url .= '?' . $affiliatepress_url_parts['query'];
+            }
+
+            /* Filter for modify the tracking query args removed from the URL */
+            $affiliatepress_remove_args = apply_filters( 'affiliatepress_tracking_query_args_to_remove', array( $this->referral_var, 'campaign', 'sub_id' ) );
+
+            return remove_query_arg( $affiliatepress_remove_args, $affiliatepress_clean_url );
+        }
+
+        /**
+         * After the referral visit is tracked, redirect to the same page without the
+         * affiliate reference and campaign parameters so the visitor stays on the
+         * @return void
+         */
+        function affiliatepress_remove_affiliate_params_from_url() {
+            if ( '' === $this->affiliatepress_url_ref_value || empty( $this->referral_var ) ) {
+                return;
+            }
+
+            if ( is_admin() || wp_doing_ajax() || wp_doing_cron() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || is_feed() || is_preview() || is_customize_preview() || is_robots() || is_trackback() || headers_sent() ) {
+                return;
+            }
+
+            $affiliatepress_request_method = isset( $_SERVER['REQUEST_METHOD'] ) ? strtoupper( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) ) : 'GET'; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+            if ( ! in_array( $affiliatepress_request_method, array( 'GET', 'HEAD' ), true ) ) {
+                return;
+            }
+
+            /* Filter for disable redirect to the clean URL after tracking */
+            if ( ! apply_filters( 'affiliatepress_remove_affiliate_params_from_url', true, $this->affiliatepress_url_ref_value ) ) {
+                return;
+            }
+
+            $affiliatepress_current_url = $this->affiliatepress_get_current_url();
+            $affiliatepress_clean_url   = $this->affiliatepress_get_url_without_affiliate_params( $affiliatepress_current_url );
+
+            /* Only redirect to a host WordPress trusts, never to an arbitrary Host header */
+            $affiliatepress_clean_url = wp_validate_redirect( $affiliatepress_clean_url, '' );
+            if ( empty( $affiliatepress_clean_url ) || untrailingslashit( $affiliatepress_clean_url ) === untrailingslashit( $affiliatepress_current_url ) ) {
+                return;
+            }
+
+            nocache_headers();
+            wp_redirect( $affiliatepress_clean_url, 302, 'AffiliatePress' ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- validated with wp_validate_redirect() above.
+            exit;
         }
 
         function affiliatepress_insert_visit( $aff_id, $data = array() ) {
