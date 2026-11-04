@@ -286,10 +286,14 @@ if( !class_exists('affiliatepress_memberpress') ){
             $affiliatepress_affiliate_id = $affiliatepress_tracking->affiliatepress_get_referral_affiliate();
             $affiliatepress_visit_id	  = $affiliatepress_tracking->affiliatepress_get_referral_visit();    
             
+            do_action( 'affiliatepress_commission_debug_log_entry',  'commission_tracking_debug_logs', $this->affiliatepress_integration_slug . ' : tracking affiliate data','affiliatepress_memberpress_commission_tracking',  'affiliate id: '.$affiliatepress_affiliate_id .' Visit id : '.$affiliatepress_visit_id ,  $affiliatepress_commission_debug_log_id );
+            
             $affiliatepress_affiliate_id = !empty($affiliatepress_affiliate_id) ? intval($affiliatepress_affiliate_id) : 0;
 
             $affiliatepress_order_data = array('order_id'=>$affiliatepress_transaction_id);
             // $affiliatepress_affiliate_id = apply_filters( 'affiliatepress_referrer_affiliate_id', $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, $affiliatepress_order_data );
+
+            do_action( 'affiliatepress_commission_debug_log_entry',  'commission_tracking_debug_logs', $this->affiliatepress_integration_slug . ' : Commission - Transaction Data','affiliatepress_memberpress_commission_tracking',   wp_json_encode((array) $affiliatepress_transaction),  $affiliatepress_commission_debug_log_id );
 
             $affiliatepress_user = get_userdata( $affiliatepress_transaction->user_id );
             $affiliatepress_user_email = $affiliatepress_user->get( 'user_email' );
@@ -301,13 +305,19 @@ if( !class_exists('affiliatepress_memberpress') ){
                 'last_name'	   => '',
             );
 
+            do_action( 'affiliatepress_commission_debug_log_entry',  'commission_tracking_debug_logs', $this->affiliatepress_integration_slug . ' : customer data','affiliatepress_memberpress_commission_tracking',   wp_json_encode((array) $affiliatepress_customer_args),  $affiliatepress_commission_debug_log_id );
+
             $affiliatepress_affiliate_id = apply_filters( 'affiliatepress_get_affiliate_id', $affiliatepress_affiliate_id, $this->affiliatepress_integration_slug, array('order_id'=>$affiliatepress_transaction_id) ,$affiliatepress_transaction ,$affiliatepress_customer_args);
+
+            do_action( 'affiliatepress_commission_debug_log_entry',  'commission_tracking_debug_logs', $this->affiliatepress_integration_slug . ' : tracking affiliate other details','affiliatepress_memberpress_commission_tracking',  'affiliate id: '.$affiliatepress_affiliate_id ,  $affiliatepress_commission_debug_log_id );
 
             if ( empty( $affiliatepress_affiliate_id ) ) {
                 $affiliatepress_log_msg = "Empty Affiliate ID";
                 do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' Empty Affiliate ID', 'affiliatepress_'.$this->affiliatepress_integration_slug.'_commission_tracking', $affiliatepress_log_msg, $affiliatepress_commission_debug_log_id);
                 return;
             }
+
+            do_action( 'affiliatepress_commission_debug_log_entry',  'commission_tracking_debug_logs', $this->affiliatepress_integration_slug . ' : Commission Pending - Transaction Data','affiliatepress_memberpress_commission_tracking',   wp_json_encode((array) $affiliatepress_transaction),  $affiliatepress_commission_debug_log_id );
 
             $affiliatepress_customer_args['affiliate_id'] = $affiliatepress_affiliate_id;
 
@@ -562,76 +572,128 @@ if( !class_exists('affiliatepress_memberpress') ){
         /**
          * Updates the status of the commission attached to a transaction to "unpaid", thus marking it as complete.
          *
-         * @param  array $affiliatepress_transaction
+         * @param  object $affiliatepress_transaction MeprTransaction object.
          * @return void
          */
         function affiliatepress_accept_pending_commission_memberpress( $affiliatepress_transaction ) {
                     
             global $wpdb, $affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_commission_debug_log_id ,$affiliatepress_tracking ,$AffiliatePress;
 
+            if ( empty( $affiliatepress_transaction ) || empty( $affiliatepress_transaction->id ) ) {
+                do_action( 'affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug . ' : Commission Approve Skipped', 'affiliatepress_' . $this->affiliatepress_integration_slug . '_commission_tracking', 'Transaction object is empty, nothing to approve.', $affiliatepress_commission_debug_log_id );
+                return;
+            }
+
+            do_action( 'affiliatepress_commission_debug_log_entry',  'commission_tracking_debug_logs', $this->affiliatepress_integration_slug . ' : Commission Approved - Transaction Data','affiliatepress_memberpress_commission_tracking',   wp_json_encode((array) $affiliatepress_transaction),  $affiliatepress_commission_debug_log_id );
+
+            $affiliatepress_transaction_id      = intval( $affiliatepress_transaction->id );
+            $affiliatepress_transection_status  = isset( $affiliatepress_transaction->status ) ? sanitize_text_field( $affiliatepress_transaction->status ) : '';
             $affiliatepress_default_commission_status = $affiliatepress_tracking->affiliatepress_get_default_commission_status();
 
-            do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Commission Approve ', 'affiliatepress_easy_digital_downloads_commission_tracking', $affiliatepress_transaction->id, $affiliatepress_commission_debug_log_id);
+            do_action( 'affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug . ' : Commission Approve Hook Received', 'affiliatepress_' . $this->affiliatepress_integration_slug . '_commission_tracking', sprintf( 'MemberPress transaction #%d status changed to "%s".', $affiliatepress_transaction_id, $affiliatepress_transection_status ) . ' | Data: ' . wp_json_encode( array( 'txn_type' => isset( $affiliatepress_transaction->txn_type ) ? $affiliatepress_transaction->txn_type : '', 'subscription_id' => isset( $affiliatepress_transaction->subscription_id ) ? intval( $affiliatepress_transaction->subscription_id ) : 0, 'gateway' => isset( $affiliatepress_transaction->gateway ) ? $affiliatepress_transaction->gateway : '', 'hook' => current_action(), 'default_commission_status' => $affiliatepress_default_commission_status ) ), $affiliatepress_commission_debug_log_id );
 
-            $affiliatepress_transaction_id = $affiliatepress_transaction->id;
-
-            $affiliatepress_transection_status = $affiliatepress_transaction->status;
-
-            if($affiliatepress_transection_status != "complete"){
-                return ;
+            if ( 'complete' !== $affiliatepress_transection_status ) {
+                do_action( 'affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug . ' : Commission Approve Skipped', 'affiliatepress_' . $this->affiliatepress_integration_slug . '_commission_tracking', sprintf( 'Transaction #%d status is "%s". Commission is approved only when the transaction status is "complete", so the commission stays pending until the payment is completed.', $affiliatepress_transaction_id, $affiliatepress_transection_status ), $affiliatepress_commission_debug_log_id );
+                return;
             }
 
-            $affiliatepress_all_commission_data = $AffiliatePress->affiliatepress_get_all_commission_by_order_and_source($affiliatepress_transaction_id, $this->affiliatepress_integration_slug,' AND ap_commission_status = 2');
+            if ( '2' === (string) $affiliatepress_default_commission_status ) {
+                do_action( 'affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug . ' : Commission Approve Skipped', 'affiliatepress_' . $this->affiliatepress_integration_slug . '_commission_tracking', sprintf( 'Default Commission Status setting is "Pending", so the commission for transaction #%d is not changed automatically.', $affiliatepress_transaction_id ), $affiliatepress_commission_debug_log_id );
+                return;
+            }
 
-            if(!empty($affiliatepress_all_commission_data)){
+            $affiliatepress_reference_transaction_id = $affiliatepress_transaction_id;
 
-                foreach($affiliatepress_all_commission_data as $affiliatepress_commission_data){
+            $affiliatepress_all_commission_data = $AffiliatePress->affiliatepress_get_all_commission_by_order_and_source( $affiliatepress_transaction_id, $this->affiliatepress_integration_slug, ' AND ap_commission_status = 2' );
 
-                    $affiliatepress_commission_id = (isset($affiliatepress_commission_data['ap_commission_id']))?intval($affiliatepress_commission_data['ap_commission_id']):0;
+            if ( empty( $affiliatepress_all_commission_data ) ) {
 
-                    if($affiliatepress_commission_id != 0){
+                /* Subscription first payment: commission is stored against the signup (subscription confirmation) transaction. */
+                $affiliatepress_parent_transaction_id = $this->affiliatepress_get_parent_transaction_id_for_first_payment( $affiliatepress_transaction );
 
-                        $affiliatepress_updated_commission_status = 1;
-                        if($affiliatepress_default_commission_status != "auto")
-                        {
-        
-                            $affiliatepress_updated_commission_status = $affiliatepress_default_commission_status;
-        
-                            $affiliatepress_commission_data = array(
-                                'ap_commission_updated_date' => current_time( 'mysql', true ),
-                                'ap_commission_status' 		 => $affiliatepress_default_commission_status
-                            );
-        
-                        }
-                        else
-                        {
-                            $affiliatepress_commission_data = array(
-                                'ap_commission_updated_date' => current_time( 'mysql', true ),
-                                'ap_commission_status' 		 => 1
-                            );
-                        }
-        
-                        if($affiliatepress_updated_commission_status != 2){
-                            $this->affiliatepress_update_record($affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_commission_data, array( 'ap_commission_id' => $affiliatepress_commission_id ));
-                            $affiliatepress_debug_log_msg = sprintf('Pending commission #%s successfully marked as completed.', $affiliatepress_commission_id );
-            
-                            do_action('affiliatepress_after_commissions_status_change',$affiliatepress_commission_id,$affiliatepress_updated_commission_status,2);
-            
-                            do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Commission Approve ', 'affiliatepress_easy_digital_downloads_commission_tracking', $affiliatepress_debug_log_msg, $affiliatepress_commission_debug_log_id);
-                        }
-        
-                    }
+                if ( ! empty( $affiliatepress_parent_transaction_id ) ) {
+
+                    do_action( 'affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug . ' : Commission Approve Parent Lookup', 'affiliatepress_' . $this->affiliatepress_integration_slug . '_commission_tracking', sprintf( 'No pending commission found for transaction #%d. It is the first payment of subscription #%d, so checking the signup transaction #%d.', $affiliatepress_transaction_id, intval( $affiliatepress_transaction->subscription_id ), $affiliatepress_parent_transaction_id ), $affiliatepress_commission_debug_log_id );
+
+                    $affiliatepress_all_commission_data = $AffiliatePress->affiliatepress_get_all_commission_by_order_and_source( $affiliatepress_parent_transaction_id, $this->affiliatepress_integration_slug, ' AND ap_commission_status = 2' );
+                    $affiliatepress_reference_transaction_id = $affiliatepress_parent_transaction_id;
                 }
             }
-           
+
+            if ( empty( $affiliatepress_all_commission_data ) ) {
+                do_action( 'affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug . ' : Commission Approve Skipped', 'affiliatepress_' . $this->affiliatepress_integration_slug . '_commission_tracking', sprintf( 'No pending commission found for transaction #%d (or its signup transaction). Commission may already be approved, rejected, paid, or was never created for this transaction.', $affiliatepress_transaction_id ), $affiliatepress_commission_debug_log_id );
+                return;
+            }
+
+            $affiliatepress_updated_commission_status = ( 'auto' === $affiliatepress_default_commission_status ) ? 1 : intval( $affiliatepress_default_commission_status );
+
+            foreach ( $affiliatepress_all_commission_data as $affiliatepress_commission_row ) {
+
+                $affiliatepress_commission_id = ( isset( $affiliatepress_commission_row['ap_commission_id'] ) ) ? intval( $affiliatepress_commission_row['ap_commission_id'] ) : 0;
+
+                if ( 0 === $affiliatepress_commission_id ) {
+                    continue;
+                }
+
+                if ( 2 === $affiliatepress_updated_commission_status ) {
+                    continue;
+                }
+
+                $affiliatepress_commission_update_data = array(
+                    'ap_commission_updated_date' => current_time( 'mysql', true ),
+                    'ap_commission_status'       => $affiliatepress_updated_commission_status,
+                );
+
+                $this->affiliatepress_update_record( $affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_commission_update_data, array( 'ap_commission_id' => $affiliatepress_commission_id ) );
+
+                do_action( 'affiliatepress_after_commissions_status_change', $affiliatepress_commission_id, $affiliatepress_updated_commission_status, 2 );
+
+                do_action( 'affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug . ' : Commission Status Updated', 'affiliatepress_' . $this->affiliatepress_integration_slug . '_commission_tracking', sprintf( 'Commission #%d status changed from "%s" to "%s" after MemberPress transaction #%d was completed (commission reference transaction #%d).', $affiliatepress_commission_id, $this->affiliatepress_memberpress_commission_status_label( 2 ), $this->affiliatepress_memberpress_commission_status_label( $affiliatepress_updated_commission_status ), $affiliatepress_transaction_id, $affiliatepress_reference_transaction_id ), $affiliatepress_commission_debug_log_id );
+            }
         }
         
-        /**
-         * Function For add pending commisisom
-         *
-         * @param  array $affiliatepress_transaction
-         * @return void
-         */
+        public function affiliatepress_get_parent_transaction_id_for_first_payment( $affiliatepress_transaction ) {
+
+            global $wpdb, $affiliatepress_commission_debug_log_id;
+
+            $affiliatepress_subscription_id = ! empty( $affiliatepress_transaction->subscription_id ) ? intval( $affiliatepress_transaction->subscription_id ) : 0;
+            $affiliatepress_transaction_id  = intval( $affiliatepress_transaction->id );
+            $affiliatepress_txn_type        = isset( $affiliatepress_transaction->txn_type ) ? $affiliatepress_transaction->txn_type : '';
+
+            if ( empty( $affiliatepress_subscription_id ) || 'payment' !== $affiliatepress_txn_type ) {
+                return 0;
+            }
+
+            if ( ! class_exists( 'MeprTransaction' ) || ! method_exists( 'MeprTransaction', 'get_first_subscr_transaction' ) ) {
+                return 0;
+            }
+
+            $affiliatepress_first_transaction = MeprTransaction::get_first_subscr_transaction( $affiliatepress_subscription_id );
+            $affiliatepress_parent_txn_id     = ! empty( $affiliatepress_first_transaction->id ) ? intval( $affiliatepress_first_transaction->id ) : 0;
+
+            if ( empty( $affiliatepress_parent_txn_id ) || $affiliatepress_parent_txn_id === $affiliatepress_transaction_id ) {
+                return 0;
+            }
+
+            /* Only the first real payment of the subscription can approve the signup commission (never a later renewal). */
+            $affiliatepress_mepr_txn_table = $wpdb->prefix . 'mepr_transactions';
+            if ( class_exists( 'MeprDb' ) && method_exists( 'MeprDb', 'fetch' ) ) {
+                $affiliatepress_mepr_db = MeprDb::fetch();
+                if ( ! empty( $affiliatepress_mepr_db->transactions ) ) {
+                    $affiliatepress_mepr_txn_table = $affiliatepress_mepr_db->transactions;
+                }
+            }
+
+            $affiliatepress_first_payment_id = intval( $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$affiliatepress_mepr_txn_table} WHERE subscription_id = %d AND txn_type = %s AND status IN ('complete','refunded') ORDER BY id ASC LIMIT 1", $affiliatepress_subscription_id, 'payment' ) ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter,WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $affiliatepress_mepr_txn_table is the MemberPress transactions table name.
+
+            if ( $affiliatepress_first_payment_id !== $affiliatepress_transaction_id ) {
+                do_action( 'affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug . ' : Signup Transaction Lookup Skipped', 'affiliatepress_' . $this->affiliatepress_integration_slug . '_commission_tracking', sprintf( 'Transaction #%d is a renewal of subscription #%d (first payment was #%d), so the signup commission is not changed.', $affiliatepress_transaction_id, $affiliatepress_subscription_id, $affiliatepress_first_payment_id ), $affiliatepress_commission_debug_log_id );
+                return 0;
+            }
+
+            return $affiliatepress_parent_txn_id;
+        }
+        
         function affiliatepress_change_pending_status_memberpress( $affiliatepress_transaction)
         {
             global $AffiliatePress,$affiliatepress_tbl_ap_affiliate_commissions,$affiliatepress_commission_debug_log_id;
@@ -640,41 +702,67 @@ if( !class_exists('affiliatepress_memberpress') ){
                 return;
             }
 
-            $affiliatepress_transaction_id = $affiliatepress_transaction->id;
+            $affiliatepress_transaction_id = intval( $affiliatepress_transaction->id );
 
             $affiliatepress_all_commission_data = $AffiliatePress->affiliatepress_get_all_commission_by_order_and_source($affiliatepress_transaction_id, $this->affiliatepress_integration_slug);
 
-            if(!empty($affiliatepress_all_commission_data)){
-                foreach($affiliatepress_all_commission_data as $affiliatepress_commission_data){
-
-                    if(!empty($affiliatepress_commission_data)){
-            
-                        $affiliatepress_ap_commission_status = (isset($affiliatepress_commission_data['ap_commission_status']))?intval($affiliatepress_commission_data['ap_commission_status']):0;
-                        $affiliatepress_ap_commission_id     = (isset($affiliatepress_commission_data['ap_commission_id']))?intval($affiliatepress_commission_data['ap_commission_id']):0;
-                        if($affiliatepress_ap_commission_status == 4){
-                            $affiliatepress_debug_log_msg = sprintf( 'Commission #%s could not be pending because it was already paid.', $affiliatepress_ap_commission_id );
-                            return;
-                        }
-        
-                        if($affiliatepress_ap_commission_id != 0){
-        
-                            $affiliatepress_update_commission_data = array(
-                                'ap_commission_updated_date' => current_time( 'mysql', true ),
-                                'ap_commission_status' 		 => 2
-                            );
-        
-                            $this->affiliatepress_update_record($affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_update_commission_data, array( 'ap_commission_id' => $affiliatepress_ap_commission_id ));
-        
-                            $affiliatepress_debug_log_msg = sprintf( 'Commission #%s successfully marked as pending, after payment #%s status change pending.', $affiliatepress_ap_commission_id, $affiliatepress_transaction_id );
-        
-                            do_action('affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug.' : Commission Pending', 'affiliatepress_easy_digital_downloads_commission_tracking', $affiliatepress_debug_log_msg, $affiliatepress_commission_debug_log_id);
-                        
-                        }
-        
-                    }
-                    
-                }
+            if ( empty( $affiliatepress_all_commission_data ) ) {
+                return;
             }
+
+            foreach ( $affiliatepress_all_commission_data as $affiliatepress_commission_row ) {
+
+                if ( empty( $affiliatepress_commission_row ) ) {
+                    continue;
+                }
+
+                $affiliatepress_ap_commission_status = ( isset( $affiliatepress_commission_row['ap_commission_status'] ) ) ? intval( $affiliatepress_commission_row['ap_commission_status'] ) : 0;
+                $affiliatepress_ap_commission_id     = ( isset( $affiliatepress_commission_row['ap_commission_id'] ) ) ? intval( $affiliatepress_commission_row['ap_commission_id'] ) : 0;
+
+                if ( 0 === $affiliatepress_ap_commission_id ) {
+                    continue;
+                }
+
+                if ( 4 === $affiliatepress_ap_commission_status ) {
+                    do_action( 'affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug . ' : Commission Pending Skipped', 'affiliatepress_' . $this->affiliatepress_integration_slug . '_commission_tracking', sprintf( 'Commission #%d could not be marked as pending because it was already paid (transaction #%d).', $affiliatepress_ap_commission_id, $affiliatepress_transaction_id ), $affiliatepress_commission_debug_log_id );
+                    continue;
+                }
+
+                if ( 2 === $affiliatepress_ap_commission_status ) {
+                    continue;
+                }
+
+                $affiliatepress_update_commission_data = array(
+                    'ap_commission_updated_date' => current_time( 'mysql', true ),
+                    'ap_commission_status'       => 2,
+                );
+
+                $this->affiliatepress_update_record( $affiliatepress_tbl_ap_affiliate_commissions, $affiliatepress_update_commission_data, array( 'ap_commission_id' => $affiliatepress_ap_commission_id ) );
+
+                do_action( 'affiliatepress_after_commissions_status_change', $affiliatepress_ap_commission_id, 2, $affiliatepress_ap_commission_status );
+
+                do_action( 'affiliatepress_commission_debug_log_entry', 'commission_tracking_debug_logs', $this->affiliatepress_integration_slug . ' : Commission Pending', 'affiliatepress_' . $this->affiliatepress_integration_slug . '_commission_tracking', sprintf( 'Commission #%d status changed from "%s" to "%s" because MemberPress transaction #%d status changed to pending.', $affiliatepress_ap_commission_id, $this->affiliatepress_memberpress_commission_status_label( $affiliatepress_ap_commission_status ), $this->affiliatepress_memberpress_commission_status_label( 2 ), $affiliatepress_transaction_id ) . ' | Data: ' . wp_json_encode( array( 'txn_type' => isset( $affiliatepress_transaction->txn_type ) ? $affiliatepress_transaction->txn_type : '', 'subscription_id' => isset( $affiliatepress_transaction->subscription_id ) ? intval( $affiliatepress_transaction->subscription_id ) : 0, 'gateway' => isset( $affiliatepress_transaction->gateway ) ? $affiliatepress_transaction->gateway : '', 'hook' => current_action() ) ), $affiliatepress_commission_debug_log_id );
+            }
+        }
+
+        /**
+         * Human readable commission status for logs.
+         *
+         * @param  int $affiliatepress_status Commission status.
+         * @return string
+         */
+        private function affiliatepress_memberpress_commission_status_label( $affiliatepress_status ) {
+
+            $affiliatepress_labels = array(
+                1 => 'Approved',
+                2 => 'Pending',
+                3 => 'Rejected',
+                4 => 'Paid',
+            );
+
+            $affiliatepress_status = intval( $affiliatepress_status );
+
+            return isset( $affiliatepress_labels[ $affiliatepress_status ] ) ? $affiliatepress_labels[ $affiliatepress_status ] : (string) $affiliatepress_status;
         }
 
     }

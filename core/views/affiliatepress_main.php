@@ -18,6 +18,9 @@
         echo '</div>';
     echo '</div>';
 
+
+    global $AffiliatePress;
+    $affiliatepress_sale_type = $AffiliatePress->affiliatepress_get_sales_type('sale_type');
 ?>
 <div v-cloak class="ap-fab-component">
     <div class="ap-fc__active-box" :class="affiliatepress_fab_floating_btn == 1 ? '__ap-is-active' : ''">
@@ -279,6 +282,6 @@
 </el-dialog>
 
 <el-dialog modal-class="ap-affiliate-dialog ap-dialog--upgrade-to-premium ap-dialog--black-friday-sale"  v-model="affiliatepress_sale_premium_modal" :close-on-press-escape="close_modal_on_esc" v-cloak @click="affiliatepress_redirect_sale_premium_page">
-    <div class="ap-dialog-body" @click="affiliatepress_redirect_sale_premium_page">
+    <div class="ap-dialog-body" @click="affiliatepress_redirect_sale_premium_page" style="background: url('<?php echo esc_html(AFFILIATEPRESS_IMAGES_URL) . '/affiliatepress_'.esc_html($affiliatepress_sale_type).'_popup.webp'; ?>') no-repeat center center; background-size: cover;">
     </div>
 </el-dialog>

@@ -826,7 +826,7 @@ if (! class_exists('AffiliatePress') ) {
         {
             global $affiliatepress_version, $AffiliatePress;
             $affiliatepress_old_version = get_option('affiliatepress_version', true);
-            if (version_compare($affiliatepress_old_version, '3.6', '<') ) {
+            if (version_compare($affiliatepress_old_version, '3.7', '<') ) {
                 $affiliatepress_load_upgrade_file = AFFILIATEPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $affiliatepress_load_upgrade_file;
                 $AffiliatePress->affiliatepress_send_anonymous_data_cron();
@@ -2369,6 +2369,7 @@ if (! class_exists('AffiliatePress') ) {
                 }
 
                 $affiliatepress_is_pro_active = $AffiliatePress->affiliatepress_pro_install();
+                $affiliatepress_sale_link = $AffiliatePress->affiliatepress_get_sales_type("sale_link");
 
                 $affiliatepress_script_return_data .= '                
                 var app;
@@ -2710,7 +2711,7 @@ if (! class_exists('AffiliatePress') ) {
                             vm.needHelpDrawer = false;
                         },
                         affiliatepress_redirect_sale_premium_page(){
-                            window.open("'.$affiliatepress_website_url.'pricing/?utm_source=springsale_liteversionpopup&utm_medium=liteversion&utm_campaign=springsale", "_blank");
+                            window.open("'.$affiliatepress_sale_link.'", "_blank");
                         },
                         openNeedHelper(page_name = "", module_name = "", module_title = ""){
                             const vm = this;
@@ -3271,7 +3272,6 @@ if (! class_exists('AffiliatePress') ) {
         function affiliatepress_get_sales_data(){
             
             global $affiliatepress_website_url;
-
             $fetch_sale_detais = get_transient( 'affiliatepress_retrieve_sale_details' );
             $sale_details = array();
             
@@ -3289,6 +3289,25 @@ if (! class_exists('AffiliatePress') ) {
             }
 
             return $sale_details;
+        }
+
+        function affiliatepress_get_sales_type($affiliatepress_return_type){
+            global $affiliatepress_website_url;
+            $affiliatepress_sale_popup_details = $this->affiliatepress_get_sales_data();
+            $affiliatepress_current_year = gmdate('Y', current_time('timestamp', true ) );
+            $affiliatepress_sale_type = $affiliatepress_sale_link = "";
+            if( !empty( $affiliatepress_sale_popup_details[ $affiliatepress_current_year ] ) ){
+                $affiliatepress_sale_details = $affiliatepress_sale_popup_details[ $affiliatepress_current_year ];
+                $affiliatepress_sale_type = !empty( $affiliatepress_sale_details['type'] ) ? $affiliatepress_sale_details['type'] : '';
+                $affiliatepress_sale_link = !empty( $affiliatepress_sale_details['sale_link'] ) ? esc_url_raw($affiliatepress_sale_details['sale_link']) : $affiliatepress_website_url .'pricing';
+            }
+
+            if($affiliatepress_return_type == "sale_type"){
+                return $affiliatepress_sale_type;
+            }elseif ($affiliatepress_return_type == "sale_link") {
+                return $affiliatepress_sale_link;
+            }
+            
         }
 
         /**

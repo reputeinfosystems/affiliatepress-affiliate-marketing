@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: AffiliatePress - Affiliate Marketing v3.6\n"
+"Project-Id-Version: AffiliatePress - Affiliate Marketing v3.7\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-10-15 05:59:25+0000\n"
+"PO-Revision-Date: 2026-11-02 06:18:07+0000\n"
 "Last-Translator: admin <testrepute@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -797,7 +797,7 @@ msgstr "Affiliate Commission Approved"
 #: core/classes/class.affiliatepress_settings.php:3765
 #: core/classes/class.affiliatepress_settings.php:3775
 #: core/classes/class.affiliatepress_settings.php:3798
-#: core/classes/class.affiliatepress_tracking.php:412
+#: core/classes/class.affiliatepress_tracking.php:413
 #: core/classes/class.affiliatepress_visits.php:81
 #: core/classes/class.affiliatepress_visits.php:88
 #: core/classes/class.affiliatepress_visits.php:97
@@ -2188,7 +2188,7 @@ msgstr "Settings has been updated successfully."
 msgid "Settings has been fetched successfully"
 msgstr "Settings has been fetched successfully"
 
-#: core/classes/class.affiliatepress_tracking.php:413
+#: core/classes/class.affiliatepress_tracking.php:414
 #@ affiliatepress-affiliate-marketing
 msgid "Commission was not inserted because the commission amount is zero."
 msgstr "Commission was not inserted because the commission amount is zero."
@@ -6437,7 +6437,7 @@ msgstr "Affiliate Email"
 msgid "Affiliate Payment Email"
 msgstr "Affiliate Payment Email"
 
-#: core/classes/class.affiliatepress_tracking.php:908
+#: core/classes/class.affiliatepress_tracking.php:909
 #@ affiliatepress-affiliate-marketing
 msgid "Default Commission Rate"
 msgstr "Default Commission Rate"
@@ -7866,6 +7866,6 @@ msgstr "Enter creative Text"
 #. translators: plugin header field 'Version'
 #: affiliatepress-affiliate-marketing.php:0
 #@ affiliatepress-affiliate-marketing
-msgid "3.6"
-msgstr "3.6"
+msgid "3.7"
+msgstr "3.7"
 
