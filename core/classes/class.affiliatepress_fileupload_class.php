@@ -305,7 +305,7 @@ if (! class_exists('affiliatepress_fileupload_class') ) {
                 return true;
             }
 
-            $affiliatepress_valid_pattern = '/(\<\?(php)|\<\?\=)|(\<(script|iframe))/';
+            $affiliatepress_valid_pattern = '/(\<\?(php)|\<\?\=)|(\<(script|iframe))/i';
 
             if ( preg_match( $affiliatepress_valid_pattern, $affiliatepress_file_content ) ) {
                 $this->affiliatepress_error_message = esc_html__('The file could not be uploaded due to security reason as it contains malicious code', 'affiliatepress-affiliate-marketing');

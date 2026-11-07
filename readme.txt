@@ -3,9 +3,9 @@ Contributors: reputeinfosystems
 Tags: Affiliate, Affiliates, Affiliate marketing, Affiliate program, Affiliate management
 Donate link: https://www.affiliatepressplugin.com/
 Requires at least: 5.3.0
-Tested up to: 7.1.3
+Tested up to: 7.1.4
 Requires PHP: 7.0
-Stable tag: 3.7
+Stable tag: 3.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -128,6 +128,9 @@ Please follow the steps for installation:
 1. AffiliatePress – WordPress Affiliate Plugin
 
 == Changelog ==
+
+= 3.8 =
+* Minor bug fixes.
 
 = 3.7 =
 * Fixed: Stripe subscription purchase issues with MemberPress.
